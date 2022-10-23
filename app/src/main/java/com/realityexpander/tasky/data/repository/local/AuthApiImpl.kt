@@ -11,6 +11,7 @@ class AuthApiImpl: IAuthApi {
 
     init {
         users["chris@demo.com"] = "password"
+        users["a@a.c"] = "zzzzzz"
     }
 
     override suspend fun login(email: String, password: String): AuthToken {

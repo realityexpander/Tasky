@@ -7,6 +7,8 @@ class ValidateEmailImpl(
     private val emailMatcher: IEmailMatcher = EmailMatcherImpl()
 ): IValidateEmail {
     override fun validateEmail(email: String): Boolean {
+        if(email.isEmpty()) return false
+
         return emailMatcher.matches(email)
     }
 }

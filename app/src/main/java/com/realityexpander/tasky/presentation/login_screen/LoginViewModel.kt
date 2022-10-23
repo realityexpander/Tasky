@@ -36,11 +36,12 @@ class LoginViewModel @Inject constructor(
 
     private suspend fun login(email: String, password: String) {
         try {
-            authRepository.login(email, password)
+            val authToken = authRepository.login(email, password)
+            sendEvent(LoginEvent.LoginSuccess(authToken))
         } catch(e: Exceptions.LoginException) {
-            sendEvent(LoginEvent.LoginError)
+            sendEvent(LoginEvent.LoginError(e.message ?: "Unknown Login Error"))
         } catch(e: Exceptions.InvalidEmailException) {
-            sendEvent(LoginEvent.InvalidEmail)
+            sendEvent(LoginEvent.IsInvalidEmail)
         } catch (e: Exception) {
             // handle general error
             sendEvent(LoginEvent.UnknownError(e.message ?: "Unknown error"))
@@ -49,25 +50,18 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun validateEmail(email: String) {
-        try {
-            validateEmail.validateEmail(email)
-        } catch(e: Exceptions.InvalidEmailException) {
-            sendEvent(LoginEvent.InvalidEmail)
-        } catch (e: Exception) {
-            // handle general error
-            sendEvent(LoginEvent.UnknownError(e.message ?: "Unknown Error"))
-            e.printStackTrace()
+        if (validateEmail.validateEmail(email)) {
+            sendEvent(LoginEvent.IsValidEmail)
+        } else {
+            sendEvent(LoginEvent.IsInvalidEmail)
         }
     }
 
     private fun validatePassword(password: String) {
-        try {
-            //validatePassword.validatePassword(password) // todo
-        } catch(e: Exceptions.InvalidPasswordException) {
-            sendEvent(LoginEvent.InvalidPassword)
-        } catch (e: Exception) {
-            sendEvent(LoginEvent.UnknownError(e.message ?: "Unknown Error"))
-            e.printStackTrace()
+        if (password.length >= 6 ) { // && validatePassword.validatePassword(password)) { //todo
+            sendEvent(LoginEvent.IsValidPassword)
+        } else {
+            sendEvent(LoginEvent.IsInvalidPassword)
         }
     }
 
@@ -80,12 +74,18 @@ class LoginViewModel @Inject constructor(
     suspend fun onEvent(event: LoginEvent) {
         when(event) {
             is LoginEvent.UpdateEmail -> {
-                _loginStateFlow.value = _loginStateFlow.value.copy(email = event.email)
+                _loginStateFlow.value = _loginStateFlow.value
+                    .copy(email = event.email, isInvalidEmail = false)
             }
             is LoginEvent.UpdatePassword -> {
-                _loginStateFlow.value = _loginStateFlow.value.copy(password = event.password)
+                _loginStateFlow.value = _loginStateFlow.value
+                    .copy(password = event.password, isInvalidPassword = false)
             }
             is LoginEvent.Login -> {
+                if(_loginStateFlow.value.isInvalidEmail || _loginStateFlow.value.isInvalidPassword) {
+                    return
+                }
+
                 login(event.email, event.password)
             }
             is LoginEvent.ValidateEmail -> {
@@ -95,19 +95,35 @@ class LoginViewModel @Inject constructor(
                 validatePassword(event.password)
             }
             is LoginEvent.LoginSuccess -> {
-                _loginStateFlow.value = _loginStateFlow.value.copy(isLoggedIn = true)
+                _loginStateFlow.value = _loginStateFlow.value
+                    .copy(
+                        isLoggedIn = true,
+                        statusMessage = "Login Success: authToken = ${event.authToken}"
+                    )
             }
             is LoginEvent.LoginError -> {
-                _loginStateFlow.value = _loginStateFlow.value.copy(isError = true)
+                _loginStateFlow.value = _loginStateFlow.value
+                    .copy(isError = true)
             }
-            is LoginEvent.InvalidEmail -> {
-                _loginStateFlow.value = _loginStateFlow.value.copy(isInvalidEmail = true)
+            is LoginEvent.IsInvalidEmail -> {
+                _loginStateFlow.value = _loginStateFlow.value
+                    .copy(isInvalidEmail = true)
             }
-            is LoginEvent.InvalidPassword -> {
-                _loginStateFlow.value = _loginStateFlow.value.copy(isInvalidPassword = true)
+            is LoginEvent.IsInvalidPassword -> {
+                _loginStateFlow.value = _loginStateFlow.value
+                    .copy(isInvalidPassword = true)
+            }
+            is LoginEvent.IsValidEmail -> {
+                _loginStateFlow.value = _loginStateFlow.value
+                    .copy(isInvalidEmail = false)
+            }
+            is LoginEvent.IsValidPassword -> {
+                _loginStateFlow.value = _loginStateFlow.value
+                    .copy(isInvalidPassword = false)
             }
             is LoginEvent.UnknownError -> {
-                _loginStateFlow.value = _loginStateFlow.value.copy(isError = true, errorMessage = event.message)
+                _loginStateFlow.value = _loginStateFlow.value
+                    .copy(isError = true, errorMessage = event.message)
             }
         }
     }

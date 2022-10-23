@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
@@ -33,7 +34,7 @@ fun LoginScreen(
             onValueChange = {
                 scope.launch {
                     viewModel.onEvent(LoginEvent.UpdateEmail(it))
-                    viewModel.onEvent(LoginEvent.ValidateEmail(it))
+                    //viewModel.onEvent(LoginEvent.ValidateEmail(it))
                 }
             },
             isError = loginState.isInvalidEmail,
@@ -41,7 +42,7 @@ fun LoginScreen(
             placeholder = { Text(text = "Enter your Email") }
         )
         if(loginState.isInvalidEmail) {
-            Text(text = "Invalid email")
+            Text(text = "Invalid email", color = Color.Red)
         }
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -50,7 +51,7 @@ fun LoginScreen(
             onValueChange = {
                 scope.launch {
                     viewModel.onEvent(LoginEvent.UpdatePassword(it))
-                    viewModel.onEvent(LoginEvent.ValidatePassword(it))
+                    //viewModel.onEvent(LoginEvent.ValidatePassword(it))
                 }
             },
             isError = loginState.isInvalidPassword,
@@ -58,8 +59,30 @@ fun LoginScreen(
             placeholder = { Text(text = "Enter your Password") }
         )
         if(loginState.isInvalidPassword) {
-            Text(text = "Invalid password")
+            Text(text = "Invalid password", color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        if(loginState.statusMessage.isNotEmpty()) {
+            Text(text = loginState.statusMessage)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(text = "Not a member? Sign up")
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(text = "Forgot password?")
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(onClick = {
+            scope.launch {
+                viewModel.onEvent(LoginEvent.ValidateEmail(loginState.email))
+                viewModel.onEvent(LoginEvent.ValidatePassword(loginState.password))
+                viewModel.onEvent(LoginEvent.Login(loginState.email, loginState.password))
+            }
+        }) {
+            Text(text = "Login")
         }
 
         if(loginState.isError) {
@@ -75,25 +98,6 @@ fun LoginScreen(
         if(loginState.isLoading) {
             Text(text = "Loading...")
             Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        if(loginState.statusMessage.isNotEmpty()) {
-            Text(text = loginState.statusMessage)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        Text(text = "Not a member? Sign up")
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(text = "Forgot password?")
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(onClick = {
-            scope.launch {
-                viewModel.onEvent(LoginEvent.Login(loginState.email, loginState.password))
-            }
-        }) {
-            Text(text = "Login")
         }
     }
 
