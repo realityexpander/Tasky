@@ -10,15 +10,9 @@ class IValidateEmailTest {
 
     private lateinit var validateEmail: IValidateEmail
 
-    private val emailMatcherFakeReturnsTrue = object : IEmailMatcher {
+    private val emailMatcherFake = object : IEmailMatcher {
         override fun matches(email: String): Boolean {
-            return true
-        }
-    }
-
-    private val emailMatcherFakeReturnsFalse = object : IEmailMatcher {
-        override fun matches(email: String): Boolean {
-            return false
+            return  email.contains("@")
         }
     }
 
@@ -26,7 +20,7 @@ class IValidateEmailTest {
     fun `validateEmail() returns true for valid email`() {
 
         // ARRANGE
-        validateEmail = ValidateEmailImpl(emailMatcherFakeReturnsTrue)
+        validateEmail = ValidateEmailImpl(emailMatcherFake)
 
         // ACT
         val result = validateEmail.validateEmail("chris@demo.com")
@@ -39,7 +33,7 @@ class IValidateEmailTest {
     fun `validateEmail() returns false for invalid email`() {
 
         // ARRANGE
-        validateEmail = ValidateEmailImpl(emailMatcherFakeReturnsFalse)
+        validateEmail = ValidateEmailImpl(emailMatcherFake)
 
         // ACT
         val result = validateEmail.validateEmail("chrismail.com")
