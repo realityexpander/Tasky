@@ -9,6 +9,10 @@ import com.realityexpander.tasky.data.repository.remote.AuthDaoImpl
 import com.realityexpander.tasky.data.validation.ValidateEmailImpl
 import com.realityexpander.tasky.domain.IAuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,6 +24,14 @@ class LoginViewModel @Inject constructor(
     ),
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    // Kotlin Coroutines StateFlow - updates NOT sent when app is in background (HOT)
+    private var _loginStateFlow = MutableStateFlow<State>(State())
+    var loginStateFlow: StateFlow<State> = _loginStateFlow.asStateFlow()
+
+    // Channel - updates ARE sent when app is in background
+    val loginChannel = Channel<State>()
+
 
     suspend fun login(email: String, password: String) {
         try {
