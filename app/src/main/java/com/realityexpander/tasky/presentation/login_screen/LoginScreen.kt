@@ -32,6 +32,7 @@ fun LoginScreen(
         Text(text = "Login:")
         Spacer(modifier = Modifier.height(8.dp))
 
+        // EMAIL
         OutlinedTextField(
             value = loginState.email,
             onValueChange = {
@@ -49,6 +50,7 @@ fun LoginScreen(
         }
         Spacer(modifier = Modifier.height(8.dp))
 
+        // PASSWORD
         OutlinedTextField(
             value = loginState.password,
             onValueChange = {
@@ -96,8 +98,13 @@ fun LoginScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
+        // STATUS //////////////////////////////////////////
+
         if(loginState.isError) {
-            Text(text = "Error: ${loginState.errorMessage}")
+            Text(
+                text = "Error: ${loginState.errorMessage}",
+                color = Color.Red,
+            )
             Spacer(modifier = Modifier.height(8.dp))
         }
         if(loginState.isLoggedIn) {

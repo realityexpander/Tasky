@@ -42,6 +42,8 @@ class LoginViewModel @Inject constructor(
             sendEvent(LoginEvent.LoginError(e.message ?: "Unknown Login Error"))
         } catch(e: Exceptions.InvalidEmailException) {
             sendEvent(LoginEvent.IsInvalidEmail)
+        } catch(e: Exceptions.InvalidPasswordException) {
+            sendEvent(LoginEvent.IsInvalidPassword)
         } catch (e: Exception) {
             // handle general error
             sendEvent(LoginEvent.UnknownError(e.message ?: "Unknown error"))
@@ -73,6 +75,13 @@ class LoginViewModel @Inject constructor(
 
     suspend fun onEvent(event: LoginEvent) {
         when(event) {
+            is LoginEvent.Loading -> {
+                if(event.isLoading) {
+                    _loginStateFlow.value = _loginStateFlow.value.copy(isLoading = true)
+                } else {
+                    _loginStateFlow.value = _loginStateFlow.value.copy(isLoading = false)
+                }
+            }
             is LoginEvent.UpdateEmail -> {
                 _loginStateFlow.value = _loginStateFlow.value
                     .copy(email = event.email, isInvalidEmail = false)
@@ -86,6 +95,7 @@ class LoginViewModel @Inject constructor(
                     return
                 }
 
+                sendEvent(LoginEvent.Loading(true))
                 login(event.email, event.password)
             }
             is LoginEvent.ValidateEmail -> {
@@ -98,12 +108,22 @@ class LoginViewModel @Inject constructor(
                 _loginStateFlow.value = _loginStateFlow.value
                     .copy(
                         isLoggedIn = true,
-                        statusMessage = "Login Success: authToken = ${event.authToken}"
+                        isError = false,
+                        errorMessage = "",
+                        statusMessage = "Login Success: authToken = ${event.authToken}",
                     )
+                sendEvent(LoginEvent.Loading(false))
             }
             is LoginEvent.LoginError -> {
                 _loginStateFlow.value = _loginStateFlow.value
-                    .copy(isError = true)
+                    .copy(
+                        isLoggedIn = false,
+                        isError = true,
+                        errorMessage = event.message,
+                        statusMessage = ""
+                    )
+
+                sendEvent(LoginEvent.Loading(false))
             }
             is LoginEvent.IsInvalidEmail -> {
                 _loginStateFlow.value = _loginStateFlow.value

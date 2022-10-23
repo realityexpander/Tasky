@@ -18,7 +18,7 @@ class AuthApiImpl: IAuthApi {
         return if(users[email] == password) {
             AuthToken("token for $email")
         } else {
-            throw Exceptions.LoginException()
+            throw Exceptions.LoginException("Invalid email or password")
         }
     }
 

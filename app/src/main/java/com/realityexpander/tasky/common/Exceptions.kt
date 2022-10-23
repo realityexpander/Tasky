@@ -17,6 +17,6 @@ object Exceptions {
     class EmailNotExistsException: Exception(EMAIL_NOT_EXISTS)
     class WrongPasswordException: Exception(WRONG_PASSWORD)
     class UnknownErrorException: Exception(UNKNOWN_ERROR)
-    class LoginException: Exception(LOGIN_ERROR)
-    class UnknownException(message: String?): Exception(message)
+    class LoginException(message: String? = null): Exception(message ?: LOGIN_ERROR)
+    class UnknownException(message: String? = null): Exception(message)
 }
