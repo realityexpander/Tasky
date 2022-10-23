@@ -4,6 +4,7 @@ import com.realityexpander.tasky.common.AuthToken
 import com.realityexpander.tasky.common.Email
 import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.common.Password
+import kotlinx.coroutines.delay
 
 class AuthApiImpl: IAuthApi {
     private var authToken: AuthToken? = null
@@ -15,6 +16,8 @@ class AuthApiImpl: IAuthApi {
     }
 
     override suspend fun login(email: String, password: String): AuthToken {
+        delay(1000)
+
         if (users[email] == null) {
             throw Exceptions.LoginException("Unknown email")
         }
