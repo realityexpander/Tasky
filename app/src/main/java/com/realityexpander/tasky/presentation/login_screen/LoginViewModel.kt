@@ -2,26 +2,32 @@ package com.realityexpander.tasky.presentation.login_screen
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.data.repository.AuthRepositoryImpl
 import com.realityexpander.tasky.data.repository.local.AuthApiImpl
 import com.realityexpander.tasky.data.repository.remote.AuthDaoImpl
+import com.realityexpander.tasky.data.validation.EmailMatcherImpl
 import com.realityexpander.tasky.data.validation.ValidateEmailImpl
 import com.realityexpander.tasky.domain.IAuthRepository
+import com.realityexpander.tasky.domain.validation.IValidateEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: IAuthRepository = AuthRepositoryImpl(
-        authApi = AuthApiImpl(),
-        authDao = AuthDaoImpl(),
-        validateEmail = ValidateEmailImpl()
-    ),
+    private val authRepository: IAuthRepository,
+//    = AuthRepositoryImpl(
+//        authApi = AuthApiImpl(),
+//        authDao = AuthDaoImpl(),
+//        validateEmail = ValidateEmailImpl(emailMatcher = EmailMatcherImpl())
+//    ),
+    private val validateEmail: IValidateEmail,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -37,13 +43,71 @@ class LoginViewModel @Inject constructor(
         try {
             authRepository.login(email, password)
         } catch(e: Exceptions.LoginException) {
-            // _event.value = Event.LoginError
+            sendEvent(LoginEvent.LoginError)
         } catch(e: Exceptions.InvalidEmailException) {
-            // _event.value = Event.InvalidEmail
+            sendEvent(LoginEvent.InvalidEmail)
         } catch (e: Exception) {
             // handle general error
-            //_event.value = Event.UnknownError(e.message)
+            sendEvent(LoginEvent.UnknownError(e.message ?: "Unknown error"))
             e.printStackTrace()
+        }
+    }
+
+    private fun validateEmail(email: String) {
+        try {
+            validateEmail(email)
+        } catch(e: Exceptions.InvalidEmailException) {
+            sendEvent(LoginEvent.InvalidEmail)
+        } catch (e: Exception) {
+            // handle general error
+            sendEvent(LoginEvent.UnknownError(e.message ?: "Unknown Error"))
+            e.printStackTrace()
+        }
+    }
+
+    private fun validatePassword(password: String) {
+        try {
+            validatePassword(password)
+        } catch(e: Exceptions.InvalidPasswordException) {
+            sendEvent(LoginEvent.InvalidPassword)
+        } catch (e: Exception) {
+            sendEvent(LoginEvent.UnknownError(e.message ?: "Unknown Error"))
+            e.printStackTrace()
+        }
+    }
+
+    private fun sendEvent(event: LoginEvent) {
+        viewModelScope.launch {
+            onEvent(event)
+        }
+    }
+
+    suspend fun onEvent(event: LoginEvent) {
+        when(event) {
+            is LoginEvent.Login -> {
+                login(event.email, event.password)
+            }
+            is LoginEvent.ValidateEmail -> {
+                validateEmail(event.email)
+            }
+            is LoginEvent.ValidatePassword -> {
+                validatePassword(event.password)
+            }
+            is LoginEvent.LoginSuccess -> {
+                _loginStateFlow.value = _loginStateFlow.value.copy(isLoggedIn = true)
+            }
+            is LoginEvent.LoginError -> {
+                _loginStateFlow.value = _loginStateFlow.value.copy(isError = true)
+            }
+            is LoginEvent.InvalidEmail -> {
+                _loginStateFlow.value = _loginStateFlow.value.copy(isInvalidEmail = true)
+            }
+            is LoginEvent.InvalidPassword -> {
+                _loginStateFlow.value = _loginStateFlow.value.copy(isInvalidPassword = true)
+            }
+            is LoginEvent.UnknownError -> {
+                _loginStateFlow.value = _loginStateFlow.value.copy(isError = true, errorMessage = event.message)
+            }
         }
     }
 
