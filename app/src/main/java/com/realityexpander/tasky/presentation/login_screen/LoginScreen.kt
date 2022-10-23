@@ -36,7 +36,10 @@ fun LoginScreen(
                 scope.launch {
                     viewModel.onEvent(LoginEvent.ValidateEmail(it))
                 }
-            }
+            },
+            isError = loginState.isInvalidEmail,
+            label = { Text(text = "Email") },
+            placeholder = { Text(text = "Enter your Email") }
         )
         if(loginState.isInvalidEmail) {
             Text(text = "Invalid email")
@@ -49,7 +52,10 @@ fun LoginScreen(
                 scope.launch {
                     viewModel.onEvent(LoginEvent.ValidatePassword(it))
                 }
-            }
+            },
+            isError = loginState.isInvalidPassword,
+            label = { Text(text = "Password") },
+            placeholder = { Text(text = "Enter your Password") }
         )
         if(loginState.isInvalidPassword) {
             Text(text = "Invalid password")
