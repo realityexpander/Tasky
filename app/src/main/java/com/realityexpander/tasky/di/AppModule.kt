@@ -1,8 +1,8 @@
 package com.realityexpander.tasky.di
 
 import com.realityexpander.tasky.data.repository.AuthRepositoryImpl
-import com.realityexpander.tasky.data.repository.local.AuthApiImpl
-import com.realityexpander.tasky.data.repository.remote.AuthDaoImpl
+import com.realityexpander.tasky.data.repository.remote.AuthApiImpl
+import com.realityexpander.tasky.data.repository.local.AuthDaoImpl
 import com.realityexpander.tasky.data.validation.EmailMatcherImpl
 import com.realityexpander.tasky.data.validation.ValidateEmailImpl
 import com.realityexpander.tasky.domain.IAuthRepository

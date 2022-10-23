@@ -2,8 +2,8 @@ package com.realityexpander.tasky.data.repository
 
 import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.common.AuthToken
-import com.realityexpander.tasky.data.repository.local.IAuthApi
-import com.realityexpander.tasky.data.repository.remote.IAuthDao
+import com.realityexpander.tasky.data.repository.remote.IAuthApi
+import com.realityexpander.tasky.data.repository.local.IAuthDao
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
 

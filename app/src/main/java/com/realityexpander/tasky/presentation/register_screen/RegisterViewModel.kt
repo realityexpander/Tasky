@@ -4,8 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.data.repository.AuthRepositoryImpl
-import com.realityexpander.tasky.data.repository.local.AuthApiImpl
-import com.realityexpander.tasky.data.repository.remote.AuthDaoImpl
+import com.realityexpander.tasky.data.repository.remote.AuthApiImpl
+import com.realityexpander.tasky.data.repository.local.AuthDaoImpl
 import com.realityexpander.tasky.data.validation.ValidateEmailImpl
 import com.realityexpander.tasky.domain.IAuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
