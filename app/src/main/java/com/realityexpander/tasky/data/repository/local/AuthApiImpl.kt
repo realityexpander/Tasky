@@ -15,10 +15,14 @@ class AuthApiImpl: IAuthApi {
     }
 
     override suspend fun login(email: String, password: String): AuthToken {
+        if (users[email] == null) {
+            throw Exceptions.LoginException("Unknown email")
+        }
+
         return if(users[email] == password) {
             AuthToken("token for $email")
         } else {
-            throw Exceptions.LoginException("Invalid email or password")
+            throw Exceptions.LoginException("Invalid password")
         }
     }
 
