@@ -34,7 +34,6 @@ fun LoginScreen(
             onValueChange = {
                 scope.launch {
                     viewModel.onEvent(LoginEvent.UpdateEmail(it))
-                    //viewModel.onEvent(LoginEvent.ValidateEmail(it))
                 }
             },
             isError = loginState.isInvalidEmail,
@@ -51,7 +50,6 @@ fun LoginScreen(
             onValueChange = {
                 scope.launch {
                     viewModel.onEvent(LoginEvent.UpdatePassword(it))
-                    //viewModel.onEvent(LoginEvent.ValidatePassword(it))
                 }
             },
             isError = loginState.isInvalidPassword,
@@ -63,12 +61,6 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        Text(text = "Not a member? Sign up")
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(text = "Forgot password?")
-        Spacer(modifier = Modifier.height(8.dp))
-
         Button(onClick = {
             scope.launch {
                 viewModel.onEvent(LoginEvent.ValidateEmail(loginState.email))
@@ -78,6 +70,12 @@ fun LoginScreen(
         }) {
             Text(text = "Login")
         }
+
+        Text(text = "Not a member? Sign up")
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(text = "Forgot password?")
+        Spacer(modifier = Modifier.height(8.dp))
 
         if(loginState.isError) {
             Text(text = "Error: ${loginState.errorMessage}")
