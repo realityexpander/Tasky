@@ -4,11 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.common.Exceptions
-import com.realityexpander.tasky.data.repository.AuthRepositoryImpl
-import com.realityexpander.tasky.data.repository.local.AuthApiImpl
-import com.realityexpander.tasky.data.repository.remote.AuthDaoImpl
-import com.realityexpander.tasky.data.validation.EmailMatcherImpl
-import com.realityexpander.tasky.data.validation.ValidateEmailImpl
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -84,6 +79,12 @@ class LoginViewModel @Inject constructor(
 
     suspend fun onEvent(event: LoginEvent) {
         when(event) {
+            is LoginEvent.UpdateEmail -> {
+                _loginStateFlow.value = _loginStateFlow.value.copy(email = event.email)
+            }
+            is LoginEvent.UpdatePassword -> {
+                _loginStateFlow.value = _loginStateFlow.value.copy(password = event.password)
+            }
             is LoginEvent.Login -> {
                 login(event.email, event.password)
             }

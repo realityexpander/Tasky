@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,6 +32,7 @@ fun LoginScreen(
             value = loginState.email,
             onValueChange = {
                 scope.launch {
+                    viewModel.onEvent(LoginEvent.UpdateEmail(it))
                     viewModel.onEvent(LoginEvent.ValidateEmail(it))
                 }
             },
@@ -49,6 +49,7 @@ fun LoginScreen(
             value = loginState.password,
             onValueChange = {
                 scope.launch {
+                    viewModel.onEvent(LoginEvent.UpdatePassword(it))
                     viewModel.onEvent(LoginEvent.ValidatePassword(it))
                 }
             },
