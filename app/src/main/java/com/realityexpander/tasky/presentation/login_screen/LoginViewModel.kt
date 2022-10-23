@@ -39,7 +39,7 @@ class LoginViewModel @Inject constructor(
     val loginChannel = Channel<State>()
 
 
-    suspend fun login(email: String, password: String) {
+    private suspend fun login(email: String, password: String) {
         try {
             authRepository.login(email, password)
         } catch(e: Exceptions.LoginException) {
@@ -55,7 +55,7 @@ class LoginViewModel @Inject constructor(
 
     private fun validateEmail(email: String) {
         try {
-            validateEmail(email)
+            validateEmail.validateEmail(email)
         } catch(e: Exceptions.InvalidEmailException) {
             sendEvent(LoginEvent.InvalidEmail)
         } catch (e: Exception) {
@@ -67,7 +67,7 @@ class LoginViewModel @Inject constructor(
 
     private fun validatePassword(password: String) {
         try {
-            validatePassword(password)
+            //validatePassword.validatePassword(password) // todo
         } catch(e: Exceptions.InvalidPasswordException) {
             sendEvent(LoginEvent.InvalidPassword)
         } catch (e: Exception) {
