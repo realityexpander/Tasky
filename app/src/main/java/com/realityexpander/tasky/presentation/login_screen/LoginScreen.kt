@@ -63,12 +63,6 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        if(loginState.statusMessage.isNotEmpty()) {
-            Text(text = loginState.statusMessage)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-
         Text(text = "Not a member? Sign up")
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -89,14 +83,16 @@ fun LoginScreen(
             Text(text = "Error: ${loginState.errorMessage}")
             Spacer(modifier = Modifier.height(8.dp))
         }
-
         if(loginState.isLoggedIn) {
             Text(text = "Logged in!")
             Spacer(modifier = Modifier.height(8.dp))
         }
-
         if(loginState.isLoading) {
             Text(text = "Loading...")
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        if(loginState.statusMessage.isNotEmpty()) {
+            Text(text = loginState.statusMessage)
             Spacer(modifier = Modifier.height(8.dp))
         }
     }
