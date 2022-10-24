@@ -71,18 +71,18 @@ class LoginViewModel @Inject constructor(
             }
             is LoginEvent.UpdateEmail -> {
                 _loginState.value = _loginState.value.copy(
-                        email = event.email,
-                        isInvalidEmail = false,
-                        isError = false,
-                    )
+                    email = event.email,
+                    isInvalidEmail = false,
+                    isError = false,
+                )
                 savedStateHandle["email"] = event.email
             }
             is LoginEvent.UpdatePassword -> {
                 _loginState.value = _loginState.value.copy(
-                        password = event.password,
-                        isInvalidPassword = false,
-                        isError = false
-                    )
+                    password = event.password,
+                    isInvalidPassword = false,
+                    isError = false
+                )
                 savedStateHandle["password"] = event.password
             }
             is LoginEvent.Login -> {
@@ -99,20 +99,20 @@ class LoginViewModel @Inject constructor(
             }
             is LoginEvent.LoginSuccess -> {
                 _loginState.value = _loginState.value.copy(
-                        isLoggedIn = true,
-                        isError = false,
-                        errorMessage = "",
-                        statusMessage = "Login Success: authToken = ${event.authToken}",
-                    )
+                    isLoggedIn = true,
+                    isError = false,
+                    errorMessage = "",
+                    statusMessage = "Login Success: authToken = ${event.authToken}",
+                )
                 sendEvent(LoginEvent.Loading(false))
             }
             is LoginEvent.LoginError -> {
                 _loginState.value = _loginState.value.copy(
-                        isLoggedIn = false,
-                        isError = true,
-                        errorMessage = event.message,
-                        statusMessage = ""
-                    )
+                    isLoggedIn = false,
+                    isError = true,
+                    errorMessage = event.message,
+                    statusMessage = ""
+                )
 
                 sendEvent(LoginEvent.Loading(false))
             }
@@ -124,10 +124,10 @@ class LoginViewModel @Inject constructor(
             }
             is LoginEvent.UnknownError -> {
                 _loginState.value = _loginState.value.copy(
-                        isLoggedIn = false,
-                        isError = true,
-                        errorMessage = event.message,
-                    )
+                    isLoggedIn = false,
+                    isError = true,
+                    errorMessage = event.message,
+                )
             }
             is LoginEvent.TogglePasswordVisibility -> {
                 _loginState.value = _loginState.value.copy(

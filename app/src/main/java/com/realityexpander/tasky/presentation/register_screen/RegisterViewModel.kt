@@ -87,32 +87,30 @@ class RegisterViewModel @Inject constructor(
     suspend fun onEvent(event: RegisterEvent) {
         when(event) {
             is RegisterEvent.Loading -> {
-                    _registerState.value = _registerState.value
-                        .copy(isLoading = event.isLoading)
+                _registerState.value = _registerState.value.copy(
+                    isLoading = event.isLoading
+                )
             }
             is RegisterEvent.UpdateEmail -> {
-                _registerState.value = _registerState.value
-                    .copy(
-                        email = event.email,
-                        isInvalidEmail = false
-                    )
+                _registerState.value = _registerState.value.copy(
+                    email = event.email,
+                    isInvalidEmail = false
+                )
                 savedStateHandle["email"] = event.email
             }
             is RegisterEvent.UpdatePassword -> {
-                _registerState.value = _registerState.value
-                    .copy(
-                        password = event.password,
-                        isInvalidPassword = false
-                    )
+                _registerState.value = _registerState.value.copy(
+                    password = event.password,
+                    isInvalidPassword = false
+                )
                 savedStateHandle["password"] = event.password
                 sendEvent(RegisterEvent.ValidatePasswordsMatch)
             }
             is RegisterEvent.UpdateConfirmPassword -> {
-                _registerState.value = _registerState.value
-                    .copy(
-                        confirmPassword = event.confirmPassword,
-                        isInvalidConfirmPassword = false
-                    )
+                _registerState.value = _registerState.value.copy(
+                    confirmPassword = event.confirmPassword,
+                    isInvalidConfirmPassword = false
+                )
                 savedStateHandle["confirmPassword"] = event.confirmPassword
                 sendEvent(RegisterEvent.ValidatePasswordsMatch)
             }
@@ -146,39 +144,37 @@ class RegisterViewModel @Inject constructor(
                 )
             }
             is RegisterEvent.IsPasswordsMatch -> {
-                _registerState.value = _registerState.value
-                    .copy(isPasswordsMatch = event.isMatch)
+                _registerState.value = _registerState.value.copy(
+                    isPasswordsMatch = event.isMatch
+                )
             }
             is RegisterEvent.EmailAlreadyExists -> {
-                _registerState.value = _registerState.value
-                    .copy(
-                        isLoggedIn = false,
-                        isError = true,
-                        errorMessage = "Email already exists - try logging in!",
-                        statusMessage = "",
-                        isLoading = false,
-                    )
+                _registerState.value = _registerState.value.copy(
+                    isLoggedIn = false,
+                    isError = true,
+                    errorMessage = "Email already exists - try logging in!",
+                    statusMessage = "",
+                    isLoading = false,
+                )
             }
             is RegisterEvent.RegisterSuccess -> {
-                _registerState.value = _registerState.value
-                    .copy(
-                        isLoggedIn = true,
-                        isError = false,
-                        errorMessage = "",
-                        statusMessage = "Login Success: authToken = ${event.authToken}",
-                        isPasswordVisible = false,
-                        isLoading = false,
-                    )
+                _registerState.value = _registerState.value.copy(
+                    isLoggedIn = true,
+                    isError = false,
+                    errorMessage = "",
+                    statusMessage = "Login Success: authToken = ${event.authToken}",
+                    isPasswordVisible = false,
+                    isLoading = false,
+                )
             }
             is RegisterEvent.RegisterError -> {
-                _registerState.value = _registerState.value
-                    .copy(
-                        isLoggedIn = false,
-                        isError = true,
-                        errorMessage = event.message,
-                        statusMessage = "",
-                        isLoading = false,
-                    )
+                _registerState.value = _registerState.value.copy(
+                    isLoggedIn = false,
+                    isError = true,
+                    errorMessage = event.message,
+                    statusMessage = "",
+                    isLoading = false,
+                )
             }
             is RegisterEvent.IsValidEmail -> {
                 _registerState.value = _registerState.value
