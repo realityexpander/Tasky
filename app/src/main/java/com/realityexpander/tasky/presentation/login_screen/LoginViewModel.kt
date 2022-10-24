@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import javax.inject.Inject
 
 @HiltViewModel
@@ -109,6 +110,10 @@ class LoginViewModel @Inject constructor(
                 _loginState.value = _loginState.value.copy(isInvalidPassword = !event.isValid)
             }
             is LoginEvent.Login -> {
+                sendEvent(LoginEvent.ValidateEmail(loginState.value.email))
+                sendEvent(LoginEvent.ValidatePassword(loginState.value.password))
+                yield()
+
                 if(_loginState.value.isInvalidEmail || _loginState.value.isInvalidPassword) return
 
                 sendEvent(LoginEvent.Loading(true))

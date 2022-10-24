@@ -89,7 +89,7 @@ sealed class UiText {
             is None -> ""
             is Str -> value ?: ""
             is StrRes -> stringResource(resId, *args)
-            is StrOrStrRes -> value ?: stringResource(resId!!, *args)
+            is StrOrStrRes -> value ?: stringResource(resId!!, *args, "")
             is StrResOrStr -> stringResource(resId!!, *args) ?: value ?: ""
         }
     }
@@ -101,8 +101,8 @@ sealed class UiText {
             is None -> null
             is Str -> value
             is StrRes -> stringResource(resId, *args)
-            is StrOrStrRes -> value ?: stringResource(resId!!, *args)
-            is StrResOrStr -> stringResource(resId!!, *args)
+            is StrOrStrRes -> value ?: stringResource(resId!!, *args, "")
+            is StrResOrStr -> stringResource(resId!!, *args, "")
         }
     }
 
@@ -114,8 +114,8 @@ sealed class UiText {
             is None -> "null"
             is Str -> value ?: "null"
             is StrRes -> stringResource(resId, *args)
-            is StrOrStrRes -> value ?: stringResource(resId!!, *args)
-            is StrResOrStr -> resId?.let { stringResource(it, *args) } ?: value ?: "null"
+            is StrOrStrRes -> value ?: stringResource(resId!!, *args, "")
+            is StrResOrStr -> resId?.let { stringResource(it, *args, "") } ?: value ?: "null"
         }
     }
 
@@ -124,9 +124,9 @@ sealed class UiText {
         return when(this) {
             is None -> null
             is Str -> value
-            is StrRes -> context.getString(resId, *args)
-            is StrOrStrRes -> value ?: context.getString(resId!!, *args)
-            is StrResOrStr -> resId?.let { context.getString(it, *args) } ?: value
+            is StrRes -> context.getString(resId, *args, "")
+            is StrOrStrRes -> value ?: context.getString(resId!!, *args, "")
+            is StrResOrStr -> resId?.let { context.getString(it, *args, "") } ?: value
         }
     }
 

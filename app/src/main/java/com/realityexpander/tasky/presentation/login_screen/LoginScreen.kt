@@ -41,10 +41,7 @@ fun LoginScreen(
 
     fun performLogin() {
         scope.launch {
-            viewModel.onEvent(LoginEvent.ValidateEmail(loginState.email))
-            viewModel.onEvent(LoginEvent.ValidatePassword(loginState.password))
-            viewModel.onEvent(LoginEvent.Login(loginState.email, loginState.password))
-
+            viewModel.sendEvent(LoginEvent.Login(loginState.email, loginState.password))
             focusManager.clearFocus()
         }
     }
