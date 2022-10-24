@@ -56,7 +56,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun validatePassword(password: String) {
-        val isValid = validatePassword.validatePassword(password)  //todo
+        val isValid = validatePassword.validatePassword(password)
         sendEvent(LoginEvent.IsValidPassword(isValid))
     }
 

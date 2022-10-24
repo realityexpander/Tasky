@@ -142,7 +142,7 @@ fun RegisterScreen(
         // SHOW PASSWORD REQUIREMENTS
         if(registerState.isInvalidPassword || registerState.isInvalidConfirmPassword) {
             Text(
-                text = "Password must be at between 6 and 30 characters long," +
+                text = "Password must be at between 6 and 30 characters long, " +
                         "contain at least one number, one uppercase letter " +
                         "and one lowercase letter.",
                 color = Color.Red

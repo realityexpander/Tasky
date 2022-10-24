@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
+import com.realityexpander.tasky.domain.validation.IValidatePassword
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class RegisterViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     private val validateEmail: IValidateEmail,
+    private val validatePassword: IValidatePassword,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -58,12 +60,12 @@ class RegisterViewModel @Inject constructor(
     }
 
     private fun validatePassword(password: String) {
-        val isValid = password.length >= 6 // && validatePassword.validatePassword(password)) { //todo
+        val isValid = validatePassword.validatePassword(password)
         sendEvent(RegisterEvent.IsValidPassword(isValid))
     }
 
     private fun validateConfirmPassword(confirmPassword: String) {
-        val isValid = confirmPassword.length >= 6  // && validatePassword.validatePassword(password)) { //todo
+        val isValid = validatePassword.validatePassword(confirmPassword)
         sendEvent(RegisterEvent.IsValidConfirmPassword(isValid))
     }
 
