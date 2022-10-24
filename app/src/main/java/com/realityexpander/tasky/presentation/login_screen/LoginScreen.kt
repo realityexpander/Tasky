@@ -170,10 +170,6 @@ fun LoginScreen(
             Text(text = "Logged in!")
             Spacer(modifier = Modifier.height(8.dp))
         }
-        if(loginState.isLoading) {
-            Text(text = "Loading...")
-            Spacer(modifier = Modifier.height(8.dp))
-        }
         if(loginState.statusMessage.isNotEmpty()) {
             Text(text = loginState.statusMessage)
             Spacer(modifier = Modifier.height(8.dp))

@@ -191,10 +191,6 @@ fun RegisterScreen(
             Text(text = "Registered and Logged in!")
             Spacer(modifier = Modifier.height(8.dp))
         }
-        if(registerState.isLoading) {
-            Text(text = "Loading...")
-            Spacer(modifier = Modifier.height(8.dp))
-        }
         if(registerState.statusMessage.isNotEmpty()) {
             Text(text = registerState.statusMessage)
             Spacer(modifier = Modifier.height(8.dp))
