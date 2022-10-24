@@ -77,14 +77,7 @@ class RegisterViewModel @Inject constructor(
             return
         }
 
-        val isMatch = (
-//            registerState.value.password.length >= 6
-//            && registerState.value.confirmPassword.length >= 6
-//            !registerState.value.isInvalidPassword
-//            && !registerState.value.isInvalidConfirmPassword
-//            &&
-                (password == confirmPassword)
-        )
+        val isMatch = (password == confirmPassword)
         sendEvent(RegisterEvent.IsPasswordsMatch(isMatch))
     }
 
