@@ -139,12 +139,12 @@ fun RegisterScreen(
             Text(text = "Passwords do not match", color = Color.Red)
         }
 
-        // Show password requirements
+        // SHOW PASSWORD REQUIREMENTS
         if(registerState.isInvalidPassword || registerState.isInvalidConfirmPassword) {
             Text(
                 text = "Password must be at least 6 characters long.", // and contain at least one number",
                 color = Color.Red
-            ) // and contain at least one number and one letter")
+            )
             Spacer(modifier = Modifier.height(8.dp))
         }
 
