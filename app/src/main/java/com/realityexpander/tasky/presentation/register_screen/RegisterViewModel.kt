@@ -7,6 +7,9 @@ import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
 import com.realityexpander.tasky.domain.validation.IValidatePassword
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_CONFIRM_PASSWORD
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_EMAIL
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_PASSWORD
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,9 +28,9 @@ class RegisterViewModel @Inject constructor(
     private val _registerState = MutableStateFlow<RegisterState>(RegisterState())
     val registerState: StateFlow<RegisterState> = _registerState.asStateFlow()
 
-    private val email: String = savedStateHandle["email"] ?: ""
-    private val password: String = savedStateHandle["password"] ?: ""
-    private val confirmPassword: String = savedStateHandle["confirmPassword"] ?: ""
+    private val email: String = savedStateHandle[SAVED_STATE_EMAIL] ?: ""
+    private val password: String = savedStateHandle[SAVED_STATE_PASSWORD] ?: ""
+    private val confirmPassword: String = savedStateHandle[SAVED_STATE_CONFIRM_PASSWORD] ?: ""
 
     init {
         sendEvent(RegisterEvent.UpdateEmail(email))
