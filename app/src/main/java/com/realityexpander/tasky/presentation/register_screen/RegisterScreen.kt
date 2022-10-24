@@ -139,6 +139,15 @@ fun RegisterScreen(
             Text(text = "Passwords do not match", color = Color.Red)
         }
 
+        // Show password requirements
+        if(registerState.isInvalidPassword || registerState.isInvalidConfirmPassword) {
+            Text(
+                text = "Password must be at least 6 characters long.", // and contain at least one number",
+                color = Color.Red
+            ) // and contain at least one number and one letter")
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
         // REGISTER BUTTON
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
@@ -195,5 +204,6 @@ fun RegisterScreen(
             Text(text = registerState.statusMessage)
             Spacer(modifier = Modifier.height(8.dp))
         }
+
     }
 }

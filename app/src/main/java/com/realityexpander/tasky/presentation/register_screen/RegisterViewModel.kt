@@ -76,11 +76,12 @@ class RegisterViewModel @Inject constructor(
         }
 
         val isMatch = (
-            registerState.value.password.length >= 6
-            && registerState.value.confirmPassword.length >= 6
-            && !registerState.value.isInvalidPassword
-            && !registerState.value.isInvalidConfirmPassword
-            && (password == confirmPassword)
+//            registerState.value.password.length >= 6
+//            && registerState.value.confirmPassword.length >= 6
+//            !registerState.value.isInvalidPassword
+//            && !registerState.value.isInvalidConfirmPassword
+//            &&
+                (password == confirmPassword)
         )
         sendEvent(RegisterEvent.IsPasswordsMatch(isMatch))
     }
@@ -108,7 +109,8 @@ class RegisterViewModel @Inject constructor(
             is RegisterEvent.UpdatePassword -> {
                 _registerState.value = _registerState.value.copy(
                     password = event.password,
-                    isInvalidPassword = false
+                    isInvalidPassword = false,
+                    isPasswordsMatch = false
                 )
                 savedStateHandle["password"] = event.password
                 sendEvent(RegisterEvent.ValidatePasswordsMatch)
@@ -116,7 +118,8 @@ class RegisterViewModel @Inject constructor(
             is RegisterEvent.UpdateConfirmPassword -> {
                 _registerState.value = _registerState.value.copy(
                     confirmPassword = event.confirmPassword,
-                    isInvalidConfirmPassword = false
+                    isInvalidConfirmPassword = false,
+                    isPasswordsMatch = false
                 )
                 savedStateHandle["confirmPassword"] = event.confirmPassword
                 sendEvent(RegisterEvent.ValidatePasswordsMatch)
