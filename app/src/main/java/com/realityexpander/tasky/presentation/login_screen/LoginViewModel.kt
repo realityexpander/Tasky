@@ -85,11 +85,10 @@ class LoginViewModel @Inject constructor(
                 )
                 savedStateHandle["password"] = event.password
             }
-            is LoginEvent.Login -> {
-                if(_loginState.value.isInvalidEmail || _loginState.value.isInvalidPassword) return
-
-                sendEvent(LoginEvent.Loading(true))
-                login(event.email, event.password)
+            is LoginEvent.TogglePasswordVisibility -> {
+                _loginState.value = _loginState.value.copy(
+                    isPasswordVisible = !event.isPasswordVisible
+                )
             }
             is LoginEvent.ValidateEmail -> {
                 validateEmail(event.email)
@@ -97,12 +96,25 @@ class LoginViewModel @Inject constructor(
             is LoginEvent.ValidatePassword -> {
                 validatePassword(event.password)
             }
+            is LoginEvent.IsValidEmail -> {
+                _loginState.value = _loginState.value.copy(isInvalidEmail = !event.isValid)
+            }
+            is LoginEvent.IsValidPassword -> {
+                _loginState.value = _loginState.value.copy(isInvalidPassword = !event.isValid)
+            }
+            is LoginEvent.Login -> {
+                if(_loginState.value.isInvalidEmail || _loginState.value.isInvalidPassword) return
+
+                sendEvent(LoginEvent.Loading(true))
+                login(event.email, event.password)
+            }
             is LoginEvent.LoginSuccess -> {
                 _loginState.value = _loginState.value.copy(
                     isLoggedIn = true,
                     isError = false,
                     errorMessage = "",
                     statusMessage = "Login Success: authToken = ${event.authToken}",
+                    isPasswordVisible = false,
                 )
                 sendEvent(LoginEvent.Loading(false))
             }
@@ -116,22 +128,11 @@ class LoginViewModel @Inject constructor(
 
                 sendEvent(LoginEvent.Loading(false))
             }
-            is LoginEvent.IsValidEmail -> {
-                _loginState.value = _loginState.value.copy(isInvalidEmail = !event.isValid)
-            }
-            is LoginEvent.IsValidPassword -> {
-                _loginState.value = _loginState.value.copy(isInvalidPassword = !event.isValid)
-            }
             is LoginEvent.UnknownError -> {
                 _loginState.value = _loginState.value.copy(
                     isLoggedIn = false,
                     isError = true,
                     errorMessage = event.message,
-                )
-            }
-            is LoginEvent.TogglePasswordVisibility -> {
-                _loginState.value = _loginState.value.copy(
-                    isPasswordVisible = !event.isPasswordVisible
                 )
             }
         }

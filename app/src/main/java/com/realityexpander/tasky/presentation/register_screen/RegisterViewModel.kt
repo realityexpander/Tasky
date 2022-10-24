@@ -130,11 +130,9 @@ class RegisterViewModel @Inject constructor(
             }
             is RegisterEvent.ValidatePassword -> {
                 validatePassword(event.password)
-                sendEvent(RegisterEvent.ValidatePasswordsMatch)
             }
             is RegisterEvent.ValidateConfirmPassword -> {
                 validateConfirmPassword(event.confirmPassword)
-                sendEvent(RegisterEvent.ValidatePasswordsMatch)
             }
             is RegisterEvent.ValidatePasswordsMatch -> {
                 validatePasswordsMatch(
