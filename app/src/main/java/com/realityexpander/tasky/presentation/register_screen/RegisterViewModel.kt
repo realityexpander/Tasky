@@ -68,12 +68,19 @@ class RegisterViewModel @Inject constructor(
     }
 
     private fun validatePasswordsMatch(password: String, confirmPassword: String) {
+        // Passwords are too short to match
+        if(password.isEmpty() || confirmPassword.isEmpty()) {
+            sendEvent(RegisterEvent.IsPasswordsMatch(true))
+
+            return
+        }
+
         val isMatch = (
-            !registerState.value.isInvalidPassword
+            registerState.value.password.length >= 6
+            && registerState.value.confirmPassword.length >= 6
+            && !registerState.value.isInvalidPassword
             && !registerState.value.isInvalidConfirmPassword
-            && registerState.value.password.isNotEmpty()
-            && registerState.value.confirmPassword.isNotEmpty()
-            && password != confirmPassword
+            && (password == confirmPassword)
         )
         sendEvent(RegisterEvent.IsPasswordsMatch(isMatch))
     }
@@ -114,17 +121,9 @@ class RegisterViewModel @Inject constructor(
                 savedStateHandle["confirmPassword"] = event.confirmPassword
                 sendEvent(RegisterEvent.ValidatePasswordsMatch)
             }
-            is RegisterEvent.Register -> {
-                if(registerState.value.isInvalidEmail
-                    || registerState.value.isInvalidPassword
-                    || registerState.value.isInvalidConfirmPassword
-                    || !registerState.value.isPasswordsMatch
-                ) {
-                    return
-                }
-
-                sendEvent(RegisterEvent.Loading(true))
-                register(event.email, event.password)
+            is RegisterEvent.TogglePasswordVisibility -> {
+                _registerState.value = _registerState.value
+                    .copy(isPasswordVisible = !event.isVisible)
             }
             is RegisterEvent.ValidateEmail -> {
                 validateEmail(event.email)
@@ -143,10 +142,34 @@ class RegisterViewModel @Inject constructor(
                     registerState.value.confirmPassword
                 )
             }
+            is RegisterEvent.IsValidEmail -> {
+                _registerState.value = _registerState.value
+                    .copy(isInvalidEmail = !event.isValid)
+            }
+            is RegisterEvent.IsValidPassword -> {
+                _registerState.value = _registerState.value
+                    .copy(isInvalidPassword = !event.isValid)
+            }
+            is RegisterEvent.IsValidConfirmPassword -> {
+                _registerState.value = _registerState.value
+                    .copy(isInvalidConfirmPassword = !event.isValid)
+            }
             is RegisterEvent.IsPasswordsMatch -> {
                 _registerState.value = _registerState.value.copy(
                     isPasswordsMatch = event.isMatch
                 )
+            }
+            is RegisterEvent.Register -> {
+                if(registerState.value.isInvalidEmail
+                    || registerState.value.isInvalidPassword
+                    || registerState.value.isInvalidConfirmPassword
+                    || !registerState.value.isPasswordsMatch
+                ) {
+                    return
+                }
+
+                sendEvent(RegisterEvent.Loading(true))
+                register(event.email, event.password)
             }
             is RegisterEvent.EmailAlreadyExists -> {
                 _registerState.value = _registerState.value.copy(
@@ -176,26 +199,11 @@ class RegisterViewModel @Inject constructor(
                     isLoading = false,
                 )
             }
-            is RegisterEvent.IsValidEmail -> {
-                _registerState.value = _registerState.value
-                    .copy(isInvalidEmail = event.isValid)
-            }
-            is RegisterEvent.IsValidPassword -> {
-                _registerState.value = _registerState.value
-                    .copy(isInvalidPassword = event.isValid)
-            }
-            is RegisterEvent.IsValidConfirmPassword -> {
-                _registerState.value = _registerState.value
-                    .copy(isInvalidConfirmPassword = event.isValid)
-            }
             is RegisterEvent.UnknownError -> {
                 _registerState.value = _registerState.value
                     .copy(isError = true, errorMessage = event.message)
             }
-            is RegisterEvent.TogglePasswordVisibility -> {
-                _registerState.value = _registerState.value
-                    .copy(isPasswordVisible = !event.isVisible)
-            }
+
         }
     }
 }

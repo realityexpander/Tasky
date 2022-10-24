@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.presentation.login_screen
 
-data class State(
+data class LoginState(
     val email: String = "",
     val password: String = "",
     val isPasswordVisible: Boolean = false,
