@@ -3,24 +3,15 @@ package com.realityexpander.tasky.presentation.register_screen
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
@@ -42,7 +33,7 @@ fun RegisterScreen(
 ) {
     BackHandler(true) { /* We want to disable back clicks */ }
 
-    val registerState by viewModel.registerStateFlow.collectAsState()
+    val registerState by viewModel.registerState.collectAsState()
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -142,12 +133,14 @@ fun RegisterScreen(
         }
 
         // VALIDATE MATCHING PASSWORDS
-        if( !registerState.isInvalidPassword
-            && !registerState.isInvalidConfirmPassword
-            && registerState.password.isNotEmpty()
-            && registerState.confirmPassword.isNotEmpty()
-            && registerState.password != registerState.confirmPassword
-        ) {
+//        if( !registerState.isInvalidPassword
+//            && !registerState.isInvalidConfirmPassword
+//            && registerState.password.isNotEmpty()
+//            && registerState.confirmPassword.isNotEmpty()
+//            && registerState.password != registerState.confirmPassword
+//        )
+        if(!registerState.passwordsMatch)
+        {
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = "Passwords do not match", color = Color.Red)
         }

@@ -71,22 +71,6 @@ fun LoginScreen(
         Text(text = "Login:")
         Spacer(modifier = Modifier.height(8.dp))
 
-//        // EMAIL
-//        OutlinedTextField(
-//            value = loginState.email,
-//            singleLine = true,
-//            onValueChange = {
-//                scope.launch {
-//                    viewModel.onEvent(LoginEvent.UpdateEmail(it))
-//                }
-//            },
-//            isError = loginState.isInvalidEmail,
-//            label = { Text(text = "Email") },
-//            placeholder = { Text(text = "Enter your Email") },
-//            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-//            modifier = Modifier.fillMaxWidth()
-//        )
-
         // EMAIL
         EmailField(
             email = loginState.email,
@@ -102,22 +86,7 @@ fun LoginScreen(
         }
         Spacer(modifier = Modifier.height(8.dp))
 
-//        // PASSWORD
-//        OutlinedTextField(
-//            value = loginState.password,
-//            singleLine = true,
-//            onValueChange = {
-//                scope.launch {
-//                    viewModel.onEvent(LoginEvent.UpdatePassword(it))
-//                }
-//            },
-//            isError = loginState.isInvalidPassword,
-//            label = { Text(text = "Password") },
-//            placeholder = { Text(text = "Enter your Password") },
-//            modifier = Modifier.fillMaxWidth(),
-//            visualTransformation = PasswordVisualTransformation()
-//        )
-
+        // PASSWORD
         PasswordField(
             password = loginState.password,
             isError = loginState.isInvalidPassword,
@@ -163,6 +132,7 @@ fun LoginScreen(
         }
         Spacer(modifier = Modifier.height(32.dp))
 
+        // REGISTER BUTTON
         Text(text = "Not a member? Sign up",
             color = Color.Cyan,
             modifier = Modifier
@@ -180,12 +150,12 @@ fun LoginScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Forgot password?",
-            color = Color.Cyan,
-            modifier = Modifier
-                .align(alignment = Alignment.CenterHorizontally)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
+//        Text(text = "Forgot password?",
+//            color = Color.Cyan,
+//            modifier = Modifier
+//                .align(alignment = Alignment.CenterHorizontally)
+//        )
+//        Spacer(modifier = Modifier.height(16.dp))
 
         // STATUS //////////////////////////////////////////
 
