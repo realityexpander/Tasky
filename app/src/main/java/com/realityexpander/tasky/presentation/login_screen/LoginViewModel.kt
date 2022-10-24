@@ -25,7 +25,7 @@ class LoginViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _loginState = MutableStateFlow<LoginState>(LoginState())
-    val loginStateFlow: StateFlow<LoginState> = _loginState.asStateFlow()
+    val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
 
     private val email: String = savedStateHandle[SAVED_STATE_EMAIL] ?: ""
     private val password: String = savedStateHandle[SAVED_STATE_PASSWORD] ?: ""
