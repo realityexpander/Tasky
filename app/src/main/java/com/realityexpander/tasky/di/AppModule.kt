@@ -5,8 +5,10 @@ import com.realityexpander.tasky.data.repository.remote.AuthApiImpl
 import com.realityexpander.tasky.data.repository.local.AuthDaoImpl
 import com.realityexpander.tasky.data.validation.EmailMatcherImpl
 import com.realityexpander.tasky.data.validation.ValidateEmailImpl
+import com.realityexpander.tasky.data.validation.ValidatePasswordImpl
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
+import com.realityexpander.tasky.domain.validation.IValidatePassword
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,5 +32,10 @@ object AppModule {
     @Singleton
     fun provideValidateEmail(): IValidateEmail =
         ValidateEmailImpl(emailMatcher = EmailMatcherImpl())
+
+    @Provides
+    @Singleton
+    fun provideValidatePassword(): IValidatePassword =
+        ValidatePasswordImpl()
 
 }
