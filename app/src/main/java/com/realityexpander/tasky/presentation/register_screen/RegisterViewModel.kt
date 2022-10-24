@@ -42,7 +42,7 @@ class RegisterViewModel @Inject constructor(
         } catch(e: Exceptions.LoginException) {
             sendEvent(RegisterEvent.RegisterError(e.message ?: "Unknown Login Error"))
         } catch(e: Exceptions.InvalidEmailException) {
-            sendEvent(RegisterEvent.IsInvalidEmail)
+            sendEvent(RegisterEvent.IsValidEmail(false))
         } catch(e: Exceptions.InvalidPasswordException) {
             sendEvent(RegisterEvent.IsInvalidPassword)
         } catch (e: Exception) {
@@ -53,11 +53,8 @@ class RegisterViewModel @Inject constructor(
     }
 
     private fun validateEmail(email: String) {
-        if (validateEmail.validateEmail(email)) {
-            sendEvent(RegisterEvent.IsValidEmail)
-        } else {
-            sendEvent(RegisterEvent.IsInvalidEmail)
-        }
+        val isValid = validateEmail.validateEmail(email)
+        sendEvent(RegisterEvent.IsValidEmail(isValid))
     }
 
     private fun validatePassword(password: String) {
@@ -195,10 +192,6 @@ class RegisterViewModel @Inject constructor(
                         isLoading = false,
                     )
             }
-            is RegisterEvent.IsInvalidEmail -> {
-                _registerState.value = _registerState.value
-                    .copy(isInvalidEmail = true)
-            }
             is RegisterEvent.IsInvalidPassword -> {
                 _registerState.value = _registerState.value
                     .copy(isInvalidPassword = true)
@@ -209,7 +202,7 @@ class RegisterViewModel @Inject constructor(
             }
             is RegisterEvent.IsValidEmail -> {
                 _registerState.value = _registerState.value
-                    .copy(isInvalidEmail = false)
+                    .copy(isInvalidEmail = event.isValid)
             }
             is RegisterEvent.IsValidPassword -> {
                 _registerState.value = _registerState.value

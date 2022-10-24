@@ -16,8 +16,8 @@ sealed class RegisterEvent {
     data class RegisterError(val message: String) : RegisterEvent()
 
     object EmailAlreadyExists : RegisterEvent()
-    object IsInvalidEmail : RegisterEvent()
-    object IsValidEmail : RegisterEvent()
+//    object IsInvalidEmail : RegisterEvent()
+    data class IsValidEmail(val isValid: Boolean) : RegisterEvent()
     object IsInvalidPassword : RegisterEvent()
     object IsValidPassword : RegisterEvent()
     object IsInvalidConfirmPassword : RegisterEvent()

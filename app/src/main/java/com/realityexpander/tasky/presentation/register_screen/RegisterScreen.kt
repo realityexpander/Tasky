@@ -132,13 +132,7 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // VALIDATE MATCHING PASSWORDS
-//        if( !registerState.isInvalidPassword
-//            && !registerState.isInvalidConfirmPassword
-//            && registerState.password.isNotEmpty()
-//            && registerState.confirmPassword.isNotEmpty()
-//            && registerState.password != registerState.confirmPassword
-//        )
+        // SHOW IF MATCHING PASSWORDS
         if(!registerState.passwordsMatch)
         {
             Spacer(modifier = Modifier.height(8.dp))
