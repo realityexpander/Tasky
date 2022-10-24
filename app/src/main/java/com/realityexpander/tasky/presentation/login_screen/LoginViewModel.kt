@@ -3,7 +3,9 @@ package com.realityexpander.tasky.presentation.login_screen
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.realityexpander.tasky.R
 import com.realityexpander.tasky.common.Exceptions
+import com.realityexpander.tasky.common.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
 import com.realityexpander.tasky.domain.validation.IValidatePassword
@@ -47,7 +49,7 @@ class LoginViewModel @Inject constructor(
             sendEvent(LoginEvent.IsValidPassword(false))
         } catch (e: Exception) {
             // handle general error
-            sendEvent(LoginEvent.UnknownError(e.message ?: "Unknown error"))
+            sendEvent(LoginEvent.UnknownError(UiText.StrOrStrRes(e.message, R.string.error_unknown)))
             e.printStackTrace()
         }
     }
@@ -79,7 +81,7 @@ class LoginViewModel @Inject constructor(
                     isInvalidEmail = false,
                     isError = false,
                 )
-                savedStateHandle["email"] = event.email
+                savedStateHandle[SAVED_STATE_EMAIL] = event.email
             }
             is LoginEvent.UpdatePassword -> {
                 _loginState.value = _loginState.value.copy(
@@ -87,7 +89,7 @@ class LoginViewModel @Inject constructor(
                     isInvalidPassword = false,
                     isError = false
                 )
-                savedStateHandle["password"] = event.password
+                savedStateHandle[SAVED_STATE_PASSWORD] = event.password
             }
             is LoginEvent.TogglePasswordVisibility -> {
                 _loginState.value = _loginState.value.copy(
@@ -136,7 +138,7 @@ class LoginViewModel @Inject constructor(
                 _loginState.value = _loginState.value.copy(
                     isLoggedIn = false,
                     isError = true,
-                    errorMessage = event.message,
+                    errorMessage = UiText.StrOrStrRes(event.message, R.string.error_unknown))
                 )
             }
         }

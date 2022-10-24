@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.presentation.login_screen
 
 import com.realityexpander.tasky.common.AuthToken
+import com.realityexpander.tasky.common.UiText
 
 sealed class LoginEvent {
     data class UpdateEmail(val email: String) : LoginEvent()
@@ -18,5 +19,5 @@ sealed class LoginEvent {
     data class LoginSuccess(val authToken: AuthToken) : LoginEvent()
     data class LoginError(val message: String) : LoginEvent()
 
-    data class UnknownError(val message: String) : LoginEvent()
+    data class UnknownError(val message: UiText) : LoginEvent()
 }

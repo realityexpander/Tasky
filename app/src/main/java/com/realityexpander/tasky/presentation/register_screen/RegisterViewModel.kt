@@ -102,7 +102,7 @@ class RegisterViewModel @Inject constructor(
                     email = event.email,
                     isInvalidEmail = false
                 )
-                savedStateHandle["email"] = event.email
+                savedStateHandle[SAVED_STATE_EMAIL] = event.email
             }
             is RegisterEvent.UpdatePassword -> {
                 _registerState.value = _registerState.value.copy(
@@ -110,7 +110,7 @@ class RegisterViewModel @Inject constructor(
                     isInvalidPassword = false,
                     isPasswordsMatch = false
                 )
-                savedStateHandle["password"] = event.password
+                savedStateHandle[SAVED_STATE_PASSWORD] = event.password
                 sendEvent(RegisterEvent.ValidatePasswordsMatch)
             }
             is RegisterEvent.UpdateConfirmPassword -> {
@@ -119,7 +119,7 @@ class RegisterViewModel @Inject constructor(
                     isInvalidConfirmPassword = false,
                     isPasswordsMatch = false
                 )
-                savedStateHandle["confirmPassword"] = event.confirmPassword
+                savedStateHandle[SAVED_STATE_CONFIRM_PASSWORD] = event.confirmPassword
                 sendEvent(RegisterEvent.ValidatePasswordsMatch)
             }
             is RegisterEvent.TogglePasswordVisibility -> {

@@ -1,5 +1,7 @@
 package com.realityexpander.tasky.presentation.login_screen
 
+import com.realityexpander.tasky.common.UiText
+
 data class LoginState(
     val email: String = "",
     val password: String = "",
@@ -13,5 +15,5 @@ data class LoginState(
     val statusMessage: String = "",
 
     val isError: Boolean = false,
-    val errorMessage: String = "",
+    val errorMessage: UiText = UiText.None,
 )
