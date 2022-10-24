@@ -17,21 +17,20 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
-//    = AuthRepositoryImpl(
-//        authApi = AuthApiImpl(),
-//        authDao = AuthDaoImpl(),
-//        validateEmail = ValidateEmailImpl(emailMatcher = EmailMatcherImpl())
-//    ),
     private val validateEmail: IValidateEmail,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    // Kotlin Coroutines StateFlow - updates NOT sent when app is in background (HOT)
     private var _loginStateFlow = MutableStateFlow<State>(State())
     var loginStateFlow: StateFlow<State> = _loginStateFlow.asStateFlow()
 
-    // Channel - updates ARE sent when app is in background
-    val loginChannel = Channel<State>()
+    private val email: String = savedStateHandle["email"] ?: ""
+    private val password: String = savedStateHandle["password"] ?: ""
+
+    init {
+        sendEvent(LoginEvent.UpdateEmail(email))
+        sendEvent(LoginEvent.UpdatePassword(password))
+    }
 
 
     private suspend fun login(email: String, password: String) {
@@ -67,7 +66,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun sendEvent(event: LoginEvent) {
+    fun sendEvent(event: LoginEvent) {
         viewModelScope.launch {
             onEvent(event)
         }
@@ -85,10 +84,12 @@ class LoginViewModel @Inject constructor(
             is LoginEvent.UpdateEmail -> {
                 _loginStateFlow.value = _loginStateFlow.value
                     .copy(email = event.email, isInvalidEmail = false)
+                savedStateHandle["email"] = event.email
             }
             is LoginEvent.UpdatePassword -> {
                 _loginStateFlow.value = _loginStateFlow.value
                     .copy(password = event.password, isInvalidPassword = false)
+                savedStateHandle["password"] = event.password
             }
             is LoginEvent.Login -> {
                 if(_loginStateFlow.value.isInvalidEmail || _loginStateFlow.value.isInvalidPassword) {

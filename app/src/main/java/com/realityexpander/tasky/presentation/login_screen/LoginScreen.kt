@@ -1,28 +1,47 @@
 package com.realityexpander.tasky.presentation.login_screen
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
 import kotlinx.coroutines.launch
 
 @Composable
 @Destination(start = true)
 fun LoginScreen(
-    viewModel: LoginViewModel = hiltViewModel()
+    email: String? = null,
+    password: String? = null,
+    navigator: DestinationsNavigator,
+    viewModel: LoginViewModel = hiltViewModel(),
 ) {
+    BackHandler(true) { /* We want to disable back clicks */ }
+
     val loginState by viewModel.loginStateFlow.collectAsState()
     val scope = rememberCoroutineScope()
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        if(loginState.isLoading) {
+            Spacer(modifier = Modifier.height(8.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier.align(alignment = Alignment.TopCenter)
+                )
+            }
+    }
 
     Column(
         modifier = Modifier
@@ -61,7 +80,8 @@ fun LoginScreen(
             isError = loginState.isInvalidPassword,
             label = { Text(text = "Password") },
             placeholder = { Text(text = "Enter your Password") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            visualTransformation = PasswordVisualTransformation()
         )
         if(loginState.isInvalidPassword) {
             Text(text = "Invalid password", color = Color.Red)
@@ -88,6 +108,15 @@ fun LoginScreen(
             color = Color.Cyan,
             modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)
+                .clickable(onClick = {
+                    navigator.clearBackStack("LoginScreenDestination")
+                    navigator.navigate(
+                        RegisterScreenDestination(
+                            email = loginState.email,
+                            password = loginState.password
+                        )
+                    )
+                })
         )
         Spacer(modifier = Modifier.height(16.dp))
 
