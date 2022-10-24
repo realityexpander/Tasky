@@ -58,7 +58,7 @@ fun RegisterScreen(
                 registerState.confirmPassword
             ))
 
-            //keyboardController?.hide()
+            focusManager.clearFocus()
         }
     }
 
@@ -91,49 +91,12 @@ fun RegisterScreen(
                 }
             }
         )
-
         if(registerState.isInvalidEmail) {
             Text(text = "Invalid email", color = Color.Red)
         }
         Spacer(modifier = Modifier.height(8.dp))
 
         // PASSWORD
-//        OutlinedTextField(
-//            value = registerState.password,
-//            singleLine = true,
-//            onValueChange = {
-//                scope.launch {
-//                    viewModel.onEvent(RegisterEvent.UpdatePassword(it))
-//                }
-//            },
-//            isError = registerState.isInvalidPassword,
-//            label = { Text(text = "Password") },
-//            placeholder = { Text(text = "Enter your Password") },
-//            modifier = Modifier.fillMaxWidth(1f),
-//            visualTransformation = if (registerState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-//            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-//            keyboardActions = KeyboardActions(onDone = {
-//                focusManager.moveFocus(
-//                    focusDirection = FocusDirection.Next,
-//                )
-//            }),
-//            trailingIcon = {
-//                val image = if (registerState.isPasswordVisible)
-//                    Icons.Default.VisibilityOff
-//                else
-//                    Icons.Default.Visibility
-//
-//                // Please provide localized description for accessibility services
-//                val description = if (registerState.isPasswordVisible) "Hide password" else "Show password"
-//
-//                IconButton(onClick = {
-//                    viewModel.sendEvent(RegisterEvent.TogglePasswordVisibility(registerState.isPasswordVisible))
-//                }){
-//                    Icon(imageVector  = image, description)
-//                }
-//            }
-//        )
-
         PasswordField(
             password = registerState.password,
             isError = registerState.isInvalidPassword,
@@ -153,6 +116,7 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
+        // CONFIRM PASSWORD
         PasswordField(
             label = "Confirm Password",
             placeholder = "Confirm your password",
@@ -177,6 +141,7 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
+        // VALIDATE MATCHING PASSWORDS
         if( !registerState.isInvalidPassword
             && !registerState.isInvalidConfirmPassword
             && registerState.password.isNotEmpty()
@@ -208,6 +173,7 @@ fun RegisterScreen(
         }
         Spacer(modifier = Modifier.height(32.dp))
 
+        // SIGN IN BUTTON
         Text(text = "Are you a member? Tap to sign in",
             color = Color.Cyan,
             modifier = Modifier

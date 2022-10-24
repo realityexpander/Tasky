@@ -146,6 +146,10 @@ class LoginViewModel @Inject constructor(
                 _loginStateFlow.value = _loginStateFlow.value
                     .copy(isError = true, errorMessage = event.message)
             }
+            is LoginEvent.TogglePasswordVisibility -> {
+                _loginStateFlow.value = _loginStateFlow.value
+                    .copy(isPasswordVisible = !event.isPasswordVisible)
+            }
         }
     }
 

@@ -9,5 +9,6 @@ data class State(
     val errorMessage: String = "",
     val statusMessage: String = "",
     val email: String = "",
-    val password: String = ""
+    val password: String = "",
+    val isPasswordVisible: Boolean = false,
 )

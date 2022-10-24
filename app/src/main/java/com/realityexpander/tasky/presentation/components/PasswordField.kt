@@ -18,56 +18,60 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.realityexpander.tasky.presentation.register_screen.RegisterEvent
-import kotlinx.coroutines.launch
 
 @Composable
-fun EmailField(
-    email: String,
-    label: String = "Email",
-    placeholder: String = "Enter your Email",
+fun PasswordField(
+    password: String,
+    label: String = "Password",
+    placeholder: String = "Enter your Password",
     isError: Boolean,
-    onEmailChange: (String) -> Unit,
+    isPasswordVisible: Boolean = false,
+    clickTogglePasswordVisibility: () -> Unit,
+    onPasswordChange: (String) -> Unit,
+    imeAction: ImeAction = ImeAction.Done,
     keyboardOptions: KeyboardOptions =
-        KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+        KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = imeAction),
     keyboardActions: KeyboardActions? = null,
+    doneAction : () -> Unit = {},
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardActionsLocal: KeyboardActions = keyboardActions ?: KeyboardActions(
         onNext = {
             focusManager.moveFocus(FocusDirection.Down)
+        },
+        onDone = {
+            focusManager.clearFocus()
+            doneAction()
         }
     )
 
     OutlinedTextField(
-        value = email,
+        value = password,
         singleLine = true,
-        onValueChange = onEmailChange,
+        onValueChange = onPasswordChange,
         isError = isError,
         label = { Text(text = label) },
         placeholder = { Text(text = placeholder) },
+        modifier = Modifier.fillMaxWidth(1f),
+        visualTransformation =
+        if (isPasswordVisible)
+            VisualTransformation.None
+        else
+            PasswordVisualTransformation(),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActionsLocal,
-        modifier = Modifier.fillMaxWidth()
+        trailingIcon = {
+            val image = if (isPasswordVisible)
+                Icons.Default.VisibilityOff
+            else
+                Icons.Default.Visibility
+
+            // Please provide localized description for accessibility services
+            val description = if (isPasswordVisible) "Hide password" else "Show password"
+
+            IconButton(onClick = clickTogglePasswordVisibility){
+                Icon(imageVector  = image, description)
+            }
+        }
     )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -16,4 +16,5 @@ sealed class LoginEvent {
     object IsValidPassword : LoginEvent()
     data class UnknownError(val message: String) : LoginEvent()
     data class Loading(val isLoading: Boolean) : LoginEvent()
+    data class TogglePasswordVisibility(val isPasswordVisible: Boolean) : LoginEvent()
 }

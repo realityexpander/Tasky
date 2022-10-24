@@ -13,13 +13,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.realityexpander.tasky.presentation.components.EmailField
+import com.realityexpander.tasky.presentation.components.PasswordField
 import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
+import com.realityexpander.tasky.presentation.register_screen.RegisterEvent
 import kotlinx.coroutines.launch
 
 @Composable
@@ -35,6 +40,17 @@ fun LoginScreen(
 
     val loginState by viewModel.loginStateFlow.collectAsState()
     val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
+
+    fun performLogin() {
+        scope.launch {
+            viewModel.onEvent(LoginEvent.ValidateEmail(loginState.email))
+            viewModel.onEvent(LoginEvent.ValidatePassword(loginState.password))
+            viewModel.onEvent(LoginEvent.Login(loginState.email, loginState.password))
+
+            focusManager.clearFocus()
+        }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -55,53 +71,81 @@ fun LoginScreen(
         Text(text = "Login:")
         Spacer(modifier = Modifier.height(8.dp))
 
+//        // EMAIL
+//        OutlinedTextField(
+//            value = loginState.email,
+//            singleLine = true,
+//            onValueChange = {
+//                scope.launch {
+//                    viewModel.onEvent(LoginEvent.UpdateEmail(it))
+//                }
+//            },
+//            isError = loginState.isInvalidEmail,
+//            label = { Text(text = "Email") },
+//            placeholder = { Text(text = "Enter your Email") },
+//            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+//            modifier = Modifier.fillMaxWidth()
+//        )
+
         // EMAIL
-        OutlinedTextField(
-            value = loginState.email,
-            singleLine = true,
-            onValueChange = {
+        EmailField(
+            email = loginState.email,
+            isError = loginState.isInvalidEmail,
+            onEmailChange = {
                 scope.launch {
                     viewModel.onEvent(LoginEvent.UpdateEmail(it))
                 }
-            },
-            isError = loginState.isInvalidEmail,
-            label = { Text(text = "Email") },
-            placeholder = { Text(text = "Enter your Email") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            modifier = Modifier.fillMaxWidth()
+            }
         )
         if(loginState.isInvalidEmail) {
             Text(text = "Invalid email", color = Color.Red)
         }
         Spacer(modifier = Modifier.height(8.dp))
 
-        // PASSWORD
-        OutlinedTextField(
-            value = loginState.password,
-            singleLine = true,
-            onValueChange = {
+//        // PASSWORD
+//        OutlinedTextField(
+//            value = loginState.password,
+//            singleLine = true,
+//            onValueChange = {
+//                scope.launch {
+//                    viewModel.onEvent(LoginEvent.UpdatePassword(it))
+//                }
+//            },
+//            isError = loginState.isInvalidPassword,
+//            label = { Text(text = "Password") },
+//            placeholder = { Text(text = "Enter your Password") },
+//            modifier = Modifier.fillMaxWidth(),
+//            visualTransformation = PasswordVisualTransformation()
+//        )
+
+        PasswordField(
+            password = loginState.password,
+            isError = loginState.isInvalidPassword,
+            onPasswordChange = {
                 scope.launch {
                     viewModel.onEvent(LoginEvent.UpdatePassword(it))
                 }
             },
-            isError = loginState.isInvalidPassword,
-            label = { Text(text = "Password") },
-            placeholder = { Text(text = "Enter your Password") },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
+            isPasswordVisible = loginState.isPasswordVisible,
+            clickTogglePasswordVisibility = {
+                viewModel.sendEvent(
+                    LoginEvent.TogglePasswordVisibility(loginState.isPasswordVisible)
+                )
+            },
+            imeAction = ImeAction.Done,
+            doneAction = {
+                performLogin()
+            }
         )
         if(loginState.isInvalidPassword) {
             Text(text = "Invalid password", color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
         }
 
+        // LOGIN BUTTON
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
-                scope.launch {
-                    viewModel.onEvent(LoginEvent.ValidateEmail(loginState.email))
-                    viewModel.onEvent(LoginEvent.ValidatePassword(loginState.password))
-                    viewModel.onEvent(LoginEvent.Login(loginState.email, loginState.password))
-                }
+                performLogin()
             },
             enabled = !loginState.isLoading,
             modifier = Modifier
