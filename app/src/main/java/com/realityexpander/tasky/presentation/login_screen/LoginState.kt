@@ -12,7 +12,7 @@ data class LoginState(
 
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
-    val statusMessage: String = "",
+    val statusMessage: UiText = UiText.None,
 
     val isError: Boolean = false,
     val errorMessage: UiText = UiText.None,

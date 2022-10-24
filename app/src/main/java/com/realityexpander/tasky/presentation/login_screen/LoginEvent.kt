@@ -17,7 +17,7 @@ sealed class LoginEvent {
     data class Login(val email: String, val password: String) : LoginEvent()
     data class Loading(val isLoading: Boolean) : LoginEvent()
     data class LoginSuccess(val authToken: AuthToken) : LoginEvent()
-    data class LoginError(val message: String) : LoginEvent()
+    data class LoginError(val message: UiText) : LoginEvent()
 
     data class UnknownError(val message: UiText) : LoginEvent()
 }

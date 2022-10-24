@@ -26,7 +26,7 @@ class LoginViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val _loginState = MutableStateFlow<LoginState>(LoginState())
+    private val _loginState = MutableStateFlow(LoginState())
     val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
 
     private val email: String = savedStateHandle[SAVED_STATE_EMAIL] ?: ""
@@ -42,14 +42,14 @@ class LoginViewModel @Inject constructor(
             val authToken = authRepository.login(email, password)
             sendEvent(LoginEvent.LoginSuccess(authToken))
         } catch(e: Exceptions.LoginException) {
-            sendEvent(LoginEvent.LoginError(e.message ?: "Unknown Login Error"))
+            sendEvent(LoginEvent.LoginError(UiText.StrRes(R.string.error_unknown_login_error, e.message ?: "")))
         } catch(e: Exceptions.InvalidEmailException) {
             sendEvent(LoginEvent.IsValidEmail(false))
         } catch(e: Exceptions.InvalidPasswordException) {
             sendEvent(LoginEvent.IsValidPassword(false))
         } catch (e: Exception) {
             // handle general error
-            sendEvent(LoginEvent.UnknownError(UiText.StrOrStrRes(e.message, R.string.error_unknown)))
+            sendEvent(LoginEvent.UnknownError(UiText.StrRes( R.string.error_unknown, e.message ?: "")))
             e.printStackTrace()
         }
     }
@@ -118,8 +118,8 @@ class LoginViewModel @Inject constructor(
                 _loginState.value = _loginState.value.copy(
                     isLoggedIn = true,
                     isError = false,
-                    errorMessage = "",
-                    statusMessage = "Login Success: authToken = ${event.authToken}",
+                    errorMessage = UiText.None,
+                    statusMessage = UiText.StrRes(R.string.login_success, event.authToken),
                     isPasswordVisible = false,
                 )
                 sendEvent(LoginEvent.Loading(false))
@@ -128,8 +128,8 @@ class LoginViewModel @Inject constructor(
                 _loginState.value = _loginState.value.copy(
                     isLoggedIn = false,
                     isError = true,
-                    errorMessage = event.message,
-                    statusMessage = ""
+                    errorMessage = UiText.StrOrStrRes(event.message.asStrValueOrNull(), R.string.error_unknown),
+                    statusMessage = UiText.None
                 )
 
                 sendEvent(LoginEvent.Loading(false))
@@ -138,10 +138,9 @@ class LoginViewModel @Inject constructor(
                 _loginState.value = _loginState.value.copy(
                     isLoggedIn = false,
                     isError = true,
-                    errorMessage = UiText.StrOrStrRes(event.message, R.string.error_unknown))
+                    errorMessage = UiText.StrOrStrRes(event.message.asStrValueOrNull(), R.string.error_unknown)
                 )
             }
         }
     }
-
 }

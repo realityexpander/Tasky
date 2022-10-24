@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.realityexpander.tasky.R
+import com.realityexpander.tasky.common.UiText
 import com.realityexpander.tasky.presentation.components.EmailField
 import com.realityexpander.tasky.presentation.components.PasswordField
 import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
@@ -63,7 +65,7 @@ fun LoginScreen(
             .fillMaxSize()
             .padding(16.dp),
     ) {
-        Text(text = "Login:")
+        Text(text = UiText.StrRes(R.string.login_title).get())
         Spacer(modifier = Modifier.height(8.dp))
 
         // EMAIL
@@ -77,7 +79,7 @@ fun LoginScreen(
             }
         )
         if(loginState.isInvalidEmail) {
-            Text(text = "Invalid email", color = Color.Red)
+            Text(text = UiText.StrRes(R.string.error_invalid_email).get(), color = Color.Red)
         }
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -102,7 +104,7 @@ fun LoginScreen(
             }
         )
         if(loginState.isInvalidPassword) {
-            Text(text = "Invalid password", color = Color.Red)
+            Text(text = UiText.StrRes(R.string.error_invalid_password).get(), color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
         }
 
@@ -128,7 +130,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         // REGISTER BUTTON
-        Text(text = "Not a member? Sign up",
+        Text(text = UiText.StrRes(R.string.login_not_a_member_sign_up).get(),
             color = Color.Cyan,
             modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)
@@ -156,7 +158,7 @@ fun LoginScreen(
 
         if(loginState.isError) {
             Text(
-                text = "Error: ${loginState.errorMessage}",
+                text = "Error: ${loginState.errorMessage.get()}",
                 color = Color.Red,
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -165,8 +167,8 @@ fun LoginScreen(
             Text(text = "Logged in!")
             Spacer(modifier = Modifier.height(8.dp))
         }
-        if(loginState.statusMessage.isNotEmpty()) {
-            Text(text = loginState.statusMessage)
+        loginState.statusMessage.asStrValueOrNull()?.let { message ->
+            Text(text = message)
             Spacer(modifier = Modifier.height(8.dp))
         }
     }
