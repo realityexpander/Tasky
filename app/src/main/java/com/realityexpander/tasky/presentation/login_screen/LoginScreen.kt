@@ -3,14 +3,17 @@ package com.realityexpander.tasky.presentation.login_screen
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -24,6 +27,7 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
     email: String? = null,
     password: String? = null,
+    confirmPassword: String? = null,
     navigator: DestinationsNavigator,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
@@ -37,10 +41,10 @@ fun LoginScreen(
     ) {
         if(loginState.isLoading) {
             Spacer(modifier = Modifier.height(8.dp))
-                CircularProgressIndicator(
-                    modifier = Modifier.align(alignment = Alignment.TopCenter)
-                )
-            }
+            CircularProgressIndicator(
+                modifier = Modifier.align(alignment = Alignment.Center)
+            )
+        }
     }
 
     Column(
@@ -54,6 +58,7 @@ fun LoginScreen(
         // EMAIL
         OutlinedTextField(
             value = loginState.email,
+            singleLine = true,
             onValueChange = {
                 scope.launch {
                     viewModel.onEvent(LoginEvent.UpdateEmail(it))
@@ -62,6 +67,7 @@ fun LoginScreen(
             isError = loginState.isInvalidEmail,
             label = { Text(text = "Email") },
             placeholder = { Text(text = "Enter your Email") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth()
         )
         if(loginState.isInvalidEmail) {
@@ -72,6 +78,7 @@ fun LoginScreen(
         // PASSWORD
         OutlinedTextField(
             value = loginState.password,
+            singleLine = true,
             onValueChange = {
                 scope.launch {
                     viewModel.onEvent(LoginEvent.UpdatePassword(it))
@@ -101,6 +108,14 @@ fun LoginScreen(
                 .align(alignment = Alignment.End)
         ) {
             Text(text = "Login")
+            if(loginState.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .padding(start = 4.dp)
+                        .size(16.dp)
+                        .align(alignment = CenterVertically)
+                )
+            }
         }
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -113,7 +128,8 @@ fun LoginScreen(
                     navigator.navigate(
                         RegisterScreenDestination(
                             email = loginState.email,
-                            password = loginState.password
+                            password = loginState.password,
+                            confirmPassword = confirmPassword
                         )
                     )
                 })

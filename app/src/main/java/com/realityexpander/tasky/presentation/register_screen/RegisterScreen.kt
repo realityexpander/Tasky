@@ -3,16 +3,25 @@ package com.realityexpander.tasky.presentation.register_screen
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.Visibility
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -20,11 +29,13 @@ import com.realityexpander.tasky.presentation.destinations.LoginScreenDestinatio
 import com.realityexpander.tasky.presentation.login_screen.LoginEvent
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Destination("RegisterScreen")
 fun RegisterScreen(
     email: String? = null,
     password: String? = null,
+    confirmPassword: String? = null,
     navigator: DestinationsNavigator,
     viewModel: RegisterViewModel = hiltViewModel(),
 ) {
@@ -32,6 +43,23 @@ fun RegisterScreen(
 
     val registerState by viewModel.registerStateFlow.collectAsState()
     val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    fun performRegister() {
+        scope.launch {
+            viewModel.onEvent(RegisterEvent.ValidateEmail(registerState.email))
+            viewModel.onEvent(RegisterEvent.ValidatePassword(registerState.password))
+            viewModel.onEvent(RegisterEvent.ValidateConfirmPassword(registerState.confirmPassword))
+            viewModel.onEvent(RegisterEvent.Register(
+                registerState.email,
+                registerState.password,
+                registerState.confirmPassword
+            ))
+
+            keyboardController?.hide()
+        }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -39,7 +67,7 @@ fun RegisterScreen(
         if(registerState.isLoading) {
             Spacer(modifier = Modifier.height(8.dp))
             CircularProgressIndicator(
-                modifier = Modifier.align(alignment = Alignment.TopCenter)
+                modifier = Modifier.align(alignment = Alignment.Center)
             )
         }
     }
@@ -55,6 +83,7 @@ fun RegisterScreen(
         // EMAIL
         OutlinedTextField(
             value = registerState.email,
+            singleLine = true,
             onValueChange = {
                 scope.launch {
                     viewModel.onEvent(RegisterEvent.UpdateEmail(it))
@@ -63,6 +92,12 @@ fun RegisterScreen(
             isError = registerState.isInvalidEmail,
             label = { Text(text = "Email") },
             placeholder = { Text(text = "Enter your Email") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.moveFocus(
+                    focusDirection = FocusDirection.Next,
+                )
+            }),
             modifier = Modifier.fillMaxWidth()
         )
         if(registerState.isInvalidEmail) {
@@ -73,6 +108,7 @@ fun RegisterScreen(
         // PASSWORD
         OutlinedTextField(
             value = registerState.password,
+            singleLine = true,
             onValueChange = {
                 scope.launch {
                     viewModel.onEvent(RegisterEvent.UpdatePassword(it))
@@ -81,27 +117,102 @@ fun RegisterScreen(
             isError = registerState.isInvalidPassword,
             label = { Text(text = "Password") },
             placeholder = { Text(text = "Enter your Password") },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
+            modifier = Modifier.fillMaxWidth(1f),
+            visualTransformation = if (registerState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.moveFocus(
+                    focusDirection = FocusDirection.Next,
+                )
+            }),
+            trailingIcon = {
+                val image = if (registerState.isPasswordVisible)
+                    Icons.Default.VisibilityOff
+                else
+                    Icons.Default.Visibility
+
+                // Please provide localized description for accessibility services
+                val description = if (registerState.isPasswordVisible) "Hide password" else "Show password"
+
+                IconButton(onClick = {
+                    viewModel.sendEvent(RegisterEvent.TogglePasswordVisibility(registerState.isPasswordVisible))
+                }){
+                    Icon(imageVector  = image, description)
+                }
+            }
         )
-        if(registerState.isInvalidPassword) {
+        if (registerState.isInvalidPassword) {
             Text(text = "Invalid password", color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
         }
 
+        // CONFIRM PASSWORD
+        OutlinedTextField(
+            value = registerState.confirmPassword,
+            singleLine = true,
+            onValueChange = {
+                scope.launch {
+                    viewModel.onEvent(RegisterEvent.UpdateConfirmPassword(it))
+                }
+            },
+            isError = registerState.isInvalidConfirmPassword,
+            label = { Text(text = "Confirm Password") },
+            placeholder = { Text(text = "Confirm your Password") },
+            modifier = Modifier.fillMaxWidth(1f),
+            visualTransformation = if (registerState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            keyboardActions = KeyboardActions(onDone = {
+                performRegister()
+            }),
+            trailingIcon = {
+                val image = if (registerState.isPasswordVisible)
+                    Icons.Default.VisibilityOff
+                else
+                    Icons.Default.Visibility
+
+                // Please provide localized description for accessibility services
+                val description = if (registerState.isPasswordVisible) "Hide password" else "Show password"
+
+                IconButton(onClick = {
+                    viewModel.sendEvent(RegisterEvent.TogglePasswordVisibility(registerState.isPasswordVisible))
+                }){
+                    Icon(imageVector  = image, description)
+                }
+            }
+        )
+        if (registerState.isInvalidConfirmPassword) {
+            Text(text = "Invalid confirm password", color = Color.Red)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        if( !registerState.isInvalidPassword
+            && !registerState.isInvalidConfirmPassword
+            && registerState.password.isNotEmpty()
+            && registerState.confirmPassword.isNotEmpty()
+            && registerState.password != registerState.confirmPassword
+        ) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = "Passwords do not match", color = Color.Red)
+        }
+
+        // REGISTER BUTTON
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
-            scope.launch {
-                viewModel.onEvent(RegisterEvent.ValidateEmail(registerState.email))
-                viewModel.onEvent(RegisterEvent.ValidatePassword(registerState.password))
-                viewModel.onEvent(RegisterEvent.Register(registerState.email, registerState.password))
-            }
+            performRegister()
         },
             enabled = !registerState.isLoading,
             modifier = Modifier
                 .align(alignment = Alignment.End)
         ) {
-            Text(text = "Login")
+            Text(text = "Register")
+            if(registerState.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .padding(start = 4.dp)
+                        .size(16.dp)
+                        .align(alignment = Alignment.CenterVertically)
+                )
+            }
         }
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -114,7 +225,8 @@ fun RegisterScreen(
                     navigator.navigate(
                         LoginScreenDestination(
                             email = registerState.email,
-                            password = registerState.password
+                            password = registerState.password,
+                            confirmPassword = registerState.confirmPassword
                         )
                     )
                 })

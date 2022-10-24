@@ -30,6 +30,8 @@ class AuthApiImpl: IAuthApi {
     }
 
     override suspend fun register(email: String, password: String): AuthToken {
+        delay(1000)
+
         return if(users[email] == null) {
             users[email] = password
             AuthToken("token for $email")

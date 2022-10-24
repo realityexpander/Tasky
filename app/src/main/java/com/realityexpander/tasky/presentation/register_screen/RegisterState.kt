@@ -6,8 +6,11 @@ data class State(
     val isError: Boolean = false,
     val isInvalidEmail: Boolean = false,
     val isInvalidPassword: Boolean = false,
+    val isInvalidConfirmPassword: Boolean = false,
     val errorMessage: String = "",
     val statusMessage: String = "",
     val email: String = "",
-    val password: String = ""
+    val password: String = "",
+    val confirmPassword: String = "",
+    val isPasswordVisible: Boolean = false,
 )
