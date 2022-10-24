@@ -7,7 +7,6 @@ import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,8 +20,8 @@ class LoginViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private var _loginStateFlow = MutableStateFlow<State>(State())
-    var loginStateFlow: StateFlow<State> = _loginStateFlow.asStateFlow()
+    private val _loginState = MutableStateFlow<State>(State())
+    val loginStateFlow: StateFlow<State> = _loginState.asStateFlow()
 
     private val email: String = savedStateHandle["email"] ?: ""
     private val password: String = savedStateHandle["password"] ?: ""
@@ -32,7 +31,6 @@ class LoginViewModel @Inject constructor(
         sendEvent(LoginEvent.UpdatePassword(password))
     }
 
-
     private suspend fun login(email: String, password: String) {
         try {
             val authToken = authRepository.login(email, password)
@@ -40,9 +38,9 @@ class LoginViewModel @Inject constructor(
         } catch(e: Exceptions.LoginException) {
             sendEvent(LoginEvent.LoginError(e.message ?: "Unknown Login Error"))
         } catch(e: Exceptions.InvalidEmailException) {
-            sendEvent(LoginEvent.IsInvalidEmail)
+            sendEvent(LoginEvent.IsValidEmail(false))
         } catch(e: Exceptions.InvalidPasswordException) {
-            sendEvent(LoginEvent.IsInvalidPassword)
+            sendEvent(LoginEvent.IsValidPassword(false))
         } catch (e: Exception) {
             // handle general error
             sendEvent(LoginEvent.UnknownError(e.message ?: "Unknown error"))
@@ -51,19 +49,13 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun validateEmail(email: String) {
-        if (validateEmail.validateEmail(email)) {
-            sendEvent(LoginEvent.IsValidEmail)
-        } else {
-            sendEvent(LoginEvent.IsInvalidEmail)
-        }
+        val isValid = validateEmail.validateEmail(email)
+        sendEvent(LoginEvent.IsValidEmail(isValid))
     }
 
     private fun validatePassword(password: String) {
-        if (password.length >= 6 ) { // && validatePassword.validatePassword(password)) { //todo
-            sendEvent(LoginEvent.IsValidPassword)
-        } else {
-            sendEvent(LoginEvent.IsInvalidPassword)
-        }
+        val isValid = password.length >= 6 // && validatePassword.validatePassword(password)  //todo
+        sendEvent(LoginEvent.IsValidPassword(isValid))
     }
 
     fun sendEvent(event: LoginEvent) {
@@ -75,26 +67,26 @@ class LoginViewModel @Inject constructor(
     suspend fun onEvent(event: LoginEvent) {
         when(event) {
             is LoginEvent.Loading -> {
-                if(event.isLoading) {
-                    _loginStateFlow.value = _loginStateFlow.value.copy(isLoading = true)
-                } else {
-                    _loginStateFlow.value = _loginStateFlow.value.copy(isLoading = false)
-                }
+                _loginState.value = _loginState.value.copy(isLoading = event.isLoading)
             }
             is LoginEvent.UpdateEmail -> {
-                _loginStateFlow.value = _loginStateFlow.value
-                    .copy(email = event.email, isInvalidEmail = false)
+                _loginState.value = _loginState.value.copy(
+                        email = event.email,
+                        isInvalidEmail = false,
+                        isError = false,
+                    )
                 savedStateHandle["email"] = event.email
             }
             is LoginEvent.UpdatePassword -> {
-                _loginStateFlow.value = _loginStateFlow.value
-                    .copy(password = event.password, isInvalidPassword = false)
+                _loginState.value = _loginState.value.copy(
+                        password = event.password,
+                        isInvalidPassword = false,
+                        isError = false
+                    )
                 savedStateHandle["password"] = event.password
             }
             is LoginEvent.Login -> {
-                if(_loginStateFlow.value.isInvalidEmail || _loginStateFlow.value.isInvalidPassword) {
-                    return
-                }
+                if(_loginState.value.isInvalidEmail || _loginState.value.isInvalidPassword) return
 
                 sendEvent(LoginEvent.Loading(true))
                 login(event.email, event.password)
@@ -106,8 +98,7 @@ class LoginViewModel @Inject constructor(
                 validatePassword(event.password)
             }
             is LoginEvent.LoginSuccess -> {
-                _loginStateFlow.value = _loginStateFlow.value
-                    .copy(
+                _loginState.value = _loginState.value.copy(
                         isLoggedIn = true,
                         isError = false,
                         errorMessage = "",
@@ -116,8 +107,7 @@ class LoginViewModel @Inject constructor(
                 sendEvent(LoginEvent.Loading(false))
             }
             is LoginEvent.LoginError -> {
-                _loginStateFlow.value = _loginStateFlow.value
-                    .copy(
+                _loginState.value = _loginState.value.copy(
                         isLoggedIn = false,
                         isError = true,
                         errorMessage = event.message,
@@ -126,29 +116,23 @@ class LoginViewModel @Inject constructor(
 
                 sendEvent(LoginEvent.Loading(false))
             }
-            is LoginEvent.IsInvalidEmail -> {
-                _loginStateFlow.value = _loginStateFlow.value
-                    .copy(isInvalidEmail = true)
-            }
-            is LoginEvent.IsInvalidPassword -> {
-                _loginStateFlow.value = _loginStateFlow.value
-                    .copy(isInvalidPassword = true)
-            }
             is LoginEvent.IsValidEmail -> {
-                _loginStateFlow.value = _loginStateFlow.value
-                    .copy(isInvalidEmail = false)
+                _loginState.value = _loginState.value.copy(isInvalidEmail = !event.isValid)
             }
             is LoginEvent.IsValidPassword -> {
-                _loginStateFlow.value = _loginStateFlow.value
-                    .copy(isInvalidPassword = false)
+                _loginState.value = _loginState.value.copy(isInvalidPassword = !event.isValid)
             }
             is LoginEvent.UnknownError -> {
-                _loginStateFlow.value = _loginStateFlow.value
-                    .copy(isError = true, errorMessage = event.message)
+                _loginState.value = _loginState.value.copy(
+                        isLoggedIn = false,
+                        isError = true,
+                        errorMessage = event.message,
+                    )
             }
             is LoginEvent.TogglePasswordVisibility -> {
-                _loginStateFlow.value = _loginStateFlow.value
-                    .copy(isPasswordVisible = !event.isPasswordVisible)
+                _loginState.value = _loginState.value.copy(
+                    isPasswordVisible = !event.isPasswordVisible
+                )
             }
         }
     }
