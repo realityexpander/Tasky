@@ -159,6 +159,7 @@ class RegisterViewModel @Inject constructor(
                         isError = false,
                         errorMessage = "",
                         statusMessage = "Login Success: authToken = ${event.authToken}",
+                        isPasswordVisible = false,
                     )
                 sendEvent(RegisterEvent.Loading(false))
             }

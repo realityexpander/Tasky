@@ -17,16 +17,17 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.Visibility
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.realityexpander.tasky.presentation.components.EmailField
+import com.realityexpander.tasky.presentation.components.PasswordField
 import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
-import com.realityexpander.tasky.presentation.login_screen.LoginEvent
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -57,7 +58,7 @@ fun RegisterScreen(
                 registerState.confirmPassword
             ))
 
-            keyboardController?.hide()
+            //keyboardController?.hide()
         }
     }
 
@@ -81,104 +82,95 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         // EMAIL
-        OutlinedTextField(
-            value = registerState.email,
-            singleLine = true,
-            onValueChange = {
+        EmailField(
+            email = registerState.email,
+            isError = registerState.isInvalidEmail,
+            onEmailChange = {
                 scope.launch {
                     viewModel.onEvent(RegisterEvent.UpdateEmail(it))
                 }
-            },
-            isError = registerState.isInvalidEmail,
-            label = { Text(text = "Email") },
-            placeholder = { Text(text = "Enter your Email") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            keyboardActions = KeyboardActions(onDone = {
-                focusManager.moveFocus(
-                    focusDirection = FocusDirection.Next,
-                )
-            }),
-            modifier = Modifier.fillMaxWidth()
+            }
         )
+
         if(registerState.isInvalidEmail) {
             Text(text = "Invalid email", color = Color.Red)
         }
         Spacer(modifier = Modifier.height(8.dp))
 
         // PASSWORD
-        OutlinedTextField(
-            value = registerState.password,
-            singleLine = true,
-            onValueChange = {
+//        OutlinedTextField(
+//            value = registerState.password,
+//            singleLine = true,
+//            onValueChange = {
+//                scope.launch {
+//                    viewModel.onEvent(RegisterEvent.UpdatePassword(it))
+//                }
+//            },
+//            isError = registerState.isInvalidPassword,
+//            label = { Text(text = "Password") },
+//            placeholder = { Text(text = "Enter your Password") },
+//            modifier = Modifier.fillMaxWidth(1f),
+//            visualTransformation = if (registerState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+//            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+//            keyboardActions = KeyboardActions(onDone = {
+//                focusManager.moveFocus(
+//                    focusDirection = FocusDirection.Next,
+//                )
+//            }),
+//            trailingIcon = {
+//                val image = if (registerState.isPasswordVisible)
+//                    Icons.Default.VisibilityOff
+//                else
+//                    Icons.Default.Visibility
+//
+//                // Please provide localized description for accessibility services
+//                val description = if (registerState.isPasswordVisible) "Hide password" else "Show password"
+//
+//                IconButton(onClick = {
+//                    viewModel.sendEvent(RegisterEvent.TogglePasswordVisibility(registerState.isPasswordVisible))
+//                }){
+//                    Icon(imageVector  = image, description)
+//                }
+//            }
+//        )
+
+        PasswordField(
+            password = registerState.password,
+            isError = registerState.isInvalidPassword,
+            onPasswordChange = {
                 scope.launch {
                     viewModel.onEvent(RegisterEvent.UpdatePassword(it))
                 }
             },
-            isError = registerState.isInvalidPassword,
-            label = { Text(text = "Password") },
-            placeholder = { Text(text = "Enter your Password") },
-            modifier = Modifier.fillMaxWidth(1f),
-            visualTransformation = if (registerState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            keyboardActions = KeyboardActions(onDone = {
-                focusManager.moveFocus(
-                    focusDirection = FocusDirection.Next,
-                )
-            }),
-            trailingIcon = {
-                val image = if (registerState.isPasswordVisible)
-                    Icons.Default.VisibilityOff
-                else
-                    Icons.Default.Visibility
-
-                // Please provide localized description for accessibility services
-                val description = if (registerState.isPasswordVisible) "Hide password" else "Show password"
-
-                IconButton(onClick = {
-                    viewModel.sendEvent(RegisterEvent.TogglePasswordVisibility(registerState.isPasswordVisible))
-                }){
-                    Icon(imageVector  = image, description)
-                }
-            }
+            isPasswordVisible = registerState.isPasswordVisible,
+            clickTogglePasswordVisibility = {
+                viewModel.sendEvent(RegisterEvent.TogglePasswordVisibility(registerState.isPasswordVisible))
+            },
+            imeAction = ImeAction.Next,
         )
         if (registerState.isInvalidPassword) {
             Text(text = "Invalid password", color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // CONFIRM PASSWORD
-        OutlinedTextField(
-            value = registerState.confirmPassword,
-            singleLine = true,
-            onValueChange = {
+        PasswordField(
+            label = "Confirm Password",
+            placeholder = "Confirm your password",
+            password = registerState.confirmPassword,
+            isError = registerState.isInvalidConfirmPassword,
+            onPasswordChange = {
                 scope.launch {
                     viewModel.onEvent(RegisterEvent.UpdateConfirmPassword(it))
                 }
             },
-            isError = registerState.isInvalidConfirmPassword,
-            label = { Text(text = "Confirm Password") },
-            placeholder = { Text(text = "Confirm your Password") },
-            modifier = Modifier.fillMaxWidth(1f),
-            visualTransformation = if (registerState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            keyboardActions = KeyboardActions(onDone = {
+            isPasswordVisible = registerState.isPasswordVisible,
+            clickTogglePasswordVisibility = {
+                viewModel.sendEvent(RegisterEvent.TogglePasswordVisibility(registerState.isPasswordVisible))
+            },
+            imeAction = ImeAction.Done,
+            doneAction = {
                 performRegister()
-            }),
-            trailingIcon = {
-                val image = if (registerState.isPasswordVisible)
-                    Icons.Default.VisibilityOff
-                else
-                    Icons.Default.Visibility
-
-                // Please provide localized description for accessibility services
-                val description = if (registerState.isPasswordVisible) "Hide password" else "Show password"
-
-                IconButton(onClick = {
-                    viewModel.sendEvent(RegisterEvent.TogglePasswordVisibility(registerState.isPasswordVisible))
-                }){
-                    Icon(imageVector  = image, description)
-                }
-            }
+            },
         )
         if (registerState.isInvalidConfirmPassword) {
             Text(text = "Invalid confirm password", color = Color.Red)
