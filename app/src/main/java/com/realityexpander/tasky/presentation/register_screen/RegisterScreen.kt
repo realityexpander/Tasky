@@ -133,7 +133,7 @@ fun RegisterScreen(
         }
 
         // SHOW IF MATCHING PASSWORDS
-        if(!registerState.passwordsMatch)
+        if(!registerState.isPasswordsMatch)
         {
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = "Passwords do not match", color = Color.Red)
