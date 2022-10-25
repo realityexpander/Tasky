@@ -202,7 +202,7 @@ fun RegisterScreen(
             Text(text = UiText.Res(R.string.register_registered).get())
             Spacer(modifier = Modifier.height(8.dp))
         }
-        registerState.statusMessage.asStrValueOrNull()?.let { message ->
+        registerState.statusMessage.asStrOrNull()?.let { message ->
             Text(text = message)
             Spacer(modifier = Modifier.height(8.dp))
         }

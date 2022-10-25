@@ -1,15 +1,15 @@
 <resources>
     <string name="app_name">Tasky</string>
 
-    <!--    Login Screen-->
+    <!--    Login Screen -->
     <string name="login_title">Login:</string>
     <string name="login_not_a_member_sign_up">Don\'t have an account? Register here</string>
     <string name="login_success">Login Success: authToken = %s</string>
     <string name="login_logged_in">Logged in!</string>
-    <string name="error_login_error">Login error - %s</string>
     <string name="login_button">Login</string>
+    <string name="error_login_error">Login error - %s</string>
 
-    <!--    Register Screen-->
+    <!--    Register Screen -->
     <string name="register_title">Register:</string>
     <string name="register_already_a_member_sign_in">Already have an account? Login here</string>
     <string name="register_success">Register Success: authToken = %s</string>
@@ -23,17 +23,17 @@
     <string name="register_placeholder_confirm_password">Confirm your password</string>
     <string name="register_button">Register</string>
 
-    <!--    EmailField Composable-->
+    <!--    EmailField Composable -->
     <string name="emailField_label">Email</string>
     <string name="emailField_placeholder">Enter your Email</string>
 
-    <!--    PasswordField Composable-->
+    <!--    PasswordField Composable -->
     <string name="passwordField_label">Password</string>
     <string name="passwordField_placeholder">Enter your Password</string>
     <string name="passwordField_description_hide">Hide password</string>
     <string name="passwordField_description_show">Show password</string>
 
-    <!--    Error Messages-->
+    <!--    Error Messages (general)-->
     <string name="error_unknown">Unknown error - %s</string>
     <string name="error_invalid_email">Invalid email</string>
     <string name="error_invalid_password">Invalid password</string>

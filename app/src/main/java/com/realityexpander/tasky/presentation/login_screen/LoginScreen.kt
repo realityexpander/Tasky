@@ -164,7 +164,7 @@ fun LoginScreen(
             Text(text = UiText.Res(R.string.login_logged_in).get())
             Spacer(modifier = Modifier.height(8.dp))
         }
-        loginState.statusMessage.asStrValueOrNull()?.let { message ->
+        loginState.statusMessage.asStrOrNull()?.let { message ->
             Text(text = message)
             Spacer(modifier = Modifier.height(8.dp))
         }

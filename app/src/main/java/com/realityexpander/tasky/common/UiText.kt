@@ -82,7 +82,8 @@ sealed class UiText {
         }
     }
 
-    // Returns string "" if UiText is `None` or value is null, or return Resource ID.
+    // If UiText is `None` or `value` is null return string "", or return Resource ID.
+    // Always returns a valid string. (good for use in display UI)
     @Composable
     fun get(): String {
         return when(this) {
@@ -94,7 +95,8 @@ sealed class UiText {
         }
     }
 
-    // Returns null if UiText is `None` or `value` is null, or return Resource ID.
+    // If UiText is `None` or `value` is null return null, or return Resource ID.
+    // May return a null. (good for use in logical checks)
     @Composable
     fun getNullable(): String? {
         return when(this) {
@@ -107,7 +109,7 @@ sealed class UiText {
     }
 
     // For use in @Composable functions.
-    // Returns the string "null" if UiText is `None` or `Str` with null value. (good for debugging)
+    // Returns the string "null" if UiText is `None` or `Str` is null value. (good for debugging)
     @Composable
     fun asString(): String {
         return when(this) {
@@ -130,8 +132,9 @@ sealed class UiText {
         }
     }
 
-    // Returns only the string value or null.
-    fun asStrValueOrNull(): String? {
+    // Returns only the string value or null if its missing.
+    // (good for logical checks if you just want the string and not the resource)
+    fun asStrOrNull(): String? {
         return when(this) {
             is None -> null
             is Str -> value
@@ -141,8 +144,9 @@ sealed class UiText {
         }
     }
 
-    // Returns only the string resource id or null.
-    fun asResIdOrNull(): Int? {
+    // Returns only the string Resource ID or null if its missing.
+    // (good for logical checks if you just want the resource and not the string)
+    fun asResOrNull(): Int? {
         return when(this) {
             is None -> null
             is Str -> null

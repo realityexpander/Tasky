@@ -143,7 +143,7 @@ class LoginViewModel @Inject constructor(
                 _loginState.value = _loginState.value.copy(
                     isLoggedIn = false,
                     isError = true,
-                    errorMessage = if(event.message.asResIdOrNull() == null)
+                    errorMessage = if(event.message.asResOrNull() == null)
                             UiText.Res(R.string.error_unknown, "")
                         else
                             event.message,
