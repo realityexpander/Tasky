@@ -18,8 +18,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.common.UiText
-import com.realityexpander.tasky.presentation.components.EmailField
-import com.realityexpander.tasky.presentation.components.PasswordField
+import com.realityexpander.tasky.ui.components.EmailField
+import com.realityexpander.tasky.ui.components.PasswordField
 import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
 
 @OptIn(ExperimentalComposeUiApi::class)

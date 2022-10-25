@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.presentation.components
+package com.realityexpander.tasky.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
