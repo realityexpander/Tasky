@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.data.validation
+package com.realityexpander.tasky.domain.validation
 
 import com.realityexpander.tasky.domain.validation.IEmailMatcher
 

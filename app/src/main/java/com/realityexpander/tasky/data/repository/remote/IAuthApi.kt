@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.data.repository.local
+package com.realityexpander.tasky.data.repository.remote
 
 import com.realityexpander.tasky.common.AuthToken
 
