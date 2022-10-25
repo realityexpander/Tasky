@@ -12,6 +12,7 @@ sealed class LoginEvent {
     object ValidatePassword : LoginEvent()
 
     data class IsValidEmail(val isValid: Boolean) : LoginEvent()
+    object ShowInvalidEmailMessage : LoginEvent()
     data class IsValidPassword(val isValid: Boolean) : LoginEvent()
 
     data class Login(val email: String, val password: String) : LoginEvent()

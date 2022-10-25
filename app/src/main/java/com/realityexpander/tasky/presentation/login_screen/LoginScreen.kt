@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -96,6 +97,7 @@ fun LoginScreen(
         Text(
             text = UiText.Res(R.string.login_title).get(),
             style = MaterialTheme.typography.h5,
+            fontWeight = FontWeight.Bold,
             color = MaterialTheme.colors.surface,
             modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)
@@ -117,7 +119,7 @@ fun LoginScreen(
                     viewModel.sendEvent(LoginEvent.UpdateEmail(it))
                 }
             )
-            if (loginState.isInvalidEmail) {
+            if (loginState.isInvalidEmail && loginState.isShowInvalidEmailMessage) {
                 Text(text = UiText.Res(R.string.error_invalid_email).get(), color = Color.Red)
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -151,9 +153,13 @@ fun LoginScreen(
                 onClick = {
                     performLogin()
                 },
-                enabled = !loginState.isLoading,
                 modifier = Modifier
-                    .align(alignment = Alignment.End)
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .clip(shape = RoundedCornerShape(32.dp))
+                    .background(color = MaterialTheme.colors.primary)
+                    .align(alignment = Alignment.CenterHorizontally),
+                enabled = !loginState.isLoading,
             ) {
                 Text(text = UiText.Res(R.string.login_button).get())
                 if (loginState.isLoading) {
@@ -203,8 +209,7 @@ fun LoginScreen(
 @Composable
 @Preview(
     showBackground = true,
-//    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 fun LoginScreenPreview() {
     TaskyTheme {
@@ -229,4 +234,13 @@ fun LoginScreenPreview() {
             )
         }
     }
+}
+
+@Composable
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+)
+fun LoginScreenPreview_NightMode() {
+    LoginScreenPreview()
 }

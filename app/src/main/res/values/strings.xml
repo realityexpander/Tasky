@@ -3,10 +3,10 @@
 
     <!--    Login Screen -->
     <string name="login_title">Welcome Back!</string>
-    <string name="login_not_a_member_sign_up">Don\'t have an account? Register here</string>
+    <string name="login_not_a_member_sign_up">DON\'T HAVE AN ACCOUNT? SIGN UP</string>
     <string name="login_success">Login Success: authToken = %s</string>
     <string name="login_logged_in">Logged in!</string>
-    <string name="login_button">Login</string>
+    <string name="login_button">LOG IN</string>
     <string name="error_login_error">Login error - %s</string>
 
     <!--    Register Screen -->
@@ -25,18 +25,20 @@
 
     <!--    EmailField Composable -->
     <string name="emailField_label">Email Address</string>
-    <string name="emailField_placeholder">Enter your Email</string>
+    <string name="emailField_placeholder">Email Address</string>
+    <string name="emailField_description_isValid">Email Address is valid</string>
+    <string name="emailField_description_isInvalid">Email Address is not valid</string>
 
     <!--    PasswordField Composable -->
     <string name="passwordField_label">Password</string>
-    <string name="passwordField_placeholder">Enter your Password</string>
+    <string name="passwordField_placeholder">Password</string>
     <string name="passwordField_description_hide">Hide password</string>
     <string name="passwordField_description_show">Show password</string>
 
     <!--    Error Messages (general)-->
     <string name="error_unknown">Unknown error - %s</string>
-    <string name="error_invalid_email">Invalid email</string>
-    <string name="error_invalid_password">Invalid password</string>
+    <string name="error_invalid_email">Invalid email address.</string>
+    <string name="error_invalid_password">Invalid password.</string>
     <string name="error_invalid_confirm_password">Invalid confirm password</string>
     <string name="error_invalid_username">Invalid username</string>
     <string name="error_invalid_user_name">Invalid user name</string>

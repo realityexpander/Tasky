@@ -14,6 +14,7 @@ import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_err
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isInvalidEmail
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isInvalidPassword
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isLoggedIn
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isShowInvalidEmailMessage
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_password
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_statusMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,6 +37,7 @@ class LoginViewModel @Inject constructor(
     private val email: String = savedStateHandle[SAVED_STATE_email] ?: ""
     private val password: String = savedStateHandle[SAVED_STATE_password] ?: ""
     private val isInvalidEmail: Boolean = savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false
+    private val isShowInvalidEmailMessage: Boolean = savedStateHandle[SAVED_STATE_isShowInvalidEmailMessage] ?: false
     private val isInvalidPassword: Boolean = savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false
     private val isLoggedIn: Boolean = savedStateHandle[SAVED_STATE_isLoggedIn] ?: false
     private val statusMessage: UiText = savedStateHandle[SAVED_STATE_statusMessage] ?: UiText.None
@@ -47,13 +49,14 @@ class LoginViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_email] = state.email
         savedStateHandle[SAVED_STATE_password] = state.password
         savedStateHandle[SAVED_STATE_isInvalidEmail] = state.isInvalidEmail
+        savedStateHandle[SAVED_STATE_isShowInvalidEmailMessage] = state.isShowInvalidEmailMessage
         savedStateHandle[SAVED_STATE_isInvalidPassword] = state.isInvalidPassword
         savedStateHandle[SAVED_STATE_isLoggedIn] = state.isLoggedIn
         savedStateHandle[SAVED_STATE_statusMessage] = state.statusMessage
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
 
-        // Only check for errors when the user clicks the login/register button
-        //if(state.email.isNotBlank()) sendEvent(RegisterEvent.ValidateEmail(state.email))
+        if(state.email.isNotBlank()) sendEvent(LoginEvent.ValidateEmail)
+        // Only check for password errors when the user clicks the login/register button
         //if(state.password.isNotBlank()) sendEvent(RegisterEvent.ValidatePassword(state.password))
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), LoginState())
 
@@ -67,6 +70,7 @@ class LoginViewModel @Inject constructor(
                 password = password,
                 isInvalidEmail = isInvalidEmail,
                 isInvalidPassword = isInvalidPassword,
+                isShowInvalidEmailMessage = isShowInvalidEmailMessage,
                 isLoggedIn = isLoggedIn,
                 statusMessage = statusMessage,
                 errorMessage = errorMessage
@@ -121,6 +125,7 @@ class LoginViewModel @Inject constructor(
                 _loginState.value = _loginState.value.copy(
                     email = event.email,
                     isInvalidEmail = false,
+                    isShowInvalidEmailMessage = false,
                     errorMessage = UiText.None,
                 )
             }
@@ -146,7 +151,12 @@ class LoginViewModel @Inject constructor(
             }
             is LoginEvent.IsValidEmail -> {
                 _loginState.value = _loginState.value.copy(
-                    isInvalidEmail = !event.isValid
+                    isInvalidEmail = !event.isValid,
+                )
+            }
+            is LoginEvent.ShowInvalidEmailMessage -> {
+                _loginState.value = _loginState.value.copy(
+                    isShowInvalidEmailMessage = true
                 )
             }
             is LoginEvent.IsValidPassword -> {
@@ -158,6 +168,9 @@ class LoginViewModel @Inject constructor(
                 sendEvent(LoginEvent.ValidateEmail)
                 sendEvent(LoginEvent.ValidatePassword)
                 yield()
+
+                // Only show `Invalid Email` message only when "login" is clicked and the email is invalid.
+                if(_loginState.value.isInvalidEmail) sendEvent(LoginEvent.ShowInvalidEmailMessage)
 
                 if(_loginState.value.isInvalidEmail || _loginState.value.isInvalidPassword) return
 

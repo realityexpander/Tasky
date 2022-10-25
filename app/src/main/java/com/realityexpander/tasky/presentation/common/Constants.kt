@@ -7,6 +7,7 @@ object UIConstants {
     const val SAVED_STATE_password = "password"
     const val SAVED_STATE_confirmPassword = "confirmPassword"
     const val SAVED_STATE_isInvalidEmail = "isInvalidEmail"
+    const val SAVED_STATE_isShowInvalidEmailMessage = "isShowInvalidEmailMessage"
     const val SAVED_STATE_isInvalidPassword = "isInvalidPassword"
     const val SAVED_STATE_isInvalidConfirmPassword = "isInvalidConfirmPassword"
     const val SAVED_STATE_isPasswordsMatch = "isPasswordsMatch"

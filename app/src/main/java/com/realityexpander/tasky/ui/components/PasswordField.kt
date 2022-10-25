@@ -52,7 +52,7 @@ fun PasswordField(
         singleLine = true,
         onValueChange = onValueChange,
         isError = isError,
-        label = { Text(text = label) },
+        //label = { Text(text = label) },
         placeholder = { Text(text = placeholder) },
         modifier = Modifier.fillMaxWidth(1f),
         visualTransformation =
@@ -68,7 +68,7 @@ fun PasswordField(
             else
                 Icons.Default.VisibilityOff
 
-            // Please provide localized description for accessibility services
+            // localized description for accessibility services
             val description = if (isPasswordVisible)
                     UiText.Res(R.string.passwordField_description_hide).get()
                 else

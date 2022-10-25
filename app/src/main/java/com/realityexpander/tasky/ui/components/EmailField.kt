@@ -3,8 +3,15 @@ package com.realityexpander.tasky.ui.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -37,16 +44,33 @@ fun EmailField(
         singleLine = true,
         onValueChange = onValueChange,
         isError = isError,
-        label = { Text(text = label) },
+        //label = { Text(text = label) },
         placeholder = { Text(text = placeholder) },
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActionsLocal,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        trailingIcon = {
+            if(value.isNotBlank() && value.length >= 5) {
+                val isEmailValid = !isError
+
+                val image =
+                    if (isEmailValid)
+                        Icons.Filled.Check
+                    else
+                        Icons.Filled.Error
+
+                // localized description for accessibility services
+                val description =
+                    if (isEmailValid)
+                        UiText.Res(R.string.emailField_description_isValid).get()
+                    else
+                        UiText.Res(R.string.emailField_description_isInvalid).get()
+
+                Icon(imageVector = image, description)
+            }
+        }
     )
 }
-
-
-
 
 
 
