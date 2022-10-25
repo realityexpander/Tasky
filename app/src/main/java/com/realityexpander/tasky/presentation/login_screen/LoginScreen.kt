@@ -203,7 +203,8 @@ fun LoginScreen(
 @Composable
 @Preview(
     showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES
+//    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
 )
 fun LoginScreenPreview() {
     TaskyTheme {

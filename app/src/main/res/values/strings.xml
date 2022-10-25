@@ -24,7 +24,7 @@
     <string name="register_button">Register</string>
 
     <!--    EmailField Composable -->
-    <string name="emailField_label">Email</string>
+    <string name="emailField_label">Email Address</string>
     <string name="emailField_placeholder">Enter your Email</string>
 
     <!--    PasswordField Composable -->

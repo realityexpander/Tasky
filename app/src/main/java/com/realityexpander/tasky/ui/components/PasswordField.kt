@@ -64,9 +64,9 @@ fun PasswordField(
         keyboardActions = keyboardActionsLocal,
         trailingIcon = {
             val image = if (isPasswordVisible)
-                Icons.Default.VisibilityOff
-            else
                 Icons.Default.Visibility
+            else
+                Icons.Default.VisibilityOff
 
             // Please provide localized description for accessibility services
             val description = if (isPasswordVisible)
