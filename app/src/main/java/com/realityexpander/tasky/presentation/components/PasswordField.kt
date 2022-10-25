@@ -23,13 +23,13 @@ import com.realityexpander.tasky.common.UiText
 
 @Composable
 fun PasswordField(
-    password: String,
+    value: String,
     label: String = UiText.Res(R.string.passwordField_label).get(),
     placeholder: String = UiText.Res(R.string.passwordField_placeholder).get(),
     isError: Boolean,
     isPasswordVisible: Boolean = false,
     clickTogglePasswordVisibility: () -> Unit,
-    onPasswordChange: (String) -> Unit,
+    onValueChange: (String) -> Unit,
     imeAction: ImeAction = ImeAction.Done,
     keyboardOptions: KeyboardOptions =
         KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = imeAction),
@@ -48,9 +48,9 @@ fun PasswordField(
     )
 
     OutlinedTextField(
-        value = password,
+        value = value,
         singleLine = true,
-        onValueChange = onPasswordChange,
+        onValueChange = onValueChange,
         isError = isError,
         label = { Text(text = label) },
         placeholder = { Text(text = placeholder) },

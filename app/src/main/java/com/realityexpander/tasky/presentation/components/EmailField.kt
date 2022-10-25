@@ -16,11 +16,11 @@ import com.realityexpander.tasky.common.UiText
 
 @Composable
 fun EmailField(
-    email: String,
+    value: String,
     label: String = UiText.Res(R.string.emailField_label).get(),
     placeholder: String = UiText.Res(R.string.emailField_placeholder).get(),
     isError: Boolean,
-    onEmailChange: (String) -> Unit,
+    onValueChange: (String) -> Unit,
     keyboardOptions: KeyboardOptions =
         KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
     keyboardActions: KeyboardActions? = null,
@@ -33,9 +33,9 @@ fun EmailField(
     )
 
     OutlinedTextField(
-        value = email,
+        value = value,
         singleLine = true,
-        onValueChange = onEmailChange,
+        onValueChange = onValueChange,
         isError = isError,
         label = { Text(text = label) },
         placeholder = { Text(text = placeholder) },

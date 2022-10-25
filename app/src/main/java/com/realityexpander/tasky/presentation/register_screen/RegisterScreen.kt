@@ -76,9 +76,9 @@ fun RegisterScreen(
 
         // EMAIL
         EmailField(
-            email = registerState.email,
+            value = registerState.email,
             isError = registerState.isInvalidEmail,
-            onEmailChange = {
+            onValueChange = {
                 scope.launch {
                     viewModel.onEvent(RegisterEvent.UpdateEmail(it))
                 }
@@ -91,9 +91,9 @@ fun RegisterScreen(
 
         // PASSWORD
         PasswordField(
-            password = registerState.password,
+            value = registerState.password,
             isError = registerState.isInvalidPassword,
-            onPasswordChange = {
+            onValueChange = {
                 scope.launch {
                     viewModel.onEvent(RegisterEvent.UpdatePassword(it))
                 }
@@ -113,9 +113,9 @@ fun RegisterScreen(
         PasswordField(
             label = UiText.Res(R.string.register_label_confirm_password).get(),
             placeholder = UiText.Res(R.string.register_placeholder_confirm_password).get(),
-            password = registerState.confirmPassword,
+            value = registerState.confirmPassword,
             isError = registerState.isInvalidConfirmPassword,
-            onPasswordChange = {
+            onValueChange = {
                 scope.launch {
                     viewModel.onEvent(RegisterEvent.UpdateConfirmPassword(it))
                 }

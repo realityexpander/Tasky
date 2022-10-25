@@ -67,9 +67,9 @@ fun LoginScreen(
 
         // EMAIL
         EmailField(
-            email = loginState.email,
+            value = loginState.email,
             isError = loginState.isInvalidEmail,
-            onEmailChange = {
+            onValueChange = {
                 scope.launch {
                     viewModel.onEvent(LoginEvent.UpdateEmail(it))
                 }
@@ -82,9 +82,9 @@ fun LoginScreen(
 
         // PASSWORD
         PasswordField(
-            password = loginState.password,
+            value = loginState.password,
             isError = loginState.isInvalidPassword,
-            onPasswordChange = {
+            onValueChange = {
                 scope.launch {
                     viewModel.onEvent(LoginEvent.UpdatePassword(it))
                 }
