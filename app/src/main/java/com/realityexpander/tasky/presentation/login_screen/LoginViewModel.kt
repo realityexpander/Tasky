@@ -55,7 +55,9 @@ class LoginViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_statusMessage] = state.statusMessage
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
 
+        // Validate email as the user types
         if(state.email.isNotBlank()) sendEvent(LoginEvent.ValidateEmail)
+
         // Only check for password errors when the user clicks the login/register button
         //if(state.password.isNotBlank()) sendEvent(RegisterEvent.ValidatePassword(state.password))
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), LoginState())

@@ -13,8 +13,14 @@ data class RegisterState(
     val isError: Boolean = false,
 
     val isInvalidEmail: Boolean = false,
+    val isShowInvalidEmailMessage: Boolean = false,
+
     val isInvalidPassword: Boolean = false,
+    val isShowInvalidPasswordMessage: Boolean = false,
+
     val isInvalidConfirmPassword: Boolean = false,
+    val isShowInvalidConfirmPasswordMessage: Boolean = false,
+
     val isPasswordsMatch: Boolean = true,
 
     val errorMessage: UiText = UiText.None,

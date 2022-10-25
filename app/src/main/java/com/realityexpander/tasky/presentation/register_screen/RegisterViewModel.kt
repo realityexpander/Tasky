@@ -9,6 +9,7 @@ import com.realityexpander.tasky.common.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
 import com.realityexpander.tasky.domain.validation.ValidatePassword
+import com.realityexpander.tasky.presentation.common.UIConstants
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_confirmPassword
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_email
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_errorMessage
@@ -17,8 +18,12 @@ import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isI
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isInvalidPassword
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isLoggedIn
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isPasswordsMatch
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isShowInvalidConfirmPasswordMessage
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isShowInvalidEmailMessage
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isShowInvalidPasswordMessage
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_password
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_statusMessage
+import com.realityexpander.tasky.presentation.login_screen.LoginEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -41,8 +46,11 @@ class RegisterViewModel @Inject constructor(
     private val password: String = savedStateHandle[SAVED_STATE_password] ?: ""
     private val confirmPassword: String = savedStateHandle[SAVED_STATE_confirmPassword] ?: ""
     private val isInvalidEmail: Boolean = savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false
+    private val isShowInvalidEmailMessage: Boolean = savedStateHandle[SAVED_STATE_isShowInvalidEmailMessage] ?: false
     private val isInvalidPassword: Boolean = savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false
+    private val isShowInvalidPasswordMessage: Boolean = savedStateHandle[SAVED_STATE_isShowInvalidPasswordMessage] ?: false
     private val isInvalidConfirmPassword: Boolean = savedStateHandle[SAVED_STATE_isInvalidConfirmPassword] ?: false
+    private val isShowInvalidConfirmPasswordMessage: Boolean = savedStateHandle[SAVED_STATE_isShowInvalidConfirmPasswordMessage] ?: false
     private val isPasswordsMatch: Boolean = savedStateHandle[SAVED_STATE_isPasswordsMatch] ?: true
     private val isLoggedIn: Boolean = savedStateHandle[SAVED_STATE_isLoggedIn] ?: false
     private val statusMessage: UiText = savedStateHandle[SAVED_STATE_statusMessage] ?: UiText.None
@@ -55,24 +63,24 @@ class RegisterViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_password] = state.password
         savedStateHandle[SAVED_STATE_confirmPassword] = state.confirmPassword
         savedStateHandle[SAVED_STATE_isInvalidEmail] = state.isInvalidEmail
+        savedStateHandle[SAVED_STATE_isShowInvalidEmailMessage] = state.isShowInvalidEmailMessage
         savedStateHandle[SAVED_STATE_isInvalidPassword] = state.isInvalidPassword
+        savedStateHandle[SAVED_STATE_isShowInvalidPasswordMessage] = state.isShowInvalidPasswordMessage
         savedStateHandle[SAVED_STATE_isInvalidConfirmPassword] = state.isInvalidConfirmPassword
+        savedStateHandle[SAVED_STATE_isShowInvalidConfirmPasswordMessage] = state.isShowInvalidConfirmPasswordMessage
         savedStateHandle[SAVED_STATE_isPasswordsMatch] = state.isPasswordsMatch
         savedStateHandle[SAVED_STATE_isLoggedIn] = state.isLoggedIn
         savedStateHandle[SAVED_STATE_statusMessage] = state.statusMessage
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
 
-        // Only check for errors when the user clicks the login/register button
-        //if(state.email.isNotBlank()) sendEvent(RegisterEvent.ValidateEmail(state.email))
-        //if(state.password.isNotBlank()) sendEvent(RegisterEvent.ValidatePassword(state.password))
-        //if(state.confirmPassword.isNotBlank()) sendEvent(RegisterEvent.ValidateConfirmPassword(state.confirmPassword))
-
-        // Check for password match as the user types
+        // Validate as the user types
+        if(state.email.isNotBlank()) sendEvent(RegisterEvent.ValidateEmail)
+        if(state.password.isNotBlank()) sendEvent(RegisterEvent.ValidatePassword)
+        if(state.confirmPassword.isNotBlank()) sendEvent(RegisterEvent.ValidateConfirmPassword)
         sendEvent(RegisterEvent.ValidatePasswordsMatch)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RegisterState())
 
     init {
-
         viewModelScope.launch {
             yield() // allow the registerState to be initialized
 
@@ -82,8 +90,11 @@ class RegisterViewModel @Inject constructor(
                 password = password,
                 confirmPassword = confirmPassword,
                 isInvalidEmail = isInvalidEmail,
+                isShowInvalidEmailMessage = isShowInvalidEmailMessage,
                 isInvalidPassword = isInvalidPassword,
+                isShowInvalidPasswordMessage = isShowInvalidPasswordMessage,
                 isInvalidConfirmPassword = isInvalidConfirmPassword,
+                isShowInvalidConfirmPasswordMessage = isShowInvalidConfirmPasswordMessage,
                 isPasswordsMatch = isPasswordsMatch,
                 isLoggedIn = isLoggedIn,
                 statusMessage = statusMessage,
@@ -91,7 +102,7 @@ class RegisterViewModel @Inject constructor(
             )
             yield() // allow the registerState to be updated
 
-            // Validate email & password only one-time when restored from process death or coming from another screen
+            // Validate email & password when restored from process death or coming from another screen
             if (registerState.value.email.isNotBlank()) sendEvent(RegisterEvent.ValidateEmail)
             if (registerState.value.password.isNotBlank()) sendEvent(RegisterEvent.ValidatePassword)
             if (registerState.value.confirmPassword.isNotBlank()) sendEvent(RegisterEvent.ValidateConfirmPassword)
@@ -163,21 +174,24 @@ class RegisterViewModel @Inject constructor(
             is RegisterEvent.UpdateEmail -> {
                 _registerState.value = _registerState.value.copy(
                     email = event.email,
-                    isInvalidEmail = false
+                    isInvalidEmail = false,
+                    isShowInvalidEmailMessage = false,
                 )
             }
             is RegisterEvent.UpdatePassword -> {
                 _registerState.value = _registerState.value.copy(
                     password = event.password,
                     isInvalidPassword = false,
-                    isPasswordsMatch = false
+                    isShowInvalidPasswordMessage = false,
+                    isPasswordsMatch = false,
                 )
             }
             is RegisterEvent.UpdateConfirmPassword -> {
                 _registerState.value = _registerState.value.copy(
                     confirmPassword = event.confirmPassword,
                     isInvalidConfirmPassword = false,
-                    isPasswordsMatch = false
+                    isShowInvalidConfirmPasswordMessage = false,
+                    isPasswordsMatch = false,
                 )
             }
             is RegisterEvent.TogglePasswordVisibility -> {
@@ -202,22 +216,37 @@ class RegisterViewModel @Inject constructor(
             }
             is RegisterEvent.IsValidEmail -> {
                 _registerState.value = _registerState.value.copy(
-                    isInvalidEmail = !event.isValid
+                    isInvalidEmail = !event.isValid,
                 )
             }
             is RegisterEvent.IsValidPassword -> {
                 _registerState.value = _registerState.value.copy(
-                    isInvalidPassword = !event.isValid
+                    isInvalidPassword = !event.isValid,
                 )
             }
             is RegisterEvent.IsValidConfirmPassword -> {
                 _registerState.value = _registerState.value.copy(
-                    isInvalidConfirmPassword = !event.isValid
+                    isInvalidConfirmPassword = !event.isValid,
                 )
             }
             is RegisterEvent.IsPasswordsMatch -> {
                 _registerState.value = _registerState.value.copy(
                     isPasswordsMatch = event.isMatch
+                )
+            }
+            is RegisterEvent.ShowInvalidEmailMessage -> {
+                _registerState.value = _registerState.value.copy(
+                    isShowInvalidEmailMessage = true,
+                )
+            }
+            is RegisterEvent.ShowInvalidPasswordMessage -> {
+                _registerState.value = _registerState.value.copy(
+                    isShowInvalidPasswordMessage = true,
+                )
+            }
+            is RegisterEvent.ShowInvalidConfirmPasswordMessage -> {
+                _registerState.value = _registerState.value.copy(
+                    isShowInvalidConfirmPasswordMessage = true,
                 )
             }
             is RegisterEvent.Register -> {
@@ -226,6 +255,15 @@ class RegisterViewModel @Inject constructor(
                 sendEvent(RegisterEvent.ValidateConfirmPassword)
                 sendEvent(RegisterEvent.ValidatePasswordsMatch)
                 yield()
+
+                // Only show `Invalid Email` message only when "login" is clicked and the email is invalid.
+                if(_registerState.value.isInvalidEmail) sendEvent(RegisterEvent.ShowInvalidEmailMessage)
+
+                // Only show `Invalid Password` message only when "login" is clicked and the password is invalid.
+                if(_registerState.value.isInvalidPassword) sendEvent(RegisterEvent.ShowInvalidPasswordMessage)
+
+                // Only show `Invalid Confirm Password` message only when "login" is clicked and the confirm password is invalid.
+                if(_registerState.value.isInvalidConfirmPassword) sendEvent(RegisterEvent.ShowInvalidConfirmPasswordMessage)
 
                 if(_registerState.value.isInvalidEmail
                     || _registerState.value.isInvalidPassword

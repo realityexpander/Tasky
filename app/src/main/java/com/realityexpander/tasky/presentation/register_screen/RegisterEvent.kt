@@ -21,6 +21,10 @@ sealed class RegisterEvent {
     data class IsValidConfirmPassword(val isValid: Boolean) : RegisterEvent()
     data class IsPasswordsMatch(val isMatch: Boolean) : RegisterEvent()
 
+    object ShowInvalidEmailMessage : RegisterEvent()
+    object ShowInvalidPasswordMessage : RegisterEvent()
+    object ShowInvalidConfirmPasswordMessage : RegisterEvent()
+
     data class Register(val email: String, val password: String, val confirmPassword: String) : RegisterEvent()
     data class RegisterSuccess(val authToken: AuthToken) : RegisterEvent()
     data class RegisterError(val message: UiText) : RegisterEvent()

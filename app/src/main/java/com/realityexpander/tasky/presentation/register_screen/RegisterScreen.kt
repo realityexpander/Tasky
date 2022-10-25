@@ -91,7 +91,7 @@ fun RegisterScreen(
                 viewModel.sendEvent(RegisterEvent.UpdateEmail(it))
             }
         )
-        if(registerState.isInvalidEmail) {
+        if(registerState.isInvalidEmail && registerState.isShowInvalidEmailMessage) {
             Text(text = UiText.Res(R.string.error_invalid_email).get(), color = Color.Red)
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -109,7 +109,7 @@ fun RegisterScreen(
             },
             imeAction = ImeAction.Next,
         )
-        if (registerState.isInvalidPassword) {
+        if (registerState.isInvalidPassword && registerState.isShowInvalidPasswordMessage) {
             Text(text = UiText.Res(R.string.error_invalid_password).get(), color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -132,7 +132,7 @@ fun RegisterScreen(
                 performRegister()
             },
         )
-        if (registerState.isInvalidConfirmPassword) {
+        if (registerState.isInvalidConfirmPassword && registerState.isShowInvalidConfirmPasswordMessage) {
             Text(text = UiText.Res(R.string.error_invalid_confirm_password).get(), color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
         }
