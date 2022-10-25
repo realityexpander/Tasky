@@ -62,6 +62,7 @@ sealed class UiText {
     // asString() = null
     object None : UiText()
 
+    // Useful for debugging
     override fun toString(): String {
         return when(this) {
             is None ->
