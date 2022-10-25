@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.ui.components
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -8,9 +9,9 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
@@ -56,26 +57,53 @@ fun PasswordField(
         placeholder = { Text(text = placeholder) },
         modifier = Modifier.fillMaxWidth(1f),
         visualTransformation =
-        if (isPasswordVisible)
-            VisualTransformation.None
-        else
-            PasswordVisualTransformation(),
+            if (isPasswordVisible)
+                VisualTransformation.None
+            else
+                PasswordVisualTransformation(),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActionsLocal,
+        leadingIcon = { Icon(imageVector = Icons.Filled.Lock, "Lock") },
         trailingIcon = {
-            val image = if (isPasswordVisible)
+            val isPasswordValid = !isError
+
+            val validImage =
+                if (isPasswordValid)
+                    Icons.Filled.Check
+                else
+                    Icons.Filled.Error
+
+            // localized description for accessibility services
+            val validDescription =
+                if (isPasswordValid)
+                    UiText.Res(R.string.emailField_description_isValid).get()
+                else
+                    UiText.Res(R.string.emailField_description_isInvalid).get()
+
+            val passwordVisibleImage = if (isPasswordVisible)
                 Icons.Default.Visibility
             else
                 Icons.Default.VisibilityOff
 
             // localized description for accessibility services
-            val description = if (isPasswordVisible)
+            val passwordVisibleDescription = if (isPasswordVisible)
                     UiText.Res(R.string.passwordField_description_hide).get()
                 else
                     UiText.Res(R.string.passwordField_description_show).get()
 
-            IconButton(onClick = clickTogglePasswordVisibility){
-                Icon(imageVector  = image, description)
+            Row {
+                if(value.isNotBlank()) {
+                    Icon(
+                        imageVector = validImage,
+                        contentDescription = validDescription,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                    )
+                }
+
+                IconButton(onClick = clickTogglePasswordVisibility) {
+                    Icon(imageVector = passwordVisibleImage, passwordVisibleDescription)
+                }
             }
         }
     )

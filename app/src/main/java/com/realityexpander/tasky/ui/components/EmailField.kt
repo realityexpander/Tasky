@@ -8,10 +8,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -49,6 +46,7 @@ fun EmailField(
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActionsLocal,
         modifier = Modifier.fillMaxWidth(),
+        leadingIcon = { Icon(imageVector = Icons.Filled.Email, "Email") },
         trailingIcon = {
             if(value.isNotBlank() && value.length >= 5) {
                 val isEmailValid = !isError

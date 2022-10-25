@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.presentation.register_screen
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -42,9 +43,9 @@ class RegisterViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)
-    private val email: String = savedStateHandle[SAVED_STATE_email] ?: ""
-    private val password: String = savedStateHandle[SAVED_STATE_password] ?: ""
-    private val confirmPassword: String = savedStateHandle[SAVED_STATE_confirmPassword] ?: ""
+    private val email: String = Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: ""
+    private val password: String = Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: ""
+    private val confirmPassword: String = Uri.decode(savedStateHandle[SAVED_STATE_confirmPassword]) ?: ""
     private val isInvalidEmail: Boolean = savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false
     private val isShowInvalidEmailMessage: Boolean = savedStateHandle[SAVED_STATE_isShowInvalidEmailMessage] ?: false
     private val isInvalidPassword: Boolean = savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false
@@ -107,6 +108,12 @@ class RegisterViewModel @Inject constructor(
             if (registerState.value.password.isNotBlank()) sendEvent(RegisterEvent.ValidatePassword)
             if (registerState.value.confirmPassword.isNotBlank()) sendEvent(RegisterEvent.ValidateConfirmPassword)
             sendEvent(RegisterEvent.ValidatePasswordsMatch)
+
+            yield() // allow the registerState to be updated
+            // Show status validation messages when restored from process death or coming from another screen
+            if(registerState.value.isInvalidEmail) sendEvent(RegisterEvent.ShowInvalidEmailMessage)
+            if(registerState.value.isInvalidPassword) sendEvent(RegisterEvent.ShowInvalidPasswordMessage)
+            if(registerState.value.isInvalidConfirmPassword) sendEvent(RegisterEvent.ShowInvalidConfirmPasswordMessage)
         }
     }
 

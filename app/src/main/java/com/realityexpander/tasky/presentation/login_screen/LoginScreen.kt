@@ -142,7 +142,7 @@ fun LoginScreen(
                     performLogin()
                 }
             )
-            if (loginState.isInvalidPassword) {
+            if (loginState.isInvalidPassword && loginState.isShowInvalidPasswordMessage) {
                 Text(text = UiText.Res(R.string.error_invalid_password).get(), color = Color.Red)
                 Spacer(modifier = Modifier.height(8.dp))
             }

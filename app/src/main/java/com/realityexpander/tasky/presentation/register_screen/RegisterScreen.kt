@@ -94,7 +94,7 @@ fun RegisterScreen(
         if(registerState.isInvalidEmail && registerState.isShowInvalidEmailMessage) {
             Text(text = UiText.Res(R.string.error_invalid_email).get(), color = Color.Red)
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // PASSWORD
         PasswordField(
@@ -113,6 +113,7 @@ fun RegisterScreen(
             Text(text = UiText.Res(R.string.error_invalid_password).get(), color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
         }
+        Spacer(modifier = Modifier.height(4.dp))
 
         // CONFIRM PASSWORD
         PasswordField(
@@ -145,7 +146,7 @@ fun RegisterScreen(
         }
 
         // SHOW PASSWORD REQUIREMENTS
-        if(registerState.isInvalidPassword || registerState.isInvalidConfirmPassword) {
+        if(registerState.isShowInvalidPasswordMessage || registerState.isShowInvalidConfirmPasswordMessage) {
             Text(
                 text = UiText.Res(R.string.register_password_requirements).get(),
                 color = Color.Red
