@@ -149,7 +149,7 @@ class RegisterViewModel @Inject constructor(
     fun sendEvent(event: RegisterEvent) {
         viewModelScope.launch {
             onEvent(event)
-            yield()
+            yield() // allow events to percolate
         }
     }
 

@@ -108,7 +108,7 @@ class LoginViewModel @Inject constructor(
     fun sendEvent(event: LoginEvent) {
         viewModelScope.launch {
             onEvent(event)
-            yield()
+            yield() // allow events to percolate
         }
     }
 
