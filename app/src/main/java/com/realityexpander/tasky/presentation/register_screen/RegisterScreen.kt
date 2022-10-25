@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.realityexpander.tasky.R
+import com.realityexpander.tasky.common.UiText
 import com.realityexpander.tasky.presentation.components.EmailField
 import com.realityexpander.tasky.presentation.components.PasswordField
 import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
@@ -83,7 +85,7 @@ fun RegisterScreen(
             }
         )
         if(registerState.isInvalidEmail) {
-            Text(text = "Invalid email", color = Color.Red)
+            Text(text = UiText.Res(R.string.error_invalid_email).get(), color = Color.Red)
         }
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -103,14 +105,14 @@ fun RegisterScreen(
             imeAction = ImeAction.Next,
         )
         if (registerState.isInvalidPassword) {
-            Text(text = "Invalid password", color = Color.Red)
+            Text(text = UiText.Res(R.string.error_invalid_password).get(), color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
         }
 
         // CONFIRM PASSWORD
         PasswordField(
-            label = "Confirm Password",
-            placeholder = "Confirm your password",
+            label = UiText.Res(R.string.register_label_confirm_password).get(),
+            placeholder = UiText.Res(R.string.register_placeholder_confirm_password).get(),
             password = registerState.confirmPassword,
             isError = registerState.isInvalidConfirmPassword,
             onPasswordChange = {
@@ -128,7 +130,7 @@ fun RegisterScreen(
             },
         )
         if (registerState.isInvalidConfirmPassword) {
-            Text(text = "Invalid confirm password", color = Color.Red)
+            Text(text = UiText.Res(R.string.error_invalid_confirm_password).get(), color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
         }
 
@@ -136,15 +138,13 @@ fun RegisterScreen(
         if(!registerState.isPasswordsMatch)
         {
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Passwords do not match", color = Color.Red)
+            Text(text = UiText.Res(R.string.register_error_passwords_do_not_match).get(), color = Color.Red)
         }
 
         // SHOW PASSWORD REQUIREMENTS
         if(registerState.isInvalidPassword || registerState.isInvalidConfirmPassword) {
             Text(
-                text = "Password must be at between 6 and 30 characters long, " +
-                        "contain at least one number, one uppercase letter " +
-                        "and one lowercase letter.",
+                text = UiText.Res(R.string.register_password_requirements).get(),
                 color = Color.Red
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -159,7 +159,7 @@ fun RegisterScreen(
             modifier = Modifier
                 .align(alignment = Alignment.End)
         ) {
-            Text(text = "Register")
+            Text(text = UiText.Res(R.string.register_button).get())
             if(registerState.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier
@@ -172,7 +172,7 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         // SIGN IN BUTTON
-        Text(text = "Are you a member? Tap to sign in",
+        Text(text = UiText.Res(R.string.register_already_a_member_sign_in).get(),
             color = Color.Cyan,
             modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)
@@ -193,17 +193,17 @@ fun RegisterScreen(
 
         if(registerState.isError) {
             Text(
-                text = "Error: ${registerState.errorMessage}",
+                text = "Error: ${registerState.errorMessage.get()}",
                 color = Color.Red,
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
         if(registerState.isLoggedIn) {
-            Text(text = "Registered and Logged in!")
+            Text(text = UiText.Res(R.string.register_registered).get())
             Spacer(modifier = Modifier.height(8.dp))
         }
-        if(registerState.statusMessage.isNotEmpty()) {
-            Text(text = registerState.statusMessage)
+        registerState.statusMessage.asStrValueOrNull()?.let { message ->
+            Text(text = message)
             Spacer(modifier = Modifier.height(8.dp))
         }
 

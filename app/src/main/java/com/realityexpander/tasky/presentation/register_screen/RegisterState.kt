@@ -1,5 +1,7 @@
 package com.realityexpander.tasky.presentation.register_screen
 
+import com.realityexpander.tasky.common.UiText
+
 data class RegisterState(
     val email: String = "",
     val password: String = "",
@@ -15,6 +17,6 @@ data class RegisterState(
     val isInvalidConfirmPassword: Boolean = false,
     val isPasswordsMatch: Boolean = true,
 
-    val errorMessage: String = "",
-    val statusMessage: String = "",
+    val errorMessage: UiText = UiText.None,
+    val statusMessage: UiText = UiText.None,
 )

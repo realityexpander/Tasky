@@ -3,7 +3,9 @@ package com.realityexpander.tasky.presentation.register_screen
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.realityexpander.tasky.R
 import com.realityexpander.tasky.common.Exceptions
+import com.realityexpander.tasky.common.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
 import com.realityexpander.tasky.domain.validation.IValidatePassword
@@ -45,14 +47,14 @@ class RegisterViewModel @Inject constructor(
         } catch(e: Exceptions.EmailAlreadyExistsException) {
             sendEvent(RegisterEvent.EmailAlreadyExists)
         } catch(e: Exceptions.LoginException) {
-            sendEvent(RegisterEvent.RegisterError(e.message ?: "Unknown Login Error"))
+            sendEvent(RegisterEvent.RegisterError(UiText.Res(R.string.register_register_error, e.message ?: "")))
         } catch(e: Exceptions.InvalidEmailException) {
             sendEvent(RegisterEvent.IsValidEmail(false))
         } catch(e: Exceptions.InvalidPasswordException) {
             sendEvent(RegisterEvent.IsValidPassword(false))
         } catch (e: Exception) {
             // handle general error
-            sendEvent(RegisterEvent.UnknownError(e.message ?: "Unknown error"))
+            sendEvent(RegisterEvent.UnknownError(UiText.Res( R.string.error_unknown, e.message ?: "")))
             e.printStackTrace()
         }
     }
@@ -174,8 +176,8 @@ class RegisterViewModel @Inject constructor(
                 _registerState.value = _registerState.value.copy(
                     isLoggedIn = false,
                     isError = true,
-                    errorMessage = "Email already exists - try logging in!",
-                    statusMessage = "",
+                    errorMessage = UiText.Res(R.string.register_error_email_exists),
+                    statusMessage = UiText.None,
                     isLoading = false,
                 )
             }
@@ -183,8 +185,8 @@ class RegisterViewModel @Inject constructor(
                 _registerState.value = _registerState.value.copy(
                     isLoggedIn = true,
                     isError = false,
-                    errorMessage = "",
-                    statusMessage = "Login Success: authToken = ${event.authToken}",
+                    errorMessage = UiText.None,
+                    statusMessage = UiText.Res(R.string.register_success, event.authToken),
                     isPasswordVisible = false,
                     isLoading = false,
                 )
@@ -194,7 +196,7 @@ class RegisterViewModel @Inject constructor(
                     isLoggedIn = false,
                     isError = true,
                     errorMessage = event.message,
-                    statusMessage = "",
+                    statusMessage = UiText.None,
                     isLoading = false,
                 )
             }

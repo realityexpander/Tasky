@@ -114,7 +114,7 @@ fun LoginScreen(
             modifier = Modifier
                 .align(alignment = Alignment.End)
         ) {
-            Text(text = "Login")
+            Text(text = UiText.Res(R.string.login_button).get())
             if(loginState.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier
@@ -126,7 +126,7 @@ fun LoginScreen(
         }
         Spacer(modifier = Modifier.height(32.dp))
 
-        // REGISTER BUTTON
+        // REGISTER TEXT BUTTON
         Text(text = UiText.Res(R.string.login_not_a_member_sign_up).get(),
             color = Color.Cyan,
             modifier = Modifier
@@ -161,7 +161,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(8.dp))
         }
         if(loginState.isLoggedIn) {
-            Text(text = "Logged in!")
+            Text(text = UiText.Res(R.string.login_logged_in).get())
             Spacer(modifier = Modifier.height(8.dp))
         }
         loginState.statusMessage.asStrValueOrNull()?.let { message ->

@@ -5,17 +5,30 @@
     <string name="login_title">Login:</string>
     <string name="login_not_a_member_sign_up">Don\'t have an account? Register here</string>
     <string name="login_success">Login Success: authToken = %s</string>
+    <string name="login_logged_in">Logged in!</string>
+    <string name="error_login_error">Login error - %s</string>
+    <string name="login_button">Login</string>
 
     <!--    Register Screen-->
     <string name="register_title">Register:</string>
     <string name="register_already_a_member_sign_in">Already have an account? Login here</string>
     <string name="register_success">Register Success: authToken = %s</string>
+    <string name="register_registered">Registered and logged in!</string>
+    <string name="register_register_error">Register error - %s</string>
+    <string name="register_error_email_exists">Email already exists - try logging in!</string>
+    <string name="register_error_passwords_do_not_match">Passwords do not match</string>
+    <string name="register_password_requirements">Password must be at between 6 and 30 characters
+        long, contain at least one number, one uppercase letter and one lowercase letter.</string>
+    <string name="register_label_confirm_password">Confirm password</string>
+    <string name="register_placeholder_confirm_password">Confirm your password</string>
+    <string name="register_button">Register</string>
+
 
     <!--    Error Messages-->
     <string name="error_unknown">Unknown error - %s</string>
-    <string name="error_login_error">Login error - %s</string>
     <string name="error_invalid_email">Invalid email</string>
     <string name="error_invalid_password">Invalid password</string>
+    <string name="error_invalid_confirm_password">Invalid confirm password</string>
     <string name="error_invalid_username">Invalid username</string>
     <string name="error_invalid_user_name">Invalid user name</string>
 </resources>

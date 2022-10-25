@@ -11,8 +11,8 @@ class AuthApiImpl: IAuthApi {
     private val users = mutableMapOf<Email, Password>()
 
     init {
-        users["chris@demo.com"] = "password"
-        users["a@a.c"] = "zzzzzz"
+        users["chris@demo.com"] = "Password1"
+        users["a@a.c"] = "1Zzzzz"
     }
 
     override suspend fun login(email: String, password: String): AuthToken {
