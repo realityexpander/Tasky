@@ -21,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        waitForDebugger() // for testing process death
+//        waitForDebugger() // for testing process death
 
         super.onCreate(savedInstanceState)
         setContent {

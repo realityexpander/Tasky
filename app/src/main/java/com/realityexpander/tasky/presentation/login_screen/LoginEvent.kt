@@ -8,8 +8,8 @@ sealed class LoginEvent {
     data class UpdatePassword(val password: String) : LoginEvent()
     data class TogglePasswordVisibility(val isPasswordVisible: Boolean) : LoginEvent()
 
-    data class ValidateEmail(val email: String) : LoginEvent()
-    data class ValidatePassword(val password: String) : LoginEvent()
+    object ValidateEmail : LoginEvent()
+    object ValidatePassword : LoginEvent()
 
     data class IsValidEmail(val isValid: Boolean) : LoginEvent()
     data class IsValidPassword(val isValid: Boolean) : LoginEvent()
