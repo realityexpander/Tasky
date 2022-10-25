@@ -19,12 +19,11 @@ import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isL
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isPasswordsMatch
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_password
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_statusMessage
-import com.realityexpander.tasky.presentation.login_screen.LoginEvent
-import com.realityexpander.tasky.presentation.login_screen.LoginState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import javax.inject.Inject
