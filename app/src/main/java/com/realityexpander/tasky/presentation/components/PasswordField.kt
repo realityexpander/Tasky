@@ -18,12 +18,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import com.realityexpander.tasky.R
+import com.realityexpander.tasky.common.UiText
 
 @Composable
 fun PasswordField(
     password: String,
-    label: String = "Password",
-    placeholder: String = "Enter your Password",
+    label: String = UiText.Res(R.string.passwordField_label).get(),
+    placeholder: String = UiText.Res(R.string.passwordField_placeholder).get(),
     isError: Boolean,
     isPasswordVisible: Boolean = false,
     clickTogglePasswordVisibility: () -> Unit,
@@ -67,7 +69,10 @@ fun PasswordField(
                 Icons.Default.Visibility
 
             // Please provide localized description for accessibility services
-            val description = if (isPasswordVisible) "Hide password" else "Show password"
+            val description = if (isPasswordVisible)
+                    UiText.Res(R.string.passwordField_description_hide).get()
+                else
+                    UiText.Res(R.string.passwordField_description_show).get()
 
             IconButton(onClick = clickTogglePasswordVisibility){
                 Icon(imageVector  = image, description)

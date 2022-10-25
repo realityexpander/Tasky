@@ -23,6 +23,15 @@
     <string name="register_placeholder_confirm_password">Confirm your password</string>
     <string name="register_button">Register</string>
 
+    <!--    EmailField Composable-->
+    <string name="emailField_label">Email</string>
+    <string name="emailField_placeholder">Enter your Email</string>
+
+    <!--    PasswordField Composable-->
+    <string name="passwordField_label">Password</string>
+    <string name="passwordField_placeholder">Enter your Password</string>
+    <string name="passwordField_description_hide">Hide password</string>
+    <string name="passwordField_description_show">Show password</string>
 
     <!--    Error Messages-->
     <string name="error_unknown">Unknown error - %s</string>
