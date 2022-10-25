@@ -189,7 +189,6 @@ fun RegisterScreen(
 
         // STATUS //////////////////////////////////////////
 
-//        if(registerState.isError) {
         registerState.errorMessage.getOrNull()?.let { errorMessage ->
             Text(
                 text = "Error: $errorMessage",
