@@ -62,7 +62,7 @@ fun LoginScreen(
             .fillMaxSize()
             .padding(16.dp),
     ) {
-        Text(text = UiText.StrRes(R.string.login_title).get())
+        Text(text = UiText.Res(R.string.login_title).get())
         Spacer(modifier = Modifier.height(8.dp))
 
         // EMAIL
@@ -76,7 +76,7 @@ fun LoginScreen(
             }
         )
         if(loginState.isInvalidEmail) {
-            Text(text = UiText.StrRes(R.string.error_invalid_email).get(), color = Color.Red)
+            Text(text = UiText.Res(R.string.error_invalid_email).get(), color = Color.Red)
         }
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -101,7 +101,7 @@ fun LoginScreen(
             }
         )
         if(loginState.isInvalidPassword) {
-            Text(text = UiText.StrRes(R.string.error_invalid_password).get(), color = Color.Red)
+            Text(text = UiText.Res(R.string.error_invalid_password).get(), color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
         }
 
@@ -127,7 +127,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         // REGISTER BUTTON
-        Text(text = UiText.StrRes(R.string.login_not_a_member_sign_up).get(),
+        Text(text = UiText.Res(R.string.login_not_a_member_sign_up).get(),
             color = Color.Cyan,
             modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)

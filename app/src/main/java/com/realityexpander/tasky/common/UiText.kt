@@ -24,7 +24,7 @@ sealed class UiText {
     // UiText.StrRes(resId) -> asString() = "Hello, World!"
     //
     // resId = null -> compiler error (not allowed)
-    class StrRes(
+    class Res(
         @StringRes val resId: Int,
         vararg val args: Any
     ): UiText()
@@ -39,7 +39,7 @@ sealed class UiText {
     // resId = "Hello, %s!"
     // args = "World!"
     // UiText.StrOrStrRes(resId) -> asString() = "Hello, World!"
-    class StrOrStrRes(
+    class StrOrRes(
         val value: String?,
         @StringRes val resId: Int? = null,
         vararg val args: Any = arrayOf()
@@ -52,7 +52,7 @@ sealed class UiText {
     //
     // resId = null
     // UiText.StrResOrStr(resId, "Goodbye!") -> asString() = "Goodbye!"
-    class StrResOrStr(
+    class ResOrStr(
         @StringRes val resId: Int? = null,
         val value: String? = null,
         vararg val args: Any = arrayOf()
@@ -69,40 +69,40 @@ sealed class UiText {
             is Str ->
                 value?.let { "UiText.Str: value=$it" }
                     ?: "UiText.Str=null"
-            is StrOrStrRes ->
+            is StrOrRes ->
                 value?.let { "UiText.StrOrStrRes: value=$value" }
                     ?: resId?.let { "UiText.StrOrStrRes: resId=${this.resId}" }
                     ?: "UiText.StrOrStrRes=both null"
-            is StrRes ->
+            is Res ->
                     "UiText.StrRes: resId=$resId"
-            is StrResOrStr ->
+            is ResOrStr ->
                 resId?.let { "UiText.StrResOrStr: resId=$resId" }
                     ?: value?.let { "UiText.StrResOrStr: value=$value" }
                     ?:  "UiText.StrResOrStr=both null"
         }
     }
 
-    // Returns string "" if UiText is `None` or value is null.
+    // Returns string "" if UiText is `None` or value is null, or return Resource ID.
     @Composable
     fun get(): String {
         return when(this) {
             is None -> ""
             is Str -> value ?: ""
-            is StrRes -> stringResource(resId, *args)
-            is StrOrStrRes -> value ?: stringResource(resId!!, *args, "")
-            is StrResOrStr -> stringResource(resId!!, *args) ?: value ?: ""
+            is Res -> stringResource(resId, *args)
+            is StrOrRes -> value ?: stringResource(resId!!, *args)
+            is ResOrStr -> stringResource(resId!!, *args) ?: value ?: ""
         }
     }
 
-    // Returns null if UiText is `None` or `value` is null.
+    // Returns null if UiText is `None` or `value` is null, or return Resource ID.
     @Composable
     fun getNullable(): String? {
         return when(this) {
             is None -> null
             is Str -> value
-            is StrRes -> stringResource(resId, *args)
-            is StrOrStrRes -> value ?: stringResource(resId!!, *args, "")
-            is StrResOrStr -> stringResource(resId!!, *args, "")
+            is Res -> stringResource(resId, *args)
+            is StrOrRes -> value ?: stringResource(resId!!, *args)
+            is ResOrStr -> stringResource(resId!!, *args)
         }
     }
 
@@ -113,9 +113,9 @@ sealed class UiText {
         return when(this) {
             is None -> "null"
             is Str -> value ?: "null"
-            is StrRes -> stringResource(resId, *args)
-            is StrOrStrRes -> value ?: stringResource(resId!!, *args, "")
-            is StrResOrStr -> resId?.let { stringResource(it, *args, "") } ?: value ?: "null"
+            is Res -> stringResource(resId, *args)
+            is StrOrRes -> value ?: stringResource(resId!!, *args)
+            is ResOrStr -> resId?.let { stringResource(it, *args) } ?: value ?: "null"
         }
     }
 
@@ -124,9 +124,9 @@ sealed class UiText {
         return when(this) {
             is None -> null
             is Str -> value
-            is StrRes -> context.getString(resId, *args, "")
-            is StrOrStrRes -> value ?: context.getString(resId!!, *args, "")
-            is StrResOrStr -> resId?.let { context.getString(it, *args, "") } ?: value
+            is Res -> context.getString(resId, *args)
+            is StrOrRes -> value ?: context.getString(resId!!, *args)
+            is ResOrStr -> resId?.let { context.getString(it, *args) } ?: value
         }
     }
 
@@ -135,20 +135,20 @@ sealed class UiText {
         return when(this) {
             is None -> null
             is Str -> value
-            is StrRes -> null
-            is StrOrStrRes -> value
-            is StrResOrStr -> null
+            is Res -> null
+            is StrOrRes -> value
+            is ResOrStr -> null
         }
     }
 
     // Returns only the string resource id or null.
-    fun asStrResIdOrNull(): Int? {
+    fun asResIdOrNull(): Int? {
         return when(this) {
             is None -> null
             is Str -> null
-            is StrRes -> resId
-            is StrOrStrRes -> resId
-            is StrResOrStr -> null
+            is Res -> resId
+            is StrOrRes -> resId
+            is ResOrStr -> null
         }
     }
 }

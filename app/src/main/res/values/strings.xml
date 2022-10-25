@@ -12,8 +12,8 @@
     <string name="register_success">Register Success: authToken = %s</string>
 
     <!--    Error Messages-->
-    <string name="error_unknown">Unknown error %s</string>
-    <string name="error_unknown_login_error">Unknown login error %s</string>
+    <string name="error_unknown">Unknown error - %s</string>
+    <string name="error_login_error">Login error - %s</string>
     <string name="error_invalid_email">Invalid email</string>
     <string name="error_invalid_password">Invalid password</string>
     <string name="error_invalid_username">Invalid username</string>

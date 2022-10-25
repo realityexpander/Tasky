@@ -43,14 +43,14 @@ class LoginViewModel @Inject constructor(
             val authToken = authRepository.login(email, password)
             sendEvent(LoginEvent.LoginSuccess(authToken))
         } catch(e: Exceptions.LoginException) {
-            sendEvent(LoginEvent.LoginError(UiText.StrRes(R.string.error_unknown_login_error, e.message ?: "")))
+            sendEvent(LoginEvent.LoginError(UiText.Res(R.string.error_login_error, e.message ?: "")))
         } catch(e: Exceptions.InvalidEmailException) {
             sendEvent(LoginEvent.IsValidEmail(false))
         } catch(e: Exceptions.InvalidPasswordException) {
             sendEvent(LoginEvent.IsValidPassword(false))
         } catch (e: Exception) {
             // handle general error
-            sendEvent(LoginEvent.UnknownError(UiText.StrRes( R.string.error_unknown, e.message ?: "")))
+            sendEvent(LoginEvent.UnknownError(UiText.Res( R.string.error_unknown, e.message ?: "")))
             e.printStackTrace()
         }
     }
@@ -124,7 +124,7 @@ class LoginViewModel @Inject constructor(
                     isLoggedIn = true,
                     isError = false,
                     errorMessage = UiText.None,
-                    statusMessage = UiText.StrRes(R.string.login_success, event.authToken),
+                    statusMessage = UiText.Res(R.string.login_success, event.authToken),
                     isPasswordVisible = false,
                 )
                 sendEvent(LoginEvent.Loading(false))
@@ -133,7 +133,7 @@ class LoginViewModel @Inject constructor(
                 _loginState.value = _loginState.value.copy(
                     isLoggedIn = false,
                     isError = true,
-                    errorMessage = UiText.StrOrStrRes(event.message.asStrValueOrNull(), R.string.error_unknown),
+                    errorMessage = event.message,
                     statusMessage = UiText.None
                 )
 
@@ -143,7 +143,10 @@ class LoginViewModel @Inject constructor(
                 _loginState.value = _loginState.value.copy(
                     isLoggedIn = false,
                     isError = true,
-                    errorMessage = UiText.StrOrStrRes(event.message.asStrValueOrNull(), R.string.error_unknown)
+                    errorMessage = if(event.message.asResIdOrNull() == null)
+                            UiText.Res(R.string.error_unknown, "")
+                        else
+                            event.message,
                 )
             }
         }
