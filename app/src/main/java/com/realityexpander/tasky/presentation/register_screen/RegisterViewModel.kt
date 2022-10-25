@@ -8,7 +8,7 @@ import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.common.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
-import com.realityexpander.tasky.domain.validation.IValidatePassword
+import com.realityexpander.tasky.domain.validation.ValidatePassword
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_CONFIRM_PASSWORD
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_EMAIL
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_PASSWORD
@@ -23,7 +23,7 @@ import javax.inject.Inject
 class RegisterViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     private val validateEmail: IValidateEmail,
-    private val validatePassword: IValidatePassword,
+    private val validatePassword: ValidatePassword,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -60,17 +60,17 @@ class RegisterViewModel @Inject constructor(
     }
 
     private fun validateEmail(email: String) {
-        val isValid = validateEmail.validateEmail(email)
+        val isValid = validateEmail.validate(email)
         sendEvent(RegisterEvent.IsValidEmail(isValid))
     }
 
     private fun validatePassword(password: String) {
-        val isValid = validatePassword.validatePassword(password)
+        val isValid = validatePassword.validate(password)
         sendEvent(RegisterEvent.IsValidPassword(isValid))
     }
 
     private fun validateConfirmPassword(confirmPassword: String) {
-        val isValid = validatePassword.validatePassword(confirmPassword)
+        val isValid = validatePassword.validate(confirmPassword)
         sendEvent(RegisterEvent.IsValidConfirmPassword(isValid))
     }
 

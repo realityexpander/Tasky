@@ -1,6 +1,5 @@
 package com.realityexpander.tasky.domain.validation
 
-import com.realityexpander.tasky.data.validation.ValidateEmailImpl
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
@@ -23,7 +22,7 @@ class IValidateEmailTest {
         validateEmail = ValidateEmailImpl(emailMatcherFake)
 
         // ACT
-        val result = validateEmail.validateEmail("chris@demo.com")
+        val result = validateEmail.validate("chris@demo.com")
 
         // ASSERT
         assertTrue(result)
@@ -36,7 +35,7 @@ class IValidateEmailTest {
         validateEmail = ValidateEmailImpl(emailMatcherFake)
 
         // ACT
-        val result = validateEmail.validateEmail("chrismail.com")
+        val result = validateEmail.validate("chrismail.com")
 
         // ASSERT
         assertFalse(result)

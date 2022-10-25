@@ -14,7 +14,7 @@ class AuthRepositoryImpl(
 ): IAuthRepository {
 
     override suspend fun login(email: String, password: String): AuthToken {
-        if(!validateEmail.validateEmail(email)) {
+        if(!validateEmail.validate(email)) {
             throw Exceptions.InvalidEmailException()
         }
 
@@ -35,7 +35,7 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun register(email: String, password: String): AuthToken {
-        if(!validateEmail.validateEmail(email)) {
+        if(!validateEmail.validate(email)) {
             throw Exceptions.InvalidEmailException()
         }
 

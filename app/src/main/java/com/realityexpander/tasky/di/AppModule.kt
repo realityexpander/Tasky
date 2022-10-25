@@ -3,12 +3,8 @@ package com.realityexpander.tasky.di
 import com.realityexpander.tasky.data.repository.AuthRepositoryImpl
 import com.realityexpander.tasky.data.repository.remote.AuthApiImpl
 import com.realityexpander.tasky.data.repository.local.AuthDaoImpl
-import com.realityexpander.tasky.data.validation.EmailMatcherImpl
-import com.realityexpander.tasky.data.validation.ValidateEmailImpl
-import com.realityexpander.tasky.data.validation.ValidatePasswordImpl
 import com.realityexpander.tasky.domain.IAuthRepository
-import com.realityexpander.tasky.domain.validation.IValidateEmail
-import com.realityexpander.tasky.domain.validation.IValidatePassword
+import com.realityexpander.tasky.domain.validation.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,7 +31,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideValidatePassword(): IValidatePassword =
-        ValidatePasswordImpl()
+    fun provideValidatePassword(): ValidatePassword = ValidatePassword()
 
 }
