@@ -32,31 +32,36 @@ fun RegisterScreen(
     navigator: DestinationsNavigator,
     viewModel: RegisterViewModel = hiltViewModel(),
 ) {
-    BackHandler(true) { /* We want to disable back clicks */ }
 
     val registerState by viewModel.registerState.collectAsState()
-//    val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
 
     fun performRegister() {
-        //scope.launch {
-//            viewModel.onEvent(RegisterEvent.ValidateEmail(registerState.email))
-//            viewModel.onEvent(RegisterEvent.ValidatePassword(registerState.password))
-//            viewModel.onEvent(RegisterEvent.ValidateConfirmPassword(registerState.confirmPassword))
-//            viewModel.onEvent(RegisterEvent.Register(
-//                registerState.email,
-//                registerState.password,
-//                registerState.confirmPassword
-//            ))
-            viewModel.sendEvent(RegisterEvent.Register(
-                registerState.email,
-                registerState.password,
-                registerState.confirmPassword
-            ))
+        viewModel.sendEvent(RegisterEvent.Register(
+            registerState.email,
+            registerState.password,
+            registerState.confirmPassword
+        ))
 
-            focusManager.clearFocus()
-        //}
+        focusManager.clearFocus()
+    }
+
+    fun navigateToLogin() {
+        navigator.navigate(
+            LoginScreenDestination(
+                email = registerState.email,
+                password = registerState.password,
+                confirmPassword = registerState.confirmPassword
+            )
+        ) {
+            popUpTo("RegisterScreen") {
+                inclusive = true
+            }
+        }
+    }
+
+    BackHandler(true) {
+        navigateToLogin()
     }
 
     Box(
@@ -175,14 +180,7 @@ fun RegisterScreen(
             modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)
                 .clickable(onClick = {
-                    navigator.clearBackStack("RegistrationScreenDestination")
-                    navigator.navigate(
-                        LoginScreenDestination(
-                            email = registerState.email,
-                            password = registerState.password,
-                            confirmPassword = registerState.confirmPassword
-                        )
-                    )
+                    navigateToLogin()
                 })
         )
         Spacer(modifier = Modifier.height(16.dp))

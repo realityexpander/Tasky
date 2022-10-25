@@ -33,7 +33,6 @@ fun LoginScreen(
     navigator: DestinationsNavigator,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
-    //BackHandler(true) { /* We want to disable back clicks */ }
 
     val loginState by viewModel.loginState.collectAsState()
     val focusManager = LocalFocusManager.current
@@ -41,6 +40,24 @@ fun LoginScreen(
     fun performLogin() {
         viewModel.sendEvent(LoginEvent.Login(loginState.email, loginState.password))
         focusManager.clearFocus()
+    }
+
+    fun navigateToRegister() {
+        navigator.navigate(
+            RegisterScreenDestination(
+                email = loginState.email,
+                password = loginState.password,
+                confirmPassword = confirmPassword
+            )
+        ) {
+            popUpTo("LoginScreen") {
+                inclusive = true
+            }
+        }
+    }
+
+    BackHandler(true) {
+        navigateToRegister()
     }
 
     Box(
@@ -125,14 +142,7 @@ fun LoginScreen(
             modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)
                 .clickable(onClick = {
-                    navigator.clearBackStack("LoginScreenDestination")
-                    navigator.navigate(
-                        RegisterScreenDestination(
-                            email = loginState.email,
-                            password = loginState.password,
-                            confirmPassword = confirmPassword
-                        )
-                    )
+                    navigateToRegister()
                 })
         )
         Spacer(modifier = Modifier.height(16.dp))
