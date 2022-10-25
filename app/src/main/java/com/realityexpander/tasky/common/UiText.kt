@@ -1,11 +1,15 @@
 package com.realityexpander.tasky.common
 
 import android.content.Context
+import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.annotation.StringRes
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
-sealed class UiText {
+@Parcelize
+open class UiText : Parcelable {
 
     // Example:
     // str = null
@@ -13,7 +17,8 @@ sealed class UiText {
     //
     // str = "Goodbye."
     // UiText.Str(str) -> asString() = "Goodbye."
-    data class Str(
+    @Parcelize
+    class Str(
         val value: String?,
     ): UiText()
 
@@ -24,9 +29,10 @@ sealed class UiText {
     // UiText.StrRes(resId) -> asString() = "Hello, World!"
     //
     // resId = null -> compiler error (not allowed)
+    @Parcelize
     class Res(
         @StringRes val resId: Int,
-        vararg val args: Any
+        vararg val args: @RawValue Any
     ): UiText()
 
     // Example:
@@ -39,10 +45,11 @@ sealed class UiText {
     // resId = "Hello, %s!"
     // args = "World!"
     // UiText.StrOrStrRes(resId) -> asString() = "Hello, World!"
+    @Parcelize
     class StrOrRes(
         val value: String?,
         @StringRes val resId: Int? = null,
-        vararg val args: Any = arrayOf()
+        vararg val args: @RawValue Any //= arrayOf()
     ): UiText()
 
     // Example:
@@ -52,14 +59,16 @@ sealed class UiText {
     //
     // resId = null
     // UiText.StrResOrStr(resId, "Goodbye!") -> asString() = "Goodbye!"
+    @Parcelize
     class ResOrStr(
         @StringRes val resId: Int? = null,
         val value: String? = null,
-        vararg val args: Any = arrayOf()
+        vararg val args: @RawValue Any //= arrayOf()
     ): UiText()
 
     // Example:
     // asString() = null
+    @Parcelize
     object None : UiText()
 
     // Useful for debugging
@@ -71,19 +80,22 @@ sealed class UiText {
                 value?.let { "UiText.Str: value=$it" }
                     ?: "UiText.Str=null"
             is StrOrRes ->
-                value?.let { "UiText.StrOrStrRes: value=$value" }
-                    ?: resId?.let { "UiText.StrOrStrRes: resId=${this.resId}" }
-                    ?: "UiText.StrOrStrRes=both null"
+                value?.let { "UiText.StrOrRes: value=$value" }
+                    ?: resId?.let { "UiText.StrOrRes: resId=${this.resId}" }
+                    ?: "UiText.StrOrRes=both null"
             is Res ->
-                    "UiText.StrRes: resId=$resId"
+                    "UiText.Res: resId=$resId"
             is ResOrStr ->
-                resId?.let { "UiText.StrResOrStr: resId=$resId" }
-                    ?: value?.let { "UiText.StrResOrStr: value=$value" }
-                    ?:  "UiText.StrResOrStr=both null"
+                resId?.let { "UiText.ResOrStr: resId=$resId" }
+                    ?: value?.let { "UiText.ResOrStr: value=$value" }
+                    ?:  "UiText.ResOrStr=both null"
+            else -> {
+                "UiText: Unknown type"
+            }
         }
     }
 
-    // If UiText is `None` or `value` is null return string "", or return Resource ID.
+    // If UiText is `None` or `value` is null this returns string "", or returns Resource ID.
     // Always returns a valid string. (good for use in display UI)
     @Composable
     fun get(): String {
@@ -93,19 +105,25 @@ sealed class UiText {
             is Res -> stringResource(resId, *args)
             is StrOrRes -> value ?: stringResource(resId!!, *args)
             is ResOrStr -> stringResource(resId!!, *args) ?: value ?: ""
+            else -> {
+                "UiText: Unknown type"
+            }
         }
     }
 
-    // If UiText is `None` or `value` is null return null, or return Resource ID.
+    // If UiText is `None` or `value` is null this returns null, or returns Resource ID.
     // May return a null. (good for use in logical checks)
     @Composable
-    fun getNullable(): String? {
+    fun getOrNull(): String? {
         return when(this) {
             is None -> null
             is Str -> value
             is Res -> stringResource(resId, *args)
             is StrOrRes -> value ?: stringResource(resId!!, *args)
             is ResOrStr -> stringResource(resId!!, *args)
+            else -> {
+                "UiText: Unknown type"
+            }
         }
     }
 
@@ -119,6 +137,9 @@ sealed class UiText {
             is Res -> stringResource(resId, *args)
             is StrOrRes -> value ?: stringResource(resId!!, *args)
             is ResOrStr -> resId?.let { stringResource(it, *args) } ?: value ?: "null"
+            else -> {
+                "UiText: Unknown type"
+            }
         }
     }
 
@@ -130,6 +151,9 @@ sealed class UiText {
             is Res -> context.getString(resId, *args)
             is StrOrRes -> value ?: context.getString(resId!!, *args)
             is ResOrStr -> resId?.let { context.getString(it, *args) } ?: value
+            else -> {
+                "UiText: Unknown type"
+            }
         }
     }
 
@@ -142,6 +166,9 @@ sealed class UiText {
             is Res -> null
             is StrOrRes -> value
             is ResOrStr -> null
+            else -> {
+                "UiText: Unknown type"
+            }
         }
     }
 
@@ -154,6 +181,9 @@ sealed class UiText {
             is Res -> resId
             is StrOrRes -> resId
             is ResOrStr -> null
+            else -> {
+                throw Exception("UiText: Unknown type")
+            }
         }
     }
 }

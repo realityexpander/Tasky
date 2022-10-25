@@ -36,14 +36,14 @@ fun LoginScreen(
     BackHandler(true) { /* We want to disable back clicks */ }
 
     val loginState by viewModel.loginState.collectAsState()
-    val scope = rememberCoroutineScope()
+//    val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
 
     fun performLogin() {
-        scope.launch {
+        //scope.launch {
             viewModel.sendEvent(LoginEvent.Login(loginState.email, loginState.password))
             focusManager.clearFocus()
-        }
+        //}
     }
 
     Box(
@@ -70,9 +70,7 @@ fun LoginScreen(
             value = loginState.email,
             isError = loginState.isInvalidEmail,
             onValueChange = {
-                scope.launch {
-                    viewModel.onEvent(LoginEvent.UpdateEmail(it))
-                }
+                viewModel.sendEvent(LoginEvent.UpdateEmail(it))
             }
         )
         if(loginState.isInvalidEmail) {
@@ -85,9 +83,7 @@ fun LoginScreen(
             value = loginState.password,
             isError = loginState.isInvalidPassword,
             onValueChange = {
-                scope.launch {
-                    viewModel.onEvent(LoginEvent.UpdatePassword(it))
-                }
+                viewModel.sendEvent(LoginEvent.UpdatePassword(it))
             },
             isPasswordVisible = loginState.isPasswordVisible,
             clickTogglePasswordVisibility = {
@@ -153,9 +149,10 @@ fun LoginScreen(
 
         // STATUS //////////////////////////////////////////
 
-        if(loginState.isError) {
+//        if(loginState.isError) {
+        loginState.errorMessage.getOrNull()?.let { errorMessage ->
             Text(
-                text = "Error: ${loginState.errorMessage.get()}",
+                text = "Error: $errorMessage",
                 color = Color.Red,
             )
             Spacer(modifier = Modifier.height(8.dp))

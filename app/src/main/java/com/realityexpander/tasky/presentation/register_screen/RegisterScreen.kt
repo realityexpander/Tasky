@@ -21,7 +21,6 @@ import com.realityexpander.tasky.common.UiText
 import com.realityexpander.tasky.presentation.components.EmailField
 import com.realityexpander.tasky.presentation.components.PasswordField
 import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -36,23 +35,28 @@ fun RegisterScreen(
     BackHandler(true) { /* We want to disable back clicks */ }
 
     val registerState by viewModel.registerState.collectAsState()
-    val scope = rememberCoroutineScope()
+//    val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
     fun performRegister() {
-        scope.launch {
-            viewModel.onEvent(RegisterEvent.ValidateEmail(registerState.email))
-            viewModel.onEvent(RegisterEvent.ValidatePassword(registerState.password))
-            viewModel.onEvent(RegisterEvent.ValidateConfirmPassword(registerState.confirmPassword))
-            viewModel.onEvent(RegisterEvent.Register(
+        //scope.launch {
+//            viewModel.onEvent(RegisterEvent.ValidateEmail(registerState.email))
+//            viewModel.onEvent(RegisterEvent.ValidatePassword(registerState.password))
+//            viewModel.onEvent(RegisterEvent.ValidateConfirmPassword(registerState.confirmPassword))
+//            viewModel.onEvent(RegisterEvent.Register(
+//                registerState.email,
+//                registerState.password,
+//                registerState.confirmPassword
+//            ))
+            viewModel.sendEvent(RegisterEvent.Register(
                 registerState.email,
                 registerState.password,
                 registerState.confirmPassword
             ))
 
             focusManager.clearFocus()
-        }
+        //}
     }
 
     Box(
@@ -79,9 +83,7 @@ fun RegisterScreen(
             value = registerState.email,
             isError = registerState.isInvalidEmail,
             onValueChange = {
-                scope.launch {
-                    viewModel.onEvent(RegisterEvent.UpdateEmail(it))
-                }
+                viewModel.sendEvent(RegisterEvent.UpdateEmail(it))
             }
         )
         if(registerState.isInvalidEmail) {
@@ -94,9 +96,7 @@ fun RegisterScreen(
             value = registerState.password,
             isError = registerState.isInvalidPassword,
             onValueChange = {
-                scope.launch {
-                    viewModel.onEvent(RegisterEvent.UpdatePassword(it))
-                }
+                viewModel.sendEvent(RegisterEvent.UpdatePassword(it))
             },
             isPasswordVisible = registerState.isPasswordVisible,
             clickTogglePasswordVisibility = {
@@ -116,9 +116,7 @@ fun RegisterScreen(
             value = registerState.confirmPassword,
             isError = registerState.isInvalidConfirmPassword,
             onValueChange = {
-                scope.launch {
-                    viewModel.onEvent(RegisterEvent.UpdateConfirmPassword(it))
-                }
+                viewModel.sendEvent(RegisterEvent.UpdateConfirmPassword(it))
             },
             isPasswordVisible = registerState.isPasswordVisible,
             clickTogglePasswordVisibility = {
@@ -137,8 +135,8 @@ fun RegisterScreen(
         // SHOW IF MATCHING PASSWORDS
         if(!registerState.isPasswordsMatch)
         {
-            Spacer(modifier = Modifier.height(8.dp))
             Text(text = UiText.Res(R.string.register_error_passwords_do_not_match).get(), color = Color.Red)
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
         // SHOW PASSWORD REQUIREMENTS
@@ -191,9 +189,10 @@ fun RegisterScreen(
 
         // STATUS //////////////////////////////////////////
 
-        if(registerState.isError) {
+//        if(registerState.isError) {
+        registerState.errorMessage.getOrNull()?.let { errorMessage ->
             Text(
-                text = "Error: ${registerState.errorMessage.get()}",
+                text = "Error: $errorMessage",
                 color = Color.Red,
             )
             Spacer(modifier = Modifier.height(8.dp))

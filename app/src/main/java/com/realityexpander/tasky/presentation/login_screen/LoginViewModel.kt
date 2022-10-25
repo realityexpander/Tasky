@@ -9,12 +9,19 @@ import com.realityexpander.tasky.common.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
 import com.realityexpander.tasky.domain.validation.ValidatePassword
-import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_EMAIL
-import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_PASSWORD
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_email
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_errorMessage
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isError
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isInvalidEmail
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isInvalidPassword
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isLoggedIn
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_password
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_statusMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import javax.inject.Inject
@@ -30,12 +37,51 @@ class LoginViewModel @Inject constructor(
     private val _loginState = MutableStateFlow(LoginState())
     val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
 
-    private val email: String = savedStateHandle[SAVED_STATE_EMAIL] ?: ""
-    private val password: String = savedStateHandle[SAVED_STATE_PASSWORD] ?: ""
+    private val email: String = savedStateHandle[SAVED_STATE_email] ?: ""
+    private val password: String = savedStateHandle[SAVED_STATE_password] ?: ""
+    private val isInvalidEmail: Boolean = savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false
+    private val isInvalidPassword: Boolean = savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false
+    private val isLoggedIn: Boolean = savedStateHandle[SAVED_STATE_isLoggedIn] ?: false
+    private val isError: Boolean = savedStateHandle[SAVED_STATE_isError] ?: false
+    private val statusMessage: UiText = savedStateHandle[SAVED_STATE_statusMessage] ?: UiText.None
+    private val errorMessage: UiText = savedStateHandle[SAVED_STATE_errorMessage] ?: UiText.None
 
     init {
-        sendEvent(LoginEvent.UpdateEmail(email))
-        sendEvent(LoginEvent.UpdatePassword(password))
+        // restore state after process death
+        _loginState.value = LoginState(
+                email = email,
+                password = password,
+                isInvalidEmail = isInvalidEmail,
+                isInvalidPassword = isInvalidPassword,
+                isLoggedIn = isLoggedIn,
+                isError = isError,
+                statusMessage = statusMessage,
+                errorMessage = errorMessage
+        )
+
+//        sendEvent(LoginEvent.UpdateEmail(email))
+//        sendEvent(LoginEvent.UpdatePassword(password))
+
+        // Save state for process death
+        viewModelScope.launch {
+            yield()
+            loginState.collect {
+                savedStateHandle[SAVED_STATE_email] = it.email
+                savedStateHandle[SAVED_STATE_password] = it.password
+                savedStateHandle[SAVED_STATE_isInvalidEmail] = it.isInvalidEmail
+                savedStateHandle[SAVED_STATE_isInvalidPassword] = it.isInvalidPassword
+                savedStateHandle[SAVED_STATE_isLoggedIn] = it.isLoggedIn
+                savedStateHandle[SAVED_STATE_isError] = it.isError
+                savedStateHandle[SAVED_STATE_statusMessage] = it.statusMessage
+                savedStateHandle[SAVED_STATE_errorMessage] = it.errorMessage
+
+                if(email.isNotBlank()) sendEvent(LoginEvent.ValidateEmail(email))
+                if(password.isNotBlank()) sendEvent(LoginEvent.ValidatePassword(password))
+            }
+        }
+
+//        if(email.isNotBlank()) sendEvent(LoginEvent.ValidateEmail(email))
+//        if(password.isNotBlank()) sendEvent(LoginEvent.ValidatePassword(password))
     }
 
     private suspend fun login(email: String, password: String) {
@@ -68,10 +114,11 @@ class LoginViewModel @Inject constructor(
     fun sendEvent(event: LoginEvent) {
         viewModelScope.launch {
             onEvent(event)
+            yield()
         }
     }
 
-    suspend fun onEvent(event: LoginEvent) {
+    private suspend fun onEvent(event: LoginEvent) {
         when(event) {
             is LoginEvent.Loading -> {
                 _loginState.value = _loginState.value.copy(isLoading = event.isLoading)
@@ -80,17 +127,19 @@ class LoginViewModel @Inject constructor(
                 _loginState.value = _loginState.value.copy(
                     email = event.email,
                     isInvalidEmail = false,
-                    isError = false,
+//                    isError = false,
+                    errorMessage = UiText.None,
                 )
-                savedStateHandle[SAVED_STATE_EMAIL] = event.email
+                //savedStateHandle[SAVED_STATE_email] = event.email
             }
             is LoginEvent.UpdatePassword -> {
                 _loginState.value = _loginState.value.copy(
                     password = event.password,
                     isInvalidPassword = false,
-                    isError = false
+//                    isError = false
+                    errorMessage = UiText.None,
                 )
-                savedStateHandle[SAVED_STATE_PASSWORD] = event.password
+                //savedStateHandle[SAVED_STATE_password] = event.password
             }
             is LoginEvent.TogglePasswordVisibility -> {
                 _loginState.value = _loginState.value.copy(
@@ -122,7 +171,7 @@ class LoginViewModel @Inject constructor(
             is LoginEvent.LoginSuccess -> {
                 _loginState.value = _loginState.value.copy(
                     isLoggedIn = true,
-                    isError = false,
+//                    isError = false,
                     errorMessage = UiText.None,
                     statusMessage = UiText.Res(R.string.login_success, event.authToken),
                     isPasswordVisible = false,
@@ -132,7 +181,7 @@ class LoginViewModel @Inject constructor(
             is LoginEvent.LoginError -> {
                 _loginState.value = _loginState.value.copy(
                     isLoggedIn = false,
-                    isError = true,
+//                    isError = true,
                     errorMessage = event.message,
                     statusMessage = UiText.None
                 )
@@ -142,7 +191,7 @@ class LoginViewModel @Inject constructor(
             is LoginEvent.UnknownError -> {
                 _loginState.value = _loginState.value.copy(
                     isLoggedIn = false,
-                    isError = true,
+//                    isError = true,
                     errorMessage = if(event.message.asResOrNull() == null)
                             UiText.Res(R.string.error_unknown, "")
                         else
