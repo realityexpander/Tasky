@@ -1,8 +1,8 @@
 package com.realityexpander.tasky.di
 
-import com.realityexpander.tasky.data.repository.AuthRepositoryImpl
-import com.realityexpander.tasky.data.repository.remote.AuthApiImpl
-import com.realityexpander.tasky.data.repository.local.AuthDaoImpl
+import com.realityexpander.tasky.data.repository.AuthRepositoryFakeImpl
+import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl
+import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.*
 import dagger.Module
@@ -18,9 +18,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAuthRepository(): IAuthRepository =
-        AuthRepositoryImpl(
-            authApi = AuthApiImpl(),
-            authDao = AuthDaoImpl(),
+        AuthRepositoryFakeImpl(
+            authApi = AuthApiFakeImpl(),
+            authDao = AuthDaoFakeImpl(),
             validateEmail = ValidateEmailImpl(EmailMatcherImpl())
         )
 

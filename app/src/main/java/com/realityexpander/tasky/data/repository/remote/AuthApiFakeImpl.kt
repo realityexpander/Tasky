@@ -6,7 +6,7 @@ import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.common.Password
 import kotlinx.coroutines.delay
 
-class AuthApiImpl: IAuthApi {
+class AuthApiFakeImpl: IAuthApi {
     private var authToken: AuthToken? = null
     private val users = mutableMapOf<Email, Password>()
 

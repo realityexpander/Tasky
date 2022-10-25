@@ -7,7 +7,7 @@ import com.realityexpander.tasky.data.repository.local.IAuthDao
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
 
-class AuthRepositoryImpl(
+class AuthRepositoryFakeImpl(
     private val authDao: IAuthDao,
     private val authApi: IAuthApi,
     private val validateEmail: IValidateEmail
