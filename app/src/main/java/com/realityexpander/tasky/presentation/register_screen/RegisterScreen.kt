@@ -24,7 +24,7 @@ import com.realityexpander.tasky.presentation.destinations.LoginScreenDestinatio
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-@Destination("RegisterScreen")
+@Destination
 fun RegisterScreen(
     email: String? = null,
     password: String? = null,
