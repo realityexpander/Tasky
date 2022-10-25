@@ -33,7 +33,7 @@ fun LoginScreen(
     navigator: DestinationsNavigator,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
-    BackHandler(true) { /* We want to disable back clicks */ }
+    //BackHandler(true) { /* We want to disable back clicks */ }
 
     val loginState by viewModel.loginState.collectAsState()
     val focusManager = LocalFocusManager.current
