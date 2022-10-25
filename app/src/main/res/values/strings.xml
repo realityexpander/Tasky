@@ -2,7 +2,7 @@
     <string name="app_name">Tasky</string>
 
     <!--    Login Screen -->
-    <string name="login_title">Login:</string>
+    <string name="login_title">Welcome Back!</string>
     <string name="login_not_a_member_sign_up">Don\'t have an account? Register here</string>
     <string name="login_success">Login Success: authToken = %s</string>
     <string name="login_logged_in">Logged in!</string>
