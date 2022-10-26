@@ -111,6 +111,7 @@ fun LoginScreen(
             // • EMAIL
             EmailField(
                 value = loginState.email,
+                label = null,
                 isError = loginState.isInvalidEmail,
                 onValueChange = {
                     viewModel.sendEvent(LoginEvent.UpdateEmail(it))
@@ -119,11 +120,12 @@ fun LoginScreen(
             if (loginState.isInvalidEmail && loginState.isShowInvalidEmailMessage) {
                 Text(text = UiText.Res(R.string.error_invalid_email).get(), color = Color.Red)
             }
-            Spacer(modifier = Modifier.extraSmallHeight())
+            Spacer(modifier = Modifier.smallHeight())
 
             // • PASSWORD
             PasswordField(
                 value = loginState.password,
+                label = null,
                 isError = loginState.isInvalidPassword,
                 onValueChange = {
                     viewModel.sendEvent(LoginEvent.UpdatePassword(it))
@@ -141,11 +143,10 @@ fun LoginScreen(
             )
             if (loginState.isInvalidPassword && loginState.isShowInvalidPasswordMessage) {
                 Text(text = UiText.Res(R.string.error_invalid_password).get(), color = Color.Red)
-                Spacer(modifier = Modifier.extraSmallHeight())
             }
+            Spacer(modifier = Modifier.mediumHeight())
 
             // • LOGIN BUTTON
-            Spacer(modifier = Modifier.smallHeight())
             Button(
                 onClick = {
                     performLogin()
@@ -162,13 +163,13 @@ fun LoginScreen(
                 if (loginState.isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier
-                            .padding(start = DP.tiny)
+                            .padding(start = DP.small)
                             .size(DP.small)
                             .align(alignment = CenterVertically)
                     )
                 }
             }
-            Spacer(modifier = Modifier.largeHeight())
+            Spacer(modifier = Modifier.mediumHeight())
 
             // STATUS //////////////////////////////////////////
 
