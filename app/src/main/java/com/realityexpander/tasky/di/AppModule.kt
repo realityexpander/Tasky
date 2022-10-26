@@ -21,7 +21,9 @@ object AppModule {
         AuthRepositoryFakeImpl(
             authApi = AuthApiFakeImpl(),
             authDao = AuthDaoFakeImpl(),
-            validateEmail = ValidateEmailImpl(EmailMatcherImpl())
+            validateUsername = ValidateUsername(),
+            validateEmail = ValidateEmailImpl(EmailMatcherImpl()),
+            validatePassword = ValidatePassword()
         )
 
     @Provides
@@ -32,5 +34,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideValidatePassword(): ValidatePassword = ValidatePassword()
+
+    @Provides
+    @Singleton
+    fun provideValidateUsername(): ValidateUsername = ValidateUsername()
 
 }
