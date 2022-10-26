@@ -3,6 +3,7 @@ package com.realityexpander.tasky.presentation.common
 object UIConstants {
 
     // Login / Register screens
+    const val SAVED_STATE_username = "username"
     const val SAVED_STATE_email = "email"
     const val SAVED_STATE_password = "password"
     const val SAVED_STATE_confirmPassword = "confirmPassword"
