@@ -105,6 +105,7 @@ fun LoginScreen(
         Column(
             modifier = Modifier
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
+                .weight(1f)
         ) {
 
             // • EMAIL
@@ -169,18 +170,6 @@ fun LoginScreen(
             }
             Spacer(modifier = Modifier.largeHeight())
 
-            // • REGISTER TEXT BUTTON
-            Text(
-                text = UiText.Res(R.string.login_not_a_member_sign_up).get(),
-                color = Color.Cyan,
-                modifier = Modifier
-                    .align(alignment = Alignment.CenterHorizontally)
-                    .clickable(onClick = {
-                        navigateToRegister()
-                    })
-            )
-            Spacer(modifier = Modifier.smallHeight())
-
             // STATUS //////////////////////////////////////////
 
             loginState.errorMessage.getOrNull()?.let { errorMessage ->
@@ -198,6 +187,25 @@ fun LoginScreen(
                 Text(text = message)
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colors.surface)
+        ) {
+            // • REGISTER TEXT BUTTON
+            Text(
+                text = UiText.Res(R.string.login_not_a_member_sign_up).get(),
+                style = MaterialTheme.typography.body2,
+                color = MaterialTheme.colors.primaryVariant,
+                modifier = Modifier
+                    .align(alignment = Alignment.CenterHorizontally)
+                    .clickable(onClick = {
+                        navigateToRegister()
+                    })
+            )
+            Spacer(modifier = Modifier.extraLargeHeight())
         }
     }
 }
