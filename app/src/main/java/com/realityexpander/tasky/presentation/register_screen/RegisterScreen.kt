@@ -1,33 +1,35 @@
 package com.realityexpander.tasky.presentation.register_screen
 
 import android.content.res.Configuration
+import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.ui.util.UiText
 import com.realityexpander.tasky.data.repository.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl
@@ -40,6 +42,7 @@ import com.realityexpander.tasky.ui.components.NameField
 import com.realityexpander.tasky.ui.components.PasswordField
 import com.realityexpander.tasky.ui.theme.TaskyTheme
 import com.realityexpander.tasky.ui.theme.modifiers.*
+import com.realityexpander.tasky.ui.util.UiText
 
 @Composable
 @Destination
@@ -55,6 +58,7 @@ fun RegisterScreen(
 ) {
 
     val registerState by viewModel.registerState.collectAsState()
+
     val focusManager = LocalFocusManager.current
 
     fun performRegister() {
@@ -86,14 +90,18 @@ fun RegisterScreen(
         navigateToLogin()
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        if(registerState.isLoading) {
-            Spacer(modifier = Modifier.height(8.dp))
-            CircularProgressIndicator(
-                modifier = Modifier.align(alignment = Alignment.Center)
-            )
+    // Check keyboard open/closed (how to make this a function?)
+    val view = LocalView.current
+    var isKeyboardOpen by remember { mutableStateOf(false) }
+    DisposableEffect(view) {
+        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+            isKeyboardOpen = ViewCompat.getRootWindowInsets(view)
+                ?.isVisible(WindowInsetsCompat.Type.ime()) ?: true
+        }
+        view.viewTreeObserver.addOnGlobalLayoutListener(listener)
+
+        onDispose {
+            view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
         }
     }
 
@@ -101,7 +109,8 @@ fun RegisterScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colors.onSurface)
-    ) {
+    ) col1@ {
+
         Spacer(modifier = Modifier.mediumHeight())
         Text(
             text = UiText.Res(R.string.register_title).get(),
@@ -115,13 +124,10 @@ fun RegisterScreen(
 
         Column(
             modifier = Modifier
+                .verticalScroll(rememberScrollState())
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
                 .weight(1f)
-                .scrollable(
-                    orientation = Orientation.Vertical,
-                    state = rememberScrollState()
-                )
-        ) {
+        ) col2@ {
             Spacer(modifier = Modifier.mediumHeight())
 
             // • USERNAME
@@ -237,11 +243,11 @@ fun RegisterScreen(
                     )
                 }
             }
-            Spacer(modifier = Modifier.mediumHeight())
 
             // STATUS //////////////////////////////////////////
 
             registerState.errorMessage.getOrNull()?.let { errorMessage ->
+                Spacer(modifier = Modifier.smallHeight())
                 Text(
                     text = "Error: $errorMessage",
                     color = Color.Red,
@@ -249,53 +255,68 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
             if (registerState.isLoggedIn) {
+                Spacer(modifier = Modifier.smallHeight())
                 Text(text = UiText.Res(R.string.register_registered).get())
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
             registerState.statusMessage.asStrOrNull()?.let { message ->
+                Spacer(modifier = Modifier.extraSmallHeight())
                 Text(text = message)
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
-        }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = MaterialTheme.colors.surface)
-        ) {
-            // • BACK TO SIGN IN BUTTON
-//            Text(
-//                text = UiText.Res(R.string.register_already_a_member_sign_in).get(),
-//                style = MaterialTheme.typography.body2,
-//                color = MaterialTheme.colors.primaryVariant,
-//                modifier = Modifier
-//                    .align(alignment = Alignment.CenterHorizontally)
-//                    .clickable(onClick = {
-//                        navigateToLogin()
-//                    })
-//            )
-            Button(
-                onClick = {
-                    navigateToLogin()
-                },
+
+            Box(
                 modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = DP.small)
-                    .taskyMediumButton(color = MaterialTheme.colors.primary)
+                    .fillMaxSize()
+                    .weight(1f)
             ) {
-                Icon(
-                    imageVector = Icons.Filled.ChevronLeft,
-                    contentDescription = UiText.Res(R.string.register_description_back).get(),
+                this@col1.AnimatedVisibility(
+                    visible = !isKeyboardOpen,
+                    enter = fadeIn() + slideInVertically(
+                        initialOffsetY = { it }
+                    ),
+                    exit = fadeOut(),
                     modifier = Modifier
-                        .size(DP.large)
-                        .align(alignment = Alignment.CenterVertically)
-                )
+                        .background(color = MaterialTheme.colors.surface)
+                        .align(alignment = Alignment.BottomStart)
+                ) {
+                    // • BACK TO SIGN IN BUTTON
+                    Button(
+                        onClick = {
+                            navigateToLogin()
+                        },
+                        modifier = Modifier
+                            .align(alignment = Alignment.BottomStart)
+                            .taskyMediumButton(color = MaterialTheme.colors.primary)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ChevronLeft,
+                            contentDescription = UiText.Res(R.string.register_description_back)
+                                .get(),
+                            modifier = Modifier
+                                .size(DP.large)
+                                .align(alignment = Alignment.CenterVertically)
+                        )
+                    }
+                }
             }
-            Spacer(modifier = Modifier.extraLargeHeight())
         }
-
     }
 }
+
+
+//    // • BACK TO SIGN IN BUTTON (alternate design)
+//    Text(
+//        text = UiText.Res(R.string.register_already_a_member_sign_in).get(),
+//        style = MaterialTheme.typography.body2,
+//        color = MaterialTheme.colors.primaryVariant,
+//        modifier = Modifier
+//            .align(alignment = Alignment.CenterHorizontally)
+//            .clickable(onClick = {
+//                navigateToLogin()
+//            })
+//    )
 
 
 @Composable
@@ -320,7 +341,7 @@ fun RegisterScreenPreview() {
                     validateEmail = ValidateEmailImpl(),
                     validatePassword = ValidatePassword(),
                     savedStateHandle = SavedStateHandle().apply {
-                        // For Live Preview
+                        // For Live Preview / interactive mode
                         set("email", "chris@demo.com")
                         set("password", "123456Aa")
                         set("confirmPassword", "123456Aa")
@@ -336,8 +357,56 @@ fun RegisterScreenPreview() {
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
 )
-fun RegisterScreenPreview_NightMode() {
+fun RegisterScreenPreview_NightMode_NO() {
     RegisterScreenPreview()
+}
+
+@Composable
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+fun RegisterScreenPreview_DarkMode() {
+    TaskyTheme {
+        Surface {
+            RegisterScreen(
+                email = "hello",
+                navigator = EmptyDestinationsNavigator,
+                viewModel = RegisterViewModel(
+                    authRepository = AuthRepositoryFakeImpl(
+                        authApi = AuthApiFakeImpl(),
+                        authDao = AuthDaoFakeImpl(),
+                        validateUsername = ValidateUsername(),
+                        validateEmail = ValidateEmailImpl(),
+                        validatePassword = ValidatePassword(),
+                    ),
+                    validateUsername = ValidateUsername(),
+                    validateEmail = ValidateEmailImpl(),
+                    validatePassword = ValidatePassword(),
+                    savedStateHandle = SavedStateHandle().apply {
+                        // For Live Preview / interactive mode
+                        set("username", "c")
+                        set("email", "chris@demo.com")
+                        set("password", "123456Aa")
+                        set("confirmPassword", "123456Aa")
+                        set("invalidUsername", true)
+                        set("invalidEmail", true)
+//                        set("invalidPassword", true)
+//                        set("invalidConfirmPassword", true)
+//                        set("isPasswordsMatch", false)
+                        set("isShowInvalidUsernameMessage", true)
+                        set("isShowInvalidEmailMessage", true)
+//                        set("isShowInvalidPasswordMessage", true)
+//                        set("isShowInvalidConfirmPasswordMessage", true)
+//                        set("isLoading", true)
+//                        set("errorMessage", "Error Message")
+//                        set("statusMessage", "Status Message")
+//                        set("isLoggedIn", true)
+                    }
+                )
+            )
+        }
+    }
 }
 
 

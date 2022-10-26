@@ -1,28 +1,35 @@
 package com.realityexpander.tasky.presentation.login_screen
 
 import android.content.res.Configuration
+import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import com.ramcosta.composedestinations.annotation.Destination
@@ -84,26 +91,26 @@ fun LoginScreen(
         navigateToRegister()
     }
 
-//    Box(
-//        modifier = Modifier.fillMaxSize()
-//    ) {
-//        if(loginState.isLoading) {
-//            Spacer(modifier = Modifier.mediumHeight())
-//            CircularProgressIndicator(
-//                modifier = Modifier.align(alignment = Alignment.Center)
-//            )
-//        }
-//    }
+    // Check keyboard open/closed (how to make this a function?)
+    val view = LocalView.current
+    var isKeyboardOpen by remember { mutableStateOf(false) }
+    DisposableEffect(view) {
+        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+            isKeyboardOpen = ViewCompat.getRootWindowInsets(view)
+                ?.isVisible(WindowInsetsCompat.Type.ime()) ?: true
+        }
+        view.viewTreeObserver.addOnGlobalLayoutListener(listener)
+
+        onDispose {
+            view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colors.onSurface)
-            .scrollable(
-                orientation = Orientation.Vertical,
-                state = rememberScrollState()
-            )
-    ) {
+    ) col1@ {
         Spacer(modifier = Modifier.largeHeight())
         Text(
             text = UiText.Res(R.string.login_title).get(),
@@ -117,6 +124,7 @@ fun LoginScreen(
 
         Column(
             modifier = Modifier
+                .verticalScroll(rememberScrollState())
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
                 .weight(1f)
         ) {
@@ -202,25 +210,37 @@ fun LoginScreen(
                 Text(text = message)
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
-        }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = MaterialTheme.colors.surface)
-        ) {
-            // • REGISTER TEXT BUTTON
-            Text(
-                text = UiText.Res(R.string.login_not_a_member_sign_up).get(),
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.primaryVariant,
+            Box(
                 modifier = Modifier
-                    .align(alignment = Alignment.CenterHorizontally)
-                    .clickable(onClick = {
-                        navigateToRegister()
-                    })
-            )
-            Spacer(modifier = Modifier.extraLargeHeight())
+                    .fillMaxSize()
+                    .weight(1f)
+                    .background(color = MaterialTheme.colors.surface)
+                    .padding(bottom = DP.large)
+            ) {
+                this@col1.AnimatedVisibility(
+                    visible = !isKeyboardOpen,
+                    enter = fadeIn() + slideInVertically(
+                        initialOffsetY = { it }
+                    ),
+                    exit = fadeOut(),
+                    modifier = Modifier
+                        .background(color = MaterialTheme.colors.surface)
+                        .align(alignment = Alignment.BottomCenter)
+                ) {
+                    // • REGISTER TEXT BUTTON
+                    Text(
+                        text = UiText.Res(R.string.login_not_a_member_sign_up).get(),
+                        style = MaterialTheme.typography.body1,
+                        color = MaterialTheme.colors.primaryVariant,
+                        modifier = Modifier
+                            .align(alignment = Alignment.BottomCenter)
+                            .clickable(onClick = {
+                                navigateToRegister()
+                            })
+                    )
+                }
+            }
         }
     }
 }
