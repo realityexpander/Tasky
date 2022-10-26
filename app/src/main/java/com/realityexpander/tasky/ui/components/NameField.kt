@@ -35,46 +35,64 @@ fun NameField(
     keyboardActions: KeyboardActions? = null,
 ) {
     val focusManager = LocalFocusManager.current
-    val keyboardActionsLocal: KeyboardActions = keyboardActions ?: KeyboardActions(
-        onNext = {
-            focusManager.moveFocus(FocusDirection.Down)
-        }
+    val keyboardActionsLocal: KeyboardActions = keyboardActions
+        ?: KeyboardActions(
+            onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }
     )
 
-    OutlinedTextField(
+//    OutlinedTextField(
+//        modifier = modifier,
+//        value = value,
+//        singleLine = true,
+//        onValueChange = onValueChange,
+//        isError = isError,
+//        label = if(label != null) labelComponent else null,
+//        placeholder = { Text(text = placeholder) },
+//        keyboardOptions = keyboardOptions,
+//        keyboardActions = keyboardActionsLocal,
+//        leadingIcon = {
+//            Icon(imageVector = Icons.Filled.Person,
+//                UiText.Res(R.string.nameField_description_name).get())
+//        },
+//        trailingIcon = {
+//            if(value.isNotBlank()) {
+//                val isNameValid = !isError
+//
+//                val image =
+//                    if (isNameValid)
+//                        Icons.Filled.Check
+//                    else
+//                        Icons.Filled.Error
+//
+//                // localized description for accessibility services
+//                val description =
+//                    if (isNameValid)
+//                        UiText.Res(R.string.nameField_description_isValid).get()
+//                    else
+//                        UiText.Res(R.string.nameField_description_isInvalid).get()
+//
+//                Icon(imageVector = image, description)
+//            }
+//        }
+//    )
+
+    TextEntryField(
+        modifier = modifier,
         value = value,
-        singleLine = true,
         onValueChange = onValueChange,
         isError = isError,
-        label = if(label != null) labelComponent else null,
-        placeholder = { Text(text = placeholder) },
+        label = label,
+        placeholder = placeholder,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActionsLocal,
-        modifier = modifier,
         leadingIcon = {
             Icon(imageVector = Icons.Filled.Person,
                 UiText.Res(R.string.nameField_description_name).get())
         },
-        trailingIcon = {
-            if(value.isNotBlank()) {
-                val isNameValid = !isError
-
-                val image =
-                    if (isNameValid)
-                        Icons.Filled.Check
-                    else
-                        Icons.Filled.Error
-
-                // localized description for accessibility services
-                val description =
-                    if (isNameValid)
-                        UiText.Res(R.string.nameField_description_isValid).get()
-                    else
-                        UiText.Res(R.string.nameField_description_isInvalid).get()
-
-                Icon(imageVector = image, description)
-            }
-        }
+        validInputDescription = UiText.Res(R.string.nameField_description_isValid).get(),
+        invalidInputDescription = UiText.Res(R.string.nameField_description_isInvalid).get(),
     )
 }
 
