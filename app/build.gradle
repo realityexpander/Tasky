@@ -1,10 +1,11 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android' version '1.6.21'
-    id 'kotlin-kapt'
-    id 'dagger.hilt.android.plugin'
     id 'kotlin-parcelize'
     id 'com.google.devtools.ksp' version '1.6.21-1.0.6'
+    id 'dagger.hilt.android.plugin'
+    id 'com.google.dagger.hilt.android'
+    id 'kotlin-kapt'
 }
 
 // For Compose Nav Destinations
