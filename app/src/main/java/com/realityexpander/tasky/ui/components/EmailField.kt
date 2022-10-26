@@ -29,7 +29,10 @@ fun EmailField(
     isError: Boolean,
     onValueChange: (String) -> Unit,
     keyboardOptions: KeyboardOptions =
-        KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+        KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next
+        ),
     keyboardActions: KeyboardActions? = null,
 ) {
     val focusManager = LocalFocusManager.current
@@ -39,42 +42,6 @@ fun EmailField(
                 focusManager.moveFocus(FocusDirection.Down)
             }
     )
-
-//    OutlinedTextField(
-//        modifier = modifier,
-//        value = value,
-//        singleLine = true,
-//        onValueChange = onValueChange,
-//        isError = isError,
-//        label = if(label != null) labelComponent else null,
-//        placeholder = { Text(text = placeholder) },
-//        keyboardOptions = keyboardOptions,
-//        keyboardActions = keyboardActionsLocal,
-//        leadingIcon = {
-//            Icon(imageVector = Icons.Filled.Email,
-//            UiText.Res(R.string.emailField_description_email).get())
-//        },
-//        trailingIcon = {
-//            if(value.isNotBlank() && value.length >= 5) {
-//                val isEmailValid = !isError
-//
-//                val image =
-//                    if (isEmailValid)
-//                        Icons.Filled.Check
-//                    else
-//                        Icons.Filled.Error
-//
-//                // localized description for accessibility services
-//                val description =
-//                    if (isEmailValid)
-//                        UiText.Res(R.string.emailField_description_isValid).get()
-//                    else
-//                        UiText.Res(R.string.emailField_description_isInvalid).get()
-//
-//                Icon(imageVector = image, description)
-//            }
-//        }
-//    )
 
     TextEntryField(
         modifier = modifier,

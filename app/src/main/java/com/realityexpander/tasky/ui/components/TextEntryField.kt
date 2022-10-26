@@ -29,7 +29,10 @@ fun TextEntryField(
     isError: Boolean,
     onValueChange: (String) -> Unit,
     keyboardOptions: KeyboardOptions =
-        KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+        KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next
+        ),
     keyboardActions: KeyboardActions? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     validInputDescription: String =
