@@ -49,7 +49,7 @@
     <string name="error_unknown">Unknown error - %s</string>
     <string name="error_invalid_email">Invalid email address.</string>
     <string name="error_invalid_password">Invalid password.</string>
-    <string name="error_invalid_confirm_password">Invalid confirm password,</string>
+    <string name="error_invalid_confirm_password">Invalid confirm password.</string>
     <string name="error_invalid_username">Invalid username.</string>
     <string name="error_invalid_user_name">Invalid user name,</string>
 
