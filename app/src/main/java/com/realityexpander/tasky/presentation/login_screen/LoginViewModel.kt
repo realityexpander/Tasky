@@ -38,15 +38,24 @@ class LoginViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val email: String = Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: ""
-    private val password: String = Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: ""
-    private val isInvalidEmail: Boolean = savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false
-    private val isShowInvalidEmailMessage: Boolean = savedStateHandle[SAVED_STATE_isShowInvalidEmailMessage] ?: false
-    private val isInvalidPassword: Boolean = savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false
-    private val isShowInvalidPasswordMessage: Boolean = savedStateHandle[SAVED_STATE_isShowInvalidPasswordMessage] ?: false
-    private val isLoggedIn: Boolean = savedStateHandle[SAVED_STATE_isLoggedIn] ?: false
-    private val statusMessage: UiText = savedStateHandle[SAVED_STATE_statusMessage] ?: UiText.None
-    private val errorMessage: UiText = savedStateHandle[SAVED_STATE_errorMessage] ?: UiText.None
+    private val email: String =
+        Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: ""
+    private val password: String =
+        Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: ""
+    private val isInvalidEmail: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false
+    private val isShowInvalidEmailMessage: Boolean =
+        savedStateHandle[SAVED_STATE_isShowInvalidEmailMessage] ?: false
+    private val isInvalidPassword: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false
+    private val isShowInvalidPasswordMessage: Boolean =
+        savedStateHandle[SAVED_STATE_isShowInvalidPasswordMessage] ?: false
+    private val isLoggedIn: Boolean =
+        savedStateHandle[SAVED_STATE_isLoggedIn] ?: false
+    private val statusMessage: UiText =
+        savedStateHandle[SAVED_STATE_statusMessage] ?: UiText.None
+    private val errorMessage: UiText =
+        savedStateHandle[SAVED_STATE_errorMessage] ?: UiText.None
 
     private val _loginState = MutableStateFlow(LoginState())
     val loginState = _loginState.onEach { state ->

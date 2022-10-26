@@ -43,19 +43,32 @@ class RegisterViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)
-    private val email: String = Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: ""
-    private val password: String = Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: ""
-    private val confirmPassword: String = Uri.decode(savedStateHandle[SAVED_STATE_confirmPassword]) ?: ""
-    private val isInvalidEmail: Boolean = savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false
-    private val isShowInvalidEmailMessage: Boolean = savedStateHandle[SAVED_STATE_isShowInvalidEmailMessage] ?: false
-    private val isInvalidPassword: Boolean = savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false
-    private val isShowInvalidPasswordMessage: Boolean = savedStateHandle[SAVED_STATE_isShowInvalidPasswordMessage] ?: false
-    private val isInvalidConfirmPassword: Boolean = savedStateHandle[SAVED_STATE_isInvalidConfirmPassword] ?: false
-    private val isShowInvalidConfirmPasswordMessage: Boolean = savedStateHandle[SAVED_STATE_isShowInvalidConfirmPasswordMessage] ?: false
-    private val isPasswordsMatch: Boolean = savedStateHandle[SAVED_STATE_isPasswordsMatch] ?: true
-    private val isLoggedIn: Boolean = savedStateHandle[SAVED_STATE_isLoggedIn] ?: false
-    private val statusMessage: UiText = savedStateHandle[SAVED_STATE_statusMessage] ?: UiText.None
-    private val errorMessage: UiText = savedStateHandle[SAVED_STATE_errorMessage] ?: UiText.None
+    private val email: String =
+        Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: ""
+    private val password: String =
+        Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: ""
+    private val confirmPassword: String =
+        Uri.decode(savedStateHandle[SAVED_STATE_confirmPassword]) ?: ""
+    private val isInvalidEmail: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false
+    private val isShowInvalidEmailMessage: Boolean =
+        savedStateHandle[SAVED_STATE_isShowInvalidEmailMessage] ?: false
+    private val isInvalidPassword: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false
+    private val isShowInvalidPasswordMessage: Boolean =
+        savedStateHandle[SAVED_STATE_isShowInvalidPasswordMessage] ?: false
+    private val isInvalidConfirmPassword: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidConfirmPassword] ?: false
+    private val isShowInvalidConfirmPasswordMessage: Boolean =
+        savedStateHandle[SAVED_STATE_isShowInvalidConfirmPasswordMessage] ?: false
+    private val isPasswordsMatch: Boolean =
+        savedStateHandle[SAVED_STATE_isPasswordsMatch] ?: true
+    private val isLoggedIn: Boolean =
+        savedStateHandle[SAVED_STATE_isLoggedIn] ?: false
+    private val statusMessage: UiText =
+        savedStateHandle[SAVED_STATE_statusMessage] ?: UiText.None
+    private val errorMessage: UiText =
+        savedStateHandle[SAVED_STATE_errorMessage] ?: UiText.None
 
     private val _registerState = MutableStateFlow<RegisterState>(RegisterState())
     val registerState = _registerState.onEach { state ->
