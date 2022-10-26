@@ -3,6 +3,7 @@ package com.realityexpander.tasky.presentation.register_screen
 import com.realityexpander.tasky.common.UiText
 
 data class RegisterState(
+    val username: String = "",
     val email: String = "",
     val password: String = "",
     val confirmPassword: String = "",
