@@ -13,6 +13,9 @@ data class RegisterState(
     val isLoggedIn: Boolean = false,
     val isError: Boolean = false,
 
+    val isInvalidUsername: Boolean = false,
+    val isShowInvalidUsernameMessage: Boolean = false,
+
     val isInvalidEmail: Boolean = false,
     val isShowInvalidEmailMessage: Boolean = false,
 

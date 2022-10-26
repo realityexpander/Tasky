@@ -21,7 +21,7 @@
         long, contain at least one number, one uppercase letter and one lowercase letter.</string>
     <string name="register_label_confirm_password">Confirm password</string>
     <string name="register_placeholder_confirm_password">Confirm your password</string>
-    <string name="register_button">REGISTER</string>
+    <string name="register_button">GET STARTED</string>
     <string name="register_description_back">Go Back to Login</string>
 
     <!--    NameField Compose Component -->
@@ -49,8 +49,8 @@
     <string name="error_unknown">Unknown error - %s</string>
     <string name="error_invalid_email">Invalid email address.</string>
     <string name="error_invalid_password">Invalid password.</string>
-    <string name="error_invalid_confirm_password">Invalid confirm password</string>
-    <string name="error_invalid_username">Invalid username</string>
-    <string name="error_invalid_user_name">Invalid user name</string>
+    <string name="error_invalid_confirm_password">Invalid confirm password,</string>
+    <string name="error_invalid_username">Invalid username.</string>
+    <string name="error_invalid_user_name">Invalid user name,</string>
 
 </resources>

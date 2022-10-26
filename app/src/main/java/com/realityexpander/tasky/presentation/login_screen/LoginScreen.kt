@@ -4,7 +4,10 @@ import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
@@ -33,6 +36,7 @@ import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl
 import com.realityexpander.tasky.domain.validation.ValidateEmailImpl
 import com.realityexpander.tasky.domain.validation.ValidatePassword
+import com.realityexpander.tasky.domain.validation.ValidateUsername
 import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
 import com.realityexpander.tasky.ui.components.EmailField
 import com.realityexpander.tasky.ui.components.PasswordField
@@ -43,7 +47,9 @@ import com.realityexpander.tasky.ui.theme.modifiers.*
 @Destination
 @RootNavGraph(start = true)
 fun LoginScreen(
+    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     email: String? = null,
+    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     password: String? = null,
     confirmPassword: String? = null,
     navigator: DestinationsNavigator,
@@ -53,7 +59,10 @@ fun LoginScreen(
     val focusManager = LocalFocusManager.current
 
     fun performLogin() {
-        viewModel.sendEvent(LoginEvent.Login(loginState.email, loginState.password))
+        viewModel.sendEvent(LoginEvent.Login(
+            email = loginState.email,
+            password = loginState.password,
+        ))
         focusManager.clearFocus()
     }
 
@@ -90,8 +99,12 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colors.onSurface)
+            .scrollable(
+                orientation = Orientation.Vertical,
+                state = rememberScrollState()
+            )
     ) {
-        Spacer(modifier = Modifier.mediumHeight())
+        Spacer(modifier = Modifier.largeHeight())
         Text(
             text = UiText.Res(R.string.login_title).get(),
             style = MaterialTheme.typography.h5,
@@ -107,6 +120,7 @@ fun LoginScreen(
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
                 .weight(1f)
         ) {
+            Spacer(modifier = Modifier.mediumHeight())
 
             // • EMAIL
             EmailField(
@@ -225,7 +239,9 @@ fun LoginScreenPreview() {
                     authRepository = AuthRepositoryFakeImpl(
                         authApi = AuthApiFakeImpl(),
                         authDao = AuthDaoFakeImpl(),
+                        validateUsername = ValidateUsername(),
                         validateEmail = ValidateEmailImpl(),
+                        validatePassword = ValidatePassword(),
                     ),
                     validateEmail = ValidateEmailImpl(),
                     validatePassword = ValidatePassword(),

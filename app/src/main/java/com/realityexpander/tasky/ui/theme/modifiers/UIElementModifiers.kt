@@ -18,6 +18,12 @@ fun Modifier.taskyWideButton(color: Color = Color.White): Modifier =
     .clip(shape = TaskyShapes.WideButtonRoundedCorners)
     .background(color = color)
 
+fun Modifier.taskyMediumButton(color: Color = Color.White): Modifier =
+    extraLargeHeight()
+    .extraLargeWidth()
+    .clip(shape = TaskyShapes.MediumButtonRoundedCorners)
+    .background(color = color)
+
 fun Modifier.taskyScreenTopCorners(color: Color = Color.White): Modifier =
     fillMaxSize()
     .clip(shape = TaskyShapes.ScreenTopCorners)

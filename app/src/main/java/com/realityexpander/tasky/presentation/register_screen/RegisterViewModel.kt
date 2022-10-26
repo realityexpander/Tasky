@@ -10,6 +10,7 @@ import com.realityexpander.tasky.common.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
 import com.realityexpander.tasky.domain.validation.ValidatePassword
+import com.realityexpander.tasky.domain.validation.ValidateUsername
 import com.realityexpander.tasky.presentation.common.UIConstants
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_confirmPassword
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_email
@@ -24,6 +25,7 @@ import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isS
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isShowInvalidPasswordMessage
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_password
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_statusMessage
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_username
 import com.realityexpander.tasky.presentation.login_screen.LoginEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,12 +39,15 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
+    private val validateUsername: ValidateUsername,
     private val validateEmail: IValidateEmail,
     private val validatePassword: ValidatePassword,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)
+    private val username: String =
+        Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: ""
     private val email: String =
         Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: ""
     private val password: String =
@@ -73,6 +78,7 @@ class RegisterViewModel @Inject constructor(
     private val _registerState = MutableStateFlow<RegisterState>(RegisterState())
     val registerState = _registerState.onEach { state ->
         // save state for process death
+        savedStateHandle[SAVED_STATE_username] = state.username
         savedStateHandle[SAVED_STATE_email] = state.email
         savedStateHandle[SAVED_STATE_password] = state.password
         savedStateHandle[SAVED_STATE_confirmPassword] = state.confirmPassword
@@ -88,6 +94,7 @@ class RegisterViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
 
         // Validate as the user types
+        if(state.username.isNotBlank()) sendEvent(RegisterEvent.ValidateUsername)
         if(state.email.isNotBlank()) sendEvent(RegisterEvent.ValidateEmail)
         if(state.password.isNotBlank()) sendEvent(RegisterEvent.ValidatePassword)
         if(state.confirmPassword.isNotBlank()) sendEvent(RegisterEvent.ValidateConfirmPassword)
@@ -100,6 +107,7 @@ class RegisterViewModel @Inject constructor(
 
             // restore state after process death
             _registerState.value = RegisterState(
+                username = username,
                 email = email,
                 password = password,
                 confirmPassword = confirmPassword,
@@ -117,6 +125,7 @@ class RegisterViewModel @Inject constructor(
             yield() // allow the registerState to be updated
 
             // Validate email & password when restored from process death or coming from another screen
+            if (registerState.value.username.isNotBlank()) sendEvent(RegisterEvent.ValidateUsername)
             if (registerState.value.email.isNotBlank()) sendEvent(RegisterEvent.ValidateEmail)
             if (registerState.value.password.isNotBlank()) sendEvent(RegisterEvent.ValidatePassword)
             if (registerState.value.confirmPassword.isNotBlank()) sendEvent(RegisterEvent.ValidateConfirmPassword)
@@ -124,15 +133,20 @@ class RegisterViewModel @Inject constructor(
 
             yield() // allow the registerState to be updated
             // Show status validation messages when restored from process death or coming from another screen
+            if(registerState.value.isInvalidUsername) sendEvent(RegisterEvent.ShowInvalidUsernameMessage)
             if(registerState.value.isInvalidEmail) sendEvent(RegisterEvent.ShowInvalidEmailMessage)
             if(registerState.value.isInvalidPassword) sendEvent(RegisterEvent.ShowInvalidPasswordMessage)
             if(registerState.value.isInvalidConfirmPassword) sendEvent(RegisterEvent.ShowInvalidConfirmPasswordMessage)
         }
     }
 
-    private suspend fun register(email: String, password: String) {
+    private suspend fun register(
+        username: String,
+        email: String,
+        password: String
+    ) {
         try {
-            val authToken = authRepository.register(email, password)
+            val authToken = authRepository.register(username, email, password)
             sendEvent(RegisterEvent.RegisterSuccess(authToken))
         } catch(e: Exceptions.EmailAlreadyExistsException) {
             sendEvent(RegisterEvent.EmailAlreadyExists)
@@ -146,6 +160,11 @@ class RegisterViewModel @Inject constructor(
             sendEvent(RegisterEvent.UnknownError(UiText.Res( R.string.error_unknown, e.message ?: "")))
             e.printStackTrace()
         }
+    }
+
+    private fun validateUsername() {
+        val isValid = validateUsername.validate(registerState.value.username)
+        sendEvent(RegisterEvent.IsValidUsername(isValid))
     }
 
     private fun validateEmail() {
@@ -191,6 +210,13 @@ class RegisterViewModel @Inject constructor(
                     isLoading = event.isLoading
                 )
             }
+            is RegisterEvent.UpdateUsername -> {
+                _registerState.value = _registerState.value.copy(
+                    username = event.username,
+                    isInvalidUsername = false,
+                    isShowInvalidUsernameMessage = false,
+                )
+            }
             is RegisterEvent.UpdateEmail -> {
                 _registerState.value = _registerState.value.copy(
                     email = event.email,
@@ -218,6 +244,10 @@ class RegisterViewModel @Inject constructor(
                 _registerState.value = _registerState.value
                     .copy(isPasswordVisible = !event.isVisible)
             }
+            is RegisterEvent.ValidateUsername -> {
+                validateUsername()
+                yield()
+            }
             is RegisterEvent.ValidateEmail -> {
                 validateEmail()
                 yield()
@@ -233,6 +263,11 @@ class RegisterViewModel @Inject constructor(
             is RegisterEvent.ValidatePasswordsMatch -> {
                 validatePasswordsMatch()
                 yield()
+            }
+            is RegisterEvent.IsValidUsername -> {
+                _registerState.value = _registerState.value.copy(
+                    isInvalidUsername = !event.isValid,
+                )
             }
             is RegisterEvent.IsValidEmail -> {
                 _registerState.value = _registerState.value.copy(
@@ -254,6 +289,11 @@ class RegisterViewModel @Inject constructor(
                     isPasswordsMatch = event.isMatch
                 )
             }
+            is RegisterEvent.ShowInvalidUsernameMessage -> {
+                _registerState.value = _registerState.value.copy(
+                    isShowInvalidUsernameMessage = true,
+                )
+            }
             is RegisterEvent.ShowInvalidEmailMessage -> {
                 _registerState.value = _registerState.value.copy(
                     isShowInvalidEmailMessage = true,
@@ -270,11 +310,15 @@ class RegisterViewModel @Inject constructor(
                 )
             }
             is RegisterEvent.Register -> {
+                sendEvent(RegisterEvent.ValidateUsername)
                 sendEvent(RegisterEvent.ValidateEmail)
                 sendEvent(RegisterEvent.ValidatePassword)
                 sendEvent(RegisterEvent.ValidateConfirmPassword)
                 sendEvent(RegisterEvent.ValidatePasswordsMatch)
                 yield()
+
+                // Only show `Invalid Username` message only when "login" is clicked and the username is invalid.
+                if(_registerState.value.isInvalidUsername) sendEvent(RegisterEvent.ShowInvalidUsernameMessage)
 
                 // Only show `Invalid Email` message only when "login" is clicked and the email is invalid.
                 if(_registerState.value.isInvalidEmail) sendEvent(RegisterEvent.ShowInvalidEmailMessage)
@@ -285,14 +329,15 @@ class RegisterViewModel @Inject constructor(
                 // Only show `Invalid Confirm Password` message only when "login" is clicked and the confirm password is invalid.
                 if(_registerState.value.isInvalidConfirmPassword) sendEvent(RegisterEvent.ShowInvalidConfirmPasswordMessage)
 
-                if(_registerState.value.isInvalidEmail
+                if( _registerState.value.isInvalidUsername
+                    || _registerState.value.isInvalidEmail
                     || _registerState.value.isInvalidPassword
                     || _registerState.value.isInvalidConfirmPassword
                     || !registerState.value.isPasswordsMatch
                 ) return
 
                 sendEvent(RegisterEvent.Loading(true))
-                register(event.email, event.password)
+                register(event.username, event.email, event.password)
             }
             is RegisterEvent.EmailAlreadyExists -> {
                 _registerState.value = _registerState.value.copy(

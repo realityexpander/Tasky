@@ -3,10 +3,12 @@ package com.realityexpander.tasky.presentation.register_screen
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,6 +33,7 @@ import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl
 import com.realityexpander.tasky.domain.validation.ValidateEmailImpl
 import com.realityexpander.tasky.domain.validation.ValidatePassword
+import com.realityexpander.tasky.domain.validation.ValidateUsername
 import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
 import com.realityexpander.tasky.ui.components.EmailField
 import com.realityexpander.tasky.ui.components.NameField
@@ -56,9 +59,10 @@ fun RegisterScreen(
 
     fun performRegister() {
         viewModel.sendEvent(RegisterEvent.Register(
-            registerState.email,
-            registerState.password,
-            registerState.confirmPassword
+            username = registerState.username,
+            email = registerState.email,
+            password = registerState.password,
+            confirmPassword = registerState.confirmPassword,
         ))
 
         focusManager.clearFocus()
@@ -113,20 +117,26 @@ fun RegisterScreen(
             modifier = Modifier
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
                 .weight(1f)
+                .scrollable(
+                    orientation = Orientation.Vertical,
+                    state = rememberScrollState()
+                )
         ) {
-//            // • USERNAME
-//            NameField(
-//                value = registerState.username,
-//                label = null,
-//                isError = registerState.isInvalidUsername,
-//                onValueChange = {
-//                    viewModel.sendEvent(RegisterEvent.UpdateUsername(it))
-//                }
-//            )
-//            if (registerState.isInvalidUsername && registerState.isShowInvalidUsernameMessage) {
-//                Text(text = UiText.Res(R.string.error_invalid_username).get(), color = Color.Red)
-//            }
-//            Spacer(modifier = Modifier.smallHeight())
+            Spacer(modifier = Modifier.mediumHeight())
+
+            // • USERNAME
+            NameField(
+                value = registerState.username,
+                label = null,
+                isError = registerState.isInvalidUsername,
+                onValueChange = {
+                    viewModel.sendEvent(RegisterEvent.UpdateUsername(it))
+                }
+            )
+            if (registerState.isInvalidUsername && registerState.isShowInvalidUsernameMessage) {
+                Text(text = UiText.Res(R.string.error_invalid_username).get(), color = Color.Red)
+            }
+            Spacer(modifier = Modifier.smallHeight())
 
             // • EMAIL
             EmailField(
@@ -271,13 +281,13 @@ fun RegisterScreen(
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = DP.small)
+                    .taskyMediumButton(color = MaterialTheme.colors.primary)
             ) {
-//                Text(text = UiText.Str("<").get())
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = UiText.Res(R.string.register_description_back).get(),
                     modifier = Modifier
-                        .size(DP.small)
+                        .size(DP.large)
                         .align(alignment = Alignment.CenterVertically)
                 )
             }
@@ -302,8 +312,11 @@ fun RegisterScreenPreview() {
                     authRepository = AuthRepositoryFakeImpl(
                         authApi = AuthApiFakeImpl(),
                         authDao = AuthDaoFakeImpl(),
+                        validateUsername = ValidateUsername(),
                         validateEmail = ValidateEmailImpl(),
+                        validatePassword = ValidatePassword(),
                     ),
+                    validateUsername = ValidateUsername(),
                     validateEmail = ValidateEmailImpl(),
                     validatePassword = ValidatePassword(),
                     savedStateHandle = SavedStateHandle().apply {

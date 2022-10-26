@@ -10,12 +10,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.common.UiText
 
@@ -50,7 +52,7 @@ fun NameField(
         keyboardActions = keyboardActionsLocal,
         modifier = Modifier.fillMaxWidth(),
         leadingIcon = {
-            Icon(imageVector = Icons.Filled.People,
+            Icon(imageVector = Icons.Filled.Person,
                 UiText.Res(R.string.nameField_description_name).get())
         },
         trailingIcon = {
@@ -73,5 +75,36 @@ fun NameField(
                 Icon(imageVector = image, description)
             }
         }
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NameFieldPreview() {
+    NameField(
+        value = "John Doe",
+        isError = false,
+        onValueChange = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NameFieldPreviewError() {
+    NameField(
+        value = "Chris Athanas",
+        isError = true,
+        onValueChange = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NameFieldPreviewNoLabel() {
+    NameField(
+        value = "",
+        label = null,
+        isError = false,
+        onValueChange = {}
     )
 }

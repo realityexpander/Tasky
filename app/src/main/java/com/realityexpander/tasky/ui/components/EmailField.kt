@@ -15,6 +15,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.common.UiText
 
@@ -75,7 +76,36 @@ fun EmailField(
     )
 }
 
+@Preview(showBackground = true)
+@Composable
+fun EmailFieldPreview() {
+    EmailField(
+        value = "",
+        label = null,
+        isError = false,
+        onValueChange = {}
+    )
+}
 
+@Preview(showBackground = true)
+@Composable
+fun EmailFieldPreviewError() {
+    EmailField(
+        value = "Bad.Email",
+        isError = true,
+        onValueChange = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EmailFieldPreviewValid() {
+    EmailField(
+        value = "chris@demo.com",
+        isError = false,
+        onValueChange = {}
+    )
+}
 
 
 
