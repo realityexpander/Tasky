@@ -21,8 +21,7 @@ import com.realityexpander.tasky.ui.util.UiText
 fun TextEntryField(
     modifier: Modifier = Modifier,
     value: String,
-    label: String? = UiText.Res(R.string.textEntryField_label)
-        .get(), // if this is null, label is not shown
+    label: String? = UiText.Res(R.string.textEntryField_label).get(), // if this is null, label is not shown
     labelComponent: @Composable (() -> Unit)? =
         { Text(text = label ?: UiText.Res(R.string.textEntryField_label).get()) },
     placeholder: String = UiText.Res(R.string.textEntryField_placeholder).get(),
