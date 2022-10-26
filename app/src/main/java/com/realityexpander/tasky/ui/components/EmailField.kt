@@ -21,8 +21,9 @@ import com.realityexpander.tasky.common.UiText
 @Composable
 fun EmailField(
     value: String,
-    @SuppressWarnings("Unused")
-    label: String = UiText.Res(R.string.emailField_label).get(),
+    label: String? = UiText.Res(R.string.emailField_label).get(), // if this is null, label is not shown.
+    labelComponent: @Composable (() -> Unit)? =
+        { Text(text = label ?: UiText.Res(R.string.emailField_label).get()) },
     placeholder: String = UiText.Res(R.string.emailField_placeholder).get(),
     isError: Boolean,
     onValueChange: (String) -> Unit,
@@ -42,7 +43,7 @@ fun EmailField(
         singleLine = true,
         onValueChange = onValueChange,
         isError = isError,
-        //label = { Text(text = label) },
+        label = if(label != null) labelComponent else null,
         placeholder = { Text(text = placeholder) },
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActionsLocal,
