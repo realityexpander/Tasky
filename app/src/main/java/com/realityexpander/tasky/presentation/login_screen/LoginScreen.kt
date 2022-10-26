@@ -154,7 +154,10 @@ fun LoginScreen(
                     .align(alignment = Alignment.CenterHorizontally),
                 enabled = !loginState.isLoading,
             ) {
-                Text(text = UiText.Res(R.string.login_button).get())
+                Text(
+                    text = UiText.Res(R.string.login_button).get(),
+                    fontSize = MaterialTheme.typography.button.fontSize,
+                )
                 if (loginState.isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier

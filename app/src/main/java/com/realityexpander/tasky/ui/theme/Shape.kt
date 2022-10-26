@@ -12,6 +12,8 @@ val Shapes = Shapes(
 )
 
 object TaskyShapes {
-    val ScreenTopCorners = RoundedCornerShape(topStart = DP.medium, topEnd = DP.medium)
-    val WideButtonRoundedCorners = RoundedCornerShape(DP.medium)
+    val ScreenTopCorners =
+        RoundedCornerShape(topStart = DP.medium, topEnd = DP.medium)
+    val WideButtonRoundedCorners =
+        RoundedCornerShape(DP.medium)
 }
