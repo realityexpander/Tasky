@@ -22,6 +22,7 @@ import com.realityexpander.tasky.ui.util.UiText
 
 @Composable
 fun NameField(
+    modifier: Modifier = Modifier.fillMaxWidth(),
     value: String,
     label: String? = UiText.Res(R.string.nameField_label).get(), // if this is null, label is not shown
     labelComponent: @Composable (() -> Unit)? =
@@ -49,7 +50,7 @@ fun NameField(
         placeholder = { Text(text = placeholder) },
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActionsLocal,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         leadingIcon = {
             Icon(imageVector = Icons.Filled.Person,
                 UiText.Res(R.string.nameField_description_name).get())

@@ -20,6 +20,7 @@ import com.realityexpander.tasky.ui.util.UiText
 
 @Composable
 fun EmailField(
+    modifier: Modifier = Modifier.fillMaxWidth(),
     value: String,
     label: String? = UiText.Res(R.string.emailField_label).get(), // if this is null, label is not shown.
     labelComponent: @Composable (() -> Unit)? =
@@ -47,7 +48,7 @@ fun EmailField(
         placeholder = { Text(text = placeholder) },
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActionsLocal,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         leadingIcon = {
             Icon(imageVector = Icons.Filled.Email,
             UiText.Res(R.string.emailField_description_email).get())
