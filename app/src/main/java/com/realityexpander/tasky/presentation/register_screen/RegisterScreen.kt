@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.presentation.register_screen
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,15 +13,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.common.UiText
+import com.realityexpander.tasky.data.repository.AuthRepositoryFakeImpl
+import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
+import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl
+import com.realityexpander.tasky.domain.validation.ValidateEmailImpl
+import com.realityexpander.tasky.domain.validation.ValidatePassword
 import com.realityexpander.tasky.ui.components.EmailField
 import com.realityexpander.tasky.ui.components.PasswordField
 import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
+import com.realityexpander.tasky.presentation.login_screen.LoginScreen
+import com.realityexpander.tasky.presentation.login_screen.LoginViewModel
+import com.realityexpander.tasky.ui.theme.TaskyTheme
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -206,3 +218,58 @@ fun RegisterScreen(
 
     }
 }
+
+
+@Composable
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+fun RegisterScreenPreview() {
+    TaskyTheme {
+        Surface {
+            RegisterScreen(
+                navigator = EmptyDestinationsNavigator,
+                viewModel = RegisterViewModel(
+                    authRepository = AuthRepositoryFakeImpl(
+                        authApi = AuthApiFakeImpl(),
+                        authDao = AuthDaoFakeImpl(),
+                        validateEmail = ValidateEmailImpl(),
+                    ),
+                    validateEmail = ValidateEmailImpl(),
+                    validatePassword = ValidatePassword(),
+                    savedStateHandle = SavedStateHandle().apply {
+                        // For Live Preview
+                        set("email", "chris@demo.com")
+                        set("password", "123456Aa")
+                        set("confirmPassword", "123456Aa")
+                    }
+                )
+            )
+        }
+    }
+}
+
+@Composable
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+)
+fun RegisterScreenPreview_NightMode() {
+    RegisterScreenPreview()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
