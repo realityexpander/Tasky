@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.common
+package com.realityexpander.tasky.ui.util
 
 import android.content.Context
 import android.os.Parcelable
@@ -70,6 +70,17 @@ open class UiText : Parcelable {
     // asString() = null
     @Parcelize
     object None : UiText()
+
+
+    // Safely returns a resource string that may not have been passed correct parameters at construction time.
+    fun Context.getStringSafe(@StringRes resId: Int, vararg args: Any): String {
+        return try {
+            getString(resId, *args)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            getString(resId)
+        }
+    }
 
     // Useful for debugging
     override fun toString(): String {
@@ -149,8 +160,8 @@ open class UiText : Parcelable {
             is None -> null
             is Str -> value
             is Res -> context.getString(resId, *args)
-            is StrOrRes -> value ?: context.getString(resId!!, *args)
-            is ResOrStr -> resId?.let { context.getString(it, *args) } ?: value
+            is StrOrRes -> value ?: resId?.let { context.getStringSafe(it, *args) }
+            is ResOrStr -> resId?.let { context.getStringSafe(it, *args) } ?: value
             else -> {
                 "UiText: Unknown type"
             }

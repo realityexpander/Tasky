@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.presentation.register_screen
 
-import com.realityexpander.tasky.common.UiText
+import com.realityexpander.tasky.ui.util.UiText
 
 data class RegisterState(
     val username: String = "",

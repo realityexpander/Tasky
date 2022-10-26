@@ -9,7 +9,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,7 +18,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.common.UiText
+import com.realityexpander.tasky.ui.util.UiText
 
 @Composable
 fun NameField(

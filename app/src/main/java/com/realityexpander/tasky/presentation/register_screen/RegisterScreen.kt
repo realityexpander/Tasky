@@ -27,7 +27,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.common.UiText
+import com.realityexpander.tasky.ui.util.UiText
 import com.realityexpander.tasky.data.repository.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl

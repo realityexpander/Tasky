@@ -6,11 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.common.Exceptions
-import com.realityexpander.tasky.common.UiText
+import com.realityexpander.tasky.ui.util.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
 import com.realityexpander.tasky.domain.validation.ValidatePassword
-import com.realityexpander.tasky.presentation.common.UIConstants
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_email
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isInvalidEmail
@@ -20,7 +19,6 @@ import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isS
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isShowInvalidPasswordMessage
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_password
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_statusMessage
-import com.realityexpander.tasky.presentation.register_screen.RegisterEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
