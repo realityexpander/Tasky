@@ -25,8 +25,8 @@ import com.realityexpander.tasky.common.UiText
 @Composable
 fun PasswordField(
     value: String,
-    @SuppressWarnings("unused_parameter")
     label: String? = UiText.Res(R.string.passwordField_label).get(),
+    labelComponent: @Composable (() -> Unit)? = { Text(text = label ?: UiText.Res(R.string.passwordField_label).get()) },
     placeholder: String = UiText.Res(R.string.passwordField_placeholder).get(),
     isError: Boolean,
     isPasswordVisible: Boolean = false,
@@ -54,7 +54,7 @@ fun PasswordField(
         singleLine = true,
         onValueChange = onValueChange,
         isError = isError,
-        //label = { if(isLabelVisible) Text(text = label) },
+        label = if(label != null) labelComponent else null,
         placeholder = { Text(text = placeholder) },
         modifier = Modifier.fillMaxWidth(1f),
         visualTransformation =
