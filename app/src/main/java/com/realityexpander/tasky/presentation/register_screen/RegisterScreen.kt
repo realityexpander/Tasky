@@ -83,7 +83,7 @@ fun RegisterScreen(
         Text(text = "Register:")
         Spacer(modifier = Modifier.height(8.dp))
 
-        // EMAIL
+        // • EMAIL
         EmailField(
             value = registerState.email,
             isError = registerState.isInvalidEmail,
@@ -96,7 +96,7 @@ fun RegisterScreen(
         }
         Spacer(modifier = Modifier.height(16.dp))
 
-        // PASSWORD
+        // • PASSWORD
         PasswordField(
             value = registerState.password,
             isError = registerState.isInvalidPassword,
@@ -115,7 +115,7 @@ fun RegisterScreen(
         }
         Spacer(modifier = Modifier.height(4.dp))
 
-        // CONFIRM PASSWORD
+        // • CONFIRM PASSWORD
         PasswordField(
             label = UiText.Res(R.string.register_label_confirm_password).get(),
             placeholder = UiText.Res(R.string.register_placeholder_confirm_password).get(),
@@ -138,14 +138,14 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // SHOW IF MATCHING PASSWORDS
+        // • SHOW IF MATCHING PASSWORDS
         if(!registerState.isPasswordsMatch)
         {
             Text(text = UiText.Res(R.string.register_error_passwords_do_not_match).get(), color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // SHOW PASSWORD REQUIREMENTS
+        // • SHOW PASSWORD REQUIREMENTS
         if(registerState.isShowInvalidPasswordMessage || registerState.isShowInvalidConfirmPasswordMessage) {
             Text(
                 text = UiText.Res(R.string.register_password_requirements).get(),
@@ -154,7 +154,7 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // REGISTER BUTTON
+        // • REGISTER BUTTON
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
             performRegister()
@@ -175,7 +175,7 @@ fun RegisterScreen(
         }
         Spacer(modifier = Modifier.height(32.dp))
 
-        // SIGN IN BUTTON
+        // • SIGN IN BUTTON
         Text(text = UiText.Res(R.string.register_already_a_member_sign_in).get(),
             color = Color.Cyan,
             modifier = Modifier

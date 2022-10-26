@@ -5,27 +5,25 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
-import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.R
@@ -35,15 +33,15 @@ import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl
 import com.realityexpander.tasky.domain.validation.ValidateEmailImpl
 import com.realityexpander.tasky.domain.validation.ValidatePassword
+import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
 import com.realityexpander.tasky.ui.components.EmailField
 import com.realityexpander.tasky.ui.components.PasswordField
-import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
-import com.realityexpander.tasky.ui.modifiers.mediumHeight
 import com.realityexpander.tasky.ui.theme.TaskyTheme
-import kotlinx.coroutines.launch
+import com.realityexpander.tasky.ui.theme.modifiers.*
 
 @Composable
-@Destination(start = true)
+@Destination
+@RootNavGraph(start = true)
 fun LoginScreen(
     email: String? = null,
     password: String? = null,
@@ -77,16 +75,16 @@ fun LoginScreen(
         navigateToRegister()
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        if(loginState.isLoading) {
-            Spacer(modifier = Modifier.mediumHeight())
-            CircularProgressIndicator(
-                modifier = Modifier.align(alignment = Alignment.Center)
-            )
-        }
-    }
+//    Box(
+//        modifier = Modifier.fillMaxSize()
+//    ) {
+//        if(loginState.isLoading) {
+//            Spacer(modifier = Modifier.mediumHeight())
+//            CircularProgressIndicator(
+//                modifier = Modifier.align(alignment = Alignment.Center)
+//            )
+//        }
+//    }
 
     Column(
         modifier = Modifier
@@ -106,12 +104,10 @@ fun LoginScreen(
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .background(color = MaterialTheme.colors.surface)
-                .padding(16.dp)
+                .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
         ) {
-            // EMAIL
+
+            // • EMAIL
             EmailField(
                 value = loginState.email,
                 isError = loginState.isInvalidEmail,
@@ -122,9 +118,9 @@ fun LoginScreen(
             if (loginState.isInvalidEmail && loginState.isShowInvalidEmailMessage) {
                 Text(text = UiText.Res(R.string.error_invalid_email).get(), color = Color.Red)
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.extraSmallHeight())
 
-            // PASSWORD
+            // • PASSWORD
             PasswordField(
                 value = loginState.password,
                 isError = loginState.isInvalidPassword,
@@ -144,20 +140,17 @@ fun LoginScreen(
             )
             if (loginState.isInvalidPassword && loginState.isShowInvalidPasswordMessage) {
                 Text(text = UiText.Res(R.string.error_invalid_password).get(), color = Color.Red)
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.extraSmallHeight())
             }
 
-            // LOGIN BUTTON
-            Spacer(modifier = Modifier.height(16.dp))
+            // • LOGIN BUTTON
+            Spacer(modifier = Modifier.smallHeight())
             Button(
                 onClick = {
                     performLogin()
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .clip(shape = RoundedCornerShape(32.dp))
-                    .background(color = MaterialTheme.colors.primary)
+                    .taskyWideButton(color = MaterialTheme.colors.primary)
                     .align(alignment = Alignment.CenterHorizontally),
                 enabled = !loginState.isLoading,
             ) {
@@ -165,15 +158,15 @@ fun LoginScreen(
                 if (loginState.isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier
-                            .padding(start = 4.dp)
-                            .size(16.dp)
+                            .padding(start = DP.tiny)
+                            .size(DP.small)
                             .align(alignment = CenterVertically)
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.largeHeight())
 
-            // REGISTER TEXT BUTTON
+            // • REGISTER TEXT BUTTON
             Text(
                 text = UiText.Res(R.string.login_not_a_member_sign_up).get(),
                 color = Color.Cyan,
@@ -183,7 +176,7 @@ fun LoginScreen(
                         navigateToRegister()
                     })
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.smallHeight())
 
             // STATUS //////////////////////////////////////////
 
@@ -192,15 +185,15 @@ fun LoginScreen(
                     text = "Error: $errorMessage",
                     color = Color.Red,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.extraSmallHeight())
             }
             if (loginState.isLoggedIn) {
                 Text(text = UiText.Res(R.string.login_logged_in).get())
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.extraSmallHeight())
             }
             loginState.statusMessage.asStrOrNull()?.let { message ->
                 Text(text = message)
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.extraSmallHeight())
             }
         }
     }
