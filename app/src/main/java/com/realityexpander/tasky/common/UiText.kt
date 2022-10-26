@@ -104,7 +104,7 @@ open class UiText : Parcelable {
             is Str -> value ?: ""
             is Res -> stringResource(resId, *args)
             is StrOrRes -> value ?: stringResource(resId!!, *args)
-            is ResOrStr -> stringResource(resId!!, *args) ?: value ?: ""
+            is ResOrStr -> resId?.let { stringResource(it, *args) } ?: value ?: ""
             else -> {
                 "UiText: Unknown type"
             }
