@@ -63,7 +63,10 @@ fun PasswordField(
                 PasswordVisualTransformation(),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActionsLocal,
-        leadingIcon = { Icon(imageVector = Icons.Filled.Lock, "Lock") },
+        leadingIcon = {
+            Icon(imageVector = Icons.Filled.Lock,
+            UiText.Res(R.string.passwordField_description_lock).get())
+        },
         trailingIcon = {
             val isPasswordValid = !isError
 

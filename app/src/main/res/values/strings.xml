@@ -28,12 +28,15 @@
     <string name="emailField_placeholder">Email Address</string>
     <string name="emailField_description_isValid">Email Address is valid</string>
     <string name="emailField_description_isInvalid">Email Address is not valid</string>
+    <string name="emailField_description_email">Email</string>
 
     <!--    PasswordField Composable -->
     <string name="passwordField_label">Password</string>
     <string name="passwordField_placeholder">Password</string>
     <string name="passwordField_description_hide">Hide password</string>
     <string name="passwordField_description_show">Show password</string>
+    <string name="passwordField_description_lock">Lock</string>
+    <string name="passwordField_description_email">Email</string>
 
     <!--    Error Messages (general)-->
     <string name="error_unknown">Unknown error - %s</string>
@@ -42,4 +45,5 @@
     <string name="error_invalid_confirm_password">Invalid confirm password</string>
     <string name="error_invalid_username">Invalid username</string>
     <string name="error_invalid_user_name">Invalid user name</string>
+
 </resources>

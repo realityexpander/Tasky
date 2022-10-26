@@ -46,7 +46,10 @@ fun EmailField(
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActionsLocal,
         modifier = Modifier.fillMaxWidth(),
-        leadingIcon = { Icon(imageVector = Icons.Filled.Email, "Email") },
+        leadingIcon = {
+            Icon(imageVector = Icons.Filled.Email,
+            UiText.Res(R.string.emailField_description_email).get())
+        },
         trailingIcon = {
             if(value.isNotBlank() && value.length >= 5) {
                 val isEmailValid = !isError
