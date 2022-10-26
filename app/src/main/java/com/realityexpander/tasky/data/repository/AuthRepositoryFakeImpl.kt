@@ -6,11 +6,15 @@ import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.data.repository.local.IAuthDao
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.IValidateEmail
+import com.realityexpander.tasky.domain.validation.ValidatePassword
+import com.realityexpander.tasky.domain.validation.ValidateUsername
 
 class AuthRepositoryFakeImpl(
     private val authDao: IAuthDao,
     private val authApi: IAuthApi,
-    private val validateEmail: IValidateEmail
+    private val validateEmail: IValidateEmail,
+    private val validatePassword: ValidatePassword,
+    private val validateUsername: ValidateUsername,
 ): IAuthRepository {
 
     override suspend fun login(email: String, password: String): AuthToken {
@@ -34,13 +38,25 @@ class AuthRepositoryFakeImpl(
         }
     }
 
-    override suspend fun register(email: String, password: String): AuthToken {
+    override suspend fun register(
+        username: String,
+        email: String,
+        password: String
+    ): AuthToken {
+        if(!validateUsername.validate(username)) {
+            throw Exceptions.InvalidUsernameException()
+        }
+
         if(!validateEmail.validate(email)) {
             throw Exceptions.InvalidEmailException()
         }
 
+        if(!validatePassword.validate(password)) {
+            throw Exceptions.InvalidPasswordException()
+        }
+
         val token: AuthToken = try {
-            authApi.register(email, password)
+            authApi.register(username, email, password)
         } catch (e: Exceptions.EmailAlreadyExistsException) {
             throw e
         } catch (e: Exception) {
