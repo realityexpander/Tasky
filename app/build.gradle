@@ -54,7 +54,6 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.2.0-rc02' // for Compose Destinations 1.5.23-beta
-        kotlinCompilerVersion '1.6.21'
     }
     packagingOptions {
         resources {
