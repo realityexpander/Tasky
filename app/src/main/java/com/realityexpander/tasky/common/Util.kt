@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.common
 
+typealias Username = String
 typealias Email = String
 typealias Password = String
 typealias AuthToken = String
