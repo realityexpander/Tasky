@@ -8,8 +8,8 @@ class AuthApiFakeImpl: IAuthApi {
     private val users = mutableMapOf<Email, Pair<Username,Password>>()
 
     init {
-        users["chris@demo.com"] = "Chris Athanas" to "Password1"
-        users["a@a.c"] = "Bilbo Baggins" to "1Zzzzz"
+        users["chris@demo.com"] = "Chris Athanas" to "Password11"
+        users["a@a.c"] = "Bilbo Baggins" to "1Zzzzzzzz"
     }
 
     override suspend fun login(email: String, password: String): AuthToken {
@@ -22,7 +22,7 @@ class AuthApiFakeImpl: IAuthApi {
         return if(users[email]?.second == password) {
             AuthToken("token for $email")
         } else {
-            throw Exceptions.LoginException("Invalid password")
+            throw Exceptions.WrongPasswordException()
         }
     }
 

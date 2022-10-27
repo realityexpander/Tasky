@@ -26,15 +26,17 @@ class AuthRepositoryFakeImpl(
             authApi.login(email, password)
         } catch (e: Exceptions.LoginException) {
             throw e
+        } catch (e: Exceptions.WrongPasswordException) {
+            throw e
         } catch (e: Exception) {
-            throw Exceptions.UnknownException(e.message)
+            throw Exceptions.UnknownErrorException(e.message)
         }
 
         if(token != "") {
             authDao.setAuthToken(token)
             return authDao.getAuthToken()
         } else {
-            throw Exceptions.LoginException()
+            throw Exceptions.LoginException("No Token")
         }
     }
 
@@ -46,11 +48,9 @@ class AuthRepositoryFakeImpl(
         if(!validateUsername.validate(username)) {
             throw Exceptions.InvalidUsernameException()
         }
-
         if(!validateEmail.validate(email)) {
             throw Exceptions.InvalidEmailException()
         }
-
         if(!validatePassword.validate(password)) {
             throw Exceptions.InvalidPasswordException()
         }
@@ -60,7 +60,7 @@ class AuthRepositoryFakeImpl(
         } catch (e: Exceptions.EmailAlreadyExistsException) {
             throw e
         } catch (e: Exception) {
-            throw Exceptions.UnknownException(e.message)
+            throw Exceptions.UnknownErrorException(e.message)
         }
 
         if(token != "") {

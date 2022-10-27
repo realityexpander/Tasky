@@ -25,8 +25,6 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        Thread.sleep(2000)
-
         setContent {
             TaskyTheme {
                 // A surface container using the 'background' color from the theme

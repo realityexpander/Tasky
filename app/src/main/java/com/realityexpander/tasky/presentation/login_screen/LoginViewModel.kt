@@ -103,6 +103,8 @@ class LoginViewModel @Inject constructor(
         try {
             val authToken = authRepository.login(email, password)
             sendEvent(LoginEvent.LoginSuccess(authToken))
+        } catch(e: Exceptions.WrongPasswordException) {
+            sendEvent(LoginEvent.LoginError(UiText.Res(R.string.error_login_error, e.message ?: "")))
         } catch(e: Exceptions.LoginException) {
             sendEvent(LoginEvent.LoginError(UiText.Res(R.string.error_login_error, e.message ?: "")))
         } catch(e: Exceptions.InvalidEmailException) {

@@ -150,6 +150,8 @@ class RegisterViewModel @Inject constructor(
             sendEvent(RegisterEvent.EmailAlreadyExists)
         } catch(e: Exceptions.LoginException) {
             sendEvent(RegisterEvent.RegisterError(UiText.Res(R.string.register_register_error, e.message ?: "")))
+        } catch(e: Exceptions.InvalidUsernameException) {
+            sendEvent(RegisterEvent.IsValidUsername(false))
         } catch(e: Exceptions.InvalidEmailException) {
             sendEvent(RegisterEvent.IsValidEmail(false))
         } catch(e: Exceptions.InvalidPasswordException) {
