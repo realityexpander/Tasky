@@ -5,6 +5,7 @@ plugins {
     id 'com.google.devtools.ksp' version '1.6.21-1.0.6'
     id 'dagger.hilt.android.plugin'
     id 'com.google.dagger.hilt.android'
+    id "org.jlleitschuh.gradle.ktlint" version "11.0.0"
     id 'kotlin-kapt'
 }
 
