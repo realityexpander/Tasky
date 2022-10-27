@@ -10,7 +10,7 @@ sealed class RegisterEvent {
     data class UpdateEmail(val email: String) : RegisterEvent()
     data class UpdatePassword(val password: String) : RegisterEvent()
     data class UpdateConfirmPassword(val confirmPassword: String) : RegisterEvent()
-    data class TogglePasswordVisibility(val isVisible: Boolean) : RegisterEvent()
+    data class SetPasswordVisibility(val isVisible: Boolean) : RegisterEvent()
 
     object ValidateUsername : RegisterEvent()
     object ValidateEmail : RegisterEvent()

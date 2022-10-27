@@ -20,10 +20,7 @@ import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isS
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_password
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_statusMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import javax.inject.Inject
@@ -71,6 +68,8 @@ class LoginViewModel @Inject constructor(
         // Validate email as the user types
         if(state.email.isNotBlank()) sendEvent(LoginEvent.ValidateEmail)
         if(state.password.isNotBlank()) sendEvent(LoginEvent.ValidatePassword)
+
+        println("LoginViewModel: _loginState.onEach: state.isPasswordVisible: ${state.isPasswordVisible}")
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), LoginState())
 
     init {
@@ -156,7 +155,7 @@ class LoginViewModel @Inject constructor(
                     errorMessage = UiText.None,
                 )
             }
-            is LoginEvent.TogglePasswordVisibility -> {
+            is LoginEvent.SetPasswordVisibility -> {
                 _loginState.value = _loginState.value.copy(
                     isPasswordVisible = !event.isPasswordVisible
                 )

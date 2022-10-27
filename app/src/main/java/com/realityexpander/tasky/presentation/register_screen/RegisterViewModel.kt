@@ -238,7 +238,7 @@ class RegisterViewModel @Inject constructor(
                     isPasswordsMatch = false,
                 )
             }
-            is RegisterEvent.TogglePasswordVisibility -> {
+            is RegisterEvent.SetPasswordVisibility -> {
                 _registerState.value = _registerState.value
                     .copy(isPasswordVisible = !event.isVisible)
             }

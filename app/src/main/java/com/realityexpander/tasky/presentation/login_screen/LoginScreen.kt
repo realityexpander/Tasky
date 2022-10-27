@@ -9,8 +9,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -88,7 +86,8 @@ fun LoginScreen(
     }
 
     BackHandler(true) {
-        navigateToRegister()
+        /* do nothing, should we ask the user to quit? */
+        // navigateToRegister()
     }
 
     // Check keyboard open/closed (how to make this a function?)
@@ -155,7 +154,7 @@ fun LoginScreen(
                 isPasswordVisible = loginState.isPasswordVisible,
                 clickTogglePasswordVisibility = {
                     viewModel.sendEvent(
-                        LoginEvent.TogglePasswordVisibility(loginState.isPasswordVisible)
+                        LoginEvent.SetPasswordVisibility(loginState.isPasswordVisible)
                     )
                 },
                 imeAction = ImeAction.Done,

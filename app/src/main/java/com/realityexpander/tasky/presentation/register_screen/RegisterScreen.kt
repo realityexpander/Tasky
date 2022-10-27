@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -168,7 +167,7 @@ fun RegisterScreen(
                 },
                 isPasswordVisible = registerState.isPasswordVisible,
                 clickTogglePasswordVisibility = {
-                    viewModel.sendEvent(RegisterEvent.TogglePasswordVisibility(registerState.isPasswordVisible))
+                    viewModel.sendEvent(RegisterEvent.SetPasswordVisibility(registerState.isPasswordVisible))
                 },
                 imeAction = ImeAction.Next,
             )
@@ -188,7 +187,7 @@ fun RegisterScreen(
                 },
                 isPasswordVisible = registerState.isPasswordVisible,
                 clickTogglePasswordVisibility = {
-                    viewModel.sendEvent(RegisterEvent.TogglePasswordVisibility(registerState.isPasswordVisible))
+                    viewModel.sendEvent(RegisterEvent.SetPasswordVisibility(registerState.isPasswordVisible))
                 },
                 imeAction = ImeAction.Done,
                 doneAction = {
