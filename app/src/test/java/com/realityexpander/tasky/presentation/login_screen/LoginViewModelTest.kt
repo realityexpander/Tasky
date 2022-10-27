@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.realityexpander.tasky.CoroutineTestRule
 import com.realityexpander.tasky.MainCoroutineRule
 import com.realityexpander.tasky.data.repository.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
@@ -18,11 +19,8 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
 import io.mockk.spyk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.yield
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -34,6 +32,9 @@ class LoginViewModelTest {
 
     @get:Rule
     val coroutineRule = MainCoroutineRule()
+
+    @get:Rule
+    val coroutineTestRule = CoroutineTestRule()
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var authRepository: IAuthRepository
@@ -103,7 +104,7 @@ class LoginViewModelTest {
         }
     }
 
-    @Test
+    @Test // broken
     fun `LoginViewModel contains email and password and can set password visibility`()  {
         // ARRANGE
         loginViewModel = LoginViewModel(
@@ -115,6 +116,7 @@ class LoginViewModelTest {
 
         // ACT
         coroutineRule.dispatcher.scheduler.advanceUntilIdle()
+//        coroutineTestRule.testDispatcher.scheduler.advanceUntilIdle()
 
         runTest {
 
@@ -140,6 +142,47 @@ class LoginViewModelTest {
                 assertThat(loginViewModel.loginState.value.isPasswordVisible).isEqualTo(true)
             }
 
+        }
+    }
+
+    @Test // broken
+    fun `LoginViewModel contains email and password and can set password visibility - ALTERNATE`()  {
+        // ARRANGE
+        loginViewModel = LoginViewModel(
+            authRepository = authRepository,
+            validateEmail = validateEmail,
+            validatePassword = validatePassword,
+            savedStateHandle = SavedStateHandle()
+        )
+
+        // ACT
+        coroutineRule.dispatcher.scheduler.advanceUntilIdle()
+//        coroutineTestRule.testDispatcher.scheduler.advanceUntilIdle()
+
+        runBlocking {
+            val job = launch {
+                loginViewModel.loginState.test {
+
+                    // ASSERT
+                    var state = awaitItem() // initial state
+                    println("isPasswordVisible: ${state.isPasswordVisible}")
+                    assertThat(state.isPasswordVisible).isFalse()
+
+                    // Await the "SetPasswordVisibility(true)" event
+                    state = awaitItem()
+                    assertThat(state.isPasswordVisible).isTrue() // why no worky?
+
+                    ensureAllEventsConsumed()
+                    cancelAndIgnoreRemainingEvents()
+                    assertThat(loginViewModel.loginState.value.isPasswordVisible).isEqualTo(true)
+                }
+            }
+
+            // attempt to set state for password visibility. (is this the right way to do this?)
+            loginViewModel.sendEvent(LoginEvent.SetPasswordVisibility(true))
+
+            job.join()
+            job.cancel()
         }
     }
 
