@@ -5,7 +5,8 @@ import kotlinx.coroutines.delay
 
 class AuthApiFakeImpl: IAuthApi {
     private var authToken: AuthToken? = null
-    private val users = mutableMapOf<Email, Pair<Username,Password>>()
+    private val users =
+        mutableMapOf<Email, Pair<Username,Password>>()
 
     init {
         users["chris@demo.com"] = "Chris Athanas" to "Password11"
