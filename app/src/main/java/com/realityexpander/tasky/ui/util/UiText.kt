@@ -78,7 +78,7 @@ open class UiText : Parcelable {
     @Parcelize
     object None : UiText()
 
-    /////////////////// Identifiers ///////////////////
+    /////////////////// IDENTIFIERS ///////////////////
 
     val isNone: Boolean
         get() = this is None
@@ -95,8 +95,7 @@ open class UiText : Parcelable {
     val isResOrStr: Boolean
         get() = this is ResOrStr
 
-
-    /////////////////// Getters ////////////////////////
+    /////////////////// GETTERS ////////////////////////
 
     // Returns the string value of the UiText, or an empty string if it is not a valid string or a string resource.
     // (good for use in UI display)
@@ -232,7 +231,7 @@ open class UiText : Parcelable {
         }
     }
 
-    /////////////////////// helpers //////////////////////////
+    /////////////////////// HELPERS //////////////////////////
 
 
     // Safely returns a resource string that may not have been passed correct parameters at construction time.
@@ -270,65 +269,4 @@ open class UiText : Parcelable {
         }
     }
 
-    // If UiText is `None` or `value` is null this returns string "", or returns Resource ID.
-    // Always returns a valid string. (good for use in display UI)
-//    @Composable
-//    fun get(): String {
-//        return when(this) {
-//            is None -> ""
-//            is Str -> value ?: ""
-//            is Res -> stringResource(resId, *args)
-//            is StrOrRes -> value ?: resId?.let { stringResource(it, *args) } ?: ""
-//            is ResOrStr -> resId?.let { stringResource(it, *args) } ?: value ?: ""
-//            else -> {
-//                throw Exception("Invalid UiText type: ${this::class.java.simpleName}")
-//            }
-//        }
-//    }
-
-    // If UiText is `None` or `value` is null this returns null, or returns Resource ID.
-    // May return a null. (good for use in logical checks)
-//    @Composable
-//    fun getOrNull(): String? {
-//        return when(this) {
-//            is None -> null
-//            is Str -> value
-//            is Res -> stringResource(resId, *args)
-//            is StrOrRes -> value ?: resId?.let{ stringResource(resId, *args) }
-//            is ResOrStr -> resId?.let{ stringResource(resId, *args) } ?: value
-//            else -> {
-//                throw Exception("Invalid UiText type: ${this::class.java.simpleName}")
-//            }
-//        }
-//    }
-
-//    // Returns only the string value or null if its missing.
-//    // (good for logical checks if you just want the string and not the resource)
-//    fun asStrOrNull(): String? {
-//        return when(this) {
-//            is None -> null
-//            is Str -> value
-//            is Res -> null
-//            is StrOrRes -> value
-//            is ResOrStr -> null
-//            else -> {
-//                throw Exception("Invalid UiText type: ${this::class.java.simpleName}")
-//            }
-//        }
-//    }
-
-//    // Returns only the string Resource ID or null if its missing.
-//    // (good for logical checks if you just want the resource and not the string)
-//    fun asResIdOrNull(): Int? {
-//        return when(this) {
-//            is None -> null
-//            is Str -> null
-//            is Res -> resId
-//            is StrOrRes -> resId
-//            is ResOrStr -> null
-//            else -> {
-//                throw Exception("Invalid UiText type: ${this::class.java.simpleName}")
-//            }
-//        }
-//    }
 }
