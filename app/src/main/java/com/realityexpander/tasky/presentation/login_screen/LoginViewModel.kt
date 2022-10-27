@@ -8,7 +8,7 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.ui.util.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
-import com.realityexpander.tasky.domain.validation.IValidateEmail
+import com.realityexpander.tasky.domain.validation.validateEmail.IValidateEmail
 import com.realityexpander.tasky.domain.validation.ValidatePassword
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_email
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_errorMessage

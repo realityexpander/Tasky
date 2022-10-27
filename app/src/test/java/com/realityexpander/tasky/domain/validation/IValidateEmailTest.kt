@@ -1,5 +1,7 @@
 package com.realityexpander.tasky.domain.validation
 
+import com.realityexpander.tasky.domain.validation.validateEmail.IValidateEmail
+import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailImpl
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.Test

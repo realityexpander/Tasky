@@ -5,7 +5,7 @@ import com.realityexpander.tasky.common.AuthToken
 import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.data.repository.local.IAuthDao
 import com.realityexpander.tasky.domain.IAuthRepository
-import com.realityexpander.tasky.domain.validation.IValidateEmail
+import com.realityexpander.tasky.domain.validation.validateEmail.IValidateEmail
 import com.realityexpander.tasky.domain.validation.ValidatePassword
 import com.realityexpander.tasky.domain.validation.ValidateUsername
 

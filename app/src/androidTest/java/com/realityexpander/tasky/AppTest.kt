@@ -9,14 +9,12 @@ import com.realityexpander.tasky.data.repository.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl
 import com.realityexpander.tasky.domain.IAuthRepository
-import com.realityexpander.tasky.domain.validation.ValidateEmailImpl
+import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailImpl
 import com.realityexpander.tasky.domain.validation.ValidatePassword
 import com.realityexpander.tasky.domain.validation.ValidateUsername
-import com.realityexpander.tasky.presentation.login_screen.LoginEvent
 import com.realityexpander.tasky.presentation.login_screen.LoginScreen
 import com.realityexpander.tasky.presentation.login_screen.LoginViewModel
 import com.realityexpander.tasky.ui.theme.TaskyTheme
-import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

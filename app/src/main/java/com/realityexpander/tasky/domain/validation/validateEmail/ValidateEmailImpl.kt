@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.domain.validation
+package com.realityexpander.tasky.domain.validation.validateEmail
 
 class ValidateEmailImpl(
     private val emailMatcher: IEmailMatcher = EmailMatcherImpl()

@@ -1,6 +1,4 @@
-package com.realityexpander.tasky.domain.validation
-
-import com.realityexpander.tasky.domain.validation.IEmailMatcher
+package com.realityexpander.tasky.domain.validation.validateEmail
 
 class EmailMatcherImpl: IEmailMatcher {
     override fun matches(email: String): Boolean {

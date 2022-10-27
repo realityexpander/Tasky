@@ -11,21 +11,17 @@ import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.EmailMatcherFakeImpl
-import com.realityexpander.tasky.domain.validation.ValidateEmailImpl
+import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailImpl
 import com.realityexpander.tasky.domain.validation.ValidatePassword
 import com.realityexpander.tasky.domain.validation.ValidateUsername
 import io.mockk.MockKAnnotations
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
-import io.mockk.spyk
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
-import java.time.LocalDateTime
 
 @ExperimentalCoroutinesApi
 class LoginViewModelTest {
