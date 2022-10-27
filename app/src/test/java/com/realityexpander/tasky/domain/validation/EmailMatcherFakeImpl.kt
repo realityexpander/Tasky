@@ -7,4 +7,3 @@ class EmailMatcherFakeImpl: IEmailMatcher {
         return  email.contains("@")
     }
 }
-

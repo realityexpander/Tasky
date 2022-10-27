@@ -164,7 +164,7 @@ class LoginViewModelTest {
                     println("isPasswordVisible: ${state.isPasswordVisible}")
                     assertThat(state.isPasswordVisible).isFalse()
 
-                    // Await the "SetPasswordVisibility(true)" event
+                    // Await the "SetPasswordVisibility(true)" event to be processed
                     state = awaitItem()
                     assertThat(state.isPasswordVisible).isTrue() // why no worky?
 
@@ -181,8 +181,6 @@ class LoginViewModelTest {
             job.cancel()
         }
     }
-
-
 
 
 }
