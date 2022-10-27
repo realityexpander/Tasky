@@ -5,6 +5,6 @@ class ValidateEmailImpl(
 ): IValidateEmail {
     override fun validate(email: String): Boolean {
         return email.isNotBlank()
-                && emailMatcher.matches(email)
+            && emailMatcher.matches(email)
     }
 }
