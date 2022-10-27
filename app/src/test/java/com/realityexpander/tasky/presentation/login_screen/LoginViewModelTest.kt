@@ -104,7 +104,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `LoginViewModel contains email and password and can set password visibility`() {
+    fun `LoginViewModel contains email and password and can set password visibility`()  {
         // ARRANGE
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
@@ -128,12 +128,11 @@ class LoginViewModelTest {
                 // ASSERT
                 var state = awaitItem() // initial state
                 println("isPasswordVisible: ${state.isPasswordVisible}")
+                assertThat(state.isPasswordVisible).isFalse()
 
-                state = awaitItem()  // first emission from init block
-                println("isPasswordVisible: ${state.isPasswordVisible}")
-
-                // Await the "SetPasswordVisibility" event
-                assert(awaitItem().isPasswordVisible) // why no worky?
+                // Await the "SetPasswordVisibility(true)" event
+                state = awaitItem()
+                assertThat(state.isPasswordVisible).isTrue() // why no worky?
 
 
                 ensureAllEventsConsumed()

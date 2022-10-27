@@ -68,8 +68,6 @@ class LoginViewModel @Inject constructor(
         // Validate email as the user types
         if(state.email.isNotBlank()) sendEvent(LoginEvent.ValidateEmail)
         if(state.password.isNotBlank()) sendEvent(LoginEvent.ValidatePassword)
-
-        println("LoginViewModel: _loginState.onEach: state.isPasswordVisible: ${state.isPasswordVisible}")
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), LoginState())
 
     init {
