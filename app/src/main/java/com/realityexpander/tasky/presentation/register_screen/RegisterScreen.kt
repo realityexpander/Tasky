@@ -111,7 +111,7 @@ fun RegisterScreen(
     ) col1@ {
         Spacer(modifier = Modifier.largeHeight())
         Text(
-            text = UiText.Res(R.string.register_title).get(),
+            text = UiText.Res(R.string.register_title).get,
             style = MaterialTheme.typography.h5,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colors.surface,
@@ -138,7 +138,7 @@ fun RegisterScreen(
                 }
             )
             if (registerState.isInvalidUsername && registerState.isShowInvalidUsernameMessage) {
-                Text(text = UiText.Res(R.string.error_invalid_username).get(), color = Color.Red)
+                Text(text = UiText.Res(R.string.error_invalid_username).get, color = Color.Red)
             }
             Spacer(modifier = Modifier.smallHeight())
 
@@ -152,7 +152,7 @@ fun RegisterScreen(
                 }
             )
             if (registerState.isInvalidEmail && registerState.isShowInvalidEmailMessage) {
-                Text(text = UiText.Res(R.string.error_invalid_email).get(), color = Color.Red)
+                Text(text = UiText.Res(R.string.error_invalid_email).get, color = Color.Red)
             }
             Spacer(modifier = Modifier.smallHeight())
 
@@ -171,14 +171,14 @@ fun RegisterScreen(
                 imeAction = ImeAction.Next,
             )
             if (registerState.isInvalidPassword && registerState.isShowInvalidPasswordMessage) {
-                Text(text = UiText.Res(R.string.error_invalid_password).get(), color = Color.Red)
+                Text(text = UiText.Res(R.string.error_invalid_password).get, color = Color.Red)
             }
             Spacer(modifier = Modifier.smallHeight())
 
             // • CONFIRM PASSWORD
             PasswordField(
-                label = null, //UiText.Res(R.string.register_label_confirm_password).get(),
-                placeholder = UiText.Res(R.string.register_placeholder_confirm_password).get(),
+                label = null, //UiText.Res(R.string.register_label_confirm_password).get,
+                placeholder = UiText.Res(R.string.register_placeholder_confirm_password).get,
                 value = registerState.confirmPassword,
                 isError = registerState.isInvalidConfirmPassword,
                 onValueChange = {
@@ -195,7 +195,7 @@ fun RegisterScreen(
             )
             if (registerState.isInvalidConfirmPassword && registerState.isShowInvalidConfirmPasswordMessage) {
                 Text(
-                    text = UiText.Res(R.string.error_invalid_confirm_password).get(),
+                    text = UiText.Res(R.string.error_invalid_confirm_password).get,
                     color = Color.Red
                 )
                 Spacer(modifier = Modifier.extraSmallHeight())
@@ -203,7 +203,7 @@ fun RegisterScreen(
             // • SHOW IF MATCHING PASSWORDS
             if (!registerState.isPasswordsMatch) {
                 Text(
-                    text = UiText.Res(R.string.register_error_passwords_do_not_match).get(),
+                    text = UiText.Res(R.string.register_error_passwords_do_not_match).get,
                     color = Color.Red
                 )
                 Spacer(modifier = Modifier.extraSmallHeight())
@@ -211,7 +211,7 @@ fun RegisterScreen(
             // • SHOW PASSWORD REQUIREMENTS
             if (registerState.isShowInvalidPasswordMessage || registerState.isShowInvalidConfirmPasswordMessage) {
                 Text(
-                    text = UiText.Res(R.string.register_password_requirements).get(),
+                    text = UiText.Res(R.string.register_password_requirements).get,
                     color = Color.Red
                 )
                 Spacer(modifier = Modifier.extraSmallHeight())
@@ -229,7 +229,7 @@ fun RegisterScreen(
                     .align(alignment = Alignment.CenterHorizontally)
             ) {
                 Text(
-                    text = UiText.Res(R.string.register_button).get(),
+                    text = UiText.Res(R.string.register_button).get,
                     fontSize = MaterialTheme.typography.button.fontSize,
                 )
                 if (registerState.isLoading) {
@@ -244,7 +244,7 @@ fun RegisterScreen(
 
             // STATUS //////////////////////////////////////////
 
-            registerState.errorMessage.getOrNull()?.let { errorMessage ->
+            registerState.errorMessage.getOrNull?.let { errorMessage ->
                 Spacer(modifier = Modifier.smallHeight())
                 Text(
                     text = "Error: $errorMessage",
@@ -254,10 +254,10 @@ fun RegisterScreen(
             }
             if (registerState.isLoggedIn) {
                 Spacer(modifier = Modifier.smallHeight())
-                Text(text = UiText.Res(R.string.register_registered).get())
+                Text(text = UiText.Res(R.string.register_registered).get)
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
-            registerState.statusMessage.asStrOrNull()?.let { message ->
+            registerState.statusMessage.getOrNull?.let { message ->
                 Spacer(modifier = Modifier.extraSmallHeight())
                 Text(text = message)
                 Spacer(modifier = Modifier.extraSmallHeight())
@@ -290,8 +290,7 @@ fun RegisterScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.ChevronLeft,
-                            contentDescription = UiText.Res(R.string.register_description_back)
-                                .get(),
+                            contentDescription = UiText.Res(R.string.register_description_back).get,
                             modifier = Modifier
                                 .size(DP.large)
                                 .align(alignment = Alignment.CenterVertically)
@@ -306,7 +305,7 @@ fun RegisterScreen(
 
 //    // • BACK TO SIGN IN BUTTON (alternate design)
 //    Text(
-//        text = UiText.Res(R.string.register_already_a_member_sign_in).get(),
+//        text = UiText.Res(R.string.register_already_a_member_sign_in).get,
 //        style = MaterialTheme.typography.body2,
 //        color = MaterialTheme.colors.primaryVariant,
 //        modifier = Modifier

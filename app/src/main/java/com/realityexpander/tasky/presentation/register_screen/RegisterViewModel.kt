@@ -366,7 +366,11 @@ class RegisterViewModel @Inject constructor(
             }
             is RegisterEvent.UnknownError -> {
                 _registerState.value = _registerState.value.copy(
-                    errorMessage = event.message
+                    isLoggedIn = false,
+                    errorMessage = if(event.message.isRes)
+                        event.message
+                    else
+                        UiText.Res(R.string.error_unknown, ""),
                 )
             }
 

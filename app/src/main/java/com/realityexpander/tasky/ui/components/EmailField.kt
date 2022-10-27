@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -22,10 +21,10 @@ import com.realityexpander.tasky.ui.util.UiText
 fun EmailField(
     modifier: Modifier = Modifier.fillMaxWidth(),
     value: String,
-    label: String? = UiText.Res(R.string.emailField_label).get(), // if this is null, label is not shown.
+    label: String? = UiText.Res(R.string.emailField_label).get, // if this is null, label is not shown.
     labelComponent: @Composable (() -> Unit)? =
-        { Text(text = label ?: UiText.Res(R.string.emailField_label).get()) },
-    placeholder: String = UiText.Res(R.string.emailField_placeholder).get(),
+        { Text(text = label ?: UiText.Res(R.string.emailField_label).get) },
+    placeholder: String = UiText.Res(R.string.emailField_placeholder).get,
     isError: Boolean,
     onValueChange: (String) -> Unit,
     keyboardOptions: KeyboardOptions =
@@ -54,10 +53,10 @@ fun EmailField(
         keyboardActions = keyboardActionsLocal,
         leadingIcon = {
             Icon(imageVector = Icons.Filled.Email,
-                UiText.Res(R.string.emailField_description_email).get())
+                UiText.Res(R.string.emailField_description_email).get)
         },
-        validInputDescription = UiText.Res(R.string.emailField_description_isValid).get(),
-        invalidInputDescription = UiText.Res(R.string.emailField_description_isInvalid).get()
+        validInputDescription = UiText.Res(R.string.emailField_description_isValid).get,
+        invalidInputDescription = UiText.Res(R.string.emailField_description_isInvalid).get
     )
 }
 

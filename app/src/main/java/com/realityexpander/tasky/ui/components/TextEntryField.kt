@@ -21,10 +21,10 @@ import com.realityexpander.tasky.ui.util.UiText
 fun TextEntryField(
     modifier: Modifier = Modifier,
     value: String,
-    label: String? = UiText.Res(R.string.textEntryField_label).get(), // if this is null, label is not shown
+    label: String? = UiText.Res(R.string.textEntryField_label).get, // if this is null, label is not shown
     labelComponent: @Composable (() -> Unit)? =
-        { Text(text = label ?: UiText.Res(R.string.textEntryField_label).get()) },
-    placeholder: String = UiText.Res(R.string.textEntryField_placeholder).get(),
+        { Text(text = label ?: UiText.Res(R.string.textEntryField_label).get) },
+    placeholder: String = UiText.Res(R.string.textEntryField_placeholder).get,
     isError: Boolean,
     onValueChange: (String) -> Unit,
     keyboardOptions: KeyboardOptions =
@@ -35,9 +35,9 @@ fun TextEntryField(
     keyboardActions: KeyboardActions? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     validInputDescription: String =
-        UiText.Res(R.string.textEntryField_description_isValid).get(),
+        UiText.Res(R.string.textEntryField_description_isValid).get,
     invalidInputDescription: String =
-        UiText.Res(R.string.textEntryField_description_isInvalid).get(),
+        UiText.Res(R.string.textEntryField_description_isInvalid).get,
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardActionsLocal: KeyboardActions = keyboardActions
@@ -71,9 +71,9 @@ fun TextEntryField(
                 // localized description for accessibility services
                 val description =
                     if (isNameValid)
-                        UiText.Res(R.string.textEntryField_description_isValid).get()
+                        UiText.Res(R.string.textEntryField_description_isValid).get
                     else
-                        UiText.Res(R.string.textEntryField_description_isInvalid).get()
+                        UiText.Res(R.string.textEntryField_description_isInvalid).get
 
                 Icon(imageVector = image, description)
             }

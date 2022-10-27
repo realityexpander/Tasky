@@ -4,11 +4,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,10 +21,10 @@ import com.realityexpander.tasky.ui.util.UiText
 fun NameField(
     modifier: Modifier = Modifier.fillMaxWidth(),
     value: String,
-    label: String? = UiText.Res(R.string.nameField_label).get(), // if this is null, label is not shown
+    label: String? = UiText.Res(R.string.nameField_label).get, // if this is null, label is not shown
     labelComponent: @Composable (() -> Unit)? =
-        { Text(text = label ?: UiText.Res(R.string.nameField_label).get()) },
-    placeholder: String = UiText.Res(R.string.nameField_placeholder).get(),
+        { Text(text = label ?: UiText.Res(R.string.nameField_label).get) },
+    placeholder: String = UiText.Res(R.string.nameField_placeholder).get,
     isError: Boolean,
     onValueChange: (String) -> Unit,
     keyboardOptions: KeyboardOptions =
@@ -56,10 +53,10 @@ fun NameField(
         keyboardActions = keyboardActionsLocal,
         leadingIcon = {
             Icon(imageVector = Icons.Filled.Person,
-                UiText.Res(R.string.nameField_description_name).get())
+                UiText.Res(R.string.nameField_description_name).get)
         },
-        validInputDescription = UiText.Res(R.string.nameField_description_isValid).get(),
-        invalidInputDescription = UiText.Res(R.string.nameField_description_isInvalid).get(),
+        validInputDescription = UiText.Res(R.string.nameField_description_isValid).get,
+        invalidInputDescription = UiText.Res(R.string.nameField_description_isInvalid).get,
     )
 }
 

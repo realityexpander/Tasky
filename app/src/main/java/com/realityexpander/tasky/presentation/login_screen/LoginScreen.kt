@@ -112,7 +112,7 @@ fun LoginScreen(
     ) col1@ {
         Spacer(modifier = Modifier.largeHeight())
         Text(
-            text = UiText.Res(R.string.login_title).get(),
+            text = UiText.Res(R.string.login_title).get,
             style = MaterialTheme.typography.h5,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colors.surface,
@@ -139,7 +139,7 @@ fun LoginScreen(
                 }
             )
             if (loginState.isInvalidEmail && loginState.isShowInvalidEmailMessage) {
-                Text(text = UiText.Res(R.string.error_invalid_email).get(), color = Color.Red)
+                Text(text = UiText.Res(R.string.error_invalid_email).get, color = Color.Red)
             }
             Spacer(modifier = Modifier.smallHeight())
 
@@ -163,7 +163,7 @@ fun LoginScreen(
                 }
             )
             if (loginState.isInvalidPassword && loginState.isShowInvalidPasswordMessage) {
-                Text(text = UiText.Res(R.string.error_invalid_password).get(), color = Color.Red)
+                Text(text = UiText.Res(R.string.error_invalid_password).get, color = Color.Red)
             }
             Spacer(modifier = Modifier.mediumHeight())
 
@@ -178,7 +178,7 @@ fun LoginScreen(
                 enabled = !loginState.isLoading,
             ) {
                 Text(
-                    text = UiText.Res(R.string.login_button).get(),
+                    text = UiText.Res(R.string.login_button).get,
                     fontSize = MaterialTheme.typography.button.fontSize,
                 )
                 if (loginState.isLoading) {
@@ -194,7 +194,7 @@ fun LoginScreen(
 
             // STATUS //////////////////////////////////////////
 
-            loginState.errorMessage.getOrNull()?.let { errorMessage ->
+            loginState.errorMessage.getOrNull?.let { errorMessage ->
                 Text(
                     text = "Error: $errorMessage",
                     color = Color.Red,
@@ -202,10 +202,10 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
             if (loginState.isLoggedIn) {
-                Text(text = UiText.Res(R.string.login_logged_in).get())
+                Text(text = UiText.Res(R.string.login_logged_in).get)
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
-            loginState.statusMessage.asStrOrNull()?.let { message ->
+            loginState.statusMessage.getOrNull?.let { message ->
                 Text(text = message)
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
@@ -229,7 +229,7 @@ fun LoginScreen(
                 ) {
                     // • REGISTER TEXT BUTTON
                     Text(
-                        text = UiText.Res(R.string.login_not_a_member_sign_up).get(),
+                        text = UiText.Res(R.string.login_not_a_member_sign_up).get,
                         style = MaterialTheme.typography.body1,
                         color = MaterialTheme.colors.primaryVariant,
                         modifier = Modifier

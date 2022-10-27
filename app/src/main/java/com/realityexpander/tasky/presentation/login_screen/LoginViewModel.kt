@@ -112,7 +112,7 @@ class LoginViewModel @Inject constructor(
         } catch(e: Exceptions.InvalidPasswordException) {
             sendEvent(LoginEvent.IsValidPassword(false))
         } catch (e: Exception) {
-            sendEvent(LoginEvent.UnknownError(UiText.Res( R.string.error_unknown, e.message ?: "")))
+            sendEvent(LoginEvent.UnknownError(UiText.Res(R.string.error_unknown, e.message ?: "")))
             e.printStackTrace()
         }
     }
@@ -225,10 +225,10 @@ class LoginViewModel @Inject constructor(
             is LoginEvent.UnknownError -> {
                 _loginState.value = _loginState.value.copy(
                     isLoggedIn = false,
-                    errorMessage = if(event.message.asResOrNull() == null)
-                            UiText.Res(R.string.error_unknown, "")
+                    errorMessage = if(event.message.isRes)
+                            event.message
                         else
-                            event.message,
+                            UiText.Res(R.string.error_unknown, ""),
                 )
             }
         }

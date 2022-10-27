@@ -26,9 +26,9 @@ import com.realityexpander.tasky.ui.util.UiText
 fun PasswordField(
     modifier: Modifier = Modifier.fillMaxWidth(1f),
     value: String,
-    label: String? = UiText.Res(R.string.passwordField_label).get(),
-    labelComponent: @Composable (() -> Unit)? = { Text(text = label ?: UiText.Res(R.string.passwordField_label).get()) },
-    placeholder: String = UiText.Res(R.string.passwordField_placeholder).get(),
+    label: String? = UiText.Res(R.string.passwordField_label).get,
+    labelComponent: @Composable (() -> Unit)? = { Text(text = label ?: UiText.Res(R.string.passwordField_label).get) },
+    placeholder: String = UiText.Res(R.string.passwordField_placeholder).get,
     isError: Boolean,
     isPasswordVisible: Boolean = false,
     clickTogglePasswordVisibility: () -> Unit,
@@ -67,7 +67,7 @@ fun PasswordField(
         keyboardActions = keyboardActionsLocal,
         leadingIcon = {
             Icon(imageVector = Icons.Filled.Lock,
-            UiText.Res(R.string.passwordField_description_lock).get())
+            UiText.Res(R.string.passwordField_description_lock).get)
         },
         trailingIcon = {
             val isPasswordValid = !isError
@@ -81,9 +81,9 @@ fun PasswordField(
             // localized description for accessibility services
             val validDescription =
                 if (isPasswordValid)
-                    UiText.Res(R.string.emailField_description_isValid).get()
+                    UiText.Res(R.string.emailField_description_isValid).get
                 else
-                    UiText.Res(R.string.emailField_description_isInvalid).get()
+                    UiText.Res(R.string.emailField_description_isInvalid).get
 
             val passwordVisibleImage = if (isPasswordVisible)
                 Icons.Default.Visibility
@@ -92,9 +92,9 @@ fun PasswordField(
 
             // localized description for accessibility services
             val passwordVisibleDescription = if (isPasswordVisible)
-                    UiText.Res(R.string.passwordField_description_hide).get()
+                    UiText.Res(R.string.passwordField_description_hide).get
                 else
-                    UiText.Res(R.string.passwordField_description_show).get()
+                    UiText.Res(R.string.passwordField_description_show).get
 
             Row {
                 if(value.isNotBlank()) {
