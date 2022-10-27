@@ -97,7 +97,7 @@ open class UiText : Parcelable {
 
     /////////////////// GETTERS ////////////////////////
 
-    // Returns the string of the UiText, or an empty string if it is not a valid string or a string resource.
+    // Returns the string of the UiText, or an empty string if it is not a `value` valid string or a string resource.
     // (good for use in UI display)
     val get: String
         @Composable
@@ -112,7 +112,7 @@ open class UiText : Parcelable {
             }
         }
 
-    // Returns the string of the UiText, or null if it is not a valid string and not a valid string resource.
+    // Returns the string of the UiText, or null if it is not a valid `value` string and not a valid string resource.
     // (good for use in logical checks)
     val getOrNull: String?
         @Composable
