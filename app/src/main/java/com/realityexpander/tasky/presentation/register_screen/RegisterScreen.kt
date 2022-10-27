@@ -365,7 +365,7 @@ fun RegisterScreenPreview_NightMode_NO() {
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
-fun RegisterScreenPreview_DarkMode() {
+fun RegisterScreenPreview_Interactive() {
     TaskyTheme {
         Surface {
             RegisterScreen(
