@@ -85,9 +85,8 @@ fun LoginScreen(
         }
     }
 
-    BackHandler(true) {
-        /* do nothing, should we ask the user to quit? */
-        // navigateToRegister()
+    BackHandler(false) {
+        /* should we ask the user to quit? */ // todo
     }
 
     // Check keyboard open/closed (how to make this a function?)
@@ -154,7 +153,7 @@ fun LoginScreen(
                 isPasswordVisible = loginState.isPasswordVisible,
                 clickTogglePasswordVisibility = {
                     viewModel.sendEvent(
-                        LoginEvent.SetPasswordVisibility(loginState.isPasswordVisible)
+                        LoginEvent.SetPasswordVisibility(!loginState.isPasswordVisible)
                     )
                 },
                 imeAction = ImeAction.Done,

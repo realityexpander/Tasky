@@ -166,7 +166,7 @@ fun RegisterScreen(
                 },
                 isPasswordVisible = registerState.isPasswordVisible,
                 clickTogglePasswordVisibility = {
-                    viewModel.sendEvent(RegisterEvent.SetPasswordVisibility(registerState.isPasswordVisible))
+                    viewModel.sendEvent(RegisterEvent.SetPasswordVisibility(!registerState.isPasswordVisible))
                 },
                 imeAction = ImeAction.Next,
             )
@@ -186,7 +186,7 @@ fun RegisterScreen(
                 },
                 isPasswordVisible = registerState.isPasswordVisible,
                 clickTogglePasswordVisibility = {
-                    viewModel.sendEvent(RegisterEvent.SetPasswordVisibility(registerState.isPasswordVisible))
+                    viewModel.sendEvent(RegisterEvent.SetPasswordVisibility(!registerState.isPasswordVisible))
                 },
                 imeAction = ImeAction.Done,
                 doneAction = {

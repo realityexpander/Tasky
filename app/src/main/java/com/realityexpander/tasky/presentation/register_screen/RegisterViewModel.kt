@@ -242,7 +242,7 @@ class RegisterViewModel @Inject constructor(
             }
             is RegisterEvent.SetPasswordVisibility -> {
                 _registerState.value = _registerState.value
-                    .copy(isPasswordVisible = !event.isVisible)
+                    .copy(isPasswordVisible = event.isVisible)
             }
             is RegisterEvent.ValidateUsername -> {
                 validateUsername()

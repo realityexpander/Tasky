@@ -157,7 +157,7 @@ class LoginViewModel @Inject constructor(
             }
             is LoginEvent.SetPasswordVisibility -> {
                 _loginState.value = _loginState.value.copy(
-                    isPasswordVisible = !event.isPasswordVisible
+                    isPasswordVisible = event.isPasswordVisible
                 )
             }
             is LoginEvent.ValidateEmail -> {
