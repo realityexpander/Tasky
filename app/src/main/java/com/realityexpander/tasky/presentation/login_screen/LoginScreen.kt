@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -111,7 +112,7 @@ fun LoginScreen(
     ) col1@ {
         Spacer(modifier = Modifier.largeHeight())
         Text(
-            text = UiText.Res(R.string.login_title).get,
+            text = stringResource(R.string.login_title),
             style = MaterialTheme.typography.h5,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colors.surface,
@@ -138,7 +139,7 @@ fun LoginScreen(
                 }
             )
             if (loginState.isInvalidEmail && loginState.isShowInvalidEmailMessage) {
-                Text(text = UiText.Res(R.string.error_invalid_email).get, color = Color.Red)
+                Text(text = stringResource(R.string.error_invalid_email), color = Color.Red)
             }
             Spacer(modifier = Modifier.smallHeight())
 
@@ -162,7 +163,7 @@ fun LoginScreen(
                 }
             )
             if (loginState.isInvalidPassword && loginState.isShowInvalidPasswordMessage) {
-                Text(text = UiText.Res(R.string.error_invalid_password).get, color = Color.Red)
+                Text(text = stringResource(R.string.error_invalid_password), color = Color.Red)
             }
             Spacer(modifier = Modifier.mediumHeight())
 
@@ -177,7 +178,7 @@ fun LoginScreen(
                 enabled = !loginState.isLoading,
             ) {
                 Text(
-                    text = UiText.Res(R.string.login_button).get,
+                    text = stringResource(R.string.login_button),
                     fontSize = MaterialTheme.typography.button.fontSize,
                 )
                 if (loginState.isLoading) {
@@ -201,7 +202,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
             if (loginState.isLoggedIn) {
-                Text(text = UiText.Res(R.string.login_logged_in).get)
+                Text(text = stringResource(R.string.login_logged_in))
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
             loginState.statusMessage.getOrNull?.let { message ->
@@ -228,7 +229,7 @@ fun LoginScreen(
                 ) {
                     // • REGISTER TEXT BUTTON
                     Text(
-                        text = UiText.Res(R.string.login_not_a_member_sign_up).get,
+                        text = stringResource(R.string.login_not_a_member_sign_up),
                         style = MaterialTheme.typography.body1,
                         color = MaterialTheme.colors.primaryVariant,
                         modifier = Modifier

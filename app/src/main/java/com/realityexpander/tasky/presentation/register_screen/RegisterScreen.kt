@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -111,7 +112,7 @@ fun RegisterScreen(
     ) col1@ {
         Spacer(modifier = Modifier.largeHeight())
         Text(
-            text = UiText.Res(R.string.register_title).get,
+            text = stringResource(R.string.register_title),
             style = MaterialTheme.typography.h5,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colors.surface,
@@ -138,7 +139,7 @@ fun RegisterScreen(
                 }
             )
             if (registerState.isInvalidUsername && registerState.isShowInvalidUsernameMessage) {
-                Text(text = UiText.Res(R.string.error_invalid_username).get, color = Color.Red)
+                Text(text = stringResource(R.string.error_invalid_username), color = Color.Red)
             }
             Spacer(modifier = Modifier.smallHeight())
 
@@ -152,7 +153,7 @@ fun RegisterScreen(
                 }
             )
             if (registerState.isInvalidEmail && registerState.isShowInvalidEmailMessage) {
-                Text(text = UiText.Res(R.string.error_invalid_email).get, color = Color.Red)
+                Text(text = stringResource(R.string.error_invalid_email), color = Color.Red)
             }
             Spacer(modifier = Modifier.smallHeight())
 
@@ -171,14 +172,14 @@ fun RegisterScreen(
                 imeAction = ImeAction.Next,
             )
             if (registerState.isInvalidPassword && registerState.isShowInvalidPasswordMessage) {
-                Text(text = UiText.Res(R.string.error_invalid_password).get, color = Color.Red)
+                Text(text = stringResource(R.string.error_invalid_password), color = Color.Red)
             }
             Spacer(modifier = Modifier.smallHeight())
 
             // • CONFIRM PASSWORD
             PasswordField(
-                label = null, //UiText.Res(R.string.register_label_confirm_password).get,
-                placeholder = UiText.Res(R.string.register_placeholder_confirm_password).get,
+                label = null, //stringResource(R.string.register_label_confirm_password),
+                placeholder = stringResource(R.string.register_placeholder_confirm_password),
                 value = registerState.confirmPassword,
                 isError = registerState.isInvalidConfirmPassword,
                 onValueChange = {
@@ -195,7 +196,7 @@ fun RegisterScreen(
             )
             if (registerState.isInvalidConfirmPassword && registerState.isShowInvalidConfirmPasswordMessage) {
                 Text(
-                    text = UiText.Res(R.string.error_invalid_confirm_password).get,
+                    text = stringResource(R.string.error_invalid_confirm_password),
                     color = Color.Red
                 )
                 Spacer(modifier = Modifier.extraSmallHeight())
@@ -203,7 +204,7 @@ fun RegisterScreen(
             // • SHOW IF MATCHING PASSWORDS
             if (!registerState.isPasswordsMatch) {
                 Text(
-                    text = UiText.Res(R.string.register_error_passwords_do_not_match).get,
+                    text = stringResource(R.string.register_error_passwords_do_not_match),
                     color = Color.Red
                 )
                 Spacer(modifier = Modifier.extraSmallHeight())
@@ -211,7 +212,7 @@ fun RegisterScreen(
             // • SHOW PASSWORD REQUIREMENTS
             if (registerState.isShowInvalidPasswordMessage || registerState.isShowInvalidConfirmPasswordMessage) {
                 Text(
-                    text = UiText.Res(R.string.register_password_requirements).get,
+                    text = stringResource(R.string.register_password_requirements),
                     color = Color.Red
                 )
                 Spacer(modifier = Modifier.extraSmallHeight())
@@ -229,7 +230,7 @@ fun RegisterScreen(
                     .align(alignment = Alignment.CenterHorizontally)
             ) {
                 Text(
-                    text = UiText.Res(R.string.register_button).get,
+                    text = stringResource(R.string.register_button),
                     fontSize = MaterialTheme.typography.button.fontSize,
                 )
                 if (registerState.isLoading) {
@@ -254,7 +255,7 @@ fun RegisterScreen(
             }
             if (registerState.isLoggedIn) {
                 Spacer(modifier = Modifier.smallHeight())
-                Text(text = UiText.Res(R.string.register_registered).get)
+                Text(text = stringResource(R.string.register_registered))
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
             registerState.statusMessage.getOrNull?.let { message ->
@@ -290,7 +291,7 @@ fun RegisterScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.ChevronLeft,
-                            contentDescription = UiText.Res(R.string.register_description_back).get,
+                            contentDescription = stringResource(R.string.register_description_back),
                             modifier = Modifier
                                 .size(DP.large)
                                 .align(alignment = Alignment.CenterVertically)
@@ -305,7 +306,7 @@ fun RegisterScreen(
 
 //    // • BACK TO SIGN IN BUTTON (alternate design)
 //    Text(
-//        text = UiText.Res(R.string.register_already_a_member_sign_in).get,
+//        text = stringResource(R.string.register_already_a_member_sign_in),
 //        style = MaterialTheme.typography.body2,
 //        color = MaterialTheme.colors.primaryVariant,
 //        modifier = Modifier
