@@ -109,8 +109,7 @@ fun RegisterScreen(
             .fillMaxSize()
             .background(color = MaterialTheme.colors.onSurface)
     ) col1@ {
-
-        Spacer(modifier = Modifier.mediumHeight())
+        Spacer(modifier = Modifier.largeHeight())
         Text(
             text = UiText.Res(R.string.register_title).get(),
             style = MaterialTheme.typography.h5,
