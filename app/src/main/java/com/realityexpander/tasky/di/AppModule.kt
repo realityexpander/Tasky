@@ -32,7 +32,7 @@ object AppModule {
     fun provideTaskyApi(): TaskyApi {
 
         val logging = HttpLoggingInterceptor()
-        logging.level = (HttpLoggingInterceptor.Level.BASIC)
+        logging.level = (HttpLoggingInterceptor.Level.BODY)
         val client: OkHttpClient = OkHttpClient.Builder()
             .addInterceptor(logging)
             .build()
