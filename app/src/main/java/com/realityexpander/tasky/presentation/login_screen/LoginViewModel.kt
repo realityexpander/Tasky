@@ -142,7 +142,6 @@ class LoginViewModel @Inject constructor(
     private suspend fun onEvent(event: LoginEvent) {
         when(event) {
             is LoginEvent.Loading -> {
-//                _loginState.value = _loginState.value.copy(isLoading = event.isLoading)
                 _loginState.update {
                     it.copy(isLoading = event.isLoading)
                 }
