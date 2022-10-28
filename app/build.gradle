@@ -36,6 +36,16 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        // load api key from `api.properties` file
+        def apiProperties = new Properties()
+        if (file('api.properties').exists()) {
+            apiProperties.load(new FileInputStream(file('api.properties')))
+            buildConfigField "String", "API_KEY", "\"${apiProperties['API_KEY']}\""
+        } else {
+            println("ERROR - `api.properties` file not found - please add `api.properties` file with API_KEY to the root of the project")
+        }
+
     }
 
     buildTypes {
