@@ -49,6 +49,207 @@ import com.realityexpander.tasky.ui.components.EmailField
 import com.realityexpander.tasky.ui.components.PasswordField
 import com.realityexpander.tasky.ui.theme.TaskyTheme
 import com.realityexpander.tasky.ui.theme.modifiers.*
+import com.realityexpander.tasky.ui.util.UiText
+
+//@Composable
+//@Destination
+////@RootNavGraph(start = true)
+//fun LoginScreen1(
+//    username: String? = null,
+//    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
+//    email: String? = null,
+//    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
+//    password: String? = null,
+//    confirmPassword: String? = null,
+//    navigator: DestinationsNavigator,
+//    viewModel: LoginViewModel = hiltViewModel(),
+//) {
+//    val loginState by viewModel.loginState.collectAsState()
+//    val focusManager = LocalFocusManager.current
+//    val context = LocalContext.current
+//
+//    fun performLogin() {
+//        viewModel.sendEvent(LoginEvent.Login(
+//            email = loginState.email,
+//            password = loginState.password,
+//        ))
+//        focusManager.clearFocus()
+//    }
+//
+//    fun navigateToRegister() {
+//        navigator.navigate(
+//            RegisterScreenDestination(
+//                username = username,
+//                email = loginState.email,
+//                password = loginState.password,
+//                confirmPassword = confirmPassword
+//            )
+//        ) {
+//            popUpTo("LoginScreen") {
+//                inclusive = true
+//            }
+//        }
+//    }
+//
+//    BackHandler(true) {
+//        // todo: should we ask the user to quit?
+//
+//        ExitActivity.exit(context)
+//    }
+//
+//    // Check keyboard open/closed (how to make this a function?)
+//    val view = LocalView.current
+//    var isKeyboardOpen by remember { mutableStateOf(false) }
+//    DisposableEffect(view) {
+//        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+//            isKeyboardOpen = ViewCompat.getRootWindowInsets(view)
+//                ?.isVisible(WindowInsetsCompat.Type.ime()) ?: true
+//        }
+//        view.viewTreeObserver.addOnGlobalLayoutListener(listener)
+//
+//        onDispose {
+//            view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+//        }
+//    }
+//
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(color = MaterialTheme.colors.onSurface)
+//    ) col1@ {
+//        Spacer(modifier = Modifier.largeHeight())
+//        Text(
+//            text = stringResource(R.string.login_title),
+//            style = MaterialTheme.typography.h5,
+//            fontWeight = FontWeight.Bold,
+//            color = MaterialTheme.colors.surface,
+//            modifier = Modifier
+//                .align(alignment = Alignment.CenterHorizontally)
+//        )
+//        Spacer(modifier = Modifier.mediumHeight())
+//
+//        Column(
+//            modifier = Modifier
+//                .verticalScroll(rememberScrollState())
+//                .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
+//                .weight(1f)
+//        ) {
+//            Spacer(modifier = Modifier.mediumHeight())
+//
+//            // • EMAIL
+//            EmailField(
+//                value = loginState.email,
+//                label = null,
+//                isError = loginState.isInvalidEmail,
+//                onValueChange = {
+//                    viewModel.sendEvent(LoginEvent.UpdateEmail(it))
+//                }
+//            )
+//            if (loginState.isInvalidEmail && loginState.isShowInvalidEmailMessage) {
+//                Text(text = stringResource(R.string.error_invalid_email), color = Color.Red)
+//            }
+//            Spacer(modifier = Modifier.smallHeight())
+//
+//            // • PASSWORD
+//            PasswordField(
+//                value = loginState.password,
+//                label = null,
+//                isError = loginState.isInvalidPassword,
+//                onValueChange = {
+//                    viewModel.sendEvent(LoginEvent.UpdatePassword(it))
+//                },
+//                isPasswordVisible = loginState.isPasswordVisible,
+//                clickTogglePasswordVisibility = {
+//                    viewModel.sendEvent(
+//                        LoginEvent.SetIsPasswordVisible(!loginState.isPasswordVisible)
+//                    )
+//                },
+//                imeAction = ImeAction.Done,
+//                doneAction = {
+//                    performLogin()
+//                }
+//            )
+//            if (loginState.isInvalidPassword && loginState.isShowInvalidPasswordMessage) {
+//                Text(text = stringResource(R.string.error_invalid_password), color = Color.Red)
+//            }
+//            Spacer(modifier = Modifier.mediumHeight())
+//
+//            // • LOGIN BUTTON
+//            Button(
+//                onClick = {
+//                    performLogin()
+//                },
+//                modifier = Modifier
+//                    .taskyWideButton(color = MaterialTheme.colors.primary)
+//                    .align(alignment = Alignment.CenterHorizontally),
+//                enabled = !loginState.isLoading,
+//            ) {
+//                Text(
+//                    text = stringResource(R.string.login_button),
+//                    fontSize = MaterialTheme.typography.button.fontSize,
+//                )
+//                if (loginState.isLoading) {
+//                    CircularProgressIndicator(
+//                        modifier = Modifier
+//                            .padding(start = DP.small)
+//                            .size(DP.small)
+//                            .align(alignment = CenterVertically)
+//                    )
+//                }
+//            }
+//            Spacer(modifier = Modifier.mediumHeight())
+//
+//            // STATUS //////////////////////////////////////////
+//
+//            loginState.errorMessage.getOrNull?.let { errorMessage ->
+//                Text(
+//                    text = "Error: $errorMessage",
+//                    color = Color.Red,
+//                )
+//                Spacer(modifier = Modifier.extraSmallHeight())
+//            }
+//            if (loginState.isLoggedIn) {
+//                Text(text = stringResource(R.string.login_logged_in))
+//                Spacer(modifier = Modifier.extraSmallHeight())
+//            }
+//            loginState.statusMessage.getOrNull?.let { message ->
+//                Text(text = message)
+//                Spacer(modifier = Modifier.extraSmallHeight())
+//            }
+//
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .weight(1f)
+//                    .background(color = MaterialTheme.colors.surface)
+//                    .padding(bottom = DP.large)
+//            ) {
+//                this@col1.AnimatedVisibility(
+//                    visible = !isKeyboardOpen,
+//                    enter = fadeIn() + slideInVertically(
+//                        initialOffsetY = { it }
+//                    ),
+//                    exit = fadeOut(),
+//                    modifier = Modifier
+//                        .background(color = MaterialTheme.colors.surface)
+//                        .align(alignment = Alignment.BottomCenter)
+//                ) {
+//                    // • REGISTER TEXT BUTTON
+//                    Text(
+//                        text = stringResource(R.string.login_not_a_member_sign_up),
+//                        style = MaterialTheme.typography.body1,
+//                        color = MaterialTheme.colors.primaryVariant,
+//                        modifier = Modifier
+//                            .align(alignment = Alignment.BottomCenter)
+//                            .clickable(onClick = {
+//                                navigateToRegister()
+//                            })
+//                    )
+//                }
+//            }
+//        }
+//    }
+//}
 
 @Composable
 @Destination
@@ -64,11 +265,30 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val loginState by viewModel.loginState.collectAsState()
+
+    LoginScreenContent(
+        username = username,                // passed to/from RegisterScreen (not used in LoginScreen)
+        confirmPassword = confirmPassword,  // passed to/from RegisterScreen (not used in LoginScreen)
+        loginState = loginState,
+        sendEvent = viewModel::sendEvent,
+        navigator = navigator,
+    )
+}
+
+
+@Composable
+fun LoginScreenContent(
+    username: String? = null,
+    confirmPassword: String? = null,
+    loginState: LoginState,
+    sendEvent: (LoginEvent) -> Unit,
+    navigator: DestinationsNavigator,
+) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
     fun performLogin() {
-        viewModel.sendEvent(LoginEvent.Login(
+        sendEvent(LoginEvent.Login(
             email = loginState.email,
             password = loginState.password,
         ))
@@ -92,7 +312,6 @@ fun LoginScreen(
 
     BackHandler(true) {
         // todo: should we ask the user to quit?
-
         ExitActivity.exit(context)
     }
 
@@ -141,7 +360,7 @@ fun LoginScreen(
                 label = null,
                 isError = loginState.isInvalidEmail,
                 onValueChange = {
-                    viewModel.sendEvent(LoginEvent.UpdateEmail(it))
+                    sendEvent(LoginEvent.UpdateEmail(it))
                 }
             )
             if (loginState.isInvalidEmail && loginState.isShowInvalidEmailMessage) {
@@ -155,11 +374,11 @@ fun LoginScreen(
                 label = null,
                 isError = loginState.isInvalidPassword,
                 onValueChange = {
-                    viewModel.sendEvent(LoginEvent.UpdatePassword(it))
+                    sendEvent(LoginEvent.UpdatePassword(it))
                 },
                 isPasswordVisible = loginState.isPasswordVisible,
                 clickTogglePasswordVisibility = {
-                    viewModel.sendEvent(
+                    sendEvent(
                         LoginEvent.SetIsPasswordVisible(!loginState.isPasswordVisible)
                     )
                 },
@@ -255,32 +474,32 @@ fun LoginScreen(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
-fun LoginScreenPreview() {
+fun LoginScreenPreview2() {
     TaskyTheme {
         androidx.compose.material.Surface {
-            LoginScreen(
+            LoginScreenContent(
                 navigator = EmptyDestinationsNavigator,
-                viewModel = LoginViewModel(
-                    authRepository = AuthRepositoryFakeImpl(
-                        authApi = AuthApiFakeImpl(),
-                        authDao = AuthDaoFakeImpl(),
-                        validateUsername = ValidateUsername(),
-                        validateEmail = ValidateEmailImpl(),
-                        validatePassword = ValidatePassword(),
-                    ),
-                    validateEmail = ValidateEmailImpl(),
-                    validatePassword = ValidatePassword(),
-                    savedStateHandle = SavedStateHandle().apply {
-                        // For Live Preview
-                        set("email", "chris@demo.com")
-                        set("password", "123456Aa")
-                        set("confirmPassword", "123456Aa")
-                    }
-                )
+                username = "NOT_USED_IN_THIS_SCREEN_UI",
+                confirmPassword = "NOT_USED_IN_THIS_SCREEN_UI",
+                loginState = LoginState(
+                    email = "chris@demo.com",
+                    password = "123456Aa",
+                    isInvalidEmail = false,
+                    isInvalidPassword = false,
+                    isShowInvalidEmailMessage = false,
+                    isShowInvalidPasswordMessage = true,
+                    isPasswordVisible = true,
+                    isLoading = false,
+                    isLoggedIn = false,
+                    errorMessage = UiText.None,  // UiText.Res(R.string.error_invalid_email),
+                    statusMessage = UiText.None, // UiText.Res(R.string.login_logged_in),
+                ),
+                sendEvent = {},
             )
         }
     }
 }
+
 
 @Composable
 @Preview(
@@ -288,5 +507,37 @@ fun LoginScreenPreview() {
     uiMode = Configuration.UI_MODE_NIGHT_NO,
 )
 fun LoginScreenPreview_NightMode() {
-    LoginScreenPreview()
+    LoginScreenPreview2()
 }
+
+//@Composable
+//@Preview(
+//    showBackground = true,
+//    uiMode = Configuration.UI_MODE_NIGHT_YES,
+//)
+//fun LoginScreenPreviewUsingViewModel() {
+//    TaskyTheme {
+//        androidx.compose.material.Surface {
+//            LoginScreen(
+//                navigator = EmptyDestinationsNavigator,
+//                viewModel = LoginViewModel(
+//                    authRepository = AuthRepositoryFakeImpl(
+//                        authApi = AuthApiFakeImpl(),
+//                        authDao = AuthDaoFakeImpl(),
+//                        validateUsername = ValidateUsername(),
+//                        validateEmail = ValidateEmailImpl(),
+//                        validatePassword = ValidatePassword(),
+//                    ),
+//                    validateEmail = ValidateEmailImpl(),
+//                    validatePassword = ValidatePassword(),
+//                    savedStateHandle = SavedStateHandle().apply {
+//                        // For Live Preview
+//                        set("email", "chris@demo.com")
+//                        set("password", "123456Aa")
+//                        set("confirmPassword", "123456Aa")
+//                    }
+//                )
+//            )
+//        }
+//    }
+//}
