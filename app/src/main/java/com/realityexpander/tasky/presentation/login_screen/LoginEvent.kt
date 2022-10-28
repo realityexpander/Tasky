@@ -6,7 +6,7 @@ import com.realityexpander.tasky.ui.util.UiText
 sealed class LoginEvent {
     data class UpdateEmail(val email: String) : LoginEvent()
     data class UpdatePassword(val password: String) : LoginEvent()
-    data class SetIsPasswordVisibile(val isPasswordVisible: Boolean) : LoginEvent()
+    data class SetIsPasswordVisible(val isPasswordVisible: Boolean) : LoginEvent()
 
     object ValidateEmail : LoginEvent()
     object ValidatePassword : LoginEvent()

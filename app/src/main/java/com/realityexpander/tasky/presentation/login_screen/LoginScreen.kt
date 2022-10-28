@@ -44,14 +44,11 @@ import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl
 import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailImpl
 import com.realityexpander.tasky.domain.validation.ValidatePassword
 import com.realityexpander.tasky.domain.validation.ValidateUsername
-import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
 import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
 import com.realityexpander.tasky.ui.components.EmailField
 import com.realityexpander.tasky.ui.components.PasswordField
 import com.realityexpander.tasky.ui.theme.TaskyTheme
 import com.realityexpander.tasky.ui.theme.modifiers.*
-import kotlinx.coroutines.yield
-import kotlin.system.exitProcess
 
 @Composable
 @Destination
@@ -163,7 +160,7 @@ fun LoginScreen(
                 isPasswordVisible = loginState.isPasswordVisible,
                 clickTogglePasswordVisibility = {
                     viewModel.sendEvent(
-                        LoginEvent.SetIsPasswordVisibile(!loginState.isPasswordVisible)
+                        LoginEvent.SetIsPasswordVisible(!loginState.isPasswordVisible)
                     )
                 },
                 imeAction = ImeAction.Done,

@@ -100,7 +100,7 @@ class LoginViewModelTest {
         }
     }
 
-    @Test // broken
+    @Test
     fun `LoginViewModel contains email and password and can set password visibility`()  {
         // ARRANGE
         loginViewModel = LoginViewModel(
@@ -112,73 +112,26 @@ class LoginViewModelTest {
 
         // ACT
         coroutineRule.dispatcher.scheduler.advanceUntilIdle()
-//        coroutineTestRule.testDispatcher.scheduler.advanceUntilIdle()
 
         runTest {
-
             loginViewModel.loginState.test {
-
-                // attempt to set state for password visibility. (is this the right way to do this?)
-                loginViewModel.sendEvent(LoginEvent.SetIsPasswordVisibile(true))
-                // https://developer.android.com/kotlin/flow/test
-                // https://medium.com/google-developer-experts/unit-testing-kotlin-flow-76ea5f4282c5
 
                 // ASSERT
                 var state = awaitItem() // initial state
-                println("isPasswordVisible: ${state.isPasswordVisible}")
                 assertThat(state.isPasswordVisible).isFalse()
 
-                // Await the "SetPasswordVisibility(true)" event
-                state = awaitItem()
-                assertThat(state.isPasswordVisible).isTrue() // why no worky?
+                // ACT
+                loginViewModel.sendEvent(LoginEvent.SetIsPasswordVisible(true))
+                //yield()
 
+                // ASSERT
+                state = awaitItem()
+                assertThat(state.isPasswordVisible).isTrue()
 
                 ensureAllEventsConsumed()
                 cancelAndIgnoreRemainingEvents()
                 assertThat(loginViewModel.loginState.value.isPasswordVisible).isEqualTo(true)
             }
-
-        }
-    }
-
-    @Test // broken
-    fun `LoginViewModel contains email and password and can set password visibility - ALTERNATE`()  {
-        // ARRANGE
-        loginViewModel = LoginViewModel(
-            authRepository = authRepository,
-            validateEmail = validateEmail,
-            validatePassword = validatePassword,
-            savedStateHandle = SavedStateHandle()
-        )
-
-        // ACT
-        coroutineRule.dispatcher.scheduler.advanceUntilIdle()
-//        coroutineTestRule.testDispatcher.scheduler.advanceUntilIdle()
-
-        runBlocking {
-            val job = launch {
-                loginViewModel.loginState.test {
-
-                    // ASSERT
-                    var state = awaitItem() // initial state
-                    println("isPasswordVisible: ${state.isPasswordVisible}")
-                    assertThat(state.isPasswordVisible).isFalse()
-
-                    // Await the "SetPasswordVisibility(true)" event to be processed
-                    state = awaitItem()
-                    assertThat(state.isPasswordVisible).isTrue() // why no worky?
-
-                    ensureAllEventsConsumed()
-                    cancelAndIgnoreRemainingEvents()
-                    assertThat(loginViewModel.loginState.value.isPasswordVisible).isEqualTo(true)
-                }
-            }
-
-            // attempt to set state for password visibility. (is this the right way to do this?)
-            loginViewModel.sendEvent(LoginEvent.SetIsPasswordVisibile(true))
-
-            job.join()
-            job.cancel()
         }
     }
 

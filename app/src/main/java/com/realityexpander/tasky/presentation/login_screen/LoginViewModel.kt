@@ -179,7 +179,7 @@ class LoginViewModel @Inject constructor(
                     )
                 }
             }
-            is LoginEvent.SetIsPasswordVisibile -> {
+            is LoginEvent.SetIsPasswordVisible -> {
 //                _loginState.value = _loginState.value.copy(
 //                    isPasswordVisible = event.isPasswordVisible
 //                )
