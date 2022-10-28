@@ -17,7 +17,7 @@ sealed class LoginEvent {
     object ShowInvalidPasswordMessage : LoginEvent()
 
     data class Login(val email: String, val password: String) : LoginEvent()
-    data class Loading(val isLoading: Boolean) : LoginEvent()
+    data class SetIsLoading(val isLoading: Boolean) : LoginEvent()
     data class LoginSuccess(val authInfo: AuthInfo) : LoginEvent()
     data class LoginError(val message: UiText) : LoginEvent()
 

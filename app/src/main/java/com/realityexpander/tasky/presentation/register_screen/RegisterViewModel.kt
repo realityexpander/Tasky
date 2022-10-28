@@ -406,6 +406,7 @@ class RegisterViewModel @Inject constructor(
                             UiText.Res(R.string.error_unknown, "")
                     )
                 }
+                sendEvent(RegisterEvent.SetIsLoading(false))
             }
 
         }

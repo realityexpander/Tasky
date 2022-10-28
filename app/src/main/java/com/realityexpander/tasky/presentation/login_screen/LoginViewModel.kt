@@ -141,7 +141,7 @@ class LoginViewModel @Inject constructor(
 
     private suspend fun onEvent(event: LoginEvent) {
         when(event) {
-            is LoginEvent.Loading -> {
+            is LoginEvent.SetIsLoading -> {
                 _loginState.update {
                     it.copy(isLoading = event.isLoading)
                 }
@@ -223,7 +223,7 @@ class LoginViewModel @Inject constructor(
                 if(_loginState.value.isInvalidEmail || _loginState.value.isInvalidPassword)
                     return
 
-                sendEvent(LoginEvent.Loading(true))
+                sendEvent(LoginEvent.SetIsLoading(true))
                 login(event.email, event.password)
             }
             is LoginEvent.LoginSuccess -> {
@@ -235,7 +235,7 @@ class LoginViewModel @Inject constructor(
                         isPasswordVisible = false,
                     )
                 }
-                sendEvent(LoginEvent.Loading(false))
+                sendEvent(LoginEvent.SetIsLoading(false))
             }
             is LoginEvent.LoginError -> {
                 _loginState.update {
@@ -246,7 +246,7 @@ class LoginViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
-                sendEvent(LoginEvent.Loading(false))
+                sendEvent(LoginEvent.SetIsLoading(false))
             }
             is LoginEvent.UnknownError -> {
                 _loginState.update {
@@ -258,6 +258,7 @@ class LoginViewModel @Inject constructor(
                             UiText.Res(R.string.error_unknown, ""),
                     )
                 }
+                sendEvent(LoginEvent.SetIsLoading(false))
             }
         }
     }
