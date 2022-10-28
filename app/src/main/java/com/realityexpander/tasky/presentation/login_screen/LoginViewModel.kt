@@ -97,7 +97,7 @@ class LoginViewModel @Inject constructor(
             if (loginState.value.email.isNotBlank()) sendEvent(LoginEvent.ValidateEmail)
             if (loginState.value.password.isNotBlank()) sendEvent(LoginEvent.ValidatePassword)
 
-            yield() // allow the loginState to be updated
+            yield() // allow loginState to be updated
             // Show status validation messages when restored from process death or coming from another screen
             if(loginState.value.isInvalidEmail) sendEvent(LoginEvent.ShowInvalidEmailMessage)
             if(loginState.value.isInvalidPassword) sendEvent(LoginEvent.ShowInvalidPasswordMessage)
@@ -148,12 +148,6 @@ class LoginViewModel @Inject constructor(
                 }
             }
             is LoginEvent.UpdateEmail -> {
-//                _loginState.value = _loginState.value.copy(
-//                    email = event.email,
-//                    isInvalidEmail = false,
-//                    isShowInvalidEmailMessage = false,
-//                    errorMessage = UiText.None,
-//                )
                 _loginState.update {
                     it.copy(
                         email = event.email,
@@ -164,12 +158,6 @@ class LoginViewModel @Inject constructor(
                 }
             }
             is LoginEvent.UpdatePassword -> {
-//                _loginState.value = _loginState.value.copy(
-//                    password = event.password,
-//                    isInvalidPassword = false,
-//                    isShowInvalidPasswordMessage = false,
-//                    errorMessage = UiText.None,
-//                )
                 _loginState.update {
                     it.copy(
                         password = event.password,
@@ -180,9 +168,6 @@ class LoginViewModel @Inject constructor(
                 }
             }
             is LoginEvent.SetIsPasswordVisible -> {
-//                _loginState.value = _loginState.value.copy(
-//                    isPasswordVisible = event.isPasswordVisible
-//                )
                 _loginState.update {
                     it.copy(
                         isPasswordVisible = event.isPasswordVisible
@@ -198,9 +183,6 @@ class LoginViewModel @Inject constructor(
                 yield()
             }
             is LoginEvent.SetIsValidEmail -> {
-//                _loginState.value = _loginState.value.copy(
-//                    isInvalidEmail = !event.isValid,
-//                )
                 _loginState.update {
                     it.copy(
                         isInvalidEmail = !event.isValid,
@@ -213,9 +195,6 @@ class LoginViewModel @Inject constructor(
                 )
             }
             is LoginEvent.SetIsValidPassword -> {
-//                _loginState.value = _loginState.value.copy(
-//                    isInvalidPassword = !event.isValid
-//                )
                 _loginState.update {
                     it.copy(
                         isInvalidPassword = !event.isValid,
@@ -223,9 +202,6 @@ class LoginViewModel @Inject constructor(
                 }
             }
             is LoginEvent.ShowInvalidPasswordMessage -> {
-//                _loginState.value = _loginState.value.copy(
-//                    isShowInvalidPasswordMessage = true
-//                )
                 _loginState.update {
                     it.copy(
                         isShowInvalidPasswordMessage = true
@@ -252,12 +228,6 @@ class LoginViewModel @Inject constructor(
                 login(event.email, event.password)
             }
             is LoginEvent.LoginSuccess -> {
-//                _loginState.value = _loginState.value.copy(
-//                    isLoggedIn = true,
-//                    errorMessage = UiText.None,
-//                    statusMessage = UiText.Res(R.string.login_success, event.authToken),
-//                    isPasswordVisible = false,
-//                )
                 _loginState.update {
                     it.copy(
                         isLoggedIn = true,
@@ -269,12 +239,6 @@ class LoginViewModel @Inject constructor(
                 sendEvent(LoginEvent.Loading(false))
             }
             is LoginEvent.LoginError -> {
-//                _loginState.value = _loginState.value.copy(
-//                    isLoggedIn = false,
-//                    errorMessage = event.message,
-//                    statusMessage = UiText.None,
-//                    isLoading = false
-//                )
                 _loginState.update {
                     it.copy(
                         isLoggedIn = false,
@@ -286,13 +250,6 @@ class LoginViewModel @Inject constructor(
                 sendEvent(LoginEvent.Loading(false))
             }
             is LoginEvent.UnknownError -> {
-//                _loginState.value = _loginState.value.copy(
-//                    isLoggedIn = false,
-//                    errorMessage = if(event.message.isRes)
-//                            event.message
-//                        else
-//                            UiText.Res(R.string.error_unknown, ""),
-//                )
                 _loginState.update {
                     it.copy(
                         isLoggedIn = false,

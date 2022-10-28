@@ -203,19 +203,11 @@ class RegisterViewModel @Inject constructor(
     private suspend fun onEvent(event: RegisterEvent) {
         when(event) {
             is RegisterEvent.SetIsLoading -> {
-//                _registerState.value = _registerState.value.copy(
-//                    isLoading = event.isLoading
-//                )
                 _registerState.update {
                     it.copy(isLoading = event.isLoading)
                 }
             }
             is RegisterEvent.UpdateUsername -> {
-//                _registerState.value = _registerState.value.copy(
-//                    username = event.username,
-//                    isInvalidUsername = false,
-//                    isShowInvalidUsernameMessage = false,
-//                )
                 _registerState.update {
                     it.copy(
                         username = event.username,
@@ -225,11 +217,6 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.UpdateEmail -> {
-//                _registerState.value = _registerState.value.copy(
-//                    email = event.email,
-//                    isInvalidEmail = false,
-//                    isShowInvalidEmailMessage = false,
-//                )
                 _registerState.update {
                     it.copy(
                         email = event.email,
@@ -239,12 +226,6 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.UpdatePassword -> {
-//                _registerState.value = _registerState.value.copy(
-//                    password = event.password,
-//                    isInvalidPassword = false,
-//                    isShowInvalidPasswordMessage = false,
-//                    isPasswordsMatch = false,
-//                )
                 _registerState.update {
                     it.copy(
                         password = event.password,
@@ -255,12 +236,6 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.UpdateConfirmPassword -> {
-//                _registerState.value = _registerState.value.copy(
-//                    confirmPassword = event.confirmPassword,
-//                    isInvalidConfirmPassword = false,
-//                    isShowInvalidConfirmPasswordMessage = false,
-//                    isPasswordsMatch = false,
-//                )
                 _registerState.update {
                     it.copy(
                         confirmPassword = event.confirmPassword,
@@ -271,8 +246,6 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.SetIsPasswordVisible -> {
-//                _registerState.value = _registerState.value
-//                    .copy(isPasswordVisible = event.isVisible)
                 _registerState.update {
                     it.copy(isPasswordVisible = event.isVisible)
                 }
@@ -298,17 +271,11 @@ class RegisterViewModel @Inject constructor(
                 yield()
             }
             is RegisterEvent.IsValidUsername -> {
-//                _registerState.value = _registerState.value.copy(
-//                    isInvalidUsername = !event.isValid,
-//                )
                 _registerState.update {
                     it.copy(isInvalidUsername = !event.isValid)
                 }
             }
             is RegisterEvent.IsValidEmail -> {
-//                _registerState.value = _registerState.value.copy(
-//                    isInvalidEmail = !event.isValid,
-//                )
                 _registerState.update {
                     it.copy(
                         isInvalidEmail = !event.isValid
@@ -316,9 +283,6 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.IsValidPassword -> {
-//                _registerState.value = _registerState.value.copy(
-//                    isInvalidPassword = !event.isValid,
-//                )
                 _registerState.update {
                     it.copy(
                         isInvalidPassword = !event.isValid
@@ -326,9 +290,6 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.IsValidConfirmPassword -> {
-//                _registerState.value = _registerState.value.copy(
-//                    isInvalidConfirmPassword = !event.isValid,
-//                )
                 _registerState.update {
                     it.copy(
                         isInvalidConfirmPassword = !event.isValid
@@ -336,9 +297,6 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.IsPasswordsMatch -> {
-//                _registerState.value = _registerState.value.copy(
-//                    isPasswordsMatch = event.isMatch
-//                )
                 _registerState.update {
                     it.copy(
                         isPasswordsMatch = event.isMatch
@@ -346,9 +304,6 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.ShowInvalidUsernameMessage -> {
-//                _registerState.value = _registerState.value.copy(
-//                    isShowInvalidUsernameMessage = true,
-//                )
                 _registerState.update {
                     it.copy(
                         isShowInvalidUsernameMessage = true
@@ -356,9 +311,6 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.ShowInvalidEmailMessage -> {
-//                _registerState.value = _registerState.value.copy(
-//                    isShowInvalidEmailMessage = true,
-//                )
                 _registerState.update {
                     it.copy(
                         isShowInvalidEmailMessage = true
@@ -366,9 +318,6 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.ShowInvalidPasswordMessage -> {
-//                _registerState.value = _registerState.value.copy(
-//                    isShowInvalidPasswordMessage = true,
-//                )
                 _registerState.update {
                     it.copy(
                         isShowInvalidPasswordMessage = true
@@ -376,9 +325,6 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.ShowInvalidConfirmPasswordMessage -> {
-//                _registerState.value = _registerState.value.copy(
-//                    isShowInvalidConfirmPasswordMessage = true,
-//                )
                 _registerState.update {
                     it.copy(
                         isShowInvalidConfirmPasswordMessage = true
@@ -420,11 +366,6 @@ class RegisterViewModel @Inject constructor(
                 register(event.username, event.email, event.password)
             }
             is RegisterEvent.EmailAlreadyExists -> {
-//                _registerState.value = _registerState.value.copy(
-//                    isLoggedIn = false,
-//                    errorMessage = UiText.Res(R.string.register_error_email_exists),
-//                    statusMessage = UiText.None,
-//                )
                 _registerState.update {
                     it.copy(
                         isLoggedIn = false,
@@ -435,12 +376,6 @@ class RegisterViewModel @Inject constructor(
                 sendEvent(RegisterEvent.SetIsLoading(false))
             }
             is RegisterEvent.RegisterSuccess -> {
-//                _registerState.value = _registerState.value.copy(
-//                    isLoggedIn = true,
-//                    errorMessage = UiText.None,
-//                    statusMessage = UiText.Res(R.string.register_success, event.authToken),
-//                    isPasswordVisible = false,
-//                )
                 _registerState.update {
                     it.copy(
                         isLoggedIn = true,
@@ -452,11 +387,6 @@ class RegisterViewModel @Inject constructor(
                 sendEvent(RegisterEvent.SetIsLoading(false))
             }
             is RegisterEvent.RegisterError -> {
-//                _registerState.value = _registerState.value.copy(
-//                    isLoggedIn = false,
-//                    errorMessage = event.message,
-//                    statusMessage = UiText.None,
-//                )
                 _registerState.update {
                     it.copy(
                         isLoggedIn = false,
@@ -467,13 +397,6 @@ class RegisterViewModel @Inject constructor(
                 sendEvent(RegisterEvent.SetIsLoading(false))
             }
             is RegisterEvent.UnknownError -> {
-//                _registerState.value = _registerState.value.copy(
-//                    isLoggedIn = false,
-//                    errorMessage = if(event.message.isRes)
-//                        event.message
-//                    else
-//                        UiText.Res(R.string.error_unknown, ""),
-//                )
                 _registerState.update {
                     it.copy(
                         isLoggedIn = false,
