@@ -93,8 +93,10 @@ fun LoginScreen(
         }
     }
 
-    BackHandler(false) {
-        /* should we ask the user to quit? */ // todo
+    BackHandler(true) {
+        // todo: should we ask the user to quit?
+
+        ExitActivity.exit(context)
     }
 
     // Check keyboard open/closed (how to make this a function?)
