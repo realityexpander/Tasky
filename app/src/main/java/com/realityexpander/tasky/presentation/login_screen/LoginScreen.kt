@@ -31,19 +31,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.SavedStateHandle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.ExitActivity
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.data.repository.AuthRepositoryFakeImpl
-import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
-import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl
-import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailImpl
-import com.realityexpander.tasky.domain.validation.ValidatePassword
-import com.realityexpander.tasky.domain.validation.ValidateUsername
 import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
 import com.realityexpander.tasky.ui.components.EmailField
 import com.realityexpander.tasky.ui.components.PasswordField
@@ -270,7 +263,7 @@ fun LoginScreen(
         username = username,                // passed to/from RegisterScreen (not used in LoginScreen)
         confirmPassword = confirmPassword,  // passed to/from RegisterScreen (not used in LoginScreen)
         loginState = loginState,
-        sendEvent = viewModel::sendEvent,
+        onAction = viewModel::sendEvent,
         navigator = navigator,
     )
 }
@@ -281,14 +274,14 @@ fun LoginScreenContent(
     username: String? = null,
     confirmPassword: String? = null,
     loginState: LoginState,
-    sendEvent: (LoginEvent) -> Unit,
+    onAction: (LoginEvent) -> Unit,
     navigator: DestinationsNavigator,
 ) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
     fun performLogin() {
-        sendEvent(LoginEvent.Login(
+        onAction(LoginEvent.Login(
             email = loginState.email,
             password = loginState.password,
         ))
@@ -360,7 +353,7 @@ fun LoginScreenContent(
                 label = null,
                 isError = loginState.isInvalidEmail,
                 onValueChange = {
-                    sendEvent(LoginEvent.UpdateEmail(it))
+                    onAction(LoginEvent.UpdateEmail(it))
                 }
             )
             if (loginState.isInvalidEmail && loginState.isShowInvalidEmailMessage) {
@@ -374,11 +367,11 @@ fun LoginScreenContent(
                 label = null,
                 isError = loginState.isInvalidPassword,
                 onValueChange = {
-                    sendEvent(LoginEvent.UpdatePassword(it))
+                    onAction(LoginEvent.UpdatePassword(it))
                 },
                 isPasswordVisible = loginState.isPasswordVisible,
                 clickTogglePasswordVisibility = {
-                    sendEvent(
+                    onAction(
                         LoginEvent.SetIsPasswordVisible(!loginState.isPasswordVisible)
                     )
                 },
@@ -494,7 +487,7 @@ fun LoginScreenPreview2() {
                     errorMessage = UiText.None,  // UiText.Res(R.string.error_invalid_email),
                     statusMessage = UiText.None, // UiText.Res(R.string.login_logged_in),
                 ),
-                sendEvent = {},
+                onAction = {},
             )
         }
     }
