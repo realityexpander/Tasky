@@ -24,6 +24,7 @@ class MainActivity : ComponentActivity() {
 //        waitForDebugger() // for testing process death
 
         super.onCreate(savedInstanceState)
+
         setContent {
             TaskyTheme {
                 // A surface container using the 'background' color from the theme
@@ -39,15 +40,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     TaskyTheme {
-        Greeting("Android")
     }
 }

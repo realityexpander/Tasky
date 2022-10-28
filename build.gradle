@@ -1,21 +1,38 @@
 buildscript {
     ext {
+        kotlin_version = '1.6.21'
         compose_ui_version = '1.1.0'
         room_version = '2.4.3'
         retrofit_version = '2.9.0'
-        dagger_hilt_version = '2.40.5'
+        dagger_hilt_version = '2.44'
+        compose_destinations_version = '1.5.23-beta' // for kotlin 1.6.21
     }
     dependencies {
-        classpath "com.google.dagger:hilt-android-gradle-plugin:2.40.5"
+        classpath "com.google.dagger:hilt-android-gradle-plugin:2.44"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
-}// Top-level build file where you can add configuration options common to all sub-projects/modules.
-plugins {
-    id 'com.android.application' version '7.4.0-beta02' apply false
-    id 'com.android.library' version '7.4.0-beta02' apply false
-    id 'org.jetbrains.kotlin.android' version '1.6.10' apply false
+
+    repositories {
+        mavenCentral()
+        google()
+        maven { url 'https://maven.google.com' }
+        maven { url 'https://jitpack.io' }
+    }
 }
 
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+plugins {
+    id 'com.android.application' version '7.4.0-beta03' apply false
+    id 'com.android.library' version '7.4.0-beta03' apply false
+    id 'org.jetbrains.kotlin.android' version '1.6.21' apply false
+}
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        freeCompilerArgs += "-opt-in=org.mylibrary.OptInAnnotation"
+    }
 }

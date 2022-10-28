@@ -1,46 +1,73 @@
 package com.realityexpander.tasky.presentation.register_screen
 
+import android.content.res.Configuration
+import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.common.UiText
-import com.realityexpander.tasky.ui.components.EmailField
-import com.realityexpander.tasky.ui.components.PasswordField
+import com.realityexpander.tasky.data.repository.AuthRepositoryFakeImpl
+import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
+import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl
+import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailImpl
+import com.realityexpander.tasky.domain.validation.ValidatePassword
+import com.realityexpander.tasky.domain.validation.ValidateUsername
 import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
+import com.realityexpander.tasky.ui.components.EmailField
+import com.realityexpander.tasky.ui.components.NameField
+import com.realityexpander.tasky.ui.components.PasswordField
+import com.realityexpander.tasky.ui.theme.TaskyTheme
+import com.realityexpander.tasky.ui.theme.modifiers.*
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Destination
 fun RegisterScreen(
+    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
+    username: String? = null,
+    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     email: String? = null,
+    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     password: String? = null,
+    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     confirmPassword: String? = null,
     navigator: DestinationsNavigator,
     viewModel: RegisterViewModel = hiltViewModel(),
 ) {
 
     val registerState by viewModel.registerState.collectAsState()
+
     val focusManager = LocalFocusManager.current
 
     fun performRegister() {
         viewModel.sendEvent(RegisterEvent.Register(
-            registerState.email,
-            registerState.password,
-            registerState.confirmPassword
+            username = registerState.username,
+            email = registerState.email,
+            password = registerState.password,
+            confirmPassword = registerState.confirmPassword,
         ))
 
         focusManager.clearFocus()
@@ -49,9 +76,10 @@ fun RegisterScreen(
     fun navigateToLogin() {
         navigator.navigate(
             LoginScreenDestination(
+                username = registerState.username,  // saved here in case the user comes back to registration
                 email = registerState.email,
                 password = registerState.password,
-                confirmPassword = registerState.confirmPassword
+                confirmPassword = registerState.confirmPassword  // saved here in case the comes goes back to registration
             )
         ) {
             popUpTo("RegisterScreen") {
@@ -64,144 +92,334 @@ fun RegisterScreen(
         navigateToLogin()
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        if(registerState.isLoading) {
-            Spacer(modifier = Modifier.height(8.dp))
-            CircularProgressIndicator(
-                modifier = Modifier.align(alignment = Alignment.Center)
-            )
+    // Check keyboard open/closed (how to make this a function?)
+    val view = LocalView.current
+    var isKeyboardOpen by remember { mutableStateOf(false) }
+    DisposableEffect(view) {
+        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+            isKeyboardOpen = ViewCompat.getRootWindowInsets(view)
+                ?.isVisible(WindowInsetsCompat.Type.ime()) ?: true
+        }
+        view.viewTreeObserver.addOnGlobalLayoutListener(listener)
+
+        onDispose {
+            view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
         }
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-    ) {
-        Text(text = "Register:")
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // EMAIL
-        EmailField(
-            value = registerState.email,
-            isError = registerState.isInvalidEmail,
-            onValueChange = {
-                viewModel.sendEvent(RegisterEvent.UpdateEmail(it))
-            }
-        )
-        if(registerState.isInvalidEmail) {
-            Text(text = UiText.Res(R.string.error_invalid_email).get(), color = Color.Red)
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // PASSWORD
-        PasswordField(
-            value = registerState.password,
-            isError = registerState.isInvalidPassword,
-            onValueChange = {
-                viewModel.sendEvent(RegisterEvent.UpdatePassword(it))
-            },
-            isPasswordVisible = registerState.isPasswordVisible,
-            clickTogglePasswordVisibility = {
-                viewModel.sendEvent(RegisterEvent.TogglePasswordVisibility(registerState.isPasswordVisible))
-            },
-            imeAction = ImeAction.Next,
-        )
-        if (registerState.isInvalidPassword) {
-            Text(text = UiText.Res(R.string.error_invalid_password).get(), color = Color.Red)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        // CONFIRM PASSWORD
-        PasswordField(
-            label = UiText.Res(R.string.register_label_confirm_password).get(),
-            placeholder = UiText.Res(R.string.register_placeholder_confirm_password).get(),
-            value = registerState.confirmPassword,
-            isError = registerState.isInvalidConfirmPassword,
-            onValueChange = {
-                viewModel.sendEvent(RegisterEvent.UpdateConfirmPassword(it))
-            },
-            isPasswordVisible = registerState.isPasswordVisible,
-            clickTogglePasswordVisibility = {
-                viewModel.sendEvent(RegisterEvent.TogglePasswordVisibility(registerState.isPasswordVisible))
-            },
-            imeAction = ImeAction.Done,
-            doneAction = {
-                performRegister()
-            },
-        )
-        if (registerState.isInvalidConfirmPassword) {
-            Text(text = UiText.Res(R.string.error_invalid_confirm_password).get(), color = Color.Red)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        // SHOW IF MATCHING PASSWORDS
-        if(!registerState.isPasswordsMatch)
-        {
-            Text(text = UiText.Res(R.string.register_error_passwords_do_not_match).get(), color = Color.Red)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        // SHOW PASSWORD REQUIREMENTS
-        if(registerState.isInvalidPassword || registerState.isInvalidConfirmPassword) {
-            Text(
-                text = UiText.Res(R.string.register_password_requirements).get(),
-                color = Color.Red
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        // REGISTER BUTTON
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            performRegister()
-        },
-            enabled = !registerState.isLoading,
-            modifier = Modifier
-                .align(alignment = Alignment.End)
-        ) {
-            Text(text = UiText.Res(R.string.register_button).get())
-            if(registerState.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .size(16.dp)
-                        .align(alignment = Alignment.CenterVertically)
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // SIGN IN BUTTON
-        Text(text = UiText.Res(R.string.register_already_a_member_sign_in).get(),
-            color = Color.Cyan,
+            .background(color = MaterialTheme.colors.onSurface)
+    ) col1@ {
+        Spacer(modifier = Modifier.largeHeight())
+        Text(
+            text = stringResource(R.string.register_title),
+            style = MaterialTheme.typography.h5,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colors.surface,
             modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)
-                .clickable(onClick = {
-                    navigateToLogin()
-                })
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.mediumHeight())
 
-        // STATUS //////////////////////////////////////////
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
+                .weight(1f)
+        ) col2@ {
+            Spacer(modifier = Modifier.mediumHeight())
 
-        registerState.errorMessage.getOrNull()?.let { errorMessage ->
-            Text(
-                text = "Error: $errorMessage",
-                color = Color.Red,
+            // • USERNAME
+            NameField(
+                value = registerState.username,
+                label = null,
+                isError = registerState.isInvalidUsername,
+                onValueChange = {
+                    viewModel.sendEvent(RegisterEvent.UpdateUsername(it))
+                }
             )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        if(registerState.isLoggedIn) {
-            Text(text = UiText.Res(R.string.register_registered).get())
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        registerState.statusMessage.asStrOrNull()?.let { message ->
-            Text(text = message)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
+            if (registerState.isInvalidUsername && registerState.isShowInvalidUsernameMessage) {
+                Text(text = stringResource(R.string.error_invalid_username), color = Color.Red)
+            }
+            Spacer(modifier = Modifier.smallHeight())
 
+            // • EMAIL
+            EmailField(
+                value = registerState.email,
+                label = null,
+                isError = registerState.isInvalidEmail,
+                onValueChange = {
+                    viewModel.sendEvent(RegisterEvent.UpdateEmail(it))
+                }
+            )
+            if (registerState.isInvalidEmail && registerState.isShowInvalidEmailMessage) {
+                Text(text = stringResource(R.string.error_invalid_email), color = Color.Red)
+            }
+            Spacer(modifier = Modifier.smallHeight())
+
+            // • PASSWORD
+            PasswordField(
+                value = registerState.password,
+                label = null,
+                isError = registerState.isInvalidPassword,
+                onValueChange = {
+                    viewModel.sendEvent(RegisterEvent.UpdatePassword(it))
+                },
+                isPasswordVisible = registerState.isPasswordVisible,
+                clickTogglePasswordVisibility = {
+                    viewModel.sendEvent(RegisterEvent.SetIsPasswordVisible(!registerState.isPasswordVisible))
+                },
+                imeAction = ImeAction.Next,
+            )
+            if (registerState.isInvalidPassword && registerState.isShowInvalidPasswordMessage) {
+                Text(text = stringResource(R.string.error_invalid_password), color = Color.Red)
+            }
+            Spacer(modifier = Modifier.smallHeight())
+
+            // • CONFIRM PASSWORD
+            PasswordField(
+                label = null, //stringResource(R.string.register_label_confirm_password),
+                placeholder = stringResource(R.string.register_placeholder_confirm_password),
+                value = registerState.confirmPassword,
+                isError = registerState.isInvalidConfirmPassword,
+                onValueChange = {
+                    viewModel.sendEvent(RegisterEvent.UpdateConfirmPassword(it))
+                },
+                isPasswordVisible = registerState.isPasswordVisible,
+                clickTogglePasswordVisibility = {
+                    viewModel.sendEvent(RegisterEvent.SetIsPasswordVisible(!registerState.isPasswordVisible))
+                },
+                imeAction = ImeAction.Done,
+                doneAction = {
+                    performRegister()
+                },
+            )
+            if (registerState.isInvalidConfirmPassword && registerState.isShowInvalidConfirmPasswordMessage) {
+                Text(
+                    text = stringResource(R.string.error_invalid_confirm_password),
+                    color = Color.Red
+                )
+                Spacer(modifier = Modifier.extraSmallHeight())
+            }
+            // • SHOW IF MATCHING PASSWORDS
+            if (!registerState.isPasswordsMatch) {
+                Text(
+                    text = stringResource(R.string.register_error_passwords_do_not_match),
+                    color = Color.Red
+                )
+                Spacer(modifier = Modifier.extraSmallHeight())
+            }
+            // • SHOW PASSWORD REQUIREMENTS
+            if (registerState.isShowInvalidPasswordMessage || registerState.isShowInvalidConfirmPasswordMessage) {
+                Text(
+                    text = stringResource(R.string.register_password_requirements),
+                    color = Color.Red
+                )
+                Spacer(modifier = Modifier.extraSmallHeight())
+            }
+            Spacer(modifier = Modifier.mediumHeight())
+
+            // • REGISTER BUTTON
+            Button(
+                onClick = {
+                    performRegister()
+                },
+                enabled = !registerState.isLoading,
+                modifier = Modifier
+                    .taskyWideButton(color = MaterialTheme.colors.primary)
+                    .align(alignment = Alignment.CenterHorizontally)
+            ) {
+                Text(
+                    text = stringResource(R.string.register_button),
+                    fontSize = MaterialTheme.typography.button.fontSize,
+                )
+                if (registerState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(start = DP.small)
+                            .size(16.dp)
+                            .align(alignment = Alignment.CenterVertically)
+                    )
+                }
+            }
+
+            // STATUS //////////////////////////////////////////
+
+            registerState.errorMessage.getOrNull?.let { errorMessage ->
+                Spacer(modifier = Modifier.smallHeight())
+                Text(
+                    text = "Error: $errorMessage",
+                    color = Color.Red,
+                )
+                Spacer(modifier = Modifier.extraSmallHeight())
+            }
+            if (registerState.isLoggedIn) {
+                Spacer(modifier = Modifier.smallHeight())
+                Text(text = stringResource(R.string.register_registered))
+                Spacer(modifier = Modifier.extraSmallHeight())
+            }
+            registerState.statusMessage.getOrNull?.let { message ->
+                Spacer(modifier = Modifier.extraSmallHeight())
+                Text(text = message)
+                Spacer(modifier = Modifier.extraSmallHeight())
+            }
+
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+            ) {
+                this@col1.AnimatedVisibility(
+                    visible = !isKeyboardOpen,
+                    enter = fadeIn() + slideInVertically(
+                        initialOffsetY = { it }
+                    ),
+                    exit = fadeOut(),
+                    modifier = Modifier
+                        .background(color = MaterialTheme.colors.surface)
+                        .align(alignment = Alignment.BottomStart)
+                ) {
+                    // • BACK TO SIGN IN BUTTON
+                    Button(
+                        onClick = {
+                            navigateToLogin()
+                        },
+                        modifier = Modifier
+                            .align(alignment = Alignment.BottomStart)
+                            .taskyMediumButton(color = MaterialTheme.colors.primary)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ChevronLeft,
+                            contentDescription = stringResource(R.string.register_description_back),
+                            modifier = Modifier
+                                .size(DP.large)
+                                .align(alignment = Alignment.CenterVertically)
+                        )
+                    }
+                }
+            }
+        }
     }
 }
+
+
+//    // • BACK TO SIGN IN BUTTON (alternate design)
+//    Text(
+//        text = stringResource(R.string.register_already_a_member_sign_in),
+//        style = MaterialTheme.typography.body2,
+//        color = MaterialTheme.colors.primaryVariant,
+//        modifier = Modifier
+//            .align(alignment = Alignment.CenterHorizontally)
+//            .clickable(onClick = {
+//                navigateToLogin()
+//            })
+//    )
+
+
+@Composable
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+fun RegisterScreenPreview() {
+    TaskyTheme {
+        Surface {
+            RegisterScreen(
+                navigator = EmptyDestinationsNavigator,
+                viewModel = RegisterViewModel(
+                    authRepository = AuthRepositoryFakeImpl(
+                        authApi = AuthApiFakeImpl(),
+                        authDao = AuthDaoFakeImpl(),
+                        validateUsername = ValidateUsername(),
+                        validateEmail = ValidateEmailImpl(),
+                        validatePassword = ValidatePassword(),
+                    ),
+                    validateUsername = ValidateUsername(),
+                    validateEmail = ValidateEmailImpl(),
+                    validatePassword = ValidatePassword(),
+                    savedStateHandle = SavedStateHandle().apply {
+                        // For Live Preview / interactive mode
+                        set("email", "chris@demo.com")
+                        set("password", "123456Aa")
+                        set("confirmPassword", "123456Aa")
+                    }
+                )
+            )
+        }
+    }
+}
+
+@Composable
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+)
+fun RegisterScreenPreview_NightMode_NO() {
+    RegisterScreenPreview()
+}
+
+@Composable
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+fun RegisterScreenPreview_Interactive() {
+    TaskyTheme {
+        Surface {
+            RegisterScreen(
+                email = "hello",
+                navigator = EmptyDestinationsNavigator,
+                viewModel = RegisterViewModel(
+                    authRepository = AuthRepositoryFakeImpl(
+                        authApi = AuthApiFakeImpl(),
+                        authDao = AuthDaoFakeImpl(),
+                        validateUsername = ValidateUsername(),
+                        validateEmail = ValidateEmailImpl(),
+                        validatePassword = ValidatePassword(),
+                    ),
+                    validateUsername = ValidateUsername(),
+                    validateEmail = ValidateEmailImpl(),
+                    validatePassword = ValidatePassword(),
+                    savedStateHandle = SavedStateHandle().apply {
+                        // For Live Preview / interactive mode
+                        set("username", "c")
+                        set("email", "chris@demo.com")
+                        set("password", "123456Aa")
+                        set("confirmPassword", "123456Aa")
+                        set("invalidUsername", true)
+                        set("invalidEmail", true)
+//                        set("invalidPassword", true)
+//                        set("invalidConfirmPassword", true)
+//                        set("isPasswordsMatch", false)
+                        set("isShowInvalidUsernameMessage", true)
+                        set("isShowInvalidEmailMessage", true)
+//                        set("isShowInvalidPasswordMessage", true)
+//                        set("isShowInvalidConfirmPasswordMessage", true)
+//                        set("isLoading", true)
+//                        set("errorMessage", "Error Message")
+//                        set("statusMessage", "Status Message")
+//                        set("isLoggedIn", true)
+                    }
+                )
+            )
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
