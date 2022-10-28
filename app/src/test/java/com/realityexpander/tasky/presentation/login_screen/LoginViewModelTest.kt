@@ -85,9 +85,9 @@ class LoginViewModelTest {
 
             loginViewModel.loginState.test {
                 // ASSERT
-                var state = awaitItem() // initial state
+                awaitItem() // ignore initial state
 
-                state = awaitItem()  // first emission from init block
+                val state = awaitItem()  // first emission from init block
                 assertThat(state.email).isEqualTo(expectedEmail)
                 assertThat(state.password).isEqualTo(expectedPassword)
 
