@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
@@ -35,24 +36,28 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import com.realityexpander.tasky.ExitActivity
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.ui.util.UiText
 import com.realityexpander.tasky.data.repository.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl
 import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailImpl
 import com.realityexpander.tasky.domain.validation.ValidatePassword
 import com.realityexpander.tasky.domain.validation.ValidateUsername
+import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
 import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
 import com.realityexpander.tasky.ui.components.EmailField
 import com.realityexpander.tasky.ui.components.PasswordField
 import com.realityexpander.tasky.ui.theme.TaskyTheme
 import com.realityexpander.tasky.ui.theme.modifiers.*
+import kotlinx.coroutines.yield
+import kotlin.system.exitProcess
 
 @Composable
 @Destination
 @RootNavGraph(start = true)
 fun LoginScreen(
+    username: String? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     email: String? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
@@ -63,6 +68,7 @@ fun LoginScreen(
 ) {
     val loginState by viewModel.loginState.collectAsState()
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
 
     fun performLogin() {
         viewModel.sendEvent(LoginEvent.Login(
@@ -75,6 +81,7 @@ fun LoginScreen(
     fun navigateToRegister() {
         navigator.navigate(
             RegisterScreenDestination(
+                username = username,
                 email = loginState.email,
                 password = loginState.password,
                 confirmPassword = confirmPassword
@@ -154,7 +161,7 @@ fun LoginScreen(
                 isPasswordVisible = loginState.isPasswordVisible,
                 clickTogglePasswordVisibility = {
                     viewModel.sendEvent(
-                        LoginEvent.SetPasswordVisibility(!loginState.isPasswordVisible)
+                        LoginEvent.SetIsPasswordVisibile(!loginState.isPasswordVisible)
                     )
                 },
                 imeAction = ImeAction.Done,

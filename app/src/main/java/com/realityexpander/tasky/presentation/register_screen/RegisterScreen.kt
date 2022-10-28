@@ -42,11 +42,12 @@ import com.realityexpander.tasky.ui.components.NameField
 import com.realityexpander.tasky.ui.components.PasswordField
 import com.realityexpander.tasky.ui.theme.TaskyTheme
 import com.realityexpander.tasky.ui.theme.modifiers.*
-import com.realityexpander.tasky.ui.util.UiText
 
 @Composable
 @Destination
 fun RegisterScreen(
+    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
+    username: String? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     email: String? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
@@ -75,9 +76,10 @@ fun RegisterScreen(
     fun navigateToLogin() {
         navigator.navigate(
             LoginScreenDestination(
+                username = registerState.username,  // saved here in case the user comes back to registration
                 email = registerState.email,
                 password = registerState.password,
-                confirmPassword = registerState.confirmPassword
+                confirmPassword = registerState.confirmPassword  // saved here in case the comes goes back to registration
             )
         ) {
             popUpTo("RegisterScreen") {
@@ -167,7 +169,7 @@ fun RegisterScreen(
                 },
                 isPasswordVisible = registerState.isPasswordVisible,
                 clickTogglePasswordVisibility = {
-                    viewModel.sendEvent(RegisterEvent.SetPasswordVisibility(!registerState.isPasswordVisible))
+                    viewModel.sendEvent(RegisterEvent.SetIsPasswordVisible(!registerState.isPasswordVisible))
                 },
                 imeAction = ImeAction.Next,
             )
@@ -187,7 +189,7 @@ fun RegisterScreen(
                 },
                 isPasswordVisible = registerState.isPasswordVisible,
                 clickTogglePasswordVisibility = {
-                    viewModel.sendEvent(RegisterEvent.SetPasswordVisibility(!registerState.isPasswordVisible))
+                    viewModel.sendEvent(RegisterEvent.SetIsPasswordVisible(!registerState.isPasswordVisible))
                 },
                 imeAction = ImeAction.Done,
                 doneAction = {

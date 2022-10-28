@@ -119,7 +119,7 @@ class LoginViewModelTest {
             loginViewModel.loginState.test {
 
                 // attempt to set state for password visibility. (is this the right way to do this?)
-                loginViewModel.sendEvent(LoginEvent.SetPasswordVisibility(true))
+                loginViewModel.sendEvent(LoginEvent.SetIsPasswordVisibile(true))
                 // https://developer.android.com/kotlin/flow/test
                 // https://medium.com/google-developer-experts/unit-testing-kotlin-flow-76ea5f4282c5
 
@@ -175,7 +175,7 @@ class LoginViewModelTest {
             }
 
             // attempt to set state for password visibility. (is this the right way to do this?)
-            loginViewModel.sendEvent(LoginEvent.SetPasswordVisibility(true))
+            loginViewModel.sendEvent(LoginEvent.SetIsPasswordVisibile(true))
 
             job.join()
             job.cancel()

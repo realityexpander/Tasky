@@ -26,10 +26,7 @@ import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_pas
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_statusMessage
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_username
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import javax.inject.Inject
@@ -205,44 +202,80 @@ class RegisterViewModel @Inject constructor(
 
     private suspend fun onEvent(event: RegisterEvent) {
         when(event) {
-            is RegisterEvent.Loading -> {
-                _registerState.value = _registerState.value.copy(
-                    isLoading = event.isLoading
-                )
+            is RegisterEvent.SetIsLoading -> {
+//                _registerState.value = _registerState.value.copy(
+//                    isLoading = event.isLoading
+//                )
+                _registerState.update {
+                    it.copy(isLoading = event.isLoading)
+                }
             }
             is RegisterEvent.UpdateUsername -> {
-                _registerState.value = _registerState.value.copy(
-                    username = event.username,
-                    isInvalidUsername = false,
-                    isShowInvalidUsernameMessage = false,
-                )
+//                _registerState.value = _registerState.value.copy(
+//                    username = event.username,
+//                    isInvalidUsername = false,
+//                    isShowInvalidUsernameMessage = false,
+//                )
+                _registerState.update {
+                    it.copy(
+                        username = event.username,
+                        isInvalidUsername = false,
+                        isShowInvalidUsernameMessage = false
+                    )
+                }
             }
             is RegisterEvent.UpdateEmail -> {
-                _registerState.value = _registerState.value.copy(
-                    email = event.email,
-                    isInvalidEmail = false,
-                    isShowInvalidEmailMessage = false,
-                )
+//                _registerState.value = _registerState.value.copy(
+//                    email = event.email,
+//                    isInvalidEmail = false,
+//                    isShowInvalidEmailMessage = false,
+//                )
+                _registerState.update {
+                    it.copy(
+                        email = event.email,
+                        isInvalidEmail = false,
+                        isShowInvalidEmailMessage = false
+                    )
+                }
             }
             is RegisterEvent.UpdatePassword -> {
-                _registerState.value = _registerState.value.copy(
-                    password = event.password,
-                    isInvalidPassword = false,
-                    isShowInvalidPasswordMessage = false,
-                    isPasswordsMatch = false,
-                )
+//                _registerState.value = _registerState.value.copy(
+//                    password = event.password,
+//                    isInvalidPassword = false,
+//                    isShowInvalidPasswordMessage = false,
+//                    isPasswordsMatch = false,
+//                )
+                _registerState.update {
+                    it.copy(
+                        password = event.password,
+                        isInvalidPassword = false,
+                        isShowInvalidPasswordMessage = false,
+                        isPasswordsMatch = false
+                    )
+                }
             }
             is RegisterEvent.UpdateConfirmPassword -> {
-                _registerState.value = _registerState.value.copy(
-                    confirmPassword = event.confirmPassword,
-                    isInvalidConfirmPassword = false,
-                    isShowInvalidConfirmPasswordMessage = false,
-                    isPasswordsMatch = false,
-                )
+//                _registerState.value = _registerState.value.copy(
+//                    confirmPassword = event.confirmPassword,
+//                    isInvalidConfirmPassword = false,
+//                    isShowInvalidConfirmPasswordMessage = false,
+//                    isPasswordsMatch = false,
+//                )
+                _registerState.update {
+                    it.copy(
+                        confirmPassword = event.confirmPassword,
+                        isInvalidConfirmPassword = false,
+                        isShowInvalidConfirmPasswordMessage = false,
+                        isPasswordsMatch = false
+                    )
+                }
             }
-            is RegisterEvent.SetPasswordVisibility -> {
-                _registerState.value = _registerState.value
-                    .copy(isPasswordVisible = event.isVisible)
+            is RegisterEvent.SetIsPasswordVisible -> {
+//                _registerState.value = _registerState.value
+//                    .copy(isPasswordVisible = event.isVisible)
+                _registerState.update {
+                    it.copy(isPasswordVisible = event.isVisible)
+                }
             }
             is RegisterEvent.ValidateUsername -> {
                 validateUsername()
@@ -265,49 +298,92 @@ class RegisterViewModel @Inject constructor(
                 yield()
             }
             is RegisterEvent.IsValidUsername -> {
-                _registerState.value = _registerState.value.copy(
-                    isInvalidUsername = !event.isValid,
-                )
+//                _registerState.value = _registerState.value.copy(
+//                    isInvalidUsername = !event.isValid,
+//                )
+                _registerState.update {
+                    it.copy(isInvalidUsername = !event.isValid)
+                }
             }
             is RegisterEvent.IsValidEmail -> {
-                _registerState.value = _registerState.value.copy(
-                    isInvalidEmail = !event.isValid,
-                )
+//                _registerState.value = _registerState.value.copy(
+//                    isInvalidEmail = !event.isValid,
+//                )
+                _registerState.update {
+                    it.copy(
+                        isInvalidEmail = !event.isValid
+                    )
+                }
             }
             is RegisterEvent.IsValidPassword -> {
-                _registerState.value = _registerState.value.copy(
-                    isInvalidPassword = !event.isValid,
-                )
+//                _registerState.value = _registerState.value.copy(
+//                    isInvalidPassword = !event.isValid,
+//                )
+                _registerState.update {
+                    it.copy(
+                        isInvalidPassword = !event.isValid
+                    )
+                }
             }
             is RegisterEvent.IsValidConfirmPassword -> {
-                _registerState.value = _registerState.value.copy(
-                    isInvalidConfirmPassword = !event.isValid,
-                )
+//                _registerState.value = _registerState.value.copy(
+//                    isInvalidConfirmPassword = !event.isValid,
+//                )
+                _registerState.update {
+                    it.copy(
+                        isInvalidConfirmPassword = !event.isValid
+                    )
+                }
             }
             is RegisterEvent.IsPasswordsMatch -> {
-                _registerState.value = _registerState.value.copy(
-                    isPasswordsMatch = event.isMatch
-                )
+//                _registerState.value = _registerState.value.copy(
+//                    isPasswordsMatch = event.isMatch
+//                )
+                _registerState.update {
+                    it.copy(
+                        isPasswordsMatch = event.isMatch
+                    )
+                }
             }
             is RegisterEvent.ShowInvalidUsernameMessage -> {
-                _registerState.value = _registerState.value.copy(
-                    isShowInvalidUsernameMessage = true,
-                )
+//                _registerState.value = _registerState.value.copy(
+//                    isShowInvalidUsernameMessage = true,
+//                )
+                _registerState.update {
+                    it.copy(
+                        isShowInvalidUsernameMessage = true
+                    )
+                }
             }
             is RegisterEvent.ShowInvalidEmailMessage -> {
-                _registerState.value = _registerState.value.copy(
-                    isShowInvalidEmailMessage = true,
-                )
+//                _registerState.value = _registerState.value.copy(
+//                    isShowInvalidEmailMessage = true,
+//                )
+                _registerState.update {
+                    it.copy(
+                        isShowInvalidEmailMessage = true
+                    )
+                }
             }
             is RegisterEvent.ShowInvalidPasswordMessage -> {
-                _registerState.value = _registerState.value.copy(
-                    isShowInvalidPasswordMessage = true,
-                )
+//                _registerState.value = _registerState.value.copy(
+//                    isShowInvalidPasswordMessage = true,
+//                )
+                _registerState.update {
+                    it.copy(
+                        isShowInvalidPasswordMessage = true
+                    )
+                }
             }
             is RegisterEvent.ShowInvalidConfirmPasswordMessage -> {
-                _registerState.value = _registerState.value.copy(
-                    isShowInvalidConfirmPasswordMessage = true,
-                )
+//                _registerState.value = _registerState.value.copy(
+//                    isShowInvalidConfirmPasswordMessage = true,
+//                )
+                _registerState.update {
+                    it.copy(
+                        isShowInvalidConfirmPasswordMessage = true
+                    )
+                }
             }
             is RegisterEvent.Register -> {
                 sendEvent(RegisterEvent.ValidateUsername)
@@ -318,16 +394,20 @@ class RegisterViewModel @Inject constructor(
                 yield()
 
                 // Only show `Invalid Username` message only when "login" is clicked and the username is invalid.
-                if(_registerState.value.isInvalidUsername) sendEvent(RegisterEvent.ShowInvalidUsernameMessage)
+                if(_registerState.value.isInvalidUsername)
+                    sendEvent(RegisterEvent.ShowInvalidUsernameMessage)
 
                 // Only show `Invalid Email` message only when "login" is clicked and the email is invalid.
-                if(_registerState.value.isInvalidEmail) sendEvent(RegisterEvent.ShowInvalidEmailMessage)
+                if(_registerState.value.isInvalidEmail)
+                    sendEvent(RegisterEvent.ShowInvalidEmailMessage)
 
                 // Only show `Invalid Password` message only when "login" is clicked and the password is invalid.
-                if(_registerState.value.isInvalidPassword) sendEvent(RegisterEvent.ShowInvalidPasswordMessage)
+                if(_registerState.value.isInvalidPassword)
+                    sendEvent(RegisterEvent.ShowInvalidPasswordMessage)
 
                 // Only show `Invalid Confirm Password` message only when "login" is clicked and the confirm password is invalid.
-                if(_registerState.value.isInvalidConfirmPassword) sendEvent(RegisterEvent.ShowInvalidConfirmPasswordMessage)
+                if(_registerState.value.isInvalidConfirmPassword)
+                    sendEvent(RegisterEvent.ShowInvalidConfirmPasswordMessage)
 
                 if( _registerState.value.isInvalidUsername
                     || _registerState.value.isInvalidEmail
@@ -336,42 +416,73 @@ class RegisterViewModel @Inject constructor(
                     || !registerState.value.isPasswordsMatch
                 ) return
 
-                sendEvent(RegisterEvent.Loading(true))
+                sendEvent(RegisterEvent.SetIsLoading(true))
                 register(event.username, event.email, event.password)
             }
             is RegisterEvent.EmailAlreadyExists -> {
-                _registerState.value = _registerState.value.copy(
-                    isLoggedIn = false,
-                    errorMessage = UiText.Res(R.string.register_error_email_exists),
-                    statusMessage = UiText.None,
-                )
-                sendEvent(RegisterEvent.Loading(false))
+//                _registerState.value = _registerState.value.copy(
+//                    isLoggedIn = false,
+//                    errorMessage = UiText.Res(R.string.register_error_email_exists),
+//                    statusMessage = UiText.None,
+//                )
+                _registerState.update {
+                    it.copy(
+                        isLoggedIn = false,
+                        errorMessage = UiText.Res(R.string.register_error_email_exists),
+                        statusMessage = UiText.None
+                    )
+                }
+                sendEvent(RegisterEvent.SetIsLoading(false))
             }
             is RegisterEvent.RegisterSuccess -> {
-                _registerState.value = _registerState.value.copy(
-                    isLoggedIn = true,
-                    errorMessage = UiText.None,
-                    statusMessage = UiText.Res(R.string.register_success, event.authToken),
-                    isPasswordVisible = false,
-                )
-                sendEvent(RegisterEvent.Loading(false))
+//                _registerState.value = _registerState.value.copy(
+//                    isLoggedIn = true,
+//                    errorMessage = UiText.None,
+//                    statusMessage = UiText.Res(R.string.register_success, event.authToken),
+//                    isPasswordVisible = false,
+//                )
+                _registerState.update {
+                    it.copy(
+                        isLoggedIn = true,
+                        errorMessage = UiText.None,
+                        statusMessage = UiText.Res(R.string.register_success, event.authToken),
+                        isPasswordVisible = false
+                    )
+                }
+                sendEvent(RegisterEvent.SetIsLoading(false))
             }
             is RegisterEvent.RegisterError -> {
-                _registerState.value = _registerState.value.copy(
-                    isLoggedIn = false,
-                    errorMessage = event.message,
-                    statusMessage = UiText.None,
-                )
-                sendEvent(RegisterEvent.Loading(false))
+//                _registerState.value = _registerState.value.copy(
+//                    isLoggedIn = false,
+//                    errorMessage = event.message,
+//                    statusMessage = UiText.None,
+//                )
+                _registerState.update {
+                    it.copy(
+                        isLoggedIn = false,
+                        errorMessage = event.message,
+                        statusMessage = UiText.None
+                    )
+                }
+                sendEvent(RegisterEvent.SetIsLoading(false))
             }
             is RegisterEvent.UnknownError -> {
-                _registerState.value = _registerState.value.copy(
-                    isLoggedIn = false,
-                    errorMessage = if(event.message.isRes)
-                        event.message
-                    else
-                        UiText.Res(R.string.error_unknown, ""),
-                )
+//                _registerState.value = _registerState.value.copy(
+//                    isLoggedIn = false,
+//                    errorMessage = if(event.message.isRes)
+//                        event.message
+//                    else
+//                        UiText.Res(R.string.error_unknown, ""),
+//                )
+                _registerState.update {
+                    it.copy(
+                        isLoggedIn = false,
+                        errorMessage = if(event.message.isRes)
+                            event.message
+                        else
+                            UiText.Res(R.string.error_unknown, "")
+                    )
+                }
             }
 
         }

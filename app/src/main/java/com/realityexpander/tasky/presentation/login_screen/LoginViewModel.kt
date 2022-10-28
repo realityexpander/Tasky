@@ -19,6 +19,7 @@ import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isS
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isShowInvalidPasswordMessage
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_password
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_statusMessage
+import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_username
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -33,6 +34,8 @@ class LoginViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
+    private val username: String =
+        Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: ""
     private val email: String =
         Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: ""
     private val password: String =
@@ -55,6 +58,7 @@ class LoginViewModel @Inject constructor(
     private val _loginState = MutableStateFlow(LoginState())
     val loginState = _loginState.onEach { state ->
         // save state for process death
+        savedStateHandle[SAVED_STATE_username] = state.username
         savedStateHandle[SAVED_STATE_email] = state.email
         savedStateHandle[SAVED_STATE_password] = state.password
         savedStateHandle[SAVED_STATE_isInvalidEmail] = state.isInvalidEmail
@@ -76,6 +80,7 @@ class LoginViewModel @Inject constructor(
 
             // restore state after process death
             _loginState.value = LoginState(
+                username = username,
                 email = email,
                 password = password,
                 isInvalidEmail = isInvalidEmail,
@@ -108,9 +113,9 @@ class LoginViewModel @Inject constructor(
         } catch(e: Exceptions.LoginException) {
             sendEvent(LoginEvent.LoginError(UiText.Res(R.string.error_login_error, e.message ?: "")))
         } catch(e: Exceptions.InvalidEmailException) {
-            sendEvent(LoginEvent.IsValidEmail(false))
+            sendEvent(LoginEvent.SetIsValidEmail(false))
         } catch(e: Exceptions.InvalidPasswordException) {
-            sendEvent(LoginEvent.IsValidPassword(false))
+            sendEvent(LoginEvent.SetIsValidPassword(false))
         } catch (e: Exception) {
             sendEvent(LoginEvent.UnknownError(UiText.Res(R.string.error_unknown, e.message ?: "")))
             e.printStackTrace()
@@ -119,12 +124,12 @@ class LoginViewModel @Inject constructor(
 
     private fun validateEmail() {
         val isValid = validateEmail.validate(loginState.value.email)
-        sendEvent(LoginEvent.IsValidEmail(isValid))
+        sendEvent(LoginEvent.SetIsValidEmail(isValid))
     }
 
     private fun validatePassword() {
         val isValid = validatePassword.validate(loginState.value.password)
-        sendEvent(LoginEvent.IsValidPassword(isValid))
+        sendEvent(LoginEvent.SetIsValidPassword(isValid))
     }
 
     fun sendEvent(event: LoginEvent) {
@@ -137,28 +142,52 @@ class LoginViewModel @Inject constructor(
     private suspend fun onEvent(event: LoginEvent) {
         when(event) {
             is LoginEvent.Loading -> {
-                _loginState.value = _loginState.value.copy(isLoading = event.isLoading)
+//                _loginState.value = _loginState.value.copy(isLoading = event.isLoading)
+                _loginState.update {
+                    it.copy(isLoading = event.isLoading)
+                }
             }
             is LoginEvent.UpdateEmail -> {
-                _loginState.value = _loginState.value.copy(
-                    email = event.email,
-                    isInvalidEmail = false,
-                    isShowInvalidEmailMessage = false,
-                    errorMessage = UiText.None,
-                )
+//                _loginState.value = _loginState.value.copy(
+//                    email = event.email,
+//                    isInvalidEmail = false,
+//                    isShowInvalidEmailMessage = false,
+//                    errorMessage = UiText.None,
+//                )
+                _loginState.update {
+                    it.copy(
+                        email = event.email,
+                        isInvalidEmail = false,
+                        isShowInvalidEmailMessage = false,
+                        errorMessage = UiText.None,
+                    )
+                }
             }
             is LoginEvent.UpdatePassword -> {
-                _loginState.value = _loginState.value.copy(
-                    password = event.password,
-                    isInvalidPassword = false,
-                    isShowInvalidPasswordMessage = false,
-                    errorMessage = UiText.None,
-                )
+//                _loginState.value = _loginState.value.copy(
+//                    password = event.password,
+//                    isInvalidPassword = false,
+//                    isShowInvalidPasswordMessage = false,
+//                    errorMessage = UiText.None,
+//                )
+                _loginState.update {
+                    it.copy(
+                        password = event.password,
+                        isInvalidPassword = false,
+                        isShowInvalidPasswordMessage = false,
+                        errorMessage = UiText.None,
+                    )
+                }
             }
-            is LoginEvent.SetPasswordVisibility -> {
-                _loginState.value = _loginState.value.copy(
-                    isPasswordVisible = event.isPasswordVisible
-                )
+            is LoginEvent.SetIsPasswordVisibile -> {
+//                _loginState.value = _loginState.value.copy(
+//                    isPasswordVisible = event.isPasswordVisible
+//                )
+                _loginState.update {
+                    it.copy(
+                        isPasswordVisible = event.isPasswordVisible
+                    )
+                }
             }
             is LoginEvent.ValidateEmail -> {
                 validateEmail()
@@ -168,25 +197,40 @@ class LoginViewModel @Inject constructor(
                 validatePassword()
                 yield()
             }
-            is LoginEvent.IsValidEmail -> {
-                _loginState.value = _loginState.value.copy(
-                    isInvalidEmail = !event.isValid,
-                )
+            is LoginEvent.SetIsValidEmail -> {
+//                _loginState.value = _loginState.value.copy(
+//                    isInvalidEmail = !event.isValid,
+//                )
+                _loginState.update {
+                    it.copy(
+                        isInvalidEmail = !event.isValid,
+                    )
+                }
             }
             is LoginEvent.ShowInvalidEmailMessage -> {
                 _loginState.value = _loginState.value.copy(
                     isShowInvalidEmailMessage = true
                 )
             }
-            is LoginEvent.IsValidPassword -> {
-                _loginState.value = _loginState.value.copy(
-                    isInvalidPassword = !event.isValid
-                )
+            is LoginEvent.SetIsValidPassword -> {
+//                _loginState.value = _loginState.value.copy(
+//                    isInvalidPassword = !event.isValid
+//                )
+                _loginState.update {
+                    it.copy(
+                        isInvalidPassword = !event.isValid,
+                    )
+                }
             }
             is LoginEvent.ShowInvalidPasswordMessage -> {
-                _loginState.value = _loginState.value.copy(
-                    isShowInvalidPasswordMessage = true
-                )
+//                _loginState.value = _loginState.value.copy(
+//                    isShowInvalidPasswordMessage = true
+//                )
+                _loginState.update {
+                    it.copy(
+                        isShowInvalidPasswordMessage = true
+                    )
+                }
             }
             is LoginEvent.Login -> {
                 sendEvent(LoginEvent.ValidateEmail)
@@ -194,42 +238,70 @@ class LoginViewModel @Inject constructor(
                 yield()
 
                 // Only show `Invalid Email` message only when "login" is clicked and the email is invalid.
-                if(_loginState.value.isInvalidEmail) sendEvent(LoginEvent.ShowInvalidEmailMessage)
+                if(_loginState.value.isInvalidEmail)
+                    sendEvent(LoginEvent.ShowInvalidEmailMessage)
 
                 // Only show `Invalid Password` message only when "login" is clicked and the password is invalid.
-                if(_loginState.value.isInvalidPassword) sendEvent(LoginEvent.ShowInvalidPasswordMessage)
+                if(_loginState.value.isInvalidPassword)
+                    sendEvent(LoginEvent.ShowInvalidPasswordMessage)
 
-                if(_loginState.value.isInvalidEmail || _loginState.value.isInvalidPassword) return
+                if(_loginState.value.isInvalidEmail || _loginState.value.isInvalidPassword)
+                    return
 
                 sendEvent(LoginEvent.Loading(true))
                 login(event.email, event.password)
             }
             is LoginEvent.LoginSuccess -> {
-                _loginState.value = _loginState.value.copy(
-                    isLoggedIn = true,
-                    errorMessage = UiText.None,
-                    statusMessage = UiText.Res(R.string.login_success, event.authToken),
-                    isPasswordVisible = false,
-                )
+//                _loginState.value = _loginState.value.copy(
+//                    isLoggedIn = true,
+//                    errorMessage = UiText.None,
+//                    statusMessage = UiText.Res(R.string.login_success, event.authToken),
+//                    isPasswordVisible = false,
+//                )
+                _loginState.update {
+                    it.copy(
+                        isLoggedIn = true,
+                        errorMessage = UiText.None,
+                        statusMessage = UiText.Res(R.string.login_success, event.authToken),
+                        isPasswordVisible = false,
+                    )
+                }
                 sendEvent(LoginEvent.Loading(false))
             }
             is LoginEvent.LoginError -> {
-                _loginState.value = _loginState.value.copy(
-                    isLoggedIn = false,
-                    errorMessage = event.message,
-                    statusMessage = UiText.None,
-                    isLoading = false
-                )
+//                _loginState.value = _loginState.value.copy(
+//                    isLoggedIn = false,
+//                    errorMessage = event.message,
+//                    statusMessage = UiText.None,
+//                    isLoading = false
+//                )
+                _loginState.update {
+                    it.copy(
+                        isLoggedIn = false,
+                        errorMessage = event.message,
+                        statusMessage = UiText.None,
+                        isLoading = false
+                    )
+                }
                 sendEvent(LoginEvent.Loading(false))
             }
             is LoginEvent.UnknownError -> {
-                _loginState.value = _loginState.value.copy(
-                    isLoggedIn = false,
-                    errorMessage = if(event.message.isRes)
+//                _loginState.value = _loginState.value.copy(
+//                    isLoggedIn = false,
+//                    errorMessage = if(event.message.isRes)
+//                            event.message
+//                        else
+//                            UiText.Res(R.string.error_unknown, ""),
+//                )
+                _loginState.update {
+                    it.copy(
+                        isLoggedIn = false,
+                        errorMessage = if(event.message.isRes)
                             event.message
                         else
                             UiText.Res(R.string.error_unknown, ""),
-                )
+                    )
+                }
             }
         }
     }

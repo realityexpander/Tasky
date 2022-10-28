@@ -3,6 +3,7 @@ package com.realityexpander.tasky.presentation.login_screen
 import com.realityexpander.tasky.ui.util.UiText
 
 data class LoginState(
+    val username: String = "",
     val email: String = "",
     val password: String = "",
     val isPasswordVisible: Boolean = false,

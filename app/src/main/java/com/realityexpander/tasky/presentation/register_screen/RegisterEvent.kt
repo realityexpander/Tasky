@@ -4,13 +4,13 @@ import com.realityexpander.tasky.common.AuthToken
 import com.realityexpander.tasky.ui.util.UiText
 
 sealed class RegisterEvent {
-    data class Loading(val isLoading: Boolean) : RegisterEvent()
+    data class SetIsLoading(val isLoading: Boolean) : RegisterEvent()
 
     data class UpdateUsername(val username: String) : RegisterEvent()
     data class UpdateEmail(val email: String) : RegisterEvent()
     data class UpdatePassword(val password: String) : RegisterEvent()
     data class UpdateConfirmPassword(val confirmPassword: String) : RegisterEvent()
-    data class SetPasswordVisibility(val isVisible: Boolean) : RegisterEvent()
+    data class SetIsPasswordVisible(val isVisible: Boolean) : RegisterEvent()
 
     object ValidateUsername : RegisterEvent()
     object ValidateEmail : RegisterEvent()
