@@ -37,6 +37,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.ExitActivity
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
 import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
 import com.realityexpander.tasky.ui.components.EmailField
 import com.realityexpander.tasky.ui.components.PasswordField
@@ -96,9 +97,8 @@ fun LoginScreenContent(
                 confirmPassword = confirmPassword
             )
         ) {
-            popUpTo("LoginScreen") {
-                inclusive = true
-            }
+            launchSingleTop = true
+            restoreState = true
         }
     }
 

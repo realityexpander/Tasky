@@ -82,9 +82,11 @@ fun RegisterScreen(
                 confirmPassword = registerState.confirmPassword  // saved here in case the comes goes back to registration
             )
         ) {
-            popUpTo("RegisterScreen") {
+            popUpTo(LoginScreenDestination.route) {
                 inclusive = true
             }
+            launchSingleTop = true
+            restoreState = true
         }
     }
 
