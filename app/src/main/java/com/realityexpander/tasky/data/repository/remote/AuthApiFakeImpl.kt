@@ -1,10 +1,11 @@
 package com.realityexpander.tasky.data.repository.remote
 
 import com.realityexpander.tasky.common.*
+import com.realityexpander.tasky.data.repository.AuthInfo
 import kotlinx.coroutines.delay
 
 class AuthApiFakeImpl: IAuthApi {
-    private var authToken: AuthToken? = null
+    private var authToken: AuthInfo? = null
     private val users =
         mutableMapOf<Email, Pair<Username,Password>>()
 
@@ -13,7 +14,7 @@ class AuthApiFakeImpl: IAuthApi {
         users["a@a.c"] = "Bilbo Baggins" to "1Zzzzzzzz"
     }
 
-    override suspend fun login(email: String, password: String): AuthToken {
+    override suspend fun login(email: Email, password: Password): AuthInfo {
         delay(1000)
 
         if (users[email] == null) {
@@ -21,22 +22,30 @@ class AuthApiFakeImpl: IAuthApi {
         }
 
         return if(users[email]?.second == password) {
-            AuthToken("token for $email")
+            AuthInfo(
+                AuthToken("token for $email"),
+                UserId("id for $email"),
+                Username(users[email]?.first ?: "Unknown")
+            )
         } else {
             throw Exceptions.WrongPasswordException()
         }
     }
 
     override suspend fun register(
-        username: String,
-        email: String,
-        password: String
-    ): AuthToken {
+        username: Username,
+        email: Email,
+        password: Password
+    ): AuthInfo {
         delay(1000)
 
         return if(users[email] == null) {
             users[email] = username to password
-            AuthToken("token for $email")
+            AuthInfo(
+                AuthToken("token for $email"),
+                UserId("id for $email"),
+                Username(username)
+            )
         } else {
             throw Exceptions.EmailAlreadyExistsException()
         }

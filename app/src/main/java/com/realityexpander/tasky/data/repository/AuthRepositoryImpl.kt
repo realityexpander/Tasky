@@ -10,8 +10,9 @@ import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.validateEmail.IValidateEmail
 import com.realityexpander.tasky.domain.validation.ValidatePassword
 import com.realityexpander.tasky.domain.validation.ValidateUsername
+import javax.inject.Inject
 
-class AuthRepositoryFakeImpl(
+class AuthRepositoryImpl @Inject constructor(
     private val authDao: IAuthDao,
     private val authApi: IAuthApi,
     private val validateEmail: IValidateEmail,
@@ -19,7 +20,7 @@ class AuthRepositoryFakeImpl(
     private val validateUsername: ValidateUsername,
 ): IAuthRepository {
 
-    override suspend fun login(email: String, password: String): AuthInfo {
+    override suspend fun login(email: Email, password: Password): AuthInfo {
         if(!validateEmail.validate(email)) {
             throw Exceptions.InvalidEmailException()
         }

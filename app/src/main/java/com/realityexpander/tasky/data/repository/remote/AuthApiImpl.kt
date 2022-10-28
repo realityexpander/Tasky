@@ -1,25 +1,67 @@
 package com.realityexpander.tasky.data.repository.remote
 
-import com.realityexpander.tasky.BuildConfig
-import okhttp3.ResponseBody
-import retrofit2.http.*
+import com.realityexpander.tasky.common.*
+import com.realityexpander.tasky.data.repository.AuthInfo
+import javax.inject.Inject
 
-interface TaskyApi {
+class AuthApiImpl @Inject constructor (
+    private val taskyApi: TaskyApi
+): IAuthApi {
 
-    @POST("login")
-    suspend fun login(
-        @Body credentials: TaskyCredentials,
-        @Header("x-api-key") apiKey: String = API_KEY
-    ): ResponseBody
+    override suspend fun login(
+        email: Email,
+        password: Password
+    ): AuthInfo {
+        if(email.isBlank() || password.isBlank()) 
+            throw Exceptions.LoginException("Invalid email or password")
 
-    @POST("register")
-    suspend fun register(
-        @Body credentials: TaskyCredentials,
-        @Header("x-api-key") apiKey: String = API_KEY
-    ): ResponseBody
+        try {
+            val response = 
+                taskyApi.login(TaskyCredentials(email = email, password = password))
+            return AuthInfo(
+                AuthToken(response.body()?.token
+                    ?: throw Exceptions.LoginException("No Token")
+                ),
+                UserId(response.body()?.userId
+                    ?: throw Exceptions.LoginException("No User Id")
+                ),
+                Username(response.body()?.username
+                    ?: throw Exceptions.LoginException("No Full Name")
+                )
+            )
+        } catch (e: Exception) {
+            throw Exceptions.LoginException(e.message)
+        }
+    }
 
-    companion object {
-        const val BASE_URL = "https://www.tasky.pl-coding.com"
-        const val API_KEY = BuildConfig.API_KEY
+    override suspend fun register(
+        username: Username,
+        email: Email,
+        password: Password
+    ): AuthInfo {
+        if(username.isBlank() || email.isBlank() || password.isBlank())
+            throw Exceptions.RegisterException("Invalid username, email or password")
+
+        try {
+            val response =
+                taskyApi.register(TaskyCredentials(
+                    username = username,
+                    email = email,
+                    password = password
+                ))
+            return AuthInfo(
+                AuthToken(response.body()?.token
+                    ?: throw Exceptions.RegisterException("No Token")
+                ),
+                UserId(response.body()?.userId
+                    ?: throw Exceptions.RegisterException("No User Id")
+                ),
+                Username(response.body()?.username
+                    ?: throw Exceptions.RegisterException("No Full Name")
+                )
+            )
+        } catch (e: Exception) {
+            throw Exceptions.RegisterException(e.message)
+        }
     }
 }

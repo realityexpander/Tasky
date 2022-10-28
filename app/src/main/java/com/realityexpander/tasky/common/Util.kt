@@ -4,6 +4,7 @@ typealias Username = String
 typealias Email = String
 typealias Password = String
 typealias AuthToken = String
+typealias UserId = String
 
 class Util {
 }
@@ -18,4 +19,12 @@ fun Email(email: String): Email {
 
 fun Password(password: String): Password {
     return password
+}
+
+fun Username(username: String): Username {
+    return username
+}
+
+fun UserId(userId: String): UserId {
+    return userId
 }

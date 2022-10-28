@@ -231,7 +231,7 @@ class LoginViewModel @Inject constructor(
                     it.copy(
                         isLoggedIn = true,
                         errorMessage = UiText.None,
-                        statusMessage = UiText.Res(R.string.login_success, event.authToken),
+                        statusMessage = UiText.Res(R.string.login_success, event.authInfo),
                         isPasswordVisible = false,
                     )
                 }

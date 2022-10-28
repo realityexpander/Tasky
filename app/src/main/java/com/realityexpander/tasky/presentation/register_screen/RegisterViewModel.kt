@@ -70,7 +70,7 @@ class RegisterViewModel @Inject constructor(
     private val errorMessage: UiText =
         savedStateHandle[SAVED_STATE_errorMessage] ?: UiText.None
 
-    private val _registerState = MutableStateFlow<RegisterState>(RegisterState())
+    private val _registerState = MutableStateFlow(RegisterState())
     val registerState = _registerState.onEach { state ->
         // save state for process death
         savedStateHandle[SAVED_STATE_username] = state.username
@@ -145,7 +145,7 @@ class RegisterViewModel @Inject constructor(
             sendEvent(RegisterEvent.RegisterSuccess(authToken))
         } catch(e: Exceptions.EmailAlreadyExistsException) {
             sendEvent(RegisterEvent.EmailAlreadyExists)
-        } catch(e: Exceptions.LoginException) {
+        } catch(e: Exceptions.RegisterException) {
             sendEvent(RegisterEvent.RegisterError(UiText.Res(R.string.register_register_error, e.message ?: "")))
         } catch(e: Exceptions.InvalidUsernameException) {
             sendEvent(RegisterEvent.IsValidUsername(false))
@@ -380,7 +380,7 @@ class RegisterViewModel @Inject constructor(
                     it.copy(
                         isLoggedIn = true,
                         errorMessage = UiText.None,
-                        statusMessage = UiText.Res(R.string.register_success, event.authToken),
+                        statusMessage = UiText.Res(R.string.register_success, event.authInfo),
                         isPasswordVisible = false
                     )
                 }
