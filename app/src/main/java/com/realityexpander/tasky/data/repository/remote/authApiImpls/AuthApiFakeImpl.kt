@@ -4,6 +4,7 @@ import com.realityexpander.tasky.common.*
 import com.realityexpander.tasky.data.repository.AuthInfoDTO
 import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
 // Fake implementation of the API for testing purposes
 // Has a delay of 1 second to simulate network latency.
@@ -16,7 +17,7 @@ data class AuthInfoFakeEntity(
     val password: Password? = null
 )
 
-class AuthApiFakeImpl: IAuthApi {
+class AuthApiFakeImpl @Inject constructor(): IAuthApi {
     private val users =
         mutableMapOf<Email, AuthInfoFakeEntity>()
 

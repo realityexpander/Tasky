@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.common.Exceptions
+import com.realityexpander.tasky.di.AuthRepositoryFakeUsingProvides
 import com.realityexpander.tasky.ui.util.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.validateEmail.IValidateEmail
@@ -25,12 +26,13 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
+    @AuthRepositoryFakeUsingProvides
+//    @AuthRepositoryProd_AuthApiProd_AuthDaoFake
     private val authRepository: IAuthRepository,
-    private val validateEmail: IValidateEmail,
-    private val validatePassword: ValidatePassword,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -123,12 +125,12 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun validateEmail() {
-        val isValid = validateEmail.validate(loginState.value.email)
+        val isValid = authRepository.validateEmail(loginState.value.email)
         sendEvent(LoginEvent.SetIsValidEmail(isValid))
     }
 
     private fun validatePassword() {
-        val isValid = validatePassword.validate(loginState.value.password)
+        val isValid = authRepository.validatePassword(loginState.value.password)
         sendEvent(LoginEvent.SetIsValidPassword(isValid))
     }
 
