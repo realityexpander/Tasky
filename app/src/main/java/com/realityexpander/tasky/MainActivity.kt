@@ -63,7 +63,7 @@ fun SplashScreen(
     navigator: DestinationsNavigator,
 ) {
     LaunchedEffect(key1 = true) {
-        //delay(2000)
+        delay(2000)
 
         navigator.navigate(
             LoginScreenDestination()
