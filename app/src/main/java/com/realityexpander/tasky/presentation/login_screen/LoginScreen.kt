@@ -34,9 +34,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.ExitActivity
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.destinations.RegisterScreenDestination
 import com.realityexpander.tasky.presentation.common.modifiers.*
-import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
-import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
 import com.realityexpander.tasky.presentation.components.EmailField
 import com.realityexpander.tasky.presentation.components.PasswordField
 import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
@@ -44,14 +43,13 @@ import com.realityexpander.tasky.presentation.util.UiText
 
 @Composable
 @Destination
-@RootNavGraph(start = true)
 fun LoginScreen(
-    username: String? = "Chris Athanas", //null,
+    username: String? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    email: String? = "chris@demo.com", //null,
+    email: String? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    password: String? = "Password1", //null,
-    confirmPassword: String? = "Password1", //null,
+    password: String? = null,
+    confirmPassword: String? = null,
     navigator: DestinationsNavigator,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
@@ -64,6 +62,7 @@ fun LoginScreen(
         onAction = viewModel::sendEvent,
         navigator = navigator,
     )
+
 }
 
 @Composable

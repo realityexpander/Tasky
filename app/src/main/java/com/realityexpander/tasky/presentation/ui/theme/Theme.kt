@@ -1,43 +1,55 @@
 package com.realityexpander.tasky.presentation.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.realityexpander.tasky.R
 
-private val DarkColorPalette = darkColors(
-    primary = Color.White,
-    primaryVariant = Color(0xFF8E97FD),
-    secondary = Teal200,
-    background = Color.Black,
-    surface = Color.Black,
-    onBackground = Color.White,
-    onSurface = Color.White,
-)
+@Composable
+private fun darkColorPalette(): Colors {
 
-private val LightColorPalette = lightColors(
-    primary = Color.Black,
-    primaryVariant = Color(0xFF8E97FD),
-    secondary = Teal200,
-    background = Color.White,
-    surface = Color.White,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
+   return darkColors(
+        primary = Color.White,
+        onPrimary = Color.Black,
+        primaryVariant = TaskyPurple,
+        secondary = colorResource(id = R.color.tasky_green),
+        onSecondary = Color.White,
+        background = Color.Black,
+        surface = Color.Black,
+        onBackground = Color.White,
+        onSurface = Color.White,
+    )
+}
 
-    /* Other default colors to override
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    */
-)
+@Composable
+private fun lightColorPalette(): Colors {
+    return lightColors(
+        primary = Color.Black,
+        onPrimary = Color.White,
+        primaryVariant = TaskyPurple,
+        secondary = colorResource(id = R.color.tasky_green),
+        onSecondary = Color.White,
+        background = Color.White,
+        surface = Color.White,
+        onBackground = Color.Black,
+        onSurface = Color.Black,
+    )
+}
 
 @Composable
 fun TaskyTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val colors = if (darkTheme) {
-        DarkColorPalette
+        darkColorPalette()
     } else {
-        LightColorPalette
+        lightColorPalette()
     }
 
     MaterialTheme(
@@ -47,3 +59,12 @@ fun TaskyTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable 
         content = content
     )
 }
+
+@Composable
+fun textEntryFieldTextStyle() = Typography.h6.copy(
+    fontFamily = fonts,
+    fontWeight = FontWeight.Normal,
+    fontSize = 16.sp,
+    color = colors.primary,
+)
+

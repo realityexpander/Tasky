@@ -59,5 +59,6 @@
     <string name="textEntryField_label">Text Entry</string>
     <string name="textEntryField_placeholder">Enter Text</string>
     <string name="register_network_error">Register network error - %s</string>
+    <string name="agenda_title">Agenda Screen</string>
 
 </resources>

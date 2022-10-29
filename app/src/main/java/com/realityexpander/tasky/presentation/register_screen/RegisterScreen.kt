@@ -33,6 +33,7 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiFakeImpl
+import com.realityexpander.tasky.destinations.LoginScreenDestination
 import com.realityexpander.tasky.domain.validation.ValidatePassword
 import com.realityexpander.tasky.domain.validation.ValidateUsername
 import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailRegexImpl
@@ -40,7 +41,6 @@ import com.realityexpander.tasky.presentation.common.modifiers.*
 import com.realityexpander.tasky.presentation.components.EmailField
 import com.realityexpander.tasky.presentation.components.NameField
 import com.realityexpander.tasky.presentation.components.PasswordField
-import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
 import com.realityexpander.tasky.presentation.util.UiText
 import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
 

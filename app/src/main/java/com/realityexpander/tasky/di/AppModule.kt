@@ -30,7 +30,7 @@ import javax.inject.Named
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-const val USE_FAKE_REPOSITORY = true
+const val USE_FAKE_REPOSITORY = false
 
 @Module
 @InstallIn(SingletonComponent::class)

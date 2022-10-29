@@ -15,17 +15,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.presentation.ui.theme.textEntryFieldTextStyle
 import com.realityexpander.tasky.presentation.util.UiText
 
 @Composable
 fun PasswordField(
     modifier: Modifier = Modifier.fillMaxWidth(1f),
     value: String,
+    textStyle: TextStyle = textEntryFieldTextStyle(),
     label: String? = UiText.Res(R.string.passwordField_label).get,
     labelComponent: @Composable (() -> Unit)? = { Text(text = label ?: UiText.Res(R.string.passwordField_label).get) },
     placeholder: String = UiText.Res(R.string.passwordField_placeholder).get,
@@ -52,8 +55,8 @@ fun PasswordField(
 
     OutlinedTextField(
         value = value,
-        singleLine = true,
         onValueChange = onValueChange,
+        textStyle = textStyle,
         isError = isError,
         label = if(label != null) labelComponent else null,
         placeholder = { Text(text = placeholder) },
@@ -69,6 +72,7 @@ fun PasswordField(
             Icon(imageVector = Icons.Filled.Lock,
             UiText.Res(R.string.passwordField_description_lock).get)
         },
+        singleLine = true,
         trailingIcon = {
             val isPasswordValid = !isError
 
