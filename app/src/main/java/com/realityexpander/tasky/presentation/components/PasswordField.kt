@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.ui.components
+package com.realityexpander.tasky.presentation.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.ui.util.UiText
+import com.realityexpander.tasky.presentation.util.UiText
 
 @Composable
 fun PasswordField(

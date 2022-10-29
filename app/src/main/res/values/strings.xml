@@ -12,8 +12,8 @@
     <!--    Register Screen -->
     <string name="register_title">Create your account</string>
     <string name="register_already_a_member_sign_in">Already have an account? Login here</string>
-    <string name="register_success">Register Success: authToken = %s</string>
-    <string name="register_registered">Registered and logged in!</string>
+    <string name="register_success">Register Success! You may now log in.</string>
+    <string name="register_registered">Registered!</string>
     <string name="register_register_error">Register error - %s</string>
     <string name="register_error_email_exists">Email already exists - try logging in!</string>
     <string name="register_error_passwords_do_not_match">Passwords do not match</string>
@@ -58,5 +58,6 @@
     <string name="textEntryField_description_isInvalid">Text entry is invalid</string>
     <string name="textEntryField_label">Text Entry</string>
     <string name="textEntryField_placeholder">Enter Text</string>
+    <string name="register_network_error">Register network error - %s</string>
 
 </resources>

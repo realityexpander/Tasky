@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.common.Exceptions
-import com.realityexpander.tasky.ui.util.UiText
+import com.realityexpander.tasky.di.AuthRepositoryFakeUsingProvides
+import com.realityexpander.tasky.di.AuthRepositoryProd_AuthApiProd_AuthDaoFake
+import com.realityexpander.tasky.presentation.util.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.validateEmail.IValidateEmail
 import com.realityexpander.tasky.domain.validation.ValidatePassword
@@ -30,13 +32,13 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
+//    @AuthRepositoryFakeUsingProvides
+//    @AuthRepositoryProd_AuthApiProd_AuthDaoFake
     private val authRepository: IAuthRepository,
-    private val validateUsername: ValidateUsername,
-    private val validateEmail: IValidateEmail,
-    private val validatePassword: ValidatePassword,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -70,7 +72,7 @@ class RegisterViewModel @Inject constructor(
     private val errorMessage: UiText =
         savedStateHandle[SAVED_STATE_errorMessage] ?: UiText.None
 
-    private val _registerState = MutableStateFlow<RegisterState>(RegisterState())
+    private val _registerState = MutableStateFlow(RegisterState())
     val registerState = _registerState.onEach { state ->
         // save state for process death
         savedStateHandle[SAVED_STATE_username] = state.username
@@ -141,11 +143,11 @@ class RegisterViewModel @Inject constructor(
         password: String
     ) {
         try {
-            val authToken = authRepository.register(username, email, password)
-            sendEvent(RegisterEvent.RegisterSuccess(authToken))
+            authRepository.register(username, email, password)
+            sendEvent(RegisterEvent.RegisterSuccess(UiText.Res(R.string.register_success)))
         } catch(e: Exceptions.EmailAlreadyExistsException) {
             sendEvent(RegisterEvent.EmailAlreadyExists)
-        } catch(e: Exceptions.LoginException) {
+        } catch(e: Exceptions.RegisterException) {
             sendEvent(RegisterEvent.RegisterError(UiText.Res(R.string.register_register_error, e.message ?: "")))
         } catch(e: Exceptions.InvalidUsernameException) {
             sendEvent(RegisterEvent.IsValidUsername(false))
@@ -153,6 +155,8 @@ class RegisterViewModel @Inject constructor(
             sendEvent(RegisterEvent.IsValidEmail(false))
         } catch(e: Exceptions.InvalidPasswordException) {
             sendEvent(RegisterEvent.IsValidPassword(false))
+        } catch(e: Exceptions.RegisterNetworkException) {
+            sendEvent(RegisterEvent.RegisterError(UiText.Res(R.string.register_network_error, e.message ?: "")))
         } catch (e: Exception) {
             sendEvent(RegisterEvent.UnknownError(UiText.Res( R.string.error_unknown, e.message ?: "")))
             e.printStackTrace()
@@ -160,22 +164,22 @@ class RegisterViewModel @Inject constructor(
     }
 
     private fun validateUsername() {
-        val isValid = validateUsername.validate(registerState.value.username)
+        val isValid = authRepository.validateUsername(registerState.value.username)
         sendEvent(RegisterEvent.IsValidUsername(isValid))
     }
 
     private fun validateEmail() {
-        val isValid = validateEmail.validate(registerState.value.email)
+        val isValid = authRepository.validateEmail(registerState.value.email)
         sendEvent(RegisterEvent.IsValidEmail(isValid))
     }
 
     private fun validatePassword() {
-        val isValid = validatePassword.validate(registerState.value.password)
+        val isValid = authRepository.validatePassword(registerState.value.password)
         sendEvent(RegisterEvent.IsValidPassword(isValid))
     }
 
     private fun validateConfirmPassword() {
-        val isValid = validatePassword.validate(registerState.value.confirmPassword)
+        val isValid = authRepository.validatePassword(registerState.value.confirmPassword)
         sendEvent(RegisterEvent.IsValidConfirmPassword(isValid))
     }
 
@@ -378,9 +382,8 @@ class RegisterViewModel @Inject constructor(
             is RegisterEvent.RegisterSuccess -> {
                 _registerState.update {
                     it.copy(
-                        isLoggedIn = true,
                         errorMessage = UiText.None,
-                        statusMessage = UiText.Res(R.string.register_success, event.authToken),
+                        statusMessage = UiText.Res(R.string.register_success),
                         isPasswordVisible = false
                     )
                 }
@@ -406,6 +409,7 @@ class RegisterViewModel @Inject constructor(
                             UiText.Res(R.string.error_unknown, "")
                     )
                 }
+                sendEvent(RegisterEvent.SetIsLoading(false))
             }
 
         }

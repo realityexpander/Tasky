@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.ui.components
+package com.realityexpander.tasky.presentation.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
@@ -6,7 +6,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -15,21 +15,21 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.ui.util.UiText
+import com.realityexpander.tasky.presentation.util.UiText
 
 @Composable
-fun EmailField(
+fun NameField(
     modifier: Modifier = Modifier.fillMaxWidth(),
     value: String,
-    label: String? = UiText.Res(R.string.emailField_label).get, // if this is null, label is not shown.
+    label: String? = UiText.Res(R.string.nameField_label).get, // if this is null, label is not shown
     labelComponent: @Composable (() -> Unit)? =
-        { Text(text = label ?: UiText.Res(R.string.emailField_label).get) },
-    placeholder: String = UiText.Res(R.string.emailField_placeholder).get,
+        { Text(text = label ?: UiText.Res(R.string.nameField_label).get) },
+    placeholder: String = UiText.Res(R.string.nameField_placeholder).get,
     isError: Boolean,
     onValueChange: (String) -> Unit,
     keyboardOptions: KeyboardOptions =
         KeyboardOptions(
-            keyboardType = KeyboardType.Email,
+            keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
         ),
     keyboardActions: KeyboardActions? = null,
@@ -52,20 +52,19 @@ fun EmailField(
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActionsLocal,
         leadingIcon = {
-            Icon(imageVector = Icons.Filled.Email,
-                UiText.Res(R.string.emailField_description_email).get)
+            Icon(imageVector = Icons.Filled.Person,
+                UiText.Res(R.string.nameField_description_name).get)
         },
-        validInputDescription = UiText.Res(R.string.emailField_description_isValid).get,
-        invalidInputDescription = UiText.Res(R.string.emailField_description_isInvalid).get
+        validInputDescription = UiText.Res(R.string.nameField_description_isValid).get,
+        invalidInputDescription = UiText.Res(R.string.nameField_description_isInvalid).get,
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-fun EmailFieldPreview() {
-    EmailField(
-        value = "",
-        label = null,
+fun NameFieldPreview() {
+    NameField(
+        value = "John Doe",
         isError = false,
         onValueChange = {}
     )
@@ -73,9 +72,9 @@ fun EmailFieldPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun EmailFieldPreviewError() {
-    EmailField(
-        value = "Bad.Email",
+fun NameFieldPreviewError() {
+    NameField(
+        value = "Chris Athanas",
         isError = true,
         onValueChange = {}
     )
@@ -83,25 +82,11 @@ fun EmailFieldPreviewError() {
 
 @Preview(showBackground = true)
 @Composable
-fun EmailFieldPreviewValid() {
-    EmailField(
-        value = "chris@demo.com",
+fun NameFieldPreviewNoLabel() {
+    NameField(
+        value = "",
+        label = null,
         isError = false,
         onValueChange = {}
     )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

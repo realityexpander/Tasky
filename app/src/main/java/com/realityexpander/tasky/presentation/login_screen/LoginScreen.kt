@@ -12,10 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -37,24 +34,24 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.ExitActivity
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.presentation.common.modifiers.*
 import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
 import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
-import com.realityexpander.tasky.ui.components.EmailField
-import com.realityexpander.tasky.ui.components.PasswordField
-import com.realityexpander.tasky.ui.theme.TaskyTheme
-import com.realityexpander.tasky.ui.theme.modifiers.*
-import com.realityexpander.tasky.ui.util.UiText
+import com.realityexpander.tasky.presentation.components.EmailField
+import com.realityexpander.tasky.presentation.components.PasswordField
+import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
+import com.realityexpander.tasky.presentation.util.UiText
 
 @Composable
 @Destination
 @RootNavGraph(start = true)
 fun LoginScreen(
-    username: String? = null,
+    username: String? = "Chris Athanas", //null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    email: String? = null,
+    email: String? = "chris@demo.com", //null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    password: String? = null,
-    confirmPassword: String? = null,
+    password: String? = "Password1", //null,
+    confirmPassword: String? = "Password1", //null,
     navigator: DestinationsNavigator,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
@@ -265,10 +262,11 @@ fun LoginScreenContent(
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
+    group = "Night mode=true"
 )
-fun LoginScreenPreview2() {
+fun LoginScreenPreview() {
     TaskyTheme {
-        androidx.compose.material.Surface {
+        Surface {
             LoginScreenContent(
                 navigator = EmptyDestinationsNavigator,
                 username = "NOT_USED_IN_THIS_SCREEN_UI",
@@ -297,39 +295,9 @@ fun LoginScreenPreview2() {
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
+    group = "Night mode=false"
 )
 fun LoginScreenPreview_NightMode() {
-    LoginScreenPreview2()
+    LoginScreenPreview()
 }
 
-//@Composable
-//@Preview(
-//    showBackground = true,
-//    uiMode = Configuration.UI_MODE_NIGHT_YES,
-//)
-//fun LoginScreenPreviewUsingViewModel() {
-//    TaskyTheme {
-//        androidx.compose.material.Surface {
-//            LoginScreen(
-//                navigator = EmptyDestinationsNavigator,
-//                viewModel = LoginViewModel(
-//                    authRepository = AuthRepositoryFakeImpl(
-//                        authApi = AuthApiFakeImpl(),
-//                        authDao = AuthDaoFakeImpl(),
-//                        validateUsername = ValidateUsername(),
-//                        validateEmail = ValidateEmailImpl(),
-//                        validatePassword = ValidatePassword(),
-//                    ),
-//                    validateEmail = ValidateEmailImpl(),
-//                    validatePassword = ValidatePassword(),
-//                    savedStateHandle = SavedStateHandle().apply {
-//                        // For Live Preview
-//                        set("email", "chris@demo.com")
-//                        set("password", "123456Aa")
-//                        set("confirmPassword", "123456Aa")
-//                    }
-//                )
-//            )
-//        }
-//    }
-//}

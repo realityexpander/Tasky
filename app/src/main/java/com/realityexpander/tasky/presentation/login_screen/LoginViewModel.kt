@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.common.Exceptions
-import com.realityexpander.tasky.ui.util.UiText
+import com.realityexpander.tasky.di.AuthRepositoryFakeUsingProvides
+import com.realityexpander.tasky.di.AuthRepositoryProd_AuthApiProd_AuthDaoFake
+import com.realityexpander.tasky.presentation.util.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.validateEmail.IValidateEmail
 import com.realityexpander.tasky.domain.validation.ValidatePassword
@@ -25,12 +27,13 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
+//    @AuthRepositoryFakeUsingProvides
+//    @AuthRepositoryProd_AuthApiProd_AuthDaoFake
     private val authRepository: IAuthRepository,
-    private val validateEmail: IValidateEmail,
-    private val validatePassword: ValidatePassword,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -123,12 +126,12 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun validateEmail() {
-        val isValid = validateEmail.validate(loginState.value.email)
+        val isValid = authRepository.validateEmail(loginState.value.email)
         sendEvent(LoginEvent.SetIsValidEmail(isValid))
     }
 
     private fun validatePassword() {
-        val isValid = validatePassword.validate(loginState.value.password)
+        val isValid = authRepository.validatePassword(loginState.value.password)
         sendEvent(LoginEvent.SetIsValidPassword(isValid))
     }
 
@@ -141,7 +144,7 @@ class LoginViewModel @Inject constructor(
 
     private suspend fun onEvent(event: LoginEvent) {
         when(event) {
-            is LoginEvent.Loading -> {
+            is LoginEvent.SetIsLoading -> {
                 _loginState.update {
                     it.copy(isLoading = event.isLoading)
                 }
@@ -223,7 +226,7 @@ class LoginViewModel @Inject constructor(
                 if(_loginState.value.isInvalidEmail || _loginState.value.isInvalidPassword)
                     return
 
-                sendEvent(LoginEvent.Loading(true))
+                sendEvent(LoginEvent.SetIsLoading(true))
                 login(event.email, event.password)
             }
             is LoginEvent.LoginSuccess -> {
@@ -231,11 +234,11 @@ class LoginViewModel @Inject constructor(
                     it.copy(
                         isLoggedIn = true,
                         errorMessage = UiText.None,
-                        statusMessage = UiText.Res(R.string.login_success, event.authToken),
+                        statusMessage = UiText.Res(R.string.login_success, event.authInfo),
                         isPasswordVisible = false,
                     )
                 }
-                sendEvent(LoginEvent.Loading(false))
+                sendEvent(LoginEvent.SetIsLoading(false))
             }
             is LoginEvent.LoginError -> {
                 _loginState.update {
@@ -246,7 +249,7 @@ class LoginViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
-                sendEvent(LoginEvent.Loading(false))
+                sendEvent(LoginEvent.SetIsLoading(false))
             }
             is LoginEvent.UnknownError -> {
                 _loginState.update {
@@ -258,6 +261,7 @@ class LoginViewModel @Inject constructor(
                             UiText.Res(R.string.error_unknown, ""),
                     )
                 }
+                sendEvent(LoginEvent.SetIsLoading(false))
             }
         }
     }
