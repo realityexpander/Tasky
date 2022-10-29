@@ -6,9 +6,9 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.realityexpander.tasky.CoroutineTestRule
 import com.realityexpander.tasky.MainCoroutineRule
-import com.realityexpander.tasky.data.repository.AuthRepositoryFakeImpl
+import com.realityexpander.tasky.data.repository.remote.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
-import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl
+import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiFakeImpl
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.EmailMatcherFakeImpl
 import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailImpl
@@ -101,7 +101,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `LoginViewModel contains email and password and can set password visibility`()  {
+    fun `LoginViewModel can set password visibility`()  {
         // ARRANGE
         loginViewModel = LoginViewModel(
             authRepository = authRepository,

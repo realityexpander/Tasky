@@ -5,9 +5,9 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.lifecycle.SavedStateHandle
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.realityexpander.tasky.data.repository.AuthRepositoryFakeImpl
+import com.realityexpander.tasky.data.repository.remote.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
-import com.realityexpander.tasky.data.repository.remote.AuthApiFakeImpl
+import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiFakeImpl
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailImpl
 import com.realityexpander.tasky.domain.validation.ValidatePassword
@@ -76,7 +76,7 @@ class AppTest {
             validatePassword = validatePassword,
             savedStateHandle = SavedStateHandle().apply {
                 set("email", "chris@demo.com")
-                set("password", "123456Aa")
+                set("password", "1234567Aa")
             }
         )
 
@@ -94,7 +94,7 @@ class AppTest {
 
         // ASSERT
         composeTestRule.onNodeWithText("chris@demo.com").assertIsDisplayed()
-        composeTestRule.onNodeWithText("••••••••").assertIsDisplayed()
+        composeTestRule.onNodeWithText("•••••••••").assertIsDisplayed()
     }
 
     @Test
@@ -107,7 +107,7 @@ class AppTest {
             validatePassword = validatePassword,
             savedStateHandle = SavedStateHandle().apply {
                 set("email", "chris@demo.com")
-                set("password", "123456Aa")
+                set("password", "1234567Aa")
             }
         )
 
@@ -131,7 +131,7 @@ class AppTest {
 
         // ASSERT
         composeTestRule.onNodeWithText("chris@demo.com").assertIsDisplayed()
-        composeTestRule.onNodeWithText("123456Aa").assertIsDisplayed()
+        composeTestRule.onNodeWithText("1234567Aa").assertIsDisplayed()
     }
 
 }
