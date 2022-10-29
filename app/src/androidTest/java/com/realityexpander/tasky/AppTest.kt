@@ -14,7 +14,7 @@ import com.realityexpander.tasky.domain.validation.ValidatePassword
 import com.realityexpander.tasky.domain.validation.ValidateUsername
 import com.realityexpander.tasky.presentation.login_screen.LoginScreen
 import com.realityexpander.tasky.presentation.login_screen.LoginViewModel
-import com.realityexpander.tasky.ui.theme.TaskyTheme
+import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

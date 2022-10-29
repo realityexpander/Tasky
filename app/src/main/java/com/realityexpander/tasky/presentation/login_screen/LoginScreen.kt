@@ -12,10 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -42,7 +39,7 @@ import com.realityexpander.tasky.presentation.destinations.LoginScreenDestinatio
 import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
 import com.realityexpander.tasky.presentation.components.EmailField
 import com.realityexpander.tasky.presentation.components.PasswordField
-import com.realityexpander.tasky.ui.theme.TaskyTheme
+import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
 import com.realityexpander.tasky.presentation.util.UiText
 
 @Composable
@@ -269,7 +266,7 @@ fun LoginScreenContent(
 )
 fun LoginScreenPreview() {
     TaskyTheme {
-        androidx.compose.material.Surface {
+        Surface {
             LoginScreenContent(
                 navigator = EmptyDestinationsNavigator,
                 username = "NOT_USED_IN_THIS_SCREEN_UI",

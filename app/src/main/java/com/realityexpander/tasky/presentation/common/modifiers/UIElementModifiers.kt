@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.realityexpander.tasky.ui.theme.TaskyShapes
+import com.realityexpander.tasky.presentation.ui.theme.TaskyShapes
 
 
 fun Modifier.taskyWideButton(color: Color = Color.White): Modifier =

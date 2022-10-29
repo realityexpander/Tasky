@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.realityexpander.tasky.presentation.NavGraphs
 import com.realityexpander.tasky.presentation.login_screen.LoginScreen
-import com.realityexpander.tasky.ui.theme.TaskyTheme
+import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
