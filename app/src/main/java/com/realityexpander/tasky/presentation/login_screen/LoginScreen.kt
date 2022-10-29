@@ -42,9 +42,7 @@ import com.realityexpander.tasky.presentation.destinations.LoginScreenDestinatio
 import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
 import com.realityexpander.tasky.presentation.components.EmailField
 import com.realityexpander.tasky.presentation.components.PasswordField
-import com.realityexpander.tasky.presentation.components.modifiers.*
 import com.realityexpander.tasky.ui.theme.TaskyTheme
-import com.realityexpander.tasky.ui.theme.modifiers.*
 import com.realityexpander.tasky.presentation.util.UiText
 
 @Composable
