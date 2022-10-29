@@ -20,6 +20,7 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,18 +55,24 @@ fun SplashScreen(
     navigator: DestinationsNavigator,
 ) {
     LaunchedEffect(key1 = true) {
-        delay(2000)
+        delay(2000) // simulate loading/validating user session
+        val isLoggedIn = true
 
-        navigator.navigate(
-            LoginScreenDestination(
-                username = "Chris Athanas",
-                email = "chris@demo.com",
-                password = "Password1",
-                confirmPassword = "Password1",
-            )
-        ) {
-            launchSingleTop = true
-            restoreState = true
+        // TESTING ONLY
+        if (isLoggedIn) {
+            navigator.navigate(AgendaScreenDestination())
+        } else {
+            navigator.navigate(
+                LoginScreenDestination(
+                    username = "Chris Athanas",
+                    email = "chris@demo.com",
+                    password = "Password1",
+                    confirmPassword = "Password1",
+                )
+            ) {
+                launchSingleTop = true
+                restoreState = true
+            }
         }
     }
 
