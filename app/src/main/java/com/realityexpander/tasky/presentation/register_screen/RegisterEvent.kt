@@ -1,6 +1,5 @@
 package com.realityexpander.tasky.presentation.register_screen
 
-import com.realityexpander.tasky.data.repository.AuthInfo
 import com.realityexpander.tasky.ui.util.UiText
 
 sealed class RegisterEvent {
@@ -35,7 +34,7 @@ sealed class RegisterEvent {
             val password: String,
             val confirmPassword: String
         ) : RegisterEvent()
-    data class RegisterSuccess(val authInfo: AuthInfo) : RegisterEvent()
+    data class RegisterSuccess(val message: UiText) : RegisterEvent()
     data class RegisterError(val message: UiText) : RegisterEvent()
 
     object EmailAlreadyExists : RegisterEvent()

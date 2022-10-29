@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.common
 
 object Exceptions {
+
     const val USERNAME_NOT_VALID = "Username is not valid"
     const val EMAIL_NOT_VALID = "Email is not valid"
     const val PASSWORD_NOT_VALID = "Password is not valid"
@@ -10,6 +11,7 @@ object Exceptions {
     const val WRONG_PASSWORD = "Wrong password"
     const val UNKNOWN_ERROR = "Unknown error"
     const val LOGIN_ERROR = "Login error"
+    const val REGISTER_ERROR = "Register error"
 
     class InvalidUsernameException : Exception(USERNAME_NOT_VALID)
     class InvalidEmailException: Exception(EMAIL_NOT_VALID)
@@ -19,6 +21,8 @@ object Exceptions {
     class EmailNotExistsException: Exception(EMAIL_DOES_NOT_EXIST)
     class WrongPasswordException: Exception(WRONG_PASSWORD)
     class LoginException(message: String? = null): Exception(message ?: LOGIN_ERROR)
-    class RegisterException(message: String? = null): Exception(message ?: LOGIN_ERROR)
+    class LoginNetworkException(message: String? = null) : Exception(message ?: LOGIN_ERROR)
+    class RegisterException(message: String? = null): Exception(message ?: REGISTER_ERROR)
+    class RegisterNetworkException(message: String? = null): Exception(message ?: REGISTER_ERROR)
     class UnknownErrorException(message: String? = null): Exception(message)
 }

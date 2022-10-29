@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.presentation.login_screen
 
-import com.realityexpander.tasky.data.repository.AuthInfo
+import com.realityexpander.tasky.domain.AuthInfo
 import com.realityexpander.tasky.ui.util.UiText
 
 sealed class LoginEvent {

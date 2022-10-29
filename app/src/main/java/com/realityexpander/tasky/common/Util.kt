@@ -9,22 +9,22 @@ typealias UserId = String
 class Util {
 }
 
-fun AuthToken(token: String): AuthToken {
-    return token
+fun authToken(authToken: String?): AuthToken? {
+    return authToken
 }
 
-fun Email(email: String): Email {
+fun email(email: String?): Email? {
     return email
 }
 
-fun Password(password: String): Password {
+fun password(password: String?): Password? {
     return password
 }
 
-fun Username(username: String): Username {
+fun username(username: String?): Username? {
     return username
 }
 
-fun UserId(userId: String): UserId {
+fun userId(userId: String?): UserId? {
     return userId
 }

@@ -49,12 +49,12 @@ import com.realityexpander.tasky.ui.util.UiText
 @Destination
 @RootNavGraph(start = true)
 fun LoginScreen(
-    username: String? = null,
+    username: String? = "caaa", //null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    email: String? = null,
+    email: String? = "ca4@ca.com", //null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    password: String? = null,
-    confirmPassword: String? = null,
+    password: String? = "Password12345", //null,
+    confirmPassword: String? = "Password12345", //null,
     navigator: DestinationsNavigator,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
@@ -265,8 +265,9 @@ fun LoginScreenContent(
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
+    group = "Night mode=true"
 )
-fun LoginScreenPreview2() {
+fun LoginScreenPreview() {
     TaskyTheme {
         androidx.compose.material.Surface {
             LoginScreenContent(
@@ -297,39 +298,9 @@ fun LoginScreenPreview2() {
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
+    group = "Night mode=false"
 )
 fun LoginScreenPreview_NightMode() {
-    LoginScreenPreview2()
+    LoginScreenPreview()
 }
 
-//@Composable
-//@Preview(
-//    showBackground = true,
-//    uiMode = Configuration.UI_MODE_NIGHT_YES,
-//)
-//fun LoginScreenPreviewUsingViewModel() {
-//    TaskyTheme {
-//        androidx.compose.material.Surface {
-//            LoginScreen(
-//                navigator = EmptyDestinationsNavigator,
-//                viewModel = LoginViewModel(
-//                    authRepository = AuthRepositoryFakeImpl(
-//                        authApi = AuthApiFakeImpl(),
-//                        authDao = AuthDaoFakeImpl(),
-//                        validateUsername = ValidateUsername(),
-//                        validateEmail = ValidateEmailImpl(),
-//                        validatePassword = ValidatePassword(),
-//                    ),
-//                    validateEmail = ValidateEmailImpl(),
-//                    validatePassword = ValidatePassword(),
-//                    savedStateHandle = SavedStateHandle().apply {
-//                        // For Live Preview
-//                        set("email", "chris@demo.com")
-//                        set("password", "123456Aa")
-//                        set("confirmPassword", "123456Aa")
-//                    }
-//                )
-//            )
-//        }
-//    }
-//}

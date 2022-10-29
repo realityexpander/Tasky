@@ -1,14 +1,20 @@
 package com.realityexpander.tasky.data.repository.remote
 
-import com.realityexpander.tasky.data.repository.AuthInfo
+import com.realityexpander.tasky.common.Email
+import com.realityexpander.tasky.common.Password
+import com.realityexpander.tasky.common.Username
+import com.realityexpander.tasky.data.repository.AuthInfoDTO
 
 
 interface IAuthApi {
-    suspend fun login(email: String, password: String): AuthInfo
+    suspend fun login(
+        email: Email,
+        password: Password
+    ): AuthInfoDTO
 
     suspend fun register(
-        username: String,
-        email: String,
-        password: String
-    ): AuthInfo
+        username: Username,
+        email: Email,
+        password: Password
+    )
 }

@@ -1,11 +1,14 @@
-package com.realityexpander.tasky.data.repository
+package com.realityexpander.tasky.data.repository.remote.authRepositoryImpls
 
 import com.realityexpander.tasky.common.Email
 import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.common.Password
 import com.realityexpander.tasky.common.Username
+import com.realityexpander.tasky.data.convertersDTOEntityDomain.toDomain
+import com.realityexpander.tasky.data.repository.AuthInfoDTO
 import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.data.repository.local.IAuthDao
+import com.realityexpander.tasky.domain.AuthInfo
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.validateEmail.IValidateEmail
 import com.realityexpander.tasky.domain.validation.ValidatePassword
@@ -14,17 +17,20 @@ import com.realityexpander.tasky.domain.validation.ValidateUsername
 class AuthRepositoryFakeImpl(
     private val authDao: IAuthDao,
     private val authApi: IAuthApi,
-    private val validateEmail: IValidateEmail,
-    private val validatePassword: ValidatePassword,
-    private val validateUsername: ValidateUsername,
+    override val validateEmail: IValidateEmail,
+    override val validatePassword: ValidatePassword,
+    override val validateUsername: ValidateUsername,
 ): IAuthRepository {
 
     override suspend fun login(email: String, password: String): AuthInfo {
         if(!validateEmail.validate(email)) {
             throw Exceptions.InvalidEmailException()
         }
+        if(!validatePassword.validate(password)) {
+            throw Exceptions.InvalidPasswordException()
+        }
 
-        val authInfo: AuthInfo = try {
+        val authInfoDTO: AuthInfoDTO = try {
             authApi.login(email, password)
         } catch (e: Exceptions.LoginException) {
             throw e
@@ -34,11 +40,13 @@ class AuthRepositoryFakeImpl(
             throw Exceptions.UnknownErrorException(e.message)
         }
 
-        if(authInfo.token != "") {
+        val authInfo = authInfoDTO.toDomain()
+
+        if(!authInfo.authToken.isNullOrBlank()) {
             authDao.setAuthInfo(authInfo)
             return authDao.getAuthInfo()
         } else {
-            throw Exceptions.LoginException("No Token")
+            throw Exceptions.LoginException("No AuthInfo")
         }
     }
 
@@ -46,7 +54,7 @@ class AuthRepositoryFakeImpl(
         username: Username,
         email: Email,
         password: Password
-    ): AuthInfo {
+    ) {
         if(!validateUsername.validate(username)) {
             throw Exceptions.InvalidUsernameException()
         }
@@ -57,19 +65,12 @@ class AuthRepositoryFakeImpl(
             throw Exceptions.InvalidPasswordException()
         }
 
-        val authInfo: AuthInfo = try {
+        try {
             authApi.register(username, email, password)
         } catch (e: Exceptions.EmailAlreadyExistsException) {
             throw e
         } catch (e: Exception) {
             throw Exceptions.UnknownErrorException(e.message)
-        }
-
-        if(authInfo.token != "") {
-            authDao.setAuthInfo(authInfo)
-            return authDao.getAuthInfo()
-        } else {
-            throw Exceptions.LoginException()
         }
     }
 }
