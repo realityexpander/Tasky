@@ -6,11 +6,12 @@ import com.realityexpander.tasky.common.UserId
 import com.realityexpander.tasky.common.userId
 import com.realityexpander.tasky.common.Username
 import com.realityexpander.tasky.common.username
-import com.realityexpander.tasky.data.convertersDTOEntityDomain.toDomain
-import com.realityexpander.tasky.data.convertersDTOEntityDomain.toEntity
+import com.realityexpander.tasky.data.common.convertersDTOEntityDomain.toDomain
+import com.realityexpander.tasky.data.common.convertersDTOEntityDomain.toEntity
 import com.realityexpander.tasky.domain.AuthInfo
 import javax.inject.Inject
 
+// Simulates a local database
 
 class AuthDaoFakeImpl @Inject constructor(): IAuthDao {
     private var authInfoEntity: AuthInfoEntity =

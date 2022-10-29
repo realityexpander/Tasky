@@ -1,7 +1,7 @@
 package com.realityexpander.tasky.data.repository.remote.authApiImpls
 
 import com.realityexpander.tasky.common.*
-import com.realityexpander.tasky.data.repository.AuthInfoDTO
+import com.realityexpander.tasky.data.repository.remote.AuthInfoDTO
 import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import kotlinx.coroutines.delay
 import javax.inject.Inject

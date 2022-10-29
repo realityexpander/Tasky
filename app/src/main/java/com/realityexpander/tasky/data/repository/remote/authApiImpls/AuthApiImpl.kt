@@ -2,7 +2,7 @@ package com.realityexpander.tasky.data.repository.remote.authApiImpls
 
 import com.realityexpander.tasky.common.*
 import com.realityexpander.tasky.data.repository.remote.ApiCredentialsDTO
-import com.realityexpander.tasky.data.repository.AuthInfoDTO
+import com.realityexpander.tasky.data.repository.remote.AuthInfoDTO
 import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import retrofit2.HttpException
 import javax.inject.Inject

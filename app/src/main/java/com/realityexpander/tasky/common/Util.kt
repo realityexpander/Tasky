@@ -6,9 +6,6 @@ typealias Password = String
 typealias AuthToken = String
 typealias UserId = String
 
-class Util {
-}
-
 fun authToken(authToken: String?): AuthToken? {
     return authToken
 }

@@ -2,8 +2,8 @@ package com.realityexpander.tasky.di
 
 import com.realityexpander.tasky.BuildConfig
 import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
-import com.realityexpander.tasky.data.repository.remote.authRepositoryImpls.AuthRepositoryFakeImpl
-import com.realityexpander.tasky.data.repository.remote.authRepositoryImpls.AuthRepositoryImpl
+import com.realityexpander.tasky.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
+import com.realityexpander.tasky.data.repository.authRepositoryImpls.AuthRepositoryImpl
 import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiFakeImpl
 import com.realityexpander.tasky.data.repository.local.IAuthDao
 import com.realityexpander.tasky.data.repository.remote.IAuthApi

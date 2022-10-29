@@ -1,11 +1,11 @@
-package com.realityexpander.tasky.data.repository.remote.authRepositoryImpls
+package com.realityexpander.tasky.data.repository.authRepositoryImpls
 
 import com.realityexpander.tasky.common.Email
 import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.common.Password
 import com.realityexpander.tasky.common.Username
-import com.realityexpander.tasky.data.convertersDTOEntityDomain.toDomain
-import com.realityexpander.tasky.data.repository.AuthInfoDTO
+import com.realityexpander.tasky.data.common.convertersDTOEntityDomain.toDomain
+import com.realityexpander.tasky.data.repository.remote.AuthInfoDTO
 import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.data.repository.local.IAuthDao
 import com.realityexpander.tasky.domain.AuthInfo
@@ -14,7 +14,6 @@ import com.realityexpander.tasky.domain.validation.validateEmail.IValidateEmail
 import com.realityexpander.tasky.domain.validation.ValidatePassword
 import com.realityexpander.tasky.domain.validation.ValidateUsername
 import javax.inject.Inject
-import javax.inject.Named
 
 class AuthRepositoryImpl @Inject constructor(
     private val authDao: IAuthDao,

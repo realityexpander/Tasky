@@ -3,7 +3,6 @@ package com.realityexpander.tasky.data.repository.remote
 import com.realityexpander.tasky.common.Email
 import com.realityexpander.tasky.common.Password
 import com.realityexpander.tasky.common.Username
-import com.realityexpander.tasky.data.repository.AuthInfoDTO
 
 
 interface IAuthApi {
