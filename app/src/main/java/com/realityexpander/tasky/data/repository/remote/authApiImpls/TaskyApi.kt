@@ -11,13 +11,13 @@ interface TaskyApi {
     @POST("login")
     suspend fun login(
         @Body credentials: ApiCredentialsDTO,
-        @Header("x-api-key") apiKey: String = API_KEY
+        //@Header("x-api-key") apiKey: String = API_KEY
     ): Response<AuthInfoDTO>
 
     @POST("register")
     suspend fun register(
         @Body credentials: ApiCredentialsDTO,
-        @Header("x-api-key") apiKey: String = API_KEY
+        //@Header("x-api-key") apiKey: String = API_KEY
     ): Response<Void>
 
 

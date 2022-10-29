@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.di
 
+import com.realityexpander.tasky.BuildConfig
 import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.remote.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.data.repository.remote.authRepositoryImpls.AuthRepositoryImpl
@@ -8,6 +9,7 @@ import com.realityexpander.tasky.data.repository.local.IAuthDao
 import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiImpl
 import com.realityexpander.tasky.data.repository.remote.authApiImpls.TaskyApi
+import com.realityexpander.tasky.data.repository.remote.authApiImpls.TaskyApi.Companion.API_KEY
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.*
 import com.realityexpander.tasky.domain.validation.validateEmail.EmailMatcherImpl
@@ -18,6 +20,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -27,7 +30,7 @@ import javax.inject.Named
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-const val USE_FAKE_REPOSITORY = true
+const val USE_FAKE_REPOSITORY = false
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -37,11 +40,27 @@ object AppModule {
     @Singleton
     fun provideTaskyApi(): TaskyApi {
 
-        val logging = HttpLoggingInterceptor()
-        logging.level = (HttpLoggingInterceptor.Level.BODY)
-        val client: OkHttpClient = OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .build()
+        val xApiKeyHeader = Interceptor { chain ->
+            val request = chain.request().newBuilder()
+                .addHeader("x-api-key", API_KEY)
+                .build()
+            chain.proceed(request)
+        }
+
+        val client = if(BuildConfig.BUILD_TYPE == "debug") {
+            val logging = HttpLoggingInterceptor()
+            //logging.level = HttpLoggingInterceptor.Level.BODY
+            logging.level = HttpLoggingInterceptor.Level.HEADERS
+
+            OkHttpClient.Builder()
+                .addInterceptor(xApiKeyHeader)
+                .addInterceptor(logging)
+                .build()
+        } else {
+            OkHttpClient.Builder()
+                .addInterceptor(xApiKeyHeader)
+                .build()
+        }
 
         return Retrofit.Builder()
             .baseUrl(TaskyApi.BASE_URL)
