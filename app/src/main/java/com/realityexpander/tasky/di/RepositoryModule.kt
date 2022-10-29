@@ -22,7 +22,7 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     @AuthDaoFakeUsingBinds
-    abstract fun bindIAuthDaoFake(
+    abstract fun bindAuthDaoFake(
         authDaoFakeImpl: AuthDaoFakeImpl  // <-- provides this instance...
     ): IAuthDao // <-- ... for this interface.
 
@@ -30,28 +30,28 @@ abstract class RepositoryModule {
 //    @Binds
 //    @Singleton
 //    @AuthDaoProdUsingBinds
-//    abstract fun bindIAuthDao(
+//    abstract fun bindAuthDaoProd(
 //        authDaoImpl: AuthDaoImpl  // <-- provides this instance...
 //    ): IAuthDao // <-- ... for this interface.
 
     @Binds
     @Singleton
     @AuthApiFakeUsingBinds
-    abstract fun bindIAuthApiFake(
+    abstract fun bindAuthApiFake(
         authApiFakeImpl: AuthApiFakeImpl
     ): IAuthApi
 
     @Binds
     @Singleton
     @AuthApiProdUsingBinds
-    abstract fun bindIAuthApi(
+    abstract fun bindAuthApiProd(
         authApiImpl: AuthApiImpl
     ): IAuthApi
 
     @Binds
     @Singleton
     @AuthRepositoryProdUsingBinds
-    abstract fun bindIAuthRepository(
+    abstract fun bindAuthRepositoryProd(
         authRepositoryImpl: AuthRepositoryImpl // <-- provides this instance...
     ): IAuthRepository // <-- ... for this interface.
 }

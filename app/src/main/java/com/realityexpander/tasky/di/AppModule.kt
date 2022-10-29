@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.di
 
+import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.remote.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.data.repository.remote.authRepositoryImpls.AuthRepositoryImpl
 import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiFakeImpl
@@ -25,6 +26,8 @@ import retrofit2.create
 import javax.inject.Named
 import javax.inject.Qualifier
 import javax.inject.Singleton
+
+const val USE_FAKE_REPOSITORY = true
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -56,12 +59,12 @@ object AppModule {
     ): IAuthApi = AuthApiFakeImpl()
 
     // Is there a way to have Hilt instantiate `TaskyApi` using @Binds?
-    // Or is this the only way to instantiate a dependency for an when creating an
-    //   implementation of an interface?
+    // Or is this the only way to instantiate a dependency for when creating an
+    //   implementation of an interface that requires an argument?
     @Provides
     @Singleton
     @AuthApiProdUsingProvides
-    fun provideAuthApiImpl(
+    fun provideAuthApiProd(
         taskyApi: TaskyApi,
     ): IAuthApi = AuthApiImpl(taskyApi)
 
@@ -87,18 +90,42 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideAuthRepository(): IAuthRepository {
+        if (USE_FAKE_REPOSITORY) {
+            return provideAuthRepositoryFake(
+                authApi = provideAuthApiFakeImpl(),
+                authDao = AuthDaoFakeImpl(),
+                validateUsername = provideValidateUsername(),
+                validatePassword = provideValidatePassword(),
+                validateEmail = provideValidateEmailRegex(),
+            )
+        } else {
+            return provideAuthRepositoryProd(
+                authApi = provideAuthApiProd(
+                    provideTaskyApi()
+                ),
+                authDao = AuthDaoFakeImpl(),  // why cant we use the implementation from @Binds here?
+                validateUsername = provideValidateUsername(),
+                validatePassword = provideValidatePassword(),
+                validateEmail = provideValidateEmailRegex(),
+            )
+        }
+    }
+
+    @Provides
+    @Singleton
     @AuthRepositoryProd_AuthApiProd_AuthDaoFake
-    fun provideAuthRepository(
-//        @AuthApiProdUsingBinds authApi: IAuthApi,  // how to add `TaskApi` to the `authApiImpl`? (instead of using @AuthApiProdUsingProvides above)
-        @AuthApiProdUsingProvides authApiImpl: IAuthApi,
-        @AuthDaoFakeUsingBinds authDaoFakeImpl: IAuthDao,
+    fun provideAuthRepositoryProd(
+//        @AuthApiProdUsingBinds authApi: IAuthApi,  // how to add `TaskApi` to the `authApi`? (instead of using @AuthApiProdUsingProvides above)
+        @AuthApiProdUsingProvides authApi: IAuthApi,
+        @AuthDaoFakeUsingBinds authDao: IAuthDao,
         validateUsername: ValidateUsername,
         @Named("ValidateEmailRegex") validateEmail: IValidateEmail,
         validatePassword: ValidatePassword
     ): IAuthRepository =
         AuthRepositoryImpl(
-            authApi = authApiImpl,
-            authDao = authDaoFakeImpl, // use fake repo until we implement database
+            authApi = authApi,
+            authDao = authDao, // use fake repo until we implement database
             validateUsername = validateUsername,
             validateEmail = validateEmail,
             validatePassword = validatePassword
@@ -108,15 +135,15 @@ object AppModule {
     @Singleton
     @AuthRepositoryFakeUsingProvides
     fun provideAuthRepositoryFake(
-        @AuthApiFakeUsingBinds authApiFakeImpl: IAuthApi,
-        @AuthDaoFakeUsingBinds authDaoFakeImpl: IAuthDao,
+        @AuthApiFakeUsingBinds authApi: IAuthApi,
+        @AuthDaoFakeUsingBinds authDao: IAuthDao,
         validateUsername: ValidateUsername,
         @Named("ValidateEmailRegex") validateEmail: IValidateEmail,
         validatePassword: ValidatePassword
     ): IAuthRepository =
         AuthRepositoryFakeImpl(
-            authApi = authApiFakeImpl,
-            authDao = authDaoFakeImpl,
+            authApi = authApi,
+            authDao = authDao,
             validateUsername = validateUsername,
             validateEmail = validateEmail,
             validatePassword = validatePassword
@@ -152,7 +179,7 @@ annotation class AuthApiProdUsingProvides
 annotation class AuthRepositoryFakeUsingProvides
 
 @Qualifier
-@Named("AuthRepository.Prod.usingBinds")
+@Named("AuthRepository.PROD.usingBinds")
 annotation class AuthRepositoryProdUsingBinds
 
 @Qualifier

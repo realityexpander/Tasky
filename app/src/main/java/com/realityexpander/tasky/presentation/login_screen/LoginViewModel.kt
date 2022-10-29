@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.di.AuthRepositoryFakeUsingProvides
+import com.realityexpander.tasky.di.AuthRepositoryProd_AuthApiProd_AuthDaoFake
 import com.realityexpander.tasky.ui.util.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.validateEmail.IValidateEmail
@@ -30,7 +31,7 @@ import javax.inject.Named
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    @AuthRepositoryFakeUsingProvides
+//    @AuthRepositoryFakeUsingProvides
 //    @AuthRepositoryProd_AuthApiProd_AuthDaoFake
     private val authRepository: IAuthRepository,
     private val savedStateHandle: SavedStateHandle,
