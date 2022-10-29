@@ -64,10 +64,10 @@ fun SplashScreen(
         } else {
             navigator.navigate(
                 LoginScreenDestination(
-                    username = "Chris Athanas",
-                    email = "chris@demo.com",
-                    password = "Password1",
-                    confirmPassword = "Password1",
+                    username = "Chris Athanas",     // TESTING ONLY
+                    email = "chris@demo.com",       // TESTING ONLY
+                    password = "Password1",         // TESTING ONLY
+                    confirmPassword = "Password1",  // TESTING ONLY
                 )
             ) {
                 launchSingleTop = true
