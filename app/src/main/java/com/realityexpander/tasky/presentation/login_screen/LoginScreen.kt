@@ -46,12 +46,12 @@ import com.realityexpander.tasky.presentation.util.UiText
 @Destination
 @RootNavGraph(start = true)
 fun LoginScreen(
-    username: String? = "caaa", //null,
+    username: String? = "Chris Athanas", //null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    email: String? = "ca4@ca.com", //null,
+    email: String? = "chris@demo.com", //null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    password: String? = "Password12345", //null,
-    confirmPassword: String? = "Password12345", //null,
+    password: String? = "Password1", //null,
+    confirmPassword: String? = "Password1", //null,
     navigator: DestinationsNavigator,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
