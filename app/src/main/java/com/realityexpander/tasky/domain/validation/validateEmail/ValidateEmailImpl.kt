@@ -1,9 +1,7 @@
 package com.realityexpander.tasky.domain.validation.validateEmail
 
-import javax.inject.Inject
-
 class ValidateEmailImpl (
-    private val emailMatcher: IEmailMatcher = EmailMatcherImpl()
+    private val emailMatcher: IEmailMatcher = EmailMatcherAndroidImpl()
 ): IValidateEmail {
     override fun validate(email: String): Boolean {
         return email.isNotBlank()

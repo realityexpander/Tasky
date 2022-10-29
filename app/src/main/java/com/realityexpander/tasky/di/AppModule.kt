@@ -12,7 +12,7 @@ import com.realityexpander.tasky.data.repository.remote.authApiImpls.TaskyApi
 import com.realityexpander.tasky.data.repository.remote.authApiImpls.TaskyApi.Companion.API_KEY
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.*
-import com.realityexpander.tasky.domain.validation.validateEmail.EmailMatcherImpl
+import com.realityexpander.tasky.domain.validation.validateEmail.EmailMatcherAndroidImpl
 import com.realityexpander.tasky.domain.validation.validateEmail.EmailMatcherRegexImpl
 import com.realityexpander.tasky.domain.validation.validateEmail.IValidateEmail
 import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailImpl
@@ -91,7 +91,7 @@ object AppModule {
     @Singleton
     @Named("ValidateEmailAndroid")
     fun provideValidateEmailAndroid(): IValidateEmail =
-        ValidateEmailImpl(emailMatcher = EmailMatcherImpl())
+        ValidateEmailImpl(emailMatcher = EmailMatcherAndroidImpl())
 
     @Provides
     @Singleton

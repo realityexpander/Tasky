@@ -1,13 +1,5 @@
 package com.realityexpander.tasky.domain.validation.validateEmail
 
-import javax.inject.Inject
-
-class EmailMatcherImpl: IEmailMatcher {
-    override fun matches(email: String): Boolean {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-}
-
 // Matches how the email is validated on the server
 class EmailMatcherRegexImpl: IEmailMatcher {
     override fun matches(email: String): Boolean {
