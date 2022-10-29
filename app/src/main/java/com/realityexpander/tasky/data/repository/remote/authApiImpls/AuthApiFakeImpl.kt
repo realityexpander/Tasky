@@ -39,7 +39,10 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
             )
     }
 
-    override suspend fun login(email: Email, password: Password): AuthInfoDTO {
+    override suspend fun login(
+        email: Email,
+        password: Password
+    ): AuthInfoDTO {
         if (email.isBlank() || password.isBlank()) {
             throw Exceptions.LoginException("Invalid email or password")
         }
