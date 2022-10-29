@@ -135,7 +135,7 @@ object AppModule {
     @Singleton
     @AuthRepositoryProd_AuthApiProd_AuthDaoFake
     fun provideAuthRepositoryProd(
-//        @AuthApiProdUsingBinds authApi: IAuthApi,  // how to add `TaskApi` to the `authApi`? (instead of using @AuthApiProdUsingProvides above)
+//        @AuthApiProdUsingBinds authApi: IAuthApi,  // How to add `TaskApi` to the `authApi`? (instead of using @AuthApiProdUsingProvides above)
         @AuthApiProdUsingProvides authApi: IAuthApi,
         @AuthDaoFakeUsingBinds authDao: IAuthDao,
         validateUsername: ValidateUsername,
