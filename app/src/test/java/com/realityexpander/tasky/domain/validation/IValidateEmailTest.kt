@@ -14,30 +14,25 @@ class IValidateEmailTest {
     private val emailMatcherFakeImpl = EmailMatcherFakeImpl()
     private val emailMatcherRegexImpl = EmailMatcherRegexImpl()
 
-    @Test
+    @Test // NOTE: we are testing the fake implementation (bc the prod impl uses android.util.Patterns.EMAIL_ADDRESS)
     fun `validateEmail() returns true for valid email`() {
 
         // ARRANGE
         validateEmail = ValidateEmailImpl(emailMatcherFakeImpl)
 
-        // ACT
-        val result = validateEmail.validate("chris@demo.com")
+        // ACT / ASSERT
+        assertTrue(validateEmail.validate("chris@demo.com")) // valid email
 
-        // ASSERT
-        assertTrue(result)
     }
 
-    @Test
+    @Test // NOTE: we are testing the fake implementation (bc the prod impl uses android.util.Patterns.EMAIL_ADDRESS)
     fun `validateEmail() returns false for invalid email`() {
 
         // ARRANGE
         validateEmail = ValidateEmailImpl(emailMatcherFakeImpl)
 
-        // ACT
-        val result = validateEmail.validate("chrismail.com")
-
-        // ASSERT
-        assertFalse(result)
+        // ACT / ASSERT
+        assertFalse(validateEmail.validate("chrismail.com")) // missing @
     }
 
     @Test

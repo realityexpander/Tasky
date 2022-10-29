@@ -8,6 +8,7 @@ class EmailMatcherImpl: IEmailMatcher {
     }
 }
 
+// Matches how the email is validated on the server
 class EmailMatcherRegexImpl: IEmailMatcher {
     override fun matches(email: String): Boolean {
         // use regex to validate email
