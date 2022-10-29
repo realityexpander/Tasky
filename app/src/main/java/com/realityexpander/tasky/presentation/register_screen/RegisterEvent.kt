@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.presentation.register_screen
 
-import com.realityexpander.tasky.ui.util.UiText
+import com.realityexpander.tasky.presentation.util.UiText
 
 sealed class RegisterEvent {
     data class SetIsLoading(val isLoading: Boolean) : RegisterEvent()

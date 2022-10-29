@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.ui.components
+package com.realityexpander.tasky.presentation.components
 
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.ui.util.UiText
+import com.realityexpander.tasky.presentation.util.UiText
 
 @Composable
 fun TextEntryField(

@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.presentation.login_screen
 
-import com.realityexpander.tasky.ui.util.UiText
+import com.realityexpander.tasky.presentation.util.UiText
 
 data class LoginState(
     val username: String = "",

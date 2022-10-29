@@ -39,11 +39,11 @@ import com.realityexpander.tasky.ExitActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
 import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
-import com.realityexpander.tasky.ui.components.EmailField
-import com.realityexpander.tasky.ui.components.PasswordField
+import com.realityexpander.tasky.presentation.components.EmailField
+import com.realityexpander.tasky.presentation.components.PasswordField
 import com.realityexpander.tasky.ui.theme.TaskyTheme
 import com.realityexpander.tasky.ui.theme.modifiers.*
-import com.realityexpander.tasky.ui.util.UiText
+import com.realityexpander.tasky.presentation.util.UiText
 
 @Composable
 @Destination
