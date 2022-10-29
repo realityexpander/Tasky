@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.ui.theme.modifiers
+package com.realityexpander.tasky.presentation.common.modifiers
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize

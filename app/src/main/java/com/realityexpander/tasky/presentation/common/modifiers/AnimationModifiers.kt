@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.ui.theme.modifiers
+package com.realityexpander.tasky.presentation.common.modifiers
 
 import androidx.compose.animation.core.*
 import androidx.compose.runtime.getValue

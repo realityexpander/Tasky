@@ -3,7 +3,7 @@ package com.realityexpander.tasky.ui.theme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes
 import androidx.compose.ui.unit.dp
-import com.realityexpander.tasky.ui.theme.modifiers.DP
+import com.realityexpander.tasky.presentation.common.modifiers.DP
 
 val Shapes = Shapes(
     small = RoundedCornerShape(4.dp),

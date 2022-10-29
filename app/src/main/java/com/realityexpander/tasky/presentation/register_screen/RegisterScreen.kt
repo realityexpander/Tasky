@@ -37,11 +37,13 @@ import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailIm
 import com.realityexpander.tasky.domain.validation.ValidatePassword
 import com.realityexpander.tasky.domain.validation.ValidateUsername
 import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailRegexImpl
+import com.realityexpander.tasky.presentation.common.modifiers.*
 import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
 import com.realityexpander.tasky.presentation.login_screen.LoginScreenContent
 import com.realityexpander.tasky.presentation.components.EmailField
 import com.realityexpander.tasky.presentation.components.NameField
 import com.realityexpander.tasky.presentation.components.PasswordField
+import com.realityexpander.tasky.presentation.components.modifiers.*
 import com.realityexpander.tasky.ui.theme.TaskyTheme
 import com.realityexpander.tasky.ui.theme.modifiers.*
 import com.realityexpander.tasky.presentation.util.UiText
