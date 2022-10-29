@@ -43,7 +43,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             TaskyTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = colorResource(id = R.color.green_tasky)
@@ -63,10 +62,15 @@ fun SplashScreen(
     navigator: DestinationsNavigator,
 ) {
     LaunchedEffect(key1 = true) {
-        delay(2000)
+        //delay(2000)
 
         navigator.navigate(
-            LoginScreenDestination()
+            LoginScreenDestination(
+                username = "Chris Athanas",
+                email = "chris@demo.com",
+                password = "Password1",
+                confirmPassword = "Password1",
+            )
         ) {
             launchSingleTop = true
             restoreState = true
@@ -83,8 +87,8 @@ fun SplashScreen(
             painter = painterResource(id = R.drawable.tasky_logo),
             contentDescription = "Tasky Logo",
             modifier = Modifier
-                .width(250.dp)
-                .height(250.dp)
+                .width(200.dp)
+                .height(200.dp)
                 .offset { IntOffset(0, -10) } // slight difference between Android Theme and this composable
         )
     }

@@ -3,6 +3,7 @@ package com.realityexpander.tasky.presentation.components
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -12,15 +13,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.presentation.ui.theme.textEntryFieldTextStyle
 import com.realityexpander.tasky.presentation.util.UiText
 
 @Composable
 fun TextEntryField(
     modifier: Modifier = Modifier,
     value: String,
+    textStyle: TextStyle = textEntryFieldTextStyle(),
     label: String? = UiText.Res(R.string.textEntryField_label).get, // if this is null, label is not shown
     labelComponent: @Composable (() -> Unit)? =
         { Text(text = label ?: UiText.Res(R.string.textEntryField_label).get) },
@@ -34,8 +38,10 @@ fun TextEntryField(
         ),
     keyboardActions: KeyboardActions? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
+    @Suppress("UNUSED_PARAMETER") // validInputDescription is used in the preview
     validInputDescription: String =
         UiText.Res(R.string.textEntryField_description_isValid).get,
+    @Suppress("UNUSED_PARAMETER") // invalidInputDescription is used in the preview
     invalidInputDescription: String =
         UiText.Res(R.string.textEntryField_description_isInvalid).get,
 ) {
@@ -58,6 +64,7 @@ fun TextEntryField(
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActionsLocal,
         leadingIcon = leadingIcon,
+        textStyle = textStyle,
         trailingIcon = {
             if (value.isNotBlank()) {
                 val isNameValid = !isError

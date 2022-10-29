@@ -44,12 +44,12 @@ import com.realityexpander.tasky.presentation.util.UiText
 @Composable
 @Destination
 fun LoginScreen(
-    username: String? = "Chris Athanas", //null,
+    username: String? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    email: String? = "chris@demo.com", //null,
+    email: String? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    password: String? = "Password1", //null,
-    confirmPassword: String? = "Password1", //null,
+    password: String? = null,
+    confirmPassword: String? = null,
     navigator: DestinationsNavigator,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
@@ -62,6 +62,7 @@ fun LoginScreen(
         onAction = viewModel::sendEvent,
         navigator = navigator,
     )
+
 }
 
 @Composable
