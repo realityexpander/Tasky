@@ -57,8 +57,6 @@ class LoginViewModelTest {
 
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            validateEmail = validateEmail,
-            validatePassword = validatePassword,
             savedStateHandle = SavedStateHandle()
         )
     }
@@ -70,8 +68,6 @@ class LoginViewModelTest {
         val expectedPassword = "Ab3456789"
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            validateEmail = validateEmail,
-            validatePassword = validatePassword,
             savedStateHandle = SavedStateHandle().apply {
                 set("email", expectedEmail)
                 set("password", expectedPassword)
@@ -105,8 +101,6 @@ class LoginViewModelTest {
         // ARRANGE
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            validateEmail = validateEmail,
-            validatePassword = validatePassword,
             savedStateHandle = SavedStateHandle()
         )
 

@@ -44,8 +44,6 @@ class AppTest {
 
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            validateEmail = validateEmail,
-            validatePassword = validatePassword,
             savedStateHandle = SavedStateHandle()
         )
     }
@@ -72,8 +70,6 @@ class AppTest {
         // ARRANGE
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            validateEmail = validateEmail,
-            validatePassword = validatePassword,
             savedStateHandle = SavedStateHandle().apply {
                 set("email", "chris@demo.com")
                 set("password", "1234567Aa")
@@ -103,8 +99,6 @@ class AppTest {
         // ARRANGE
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            validateEmail = validateEmail,
-            validatePassword = validatePassword,
             savedStateHandle = SavedStateHandle().apply {
                 set("email", "chris@demo.com")
                 set("password", "1234567Aa")
