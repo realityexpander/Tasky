@@ -20,6 +20,7 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
@@ -97,7 +98,8 @@ fun SplashScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
+fun SplashScreenPreview() {
     TaskyTheme {
+        SplashScreen(navigator = EmptyDestinationsNavigator)
     }
 }
