@@ -5,12 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -22,6 +20,9 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.common.settings.AppSettings
+import com.realityexpander.tasky.common.settings.setFirstTime
+import com.realityexpander.tasky.dataStore
 import com.realityexpander.tasky.domain.AuthInfo
 import com.realityexpander.tasky.presentation.common.modifiers.largeHeight
 import com.realityexpander.tasky.presentation.destinations.AgendaScreenDestination
@@ -40,6 +41,28 @@ fun SplashScreen(
 ) {
     val splashState by viewModel.splashState.collectAsState()
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    val appSettings = context.dataStore.data.collectAsState( // .data is a Flow
+        initial = AppSettings()
+    ).value
+
+    // Load settings from data store
+    LaunchedEffect(key1 = appSettings) {
+        // ignore first data (always initial default state)
+        if(appSettings.settingsLoaded) {
+            context.dataStore.setFirstTime(false)
+            return@LaunchedEffect
+        }
+
+        viewModel.onSetAuthInfo(
+            AuthInfo(
+                authToken = appSettings.authInfo.authToken,
+                userId = appSettings.authInfo.userId,
+                username = appSettings.authInfo.username,
+            )
+        )
+    }
 
     if (splashState.authInfoChecked) {
 
@@ -58,7 +81,7 @@ fun SplashScreen(
                 navigator.navigate(
                     LoginScreenDestination(
                         username = "Chris Athanas",     // TESTING ONLY
-                        email = "chris@demo.com",       // TESTING ONLY
+                        email = "chris3@demo.com",      // TESTING ONLY
                         password = "Password1",         // TESTING ONLY
                         confirmPassword = "Password1",  // TESTING ONLY
                     )
@@ -98,7 +121,8 @@ fun SplashScreenContent(
                     .width(200.dp)
                     .height(200.dp)
                     .offset {
-                        IntOffset(0, -10) } // slight difference in position between Android Theme and this composable when centering logo
+                        IntOffset(0, -10)
+                    } // slight difference in position between Android Theme and this composable when centering logo
             )
             Spacer(modifier = Modifier.largeHeight())
 

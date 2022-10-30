@@ -1,9 +1,14 @@
 package com.realityexpander.tasky.presentation.splash_screen
 
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.dataStore
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.TaskyApplication
+import com.realityexpander.tasky.common.settings.AppSettings
+import com.realityexpander.tasky.common.settings.AppSettingsSerializer
 import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.domain.AuthInfo
 import com.realityexpander.tasky.domain.IAuthRepository
@@ -24,6 +29,8 @@ class SplashViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
+
+
     private val authInfo: AuthInfo? =
         savedStateHandle[UIConstants.SAVED_STATE_authInfo]
     private val statusMessage: UiText =
@@ -36,6 +43,7 @@ class SplashViewModel @Inject constructor(
         savedStateHandle[UIConstants.SAVED_STATE_authInfo] = state.authInfo
         savedStateHandle[UIConstants.SAVED_STATE_statusMessage] = state.statusMessage
 
+        println("SplashViewModel: splashState: $state")
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SplashState())
 
     init {
@@ -50,14 +58,37 @@ class SplashViewModel @Inject constructor(
             )
             yield() // allow the splashState to be restored
 
-            // Check if there is AuthInfo/AuthToken in the AuthRepository
-            val authInfo = authRepository.getAuthInfo()
+//            // Check if there is AuthInfo/AuthToken in the AuthRepository
+//            val authInfo = authRepository.getAuthInfo()
 
-            // set the AuthInfo and AuthToken for this user
-            TaskyApplication.authInfoGlobal = authInfo // todo should replace with DataStore?
-            IAuthApi.setAuthToken(authInfo?.authToken)
+//            // set the AuthInfo and AuthToken for this user
+//            TaskyApplication.authInfoGlobal = authInfo // todo should replace with DataStore?
+//            IAuthApi.setAuthToken(authInfo?.authToken)
+//
+//            if (authInfo?.authToken != AuthInfo.NOT_LOGGED_IN.authToken
+//                && authRepository.authenticateAuthInfo(authInfo)
+//            ) {
+//                _splashState.value = SplashState(
+//                    authInfo = authInfo,
+//                    authInfoChecked = true,
+//                    statusMessage = UiText.None, //UiText.Res(R.string.splash_logged_in)
+//                )
+//            } else {
+//                _splashState.value = SplashState(
+//                    authInfo = AuthInfo.NOT_LOGGED_IN,
+//                    authInfoChecked = true,
+//                    statusMessage = UiText.None, //UiText.Res(R.string.splash_not_logged_in)
+//                )
+//            }
+        }
+    }
 
-            if (authInfo?.authToken != AuthInfo.NOT_LOGGED_IN.authToken
+    fun onSetAuthInfo(authInfo: AuthInfo) {
+        viewModelScope.launch {
+            TaskyApplication.authInfoGlobal = authInfo
+            IAuthApi.setAuthToken(authInfo.authToken)
+
+            if (authInfo.authToken != AuthInfo.NOT_LOGGED_IN.authToken
                 && authRepository.authenticateAuthInfo(authInfo)
             ) {
                 _splashState.value = SplashState(
