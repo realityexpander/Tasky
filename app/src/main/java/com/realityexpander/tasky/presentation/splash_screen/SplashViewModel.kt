@@ -29,49 +29,49 @@ class SplashViewModel @Inject constructor(
     private val statusMessage: UiText =
         savedStateHandle[UIConstants.SAVED_STATE_statusMessage] ?: UiText.None
 
-        private val _splashState = MutableStateFlow(SplashState())
-        val splashState = _splashState.onEach { state ->
-            // save state for process death
-            // is this needed for splash screen?
-            savedStateHandle[UIConstants.SAVED_STATE_authInfo] = state.authInfo
-            savedStateHandle[UIConstants.SAVED_STATE_statusMessage] = state.statusMessage
+    private val _splashState = MutableStateFlow(SplashState())
+    val splashState = _splashState.onEach { state ->
+        // save state for process death
+        // is this needed for splash screen?
+        savedStateHandle[UIConstants.SAVED_STATE_authInfo] = state.authInfo
+        savedStateHandle[UIConstants.SAVED_STATE_statusMessage] = state.statusMessage
 
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SplashState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SplashState())
 
-        init {
-            viewModelScope.launch {
-                yield() // allow the splashState to be initialized
+    init {
+        viewModelScope.launch {
+            yield() // allow the splashState to be initialized
 
-                // restore state after process death -- // is this needed for splash screen?
+            // restore state after process death -- // is this needed for splash screen?
+            _splashState.value = SplashState(
+                authInfo = authInfo,
+                authInfoChecked = false,
+                statusMessage = statusMessage,
+            )
+            yield() // allow the splashState to be restored
+
+            // Check if there is AuthInfo/AuthToken in the AuthRepository
+            val authInfo = authRepository.getAuthInfo()
+
+            // set the AuthInfo and AuthToken for this user
+            TaskyApplication.authInfoGlobal = authInfo // todo should replace with DataStore?
+            IAuthApi.setAuthToken(authInfo?.authToken)
+
+            if (authInfo?.authToken != AuthInfo.NOT_LOGGED_IN.authToken
+                && authRepository.authenticateAuthInfo(authInfo)
+            ) {
                 _splashState.value = SplashState(
                     authInfo = authInfo,
-                    authInfoChecked = false,
-                    statusMessage = statusMessage,
+                    authInfoChecked = true,
+                    statusMessage = UiText.None, //UiText.Res(R.string.splash_logged_in)
                 )
-                yield() // allow the splashState to be restored
-
-                // Check if there is AuthInfo/AuthToken in the AuthRepository
-                val authInfo = authRepository.getAuthInfo()
-
-                // set the AuthInfo and AuthToken for this user
-                TaskyApplication.authInfoGlobal = authInfo // todo should replace with DataStore?
-                IAuthApi.setAuthToken(authInfo?.authToken)
-
-                if(authInfo?.authToken != AuthInfo.NOT_LOGGED_IN.authToken
-                    && authRepository.authenticateAuthInfo(authInfo)
-                ) {
-                    _splashState.value = SplashState(
-                        authInfo = authInfo,
-                        authInfoChecked = true,
-                        statusMessage = UiText.None, //UiText.Res(R.string.splash_logged_in)
-                    )
-                } else {
-                    _splashState.value = SplashState(
-                        authInfo = AuthInfo.NOT_LOGGED_IN,
-                        authInfoChecked = true,
-                        statusMessage = UiText.None, //UiText.Res(R.string.splash_not_logged_in)
-                    )
-                }
+            } else {
+                _splashState.value = SplashState(
+                    authInfo = AuthInfo.NOT_LOGGED_IN,
+                    authInfoChecked = true,
+                    statusMessage = UiText.None, //UiText.Res(R.string.splash_not_logged_in)
+                )
             }
         }
+    }
 }
