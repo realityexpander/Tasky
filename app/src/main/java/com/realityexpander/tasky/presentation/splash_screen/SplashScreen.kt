@@ -21,7 +21,7 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.common.settings.AppSettings
-import com.realityexpander.tasky.common.settings.setFirstTime
+import com.realityexpander.tasky.common.settings.setSettingsLoaded
 import com.realityexpander.tasky.dataStore
 import com.realityexpander.tasky.domain.AuthInfo
 import com.realityexpander.tasky.presentation.common.modifiers.largeHeight
@@ -49,9 +49,9 @@ fun SplashScreen(
 
     // Load settings from data store
     LaunchedEffect(key1 = appSettings) {
-        // ignore first data (is always initial default state due to it being a flow)
-        if(appSettings.settingsLoaded) {
-            context.dataStore.setFirstTime(false)
+        // ignore first data (initial emit is always default state, due to it being a flow)
+        if(!appSettings.settingsLoaded) {
+            context.dataStore.setSettingsLoaded(true)
             return@LaunchedEffect
         }
 
