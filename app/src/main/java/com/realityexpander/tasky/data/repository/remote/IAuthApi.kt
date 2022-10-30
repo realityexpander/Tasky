@@ -27,7 +27,7 @@ interface IAuthApi {
 
         var authorizationHeader: String? = null
             private set
-            get() = "Bearer ${Companion.authToken}"
+            get() = createAuthorizationHeader(Companion.authToken)
 
         @JvmName("setAuthToken1")
         fun setAuthToken(authToken: AuthToken?) {
