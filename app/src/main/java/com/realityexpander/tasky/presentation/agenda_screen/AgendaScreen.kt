@@ -72,7 +72,7 @@ fun AgendaScreenContent(
         focusManager.clearFocus()
     }
 
-    fun navigateToXXX() {
+    fun navigateToLogin() {
         navigator.navigate(
             LoginScreenDestination(
                 username = state.username,  // saved here in case the user comes back to registration
@@ -87,6 +87,11 @@ fun AgendaScreenContent(
             launchSingleTop = true
             restoreState = true
         }
+    }
+
+    // Guard against invalid authentication state
+    if (TaskyApplication.authInfoGlobal?.authToken == null) {
+        navigateToLogin()
     }
 
     BackHandler(true) {
