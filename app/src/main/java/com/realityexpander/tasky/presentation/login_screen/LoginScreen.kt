@@ -33,7 +33,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.ExitActivity
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.common.settings.setAuthInfo
+import com.realityexpander.tasky.common.settings.saveAuthInfo
 import com.realityexpander.tasky.dataStore
 import com.realityexpander.tasky.domain.AuthInfo
 import com.realityexpander.tasky.presentation.common.modifiers.*
@@ -105,7 +105,9 @@ fun LoginScreenContent(
 
     fun navigateToAgenda(authInfo: AuthInfo) {
         scope.launch {
-            context.dataStore.setAuthInfo(authInfo)
+
+            // Save the AuthInfo in the dataStore
+            context.dataStore.saveAuthInfo(authInfo)
 
             navigator.navigate(
                 AgendaScreenDestination(
@@ -236,7 +238,7 @@ fun LoginScreenContent(
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
             if (state.isLoggedIn) {
-                //Text(text = stringResource(R.string.login_logged_in))
+                //Text(text = stringResource(R.string.login_logged_in)) // keep for debugging
                 //Spacer(modifier = Modifier.extraSmallHeight())
 
                 state.authInfo?.let { authInfo ->

@@ -239,7 +239,7 @@ class LoginViewModel @Inject constructor(
                         authInfo = event.authInfo,
                         isLoggedIn = true,
                         errorMessage = UiText.None,
-                        statusMessage = UiText.None, //UiText.Res(R.string.login_success, event.authInfo),
+                        statusMessage = UiText.None, //UiText.Res(R.string.login_success, event.authInfo), // keep for debugging
                         isPasswordVisible = false,
                     )
                 }

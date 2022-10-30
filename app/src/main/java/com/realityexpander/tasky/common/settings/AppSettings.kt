@@ -10,7 +10,7 @@ data class AppSettings(
     var settingsLoaded: Boolean = true        // allows us to check if the initial data is loaded
 )
 
-suspend fun DataStore<AppSettings>.setAuthInfo(authInfo: AuthInfo) {
+suspend fun DataStore<AppSettings>.saveAuthInfo(authInfo: AuthInfo) {
     updateData { appSettings ->
         appSettings.copy(authInfo = authInfo)
     }
