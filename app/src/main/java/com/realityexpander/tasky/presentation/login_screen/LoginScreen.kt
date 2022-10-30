@@ -236,8 +236,8 @@ fun LoginScreenContent(
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
             if (state.isLoggedIn) {
-                Text(text = stringResource(R.string.login_logged_in))
-                Spacer(modifier = Modifier.extraSmallHeight())
+                //Text(text = stringResource(R.string.login_logged_in))
+                //Spacer(modifier = Modifier.extraSmallHeight())
 
                 state.authInfo?.let { authInfo ->
                     navigateToAgenda(authInfo)

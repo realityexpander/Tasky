@@ -23,6 +23,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.realityexpander.tasky.ExitActivity
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.presentation.common.modifiers.*
 import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
 
@@ -131,6 +132,11 @@ fun AgendaScreenContent(
                 .weight(1f)
         ) col2@ {
             Spacer(modifier = Modifier.mediumHeight())
+
+            Text(
+                "Hello, " + (TaskyApplication.authInfoGlobal?.username ?: "No username"),
+                color = MaterialTheme.colors.onSurface
+            )
 //
 //            // • USERNAME
 //            NameField(

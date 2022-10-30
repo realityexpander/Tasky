@@ -29,8 +29,6 @@ class SplashViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-
-
     private val authInfo: AuthInfo? =
         savedStateHandle[UIConstants.SAVED_STATE_authInfo]
     private val statusMessage: UiText =
@@ -38,8 +36,7 @@ class SplashViewModel @Inject constructor(
 
     private val _splashState = MutableStateFlow(SplashState())
     val splashState = _splashState.onEach { state ->
-        // save state for process death
-        // is this needed for splash screen?
+        // save state for process death // is this needed for splash screen?
         savedStateHandle[UIConstants.SAVED_STATE_authInfo] = state.authInfo
         savedStateHandle[UIConstants.SAVED_STATE_statusMessage] = state.statusMessage
 
@@ -57,34 +54,13 @@ class SplashViewModel @Inject constructor(
                 statusMessage = statusMessage,
             )
             yield() // allow the splashState to be restored
-
-//            // Check if there is AuthInfo/AuthToken in the AuthRepository
-//            val authInfo = authRepository.getAuthInfo()
-
-//            // set the AuthInfo and AuthToken for this user
-//            TaskyApplication.authInfoGlobal = authInfo // todo should replace with DataStore?
-//            IAuthApi.setAuthToken(authInfo?.authToken)
-//
-//            if (authInfo?.authToken != AuthInfo.NOT_LOGGED_IN.authToken
-//                && authRepository.authenticateAuthInfo(authInfo)
-//            ) {
-//                _splashState.value = SplashState(
-//                    authInfo = authInfo,
-//                    authInfoChecked = true,
-//                    statusMessage = UiText.None, //UiText.Res(R.string.splash_logged_in)
-//                )
-//            } else {
-//                _splashState.value = SplashState(
-//                    authInfo = AuthInfo.NOT_LOGGED_IN,
-//                    authInfoChecked = true,
-//                    statusMessage = UiText.None, //UiText.Res(R.string.splash_not_logged_in)
-//                )
-//            }
         }
     }
 
     fun onSetAuthInfo(authInfo: AuthInfo) {
         viewModelScope.launch {
+
+            // set the AuthInfo and AuthToken for this user
             TaskyApplication.authInfoGlobal = authInfo
             IAuthApi.setAuthToken(authInfo.authToken)
 
