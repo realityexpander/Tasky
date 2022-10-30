@@ -53,7 +53,7 @@ fun SplashScreen(
             }
         } ?: run {
             scope.launch {
-                delay(1000) // show logo for 1 second before going to login screen
+                delay(500) // show logo for .5 second before going to login screen
 
                 navigator.navigate(
                     LoginScreenDestination(
