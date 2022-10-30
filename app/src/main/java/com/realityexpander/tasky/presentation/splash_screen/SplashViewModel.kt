@@ -13,7 +13,7 @@ import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.domain.AuthInfo
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.presentation.common.UIConstants
-import com.realityexpander.tasky.presentation.util.UiText
+import com.realityexpander.tasky.presentation.common.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

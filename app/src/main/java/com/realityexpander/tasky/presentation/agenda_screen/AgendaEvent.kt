@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.presentation.agenda_screen
 
-import com.realityexpander.tasky.presentation.util.UiText
+import com.realityexpander.tasky.presentation.common.util.UiText
 
 sealed class AgendaEvent {
     data class SetIsLoading(val isLoading: Boolean) : AgendaEvent()

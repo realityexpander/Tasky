@@ -28,7 +28,7 @@ import com.realityexpander.tasky.presentation.common.modifiers.largeHeight
 import com.realityexpander.tasky.presentation.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
 import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
-import com.realityexpander.tasky.presentation.util.UiText
+import com.realityexpander.tasky.presentation.common.util.UiText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

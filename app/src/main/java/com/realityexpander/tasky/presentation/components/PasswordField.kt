@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.presentation.ui.theme.textEntryFieldTextStyle
-import com.realityexpander.tasky.presentation.util.UiText
+import com.realityexpander.tasky.presentation.common.util.UiText
 
 @Composable
 fun PasswordField(

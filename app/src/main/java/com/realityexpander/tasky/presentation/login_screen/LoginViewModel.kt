@@ -11,7 +11,7 @@ import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.common.settings.AppSettings
 import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.data.repository.remote.authApiImpls.TaskyApi
-import com.realityexpander.tasky.presentation.util.UiText
+import com.realityexpander.tasky.presentation.common.util.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_email
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_errorMessage

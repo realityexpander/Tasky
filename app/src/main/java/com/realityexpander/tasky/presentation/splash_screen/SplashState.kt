@@ -1,7 +1,7 @@
 package com.realityexpander.tasky.presentation.splash_screen
 
 import com.realityexpander.tasky.domain.AuthInfo
-import com.realityexpander.tasky.presentation.util.UiText
+import com.realityexpander.tasky.presentation.common.util.UiText
 
 data class SplashState(
     val authInfo: AuthInfo? = null,

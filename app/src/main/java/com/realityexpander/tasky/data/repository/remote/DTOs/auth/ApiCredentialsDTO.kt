@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.data.repository.remote
+package com.realityexpander.tasky.data.repository.remote.DTOs.auth
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
