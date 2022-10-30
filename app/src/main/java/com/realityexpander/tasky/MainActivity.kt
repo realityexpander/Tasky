@@ -57,7 +57,7 @@ fun SplashScreen(
 ) {
     LaunchedEffect(key1 = true) {
         delay(2000) // simulate loading/validating user session
-        val isLoggedIn = true
+        val isLoggedIn = false
 
         // TESTING ONLY
         if (isLoggedIn) {

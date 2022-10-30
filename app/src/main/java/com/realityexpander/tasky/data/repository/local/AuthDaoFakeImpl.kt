@@ -8,6 +8,7 @@ import com.realityexpander.tasky.common.Username
 import com.realityexpander.tasky.common.username
 import com.realityexpander.tasky.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.data.common.convertersDTOEntityDomain.toEntity
+import com.realityexpander.tasky.data.repository.remote.ApiCredentialsDTO
 import com.realityexpander.tasky.domain.AuthInfo
 import javax.inject.Inject
 

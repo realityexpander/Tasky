@@ -49,7 +49,7 @@ object AppModule {
             ignoreUnknownKeys = true
             isLenient = true
         }
-        return json. asConverterFactory(contentType)
+        return json.asConverterFactory(contentType)
     }
 
     @Provides
@@ -65,8 +65,8 @@ object AppModule {
 
         val client = if(BuildConfig.BUILD_TYPE == "debug") {
             val logging = HttpLoggingInterceptor()
-            //logging.level = HttpLoggingInterceptor.Level.BODY
-            logging.level = HttpLoggingInterceptor.Level.HEADERS
+            logging.level = HttpLoggingInterceptor.Level.BODY
+//            logging.level = HttpLoggingInterceptor.Level.HEADERS
 
             OkHttpClient.Builder()
                 .addInterceptor(xApiKeyHeader)
@@ -81,7 +81,6 @@ object AppModule {
         return Retrofit.Builder()
             .baseUrl(TaskyApi.BASE_URL)
             .client(client)
-            //.addConverterFactory(MoshiConverterFactory.create())  // MOSHI json->kotlin data classes
             .addConverterFactory(converterFactory)
             .build()
             .create()

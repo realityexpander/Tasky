@@ -11,9 +11,7 @@ import kotlinx.serialization.json.JsonNames
 @Serializable
 @OptIn(ExperimentalSerializationApi::class)
 data class AuthInfoDTO(
-//    @field:Json(name="token") val authToken: AuthToken? = null,
     @JsonNames("token") val authToken: AuthToken? = null,
     val userId: UserId? = null,
-//    @field:Json(name="fullName") val username: Username? = null,
     @JsonNames("fullName") val username: Username? = null,
 )
