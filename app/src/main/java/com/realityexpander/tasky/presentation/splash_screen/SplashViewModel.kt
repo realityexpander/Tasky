@@ -15,10 +15,7 @@ import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.presentation.common.UIConstants
 import com.realityexpander.tasky.presentation.common.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import javax.inject.Inject
@@ -48,11 +45,12 @@ class SplashViewModel @Inject constructor(
             yield() // allow the splashState to be initialized
 
             // restore state after process death -- // is this needed for splash screen?
-            _splashState.value = SplashState(
-                authInfo = authInfo,
-                authInfoChecked = false,
-                statusMessage = statusMessage,
-            )
+            _splashState.update {
+                it.copy(
+                    authInfo = authInfo,
+                    authInfoChecked = false,
+                    statusMessage = statusMessage,
+                )}
             yield() // allow the splashState to be restored
         }
     }
@@ -67,17 +65,19 @@ class SplashViewModel @Inject constructor(
             if (authInfo.authToken != AuthInfo.NOT_LOGGED_IN.authToken
                 && authRepository.authenticateAuthInfo(authInfo)
             ) {
-                _splashState.value = SplashState(
-                    authInfo = authInfo,
-                    authInfoChecked = true,
-                    statusMessage = UiText.None, //UiText.Res(R.string.splash_logged_in)
-                )
+                _splashState.update {
+                    it.copy(
+                        authInfo = authInfo,
+                        authInfoChecked = true,
+                        statusMessage = UiText.None, //UiText.Res(R.string.splash_logged_in)
+                    )}
             } else {
-                _splashState.value = SplashState(
-                    authInfo = AuthInfo.NOT_LOGGED_IN,
-                    authInfoChecked = true,
-                    statusMessage = UiText.None, //UiText.Res(R.string.splash_not_logged_in)
-                )
+                _splashState.update {
+                    it.copy(
+                        authInfo = AuthInfo.NOT_LOGGED_IN,
+                        authInfoChecked = true,
+                        statusMessage = UiText.None, //UiText.Res(R.string.splash_not_logged_in)
+                    )}
             }
         }
     }

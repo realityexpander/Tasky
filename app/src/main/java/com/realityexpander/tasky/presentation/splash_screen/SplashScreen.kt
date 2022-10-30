@@ -49,7 +49,7 @@ fun SplashScreen(
 
     // Load settings from data store
     LaunchedEffect(key1 = appSettings) {
-        // ignore first data (always initial default state)
+        // ignore first data (is always initial default state due to it being a flow)
         if(appSettings.settingsLoaded) {
             context.dataStore.setFirstTime(false)
             return@LaunchedEffect
@@ -64,8 +64,8 @@ fun SplashScreen(
         )
     }
 
+    // Settings Loaded (or not) - Navigate to correct screen
     if (splashState.authInfoChecked) {
-
         splashState.authInfo?.authToken?.let { authToken ->
             if (authToken != AuthInfo.NOT_LOGGED_IN.authToken) {
                 navigator.navigate(
