@@ -1,9 +1,6 @@
 package com.realityexpander.tasky.data.repository.authRepositoryImpls
 
-import com.realityexpander.tasky.common.Email
-import com.realityexpander.tasky.common.Exceptions
-import com.realityexpander.tasky.common.Password
-import com.realityexpander.tasky.common.Username
+import com.realityexpander.tasky.common.*
 import com.realityexpander.tasky.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.data.repository.remote.AuthInfoDTO
 import com.realityexpander.tasky.data.repository.remote.IAuthApi
@@ -80,6 +77,31 @@ class AuthRepositoryImpl @Inject constructor(
             throw e
         } catch (e: Exception) {
             throw Exceptions.UnknownErrorException(e.message)
+        }
+    }
+
+    // todo: move these to the interface, and allow authDao and authApi to be defined in the interface
+
+    override suspend fun getAuthToken(): AuthToken? {
+        return authDao.getAuthToken()
+    }
+
+    override suspend fun getAuthInfo(): AuthInfo? {
+        return authDao.getAuthInfo()
+    }
+
+    override suspend fun clearAuthInfo() {
+        authDao.clearAuthInfo()
+    }
+
+    override suspend fun authenticateAuthInfo(authInfo: AuthInfo?): Boolean {
+        if(authInfo == null) return false
+        if(authInfo.authToken.isNullOrBlank()) return false
+
+        return try {
+            authApi.authenticate(authInfo.authToken)
+        } catch (e: Exception) {
+            false
         }
     }
 }

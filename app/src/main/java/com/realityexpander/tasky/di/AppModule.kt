@@ -2,7 +2,8 @@ package com.realityexpander.tasky.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.realityexpander.tasky.BuildConfig
-import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
+import com.realityexpander.tasky.TaskyApplication.Companion.authInfoGlobal
+import com.realityexpander.tasky.data.repository.local.authDaoImpls.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.data.repository.authRepositoryImpls.AuthRepositoryImpl
 import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiFakeImpl
@@ -59,14 +60,15 @@ object AppModule {
         val xApiKeyHeader = Interceptor { chain ->
             val request = chain.request().newBuilder()
                 .addHeader("x-api-key", API_KEY)
+//                .addHeader("Authorization", "${HOW_TO_GET_AUTH_TOKEN_HERE???}")
                 .build()
             chain.proceed(request)
         }
 
         val client = if(BuildConfig.BUILD_TYPE == "debug") {
             val logging = HttpLoggingInterceptor()
-            logging.level = HttpLoggingInterceptor.Level.BODY
-//            logging.level = HttpLoggingInterceptor.Level.HEADERS
+//            logging.level = HttpLoggingInterceptor.Level.BODY
+            logging.level = HttpLoggingInterceptor.Level.HEADERS
 
             OkHttpClient.Builder()
                 .addInterceptor(xApiKeyHeader)

@@ -101,4 +101,8 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
     private fun getUserId(email: Email): UserId {
         return userId("id for $email") as UserId
     }
+
+    override suspend fun authenticate(authToken: AuthToken?): Boolean {
+        return authToken != null
+    }
 }

@@ -7,7 +7,7 @@ import com.google.common.truth.Truth.assertThat
 import com.realityexpander.tasky.CoroutineTestRule
 import com.realityexpander.tasky.MainCoroutineRule
 import com.realityexpander.tasky.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
-import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
+import com.realityexpander.tasky.data.repository.local.authDaoImpls.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiFakeImpl
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.EmailMatcherFakeImpl

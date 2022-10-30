@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.domain
 
+import com.realityexpander.tasky.common.AuthToken
 import com.realityexpander.tasky.common.Email
 import com.realityexpander.tasky.common.Password
 import com.realityexpander.tasky.common.Username
@@ -34,4 +35,12 @@ interface IAuthRepository {
         email: Email,
         password: Password
     )
+
+    suspend fun getAuthToken(): AuthToken?
+
+    suspend fun getAuthInfo(): AuthInfo?
+
+    suspend fun clearAuthInfo()
+
+    suspend fun authenticateAuthInfo(authInfo: AuthInfo?): Boolean
 }

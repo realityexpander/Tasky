@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.data.repository.remote
 
+import com.realityexpander.tasky.common.AuthToken
 import com.realityexpander.tasky.common.Email
 import com.realityexpander.tasky.common.Password
 import com.realityexpander.tasky.common.Username
@@ -16,4 +17,6 @@ interface IAuthApi {
         email: Email,
         password: Password
     )
+
+    suspend fun authenticate(authToken: AuthToken? = null): Boolean
 }

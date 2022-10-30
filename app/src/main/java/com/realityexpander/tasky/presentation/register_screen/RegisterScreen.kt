@@ -31,7 +31,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
-import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
+import com.realityexpander.tasky.data.repository.local.authDaoImpls.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiFakeImpl
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import com.realityexpander.tasky.domain.validation.ValidatePassword

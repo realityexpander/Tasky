@@ -18,4 +18,7 @@ object UIConstants {
     const val SAVED_STATE_statusMessage = "statusMessage"
     const val SAVED_STATE_errorMessage = "errorMessage"
 
+    // Splash screen
+    const val SAVED_STATE_authInfo = "authToken"
+
 }

@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.data.repository.local
+package com.realityexpander.tasky.data.repository.local.authDaoImpls
 
 import com.realityexpander.tasky.common.AuthToken
 import com.realityexpander.tasky.common.authToken
@@ -8,7 +8,8 @@ import com.realityexpander.tasky.common.Username
 import com.realityexpander.tasky.common.username
 import com.realityexpander.tasky.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.data.common.convertersDTOEntityDomain.toEntity
-import com.realityexpander.tasky.data.repository.remote.ApiCredentialsDTO
+import com.realityexpander.tasky.data.repository.local.AuthInfoEntity
+import com.realityexpander.tasky.data.repository.local.IAuthDao
 import com.realityexpander.tasky.domain.AuthInfo
 import javax.inject.Inject
 
@@ -16,7 +17,7 @@ import javax.inject.Inject
 
 class AuthDaoImpl @Inject constructor(): IAuthDao {
     private var authInfoEntity: AuthInfoEntity =
-        AuthInfoEntity(null, null, null)
+        AuthInfoEntity(null, null, null) // todo replace with DataStore
 
     override suspend fun getAuthToken(): AuthToken? {
         return authToken(authInfoEntity.authToken)
