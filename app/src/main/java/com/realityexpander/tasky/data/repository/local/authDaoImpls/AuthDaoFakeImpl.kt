@@ -18,8 +18,8 @@ import javax.inject.Inject
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 class AuthDaoFakeImpl @Inject constructor(): IAuthDao {
     private var authInfoEntity: AuthInfoEntity =
-//        AuthInfoEntity(null, null, null)
-        AuthInfoEntity("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJ1c2VycyIsImlzcyI6Imh0dHBzOi8vMC4wLjAuMDo4MDgwIiwiZXhwIjoxNjk4NjQzNDAzLCJ1c2VySWQiOiI2MzVkYzc4ODA4MDZiMjdkYzhhYjgxYWUifQ.oo4uPe1w4l1ddz_kXm45TttwUpwmfBkwel2_M5MBH4Y", "635dc7880806b27dc8ab81ae", "Chris Athanas")
+        AuthInfoEntity(null, null, null)
+//        AuthInfoEntity("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJ1c2VycyIsImlzcyI6Imh0dHBzOi8vMC4wLjAuMDo4MDgwIiwiZXhwIjoxNjk4NjQzNDAzLCJ1c2VySWQiOiI2MzVkYzc4ODA4MDZiMjdkYzhhYjgxYWUifQ.oo4uPe1w4l1ddz_kXm45TttwUpwmfBkwel2_M5MBH4Y", "635dc7880806b27dc8ab81ae", "Chris Athanas")
 
     override suspend fun getAuthToken(): AuthToken? {
         return authToken(authInfoEntity.authToken)
