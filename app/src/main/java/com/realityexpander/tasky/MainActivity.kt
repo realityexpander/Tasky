@@ -26,6 +26,7 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.data.repository.remote.authApiImpls.TaskyApi
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
@@ -111,7 +112,7 @@ class SplashViewModel @Inject constructor(
 
                 // set the AuthInfo and AuthToken for this user
                 TaskyApplication.authInfoGlobal = authInfo // todo should replace with DataStore?
-                TaskyApi.setAuthToken(authInfo?.authToken)
+                IAuthApi.setAuthToken(authInfo?.authToken)
 
                 if(authInfo?.authToken != AuthInfo.NOT_LOGGED_IN.authToken
                     && authRepository.authenticateAuthInfo(authInfo)

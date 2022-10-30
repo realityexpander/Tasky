@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.common.Exceptions
+import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.data.repository.remote.authApiImpls.TaskyApi
 import com.realityexpander.tasky.presentation.util.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
@@ -108,7 +109,7 @@ class LoginViewModel @Inject constructor(
         try {
             val authInfo = authRepository.login(email, password)
             TaskyApplication.authInfoGlobal = authInfo // todo should replace with DataStore?
-            TaskyApi.setAuthToken(authInfo?.authToken)
+            IAuthApi.setAuthToken(authInfo?.authToken)
             sendEvent(LoginEvent.LoginSuccess(authInfo))
         } catch(e: Exceptions.WrongPasswordException) {
             sendEvent(LoginEvent.LoginError(UiText.Res(R.string.error_login_error, e.message ?: "")))

@@ -108,9 +108,9 @@ class AuthApiImpl @Inject constructor (
         try {
             val response =  authToken?.let {
                 // Use the provided token
-                taskyApi.authenticate(TaskyApi.createAuthorizationHeader(authToken))
+                taskyApi.authenticate(IAuthApi.createAuthorizationHeader(authToken))
             } ?:
-                // Use the current user's token
+                // Use the current user's AuthToken from the IAuthApi companion object
                 taskyApi.authenticate()
 
             return when(response.code()) {
