@@ -37,6 +37,6 @@ task clean(type: Delete) {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += "-opt-in=org.mylibrary.OptInAnnotation"
-        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"  // for kotlinx.serialization
     }
 }
