@@ -45,6 +45,13 @@
     <string name="passwordField_description_show">Show password</string>
     <string name="passwordField_description_lock">Password entry field</string>
 
+    <!--    TextEntryField Compose Component -->
+    <string name="textEntryField_description_isValid">Text entry is valid</string>
+    <string name="textEntryField_description_isInvalid">Text entry is invalid</string>
+    <string name="textEntryField_label">Text Entry</string>
+    <string name="textEntryField_placeholder">Enter Text</string>
+    <string name="register_network_error">Register network error - %s</string>
+
     <!--    Error Messages (general)-->
     <string name="error_unknown">Unknown error - %s</string>
     <string name="error_invalid_email">Invalid email address.</string>
@@ -52,13 +59,6 @@
     <string name="error_invalid_confirm_password">Invalid confirm password.</string>
     <string name="error_invalid_username">Invalid username.</string>
     <string name="error_invalid_user_name">Invalid user name,</string>
-
-    <!--    TextEntryField Compose Component -->
-    <string name="textEntryField_description_isValid">Text entry is valid</string>
-    <string name="textEntryField_description_isInvalid">Text entry is invalid</string>
-    <string name="textEntryField_label">Text Entry</string>
-    <string name="textEntryField_placeholder">Enter Text</string>
-    <string name="register_network_error">Register network error - %s</string>
 
     <!--    Agenda screen -->
     <string name="agenda_title">Agenda Screen</string>
