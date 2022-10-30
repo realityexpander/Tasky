@@ -1,8 +1,9 @@
 package com.realityexpander.tasky.data.repository.remote.authApiImpls
 
 import com.realityexpander.tasky.BuildConfig
-import com.realityexpander.tasky.data.repository.remote.ApiCredentialsDTO
-import com.realityexpander.tasky.data.repository.remote.AuthInfoDTO
+import com.realityexpander.tasky.data.repository.remote.DTOs.auth.ApiCredentialsDTO
+import com.realityexpander.tasky.data.repository.remote.DTOs.auth.AuthInfoDTO
+import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -16,6 +17,12 @@ interface TaskyApi {
     @POST("register")
     suspend fun register(
         @Body credentials: ApiCredentialsDTO,
+    ): Response<Void>
+
+    @GET("authenticate")
+    suspend fun authenticate(
+        //authToken: String = ""
+        @Header("Authorization") authorizationHeader: String? = IAuthApi.authorizationHeader
     ): Response<Void>
 
 

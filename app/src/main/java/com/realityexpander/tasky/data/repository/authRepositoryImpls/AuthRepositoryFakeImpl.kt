@@ -1,11 +1,8 @@
 package com.realityexpander.tasky.data.repository.authRepositoryImpls
 
-import com.realityexpander.tasky.common.Email
-import com.realityexpander.tasky.common.Exceptions
-import com.realityexpander.tasky.common.Password
-import com.realityexpander.tasky.common.Username
+import com.realityexpander.tasky.common.*
 import com.realityexpander.tasky.data.common.convertersDTOEntityDomain.toDomain
-import com.realityexpander.tasky.data.repository.remote.AuthInfoDTO
+import com.realityexpander.tasky.data.repository.remote.DTOs.auth.AuthInfoDTO
 import com.realityexpander.tasky.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.data.repository.local.IAuthDao
 import com.realityexpander.tasky.domain.AuthInfo
@@ -72,5 +69,21 @@ class AuthRepositoryFakeImpl(
         } catch (e: Exception) {
             throw Exceptions.UnknownErrorException(e.message)
         }
+    }
+
+    override suspend fun getAuthToken(): AuthToken? {
+        return authDao.getAuthToken()
+    }
+
+    override suspend fun getAuthInfo(): AuthInfo? {
+        return authDao.getAuthInfo()
+    }
+
+    override suspend fun clearAuthInfo() {
+        authDao.clearAuthInfo()
+    }
+
+    override suspend fun authenticateAuthInfo(authInfo: AuthInfo?): Boolean {
+        return authApi.authenticate(authInfo?.authToken)
     }
 }

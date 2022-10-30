@@ -29,17 +29,21 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.ExitActivity
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.destinations.RegisterScreenDestination
+import com.realityexpander.tasky.common.settings.saveAuthInfo
+import com.realityexpander.tasky.dataStore
+import com.realityexpander.tasky.domain.AuthInfo
 import com.realityexpander.tasky.presentation.common.modifiers.*
 import com.realityexpander.tasky.presentation.components.EmailField
 import com.realityexpander.tasky.presentation.components.PasswordField
+import com.realityexpander.tasky.presentation.destinations.AgendaScreenDestination
+import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
 import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
-import com.realityexpander.tasky.presentation.util.UiText
+import com.realityexpander.tasky.presentation.common.util.UiText
+import kotlinx.coroutines.launch
 
 @Composable
 @Destination
@@ -58,7 +62,7 @@ fun LoginScreen(
     LoginScreenContent(
         username = username,                // passed to/from RegisterScreen (not used in LoginScreen)
         confirmPassword = confirmPassword,  // passed to/from RegisterScreen (not used in LoginScreen)
-        loginState = loginState,
+        state = loginState,
         onAction = viewModel::sendEvent,
         navigator = navigator,
     )
@@ -69,17 +73,18 @@ fun LoginScreen(
 fun LoginScreenContent(
     username: String? = null,
     confirmPassword: String? = null,
-    loginState: LoginState,
+    state: LoginState,
     onAction: (LoginEvent) -> Unit,
     navigator: DestinationsNavigator,
 ) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     fun performLogin() {
         onAction(LoginEvent.Login(
-            email = loginState.email,
-            password = loginState.password,
+            email = state.email,
+            password = state.password,
         ))
         focusManager.clearFocus()
     }
@@ -88,8 +93,8 @@ fun LoginScreenContent(
         navigator.navigate(
             RegisterScreenDestination(
                 username = username,
-                email = loginState.email,
-                password = loginState.password,
+                email = state.email,
+                password = state.password,
                 confirmPassword = confirmPassword
             )
         ) {
@@ -97,6 +102,24 @@ fun LoginScreenContent(
             restoreState = true
         }
     }
+
+    fun navigateToAgenda(authInfo: AuthInfo) {
+        scope.launch {
+
+            // Save the AuthInfo in the dataStore
+            context.dataStore.saveAuthInfo(authInfo)
+
+            navigator.navigate(
+                AgendaScreenDestination(
+                    // authInfo = authInfo
+                )
+            ) {
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
+    }
+
 
     BackHandler(true) {
         // todo: should we ask the user to quit?
@@ -144,30 +167,30 @@ fun LoginScreenContent(
 
             // • EMAIL
             EmailField(
-                value = loginState.email,
+                value = state.email,
                 label = null,
-                isError = loginState.isInvalidEmail,
+                isError = state.isInvalidEmail,
                 onValueChange = {
                     onAction(LoginEvent.UpdateEmail(it))
                 }
             )
-            if (loginState.isInvalidEmail && loginState.isShowInvalidEmailMessage) {
+            if (state.isInvalidEmail && state.isShowInvalidEmailMessage) {
                 Text(text = stringResource(R.string.error_invalid_email), color = Color.Red)
             }
             Spacer(modifier = Modifier.smallHeight())
 
             // • PASSWORD
             PasswordField(
-                value = loginState.password,
+                value = state.password,
                 label = null,
-                isError = loginState.isInvalidPassword,
+                isError = state.isInvalidPassword,
                 onValueChange = {
                     onAction(LoginEvent.UpdatePassword(it))
                 },
-                isPasswordVisible = loginState.isPasswordVisible,
+                isPasswordVisible = state.isPasswordVisible,
                 clickTogglePasswordVisibility = {
                     onAction(
-                        LoginEvent.SetIsPasswordVisible(!loginState.isPasswordVisible)
+                        LoginEvent.SetIsPasswordVisible(!state.isPasswordVisible)
                     )
                 },
                 imeAction = ImeAction.Done,
@@ -175,7 +198,7 @@ fun LoginScreenContent(
                     performLogin()
                 }
             )
-            if (loginState.isInvalidPassword && loginState.isShowInvalidPasswordMessage) {
+            if (state.isInvalidPassword && state.isShowInvalidPasswordMessage) {
                 Text(text = stringResource(R.string.error_invalid_password), color = Color.Red)
             }
             Spacer(modifier = Modifier.mediumHeight())
@@ -188,13 +211,13 @@ fun LoginScreenContent(
                 modifier = Modifier
                     .taskyWideButton(color = MaterialTheme.colors.primary)
                     .align(alignment = Alignment.CenterHorizontally),
-                enabled = !loginState.isLoading,
+                enabled = !state.isLoading,
             ) {
                 Text(
                     text = stringResource(R.string.login_button),
                     fontSize = MaterialTheme.typography.button.fontSize,
                 )
-                if (loginState.isLoading) {
+                if (state.isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier
                             .padding(start = DP.small)
@@ -207,18 +230,24 @@ fun LoginScreenContent(
 
             // STATUS //////////////////////////////////////////
 
-            loginState.errorMessage.getOrNull?.let { errorMessage ->
+            state.errorMessage.getOrNull?.let { errorMessage ->
                 Text(
                     text = "Error: $errorMessage",
                     color = Color.Red,
                 )
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
-            if (loginState.isLoggedIn) {
-                Text(text = stringResource(R.string.login_logged_in))
-                Spacer(modifier = Modifier.extraSmallHeight())
+            if (state.isLoggedIn) {
+                //Text(text = stringResource(R.string.login_logged_in)) // keep for debugging
+                //Spacer(modifier = Modifier.extraSmallHeight())
+
+                state.authInfo?.let { authInfo ->
+                    navigateToAgenda(authInfo)
+                } ?: run {
+                    onAction(LoginEvent.LoginError(UiText.Res(R.string.error_login_error, "authInfo is null")))
+                }
             }
-            loginState.statusMessage.getOrNull?.let { message ->
+            state.statusMessage.getOrNull?.let { message ->
                 Text(text = message)
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
@@ -270,7 +299,7 @@ fun LoginScreenPreview() {
                 navigator = EmptyDestinationsNavigator,
                 username = "NOT_USED_IN_THIS_SCREEN_UI",
                 confirmPassword = "NOT_USED_IN_THIS_SCREEN_UI",
-                loginState = LoginState(
+                state = LoginState(
                     email = "chris@demo.com",
                     password = "123456Aa",
                     isInvalidEmail = false,

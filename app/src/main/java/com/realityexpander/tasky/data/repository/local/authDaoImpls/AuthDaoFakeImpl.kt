@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.data.repository.local
+package com.realityexpander.tasky.data.repository.local.authDaoImpls
 
 import com.realityexpander.tasky.common.AuthToken
 import com.realityexpander.tasky.common.authToken
@@ -8,14 +8,19 @@ import com.realityexpander.tasky.common.Username
 import com.realityexpander.tasky.common.username
 import com.realityexpander.tasky.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.data.common.convertersDTOEntityDomain.toEntity
+import com.realityexpander.tasky.data.repository.local.AuthInfoEntity
+import com.realityexpander.tasky.data.repository.local.IAuthDao
 import com.realityexpander.tasky.domain.AuthInfo
+import kotlinx.serialization.ExperimentalSerializationApi
 import javax.inject.Inject
 
 // Simulates a local database
 
+@OptIn(ExperimentalSerializationApi::class)
 class AuthDaoFakeImpl @Inject constructor(): IAuthDao {
     private var authInfoEntity: AuthInfoEntity =
         AuthInfoEntity(null, null, null)
+//        AuthInfoEntity("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJ1c2VycyIsImlzcyI6Imh0dHBzOi8vMC4wLjAuMDo4MDgwIiwiZXhwIjoxNjk4NjQzNDAzLCJ1c2VySWQiOiI2MzVkYzc4ODA4MDZiMjdkYzhhYjgxYWUifQ.oo4uPe1w4l1ddz_kXm45TttwUpwmfBkwel2_M5MBH4Y", "635dc7880806b27dc8ab81ae", "Chris Athanas")
 
     override suspend fun getAuthToken(): AuthToken? {
         return authToken(authInfoEntity.authToken)

@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.data.common.convertersDTOEntityDomain
 
-import com.realityexpander.tasky.data.repository.remote.AuthInfoDTO
+import com.realityexpander.tasky.data.repository.remote.DTOs.auth.AuthInfoDTO
 import com.realityexpander.tasky.data.repository.local.AuthInfoEntity
 import com.realityexpander.tasky.domain.AuthInfo
 

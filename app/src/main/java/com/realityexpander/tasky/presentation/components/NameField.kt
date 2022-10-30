@@ -15,13 +15,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.presentation.util.UiText
+import com.realityexpander.tasky.presentation.common.util.UiText
 
 @Composable
 fun NameField(
     modifier: Modifier = Modifier.fillMaxWidth(),
     value: String,
     label: String? = UiText.Res(R.string.nameField_label).get, // if this is null, label is not shown
+    @Suppress("UNUSED_PARAMETER") // left for future use
     labelComponent: @Composable (() -> Unit)? =
         { Text(text = label ?: UiText.Res(R.string.nameField_label).get) },
     placeholder: String = UiText.Res(R.string.nameField_placeholder).get,

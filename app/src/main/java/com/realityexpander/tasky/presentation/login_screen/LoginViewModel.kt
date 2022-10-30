@@ -1,17 +1,18 @@
 package com.realityexpander.tasky.presentation.login_screen
 
 import android.net.Uri
+import androidx.datastore.core.DataStore
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.common.Exceptions
-import com.realityexpander.tasky.di.AuthRepositoryFakeUsingProvides
-import com.realityexpander.tasky.di.AuthRepositoryProd_AuthApiProd_AuthDaoFake
-import com.realityexpander.tasky.presentation.util.UiText
+import com.realityexpander.tasky.common.settings.AppSettings
+import com.realityexpander.tasky.data.repository.remote.IAuthApi
+import com.realityexpander.tasky.data.repository.remote.authApiImpls.TaskyApi
+import com.realityexpander.tasky.presentation.common.util.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
-import com.realityexpander.tasky.domain.validation.validateEmail.IValidateEmail
-import com.realityexpander.tasky.domain.validation.ValidatePassword
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_email
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.presentation.common.UIConstants.SAVED_STATE_isInvalidEmail
@@ -27,7 +28,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import javax.inject.Inject
-import javax.inject.Named
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -109,8 +109,12 @@ class LoginViewModel @Inject constructor(
 
     private suspend fun login(email: String, password: String) {
         try {
-            val authToken = authRepository.login(email, password)
-            sendEvent(LoginEvent.LoginSuccess(authToken))
+            val authInfo = authRepository.login(email, password)
+
+            TaskyApplication.authInfoGlobal = authInfo // will be saved in datastore in the LoginScreen composable
+            IAuthApi.setAuthToken(authInfo.authToken)
+
+            sendEvent(LoginEvent.LoginSuccess(authInfo))
         } catch(e: Exceptions.WrongPasswordException) {
             sendEvent(LoginEvent.LoginError(UiText.Res(R.string.error_login_error, e.message ?: "")))
         } catch(e: Exceptions.LoginException) {
@@ -232,9 +236,10 @@ class LoginViewModel @Inject constructor(
             is LoginEvent.LoginSuccess -> {
                 _loginState.update {
                     it.copy(
+                        authInfo = event.authInfo,
                         isLoggedIn = true,
                         errorMessage = UiText.None,
-                        statusMessage = UiText.Res(R.string.login_success, event.authInfo),
+                        statusMessage = UiText.None, //UiText.Res(R.string.login_success, event.authInfo), // keep for debugging
                         isPasswordVisible = false,
                     )
                 }

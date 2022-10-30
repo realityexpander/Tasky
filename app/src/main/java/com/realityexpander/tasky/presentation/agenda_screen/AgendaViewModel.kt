@@ -8,7 +8,7 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.common.Exceptions
 import com.realityexpander.tasky.di.AuthRepositoryFakeUsingProvides
 import com.realityexpander.tasky.di.AuthRepositoryProd_AuthApiProd_AuthDaoFake
-import com.realityexpander.tasky.presentation.util.UiText
+import com.realityexpander.tasky.presentation.common.util.UiText
 import com.realityexpander.tasky.domain.IAuthRepository
 import com.realityexpander.tasky.domain.validation.validateEmail.IValidateEmail
 import com.realityexpander.tasky.domain.validation.ValidatePassword
@@ -205,7 +205,7 @@ class AgendaViewModel @Inject constructor(
     }
 
     private suspend fun onEvent(event: AgendaEvent) {
-        when(event) {
+//        when(event) {
 //            is AgendaEvent.SetIsLoading -> {
 //                _agendaState.update {
 //                    it.copy(isLoading = event.isLoading)
@@ -411,7 +411,7 @@ class AgendaViewModel @Inject constructor(
 //                }
 //                sendEvent(AgendaEvent.SetIsLoading(false))
 //            }
-
-        }
+//
+//        }
     }
 }

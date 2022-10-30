@@ -23,8 +23,9 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.realityexpander.tasky.ExitActivity
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.destinations.LoginScreenDestination
+import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.presentation.common.modifiers.*
+import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
 
 @Composable
 @Destination
@@ -71,7 +72,7 @@ fun AgendaScreenContent(
         focusManager.clearFocus()
     }
 
-    fun navigateToXXX() {
+    fun navigateToLogin() {
         navigator.navigate(
             LoginScreenDestination(
                 username = state.username,  // saved here in case the user comes back to registration
@@ -86,6 +87,11 @@ fun AgendaScreenContent(
             launchSingleTop = true
             restoreState = true
         }
+    }
+
+    // Guard against invalid authentication state
+    if (TaskyApplication.authInfoGlobal?.authToken == null) {
+        navigateToLogin()
     }
 
     BackHandler(true) {
@@ -131,6 +137,11 @@ fun AgendaScreenContent(
                 .weight(1f)
         ) col2@ {
             Spacer(modifier = Modifier.mediumHeight())
+
+            Text(
+                "Hello, " + (TaskyApplication.authInfoGlobal?.username ?: "No username"),
+                color = MaterialTheme.colors.onSurface
+            )
 //
 //            // • USERNAME
 //            NameField(
