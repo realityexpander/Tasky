@@ -64,7 +64,7 @@ fun SplashScreen(
         )
     }
 
-    // Settings Loaded (or not) - Navigate to correct screen
+    // After settings are Loaded (or not) - Navigate to correct screen
     if (splashState.authInfoChecked) {
         splashState.authInfo?.authToken?.let { authToken ->
             if (authToken != AuthInfo.NOT_LOGGED_IN.authToken) {
