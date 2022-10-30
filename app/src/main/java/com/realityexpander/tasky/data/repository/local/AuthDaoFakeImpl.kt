@@ -14,6 +14,7 @@ import javax.inject.Inject
 
 // Simulates a local database
 
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 class AuthDaoFakeImpl @Inject constructor(): IAuthDao {
     private var authInfoEntity: AuthInfoEntity =
         AuthInfoEntity(null, null, null)
