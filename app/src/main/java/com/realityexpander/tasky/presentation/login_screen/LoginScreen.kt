@@ -29,15 +29,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.ExitActivity
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.destinations.RegisterScreenDestination
 import com.realityexpander.tasky.presentation.common.modifiers.*
 import com.realityexpander.tasky.presentation.components.EmailField
 import com.realityexpander.tasky.presentation.components.PasswordField
+import com.realityexpander.tasky.presentation.destinations.RegisterScreenDestination
 import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
 import com.realityexpander.tasky.presentation.util.UiText
 

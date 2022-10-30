@@ -109,7 +109,7 @@ class LoginViewModel @Inject constructor(
         try {
             val authInfo = authRepository.login(email, password)
             TaskyApplication.authInfoGlobal = authInfo // todo should replace with DataStore?
-            IAuthApi.setAuthToken(authInfo?.authToken)
+            IAuthApi.setAuthToken(authInfo.authToken)
             sendEvent(LoginEvent.LoginSuccess(authInfo))
         } catch(e: Exceptions.WrongPasswordException) {
             sendEvent(LoginEvent.LoginError(UiText.Res(R.string.error_login_error, e.message ?: "")))

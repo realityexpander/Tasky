@@ -22,6 +22,7 @@ fun EmailField(
     modifier: Modifier = Modifier.fillMaxWidth(),
     value: String,
     label: String? = UiText.Res(R.string.emailField_label).get, // if this is null, label is not shown.
+    @Suppress("UNUSED_PARAMETER") // left for future use
     labelComponent: @Composable (() -> Unit)? =
         { Text(text = label ?: UiText.Res(R.string.emailField_label).get) },
     placeholder: String = UiText.Res(R.string.emailField_placeholder).get,

@@ -205,7 +205,7 @@ class AgendaViewModel @Inject constructor(
     }
 
     private suspend fun onEvent(event: AgendaEvent) {
-        when(event) {
+//        when(event) {
 //            is AgendaEvent.SetIsLoading -> {
 //                _agendaState.update {
 //                    it.copy(isLoading = event.isLoading)
@@ -411,7 +411,7 @@ class AgendaViewModel @Inject constructor(
 //                }
 //                sendEvent(AgendaEvent.SetIsLoading(false))
 //            }
-
-        }
+//
+//        }
     }
 }

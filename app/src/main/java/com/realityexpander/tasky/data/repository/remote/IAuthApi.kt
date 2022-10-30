@@ -30,6 +30,7 @@ interface IAuthApi {
             get() = createAuthorizationHeader(Companion.authToken)
 
         @JvmName("setAuthToken1")
+        @JvmStatic
         fun setAuthToken(authToken: AuthToken?) {
             Companion.authToken = authToken
         }

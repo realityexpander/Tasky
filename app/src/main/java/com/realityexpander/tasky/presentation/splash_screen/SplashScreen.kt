@@ -22,10 +22,10 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.destinations.AgendaScreenDestination
-import com.realityexpander.tasky.destinations.LoginScreenDestination
 import com.realityexpander.tasky.domain.AuthInfo
 import com.realityexpander.tasky.presentation.common.modifiers.largeHeight
+import com.realityexpander.tasky.presentation.destinations.AgendaScreenDestination
+import com.realityexpander.tasky.presentation.destinations.LoginScreenDestination
 import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
 import com.realityexpander.tasky.presentation.util.UiText
 import kotlinx.coroutines.delay
