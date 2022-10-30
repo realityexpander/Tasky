@@ -1,9 +1,12 @@
 package com.realityexpander.tasky.data.repository.remote
 
-import com.squareup.moshi.Json
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.JsonNames
 
-data class ApiCredentialsDTO(
-    @field:Json(name="fullName") val username: String? = null,
+@OptIn(ExperimentalSerializationApi::class)
+data class ApiCredentialsDTO constructor(
+//    @field:Json(name="fullName") val username: String? = null,
+    @JsonNames("fullName") val username: String? = null,
     val email: String,
     val password: String
 )

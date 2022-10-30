@@ -6,6 +6,10 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'com.google.dagger.hilt.android'
     id "org.jlleitschuh.gradle.ktlint" version "11.0.0"
+//    id 'org.jetbrains.kotlin.multiplatform' version '1.6.21'
+//    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.21'
+//    id 'kotlin'
+    id 'kotlinx-serialization'
     id 'kotlin-kapt'
 }
 
@@ -123,9 +127,13 @@ dependencies {
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
-    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+//    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
     implementation "com.squareup.okhttp3:okhttp:5.0.0-alpha.3"
     implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3"
+
+    // KotlinX Serialization
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version"
+    implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
 
     // Room
     implementation "androidx.room:room-runtime:$room_version"

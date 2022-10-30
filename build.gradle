@@ -6,10 +6,7 @@ buildscript {
         retrofit_version = '2.9.0'
         dagger_hilt_version = '2.44'
         compose_destinations_version = '1.5.23-beta' // for kotlin 1.6.21
-    }
-    dependencies {
-        classpath "com.google.dagger:hilt-android-gradle-plugin:2.44"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        serialization_version = '1.4.1'
     }
 
     repositories {
@@ -17,6 +14,12 @@ buildscript {
         google()
         maven { url 'https://maven.google.com' }
         maven { url 'https://jitpack.io' }
+    }
+
+    dependencies {
+        classpath "com.google.dagger:hilt-android-gradle-plugin:2.44"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
     }
 }
 
@@ -34,5 +37,6 @@ task clean(type: Delete) {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += "-opt-in=org.mylibrary.OptInAnnotation"
+        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
     }
 }

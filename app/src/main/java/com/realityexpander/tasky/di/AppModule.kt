@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.di
 
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.realityexpander.tasky.BuildConfig
 import com.realityexpander.tasky.data.repository.local.AuthDaoFakeImpl
 import com.realityexpander.tasky.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
@@ -20,11 +21,14 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Converter
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
 import javax.inject.Named
 import javax.inject.Qualifier
@@ -36,9 +40,21 @@ const val USE_FAKE_REPOSITORY = false
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
-    fun provideTaskyApi(): TaskyApi {
+    fun provideKotlinSerialization(): Converter.Factory {
+        val contentType = "application/json".toMediaType()
+        val json = Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+        }
+        return json. asConverterFactory(contentType)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTaskyApi(converterFactory: Converter.Factory): TaskyApi {
 
         val xApiKeyHeader = Interceptor { chain ->
             val request = chain.request().newBuilder()
@@ -65,7 +81,8 @@ object AppModule {
         return Retrofit.Builder()
             .baseUrl(TaskyApi.BASE_URL)
             .client(client)
-            .addConverterFactory(MoshiConverterFactory.create())  // json->kotlin data classes
+            //.addConverterFactory(MoshiConverterFactory.create())  // MOSHI json->kotlin data classes
+            .addConverterFactory(converterFactory)
             .build()
             .create()
     }
@@ -109,7 +126,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(): IAuthRepository {
+    fun provideAuthRepository(converterFactory: Converter.Factory): IAuthRepository {
         if (USE_FAKE_REPOSITORY) {
             return provideAuthRepositoryFake(
                 authApi = provideAuthApiFakeImpl(),
@@ -121,7 +138,7 @@ object AppModule {
         } else {
             return provideAuthRepositoryProd(
                 authApi = provideAuthApiProd(
-                    provideTaskyApi()
+                    provideTaskyApi(converterFactory)
                 ),
                 authDao = AuthDaoFakeImpl(),  // why cant we use the implementation from @Binds here?
                 validateUsername = provideValidateUsername(),
