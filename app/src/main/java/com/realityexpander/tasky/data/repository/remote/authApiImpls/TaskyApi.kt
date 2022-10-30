@@ -30,21 +30,5 @@ interface TaskyApi {
     companion object {
         const val BASE_URL = "https://tasky.pl-coding.com/"
         const val API_KEY = BuildConfig.API_KEY
-
-//        var authToken: String? = null
-//            private set
-//
-//        var authorizationHeader: String? = null
-//            private set
-//            get() = "Bearer ${Companion.authToken}" ?: "{NULL TOKEN}"
-//
-//        @JvmName("setAuthToken1")
-//        fun setAuthToken(authToken: AuthToken?) {
-//            Companion.authToken = authToken
-//        }
-//
-//        fun createAuthorizationHeader(authToken: String?): String {
-//            return "Bearer $authToken" ?: "{NULL TOKEN}"
-//        }
     }
 }
