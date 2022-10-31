@@ -70,13 +70,6 @@ class MainActivity : ComponentActivity() {
                         viewModel.onSetAuthInfo(appSettings.authInfo)
                     }
 
-//                    LoginScreenDestination(
-//                        username = "Chris Athanas",     // TESTING ONLY
-//                        email = "chris3@demo.com",      // TESTING ONLY
-//                        password = "Password1",         // TESTING ONLY
-//                        confirmPassword = "Password1",  // TESTING ONLY
-//                    )
-
                     if (!splashState.isLoading) {
                         DestinationsNavHost(
                             navGraph = NavGraphs.root,
