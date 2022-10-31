@@ -86,6 +86,8 @@ class AuthApiImpl @Inject constructor (
             }
         } catch (e: Exceptions.NetworkException) {
             throw e
+        } catch (e: Exceptions.RegisterException) {
+            throw e
         } catch (e: Exceptions.UnknownErrorException) {
             throw e
         } catch (e: HttpException) {
