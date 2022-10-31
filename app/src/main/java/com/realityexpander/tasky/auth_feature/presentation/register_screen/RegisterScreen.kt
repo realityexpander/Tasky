@@ -394,6 +394,9 @@ fun RegisterScreenPreview_Interactive() {
                         validateEmail = ValidateEmail(),
                         validatePassword = ValidatePassword(),
                     ),
+                    validateUsername = ValidateUsername(),
+                    validateEmail = ValidateEmail(),
+                    validatePassword = ValidatePassword(),
                     savedStateHandle = SavedStateHandle().apply {
                         // For Live Preview / interactive mode
                         set("username", "c")
@@ -419,18 +422,3 @@ fun RegisterScreenPreview_Interactive() {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

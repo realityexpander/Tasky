@@ -7,6 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.core.common.Exceptions
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_authInfo
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_confirmPassword
@@ -32,6 +35,9 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
+    val validateEmail: ValidateEmail,
+    val validatePassword: ValidatePassword,
+    val validateUsername: ValidateUsername,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -157,38 +163,35 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-    private fun validateUsername() {
-        val isValid = authRepository.validateUsername(registerState.value.username)
-        sendEvent(RegisterEvent.IsValidUsername(isValid))
-    }
+//    private fun validateUsername() {
+//        val isValid = validateUsername(registerState.value.username)
+//        sendEvent(RegisterEvent.IsValidUsername(isValid))
+//    }
 
-    private fun validateEmail() {
-        val isValid = authRepository.validateEmail(registerState.value.email)
-        sendEvent(RegisterEvent.IsValidEmail(isValid))
-    }
+//    private fun validateEmail() {
+//        val isValid = authRepository.validateEmail(registerState.value.email)
+//        sendEvent(RegisterEvent.IsValidEmail(isValid))
+//    }
 
-    private fun validatePassword() {
-        val isValid = authRepository.validatePassword(registerState.value.password)
-        sendEvent(RegisterEvent.IsValidPassword(isValid))
-    }
+//    private fun validatePassword() {
+//        val isValid = authRepository.validatePassword(registerState.value.password)
+//        sendEvent(RegisterEvent.IsValidPassword(isValid))
+//    }
 
-    private fun validateConfirmPassword() {
-        val isValid = authRepository.validatePassword(registerState.value.confirmPassword)
-        sendEvent(RegisterEvent.IsValidConfirmPassword(isValid))
-    }
+//    private fun validateConfirmPassword() {
+//        val isValid = authRepository.validatePassword(registerState.value.confirmPassword)
+//        sendEvent(RegisterEvent.IsValidConfirmPassword(isValid))
+//    }
 
-    private fun validatePasswordsMatch() {
+    private fun validatePasswordsMatch(): Boolean {
         // Both passwords must have at least 1 character to validate match
-        if(registerState.value.password.isBlank()
+        if (registerState.value.password.isBlank()
             || registerState.value.confirmPassword.isBlank()
         ) {
-            sendEvent(RegisterEvent.IsPasswordsMatch(true))
-
-            return
+            return true
         }
 
-        val isMatch = (registerState.value.password == registerState.value.confirmPassword)
-        sendEvent(RegisterEvent.IsPasswordsMatch(isMatch))
+        return (registerState.value.password == registerState.value.confirmPassword)
     }
 
     fun sendEvent(event: RegisterEvent) {
@@ -249,58 +252,80 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.ValidateUsername -> {
-                validateUsername()
+                val isValid = validateUsername.validate(registerState.value.username)
+                _registerState.update {
+                    it.copy(isInvalidUsername = !isValid)
+                }
                 yield()
             }
             is RegisterEvent.ValidateEmail -> {
-                validateEmail()
+                val isValid = validateEmail.validate(registerState.value.email)
+                _registerState.update {
+                    it.copy(
+                        isInvalidEmail = !isValid
+                    )
+                }
                 yield()
             }
             is RegisterEvent.ValidatePassword -> {
-                validatePassword()
+                val isValid = validatePassword.validate(registerState.value.password)
+                _registerState.update {
+                    it.copy(
+                        isInvalidPassword = !isValid
+                    )
+                }
                 yield()
             }
             is RegisterEvent.ValidateConfirmPassword -> {
-                validateConfirmPassword()
+                val isValid = validatePassword.validate(registerState.value.confirmPassword)
+                _registerState.update {
+                    it.copy(
+                        isInvalidConfirmPassword = !isValid
+                    )
+                }
                 yield()
             }
             is RegisterEvent.ValidatePasswordsMatch -> {
-                validatePasswordsMatch()
+                _registerState.update {
+                    it.copy(
+                        isPasswordsMatch = validatePasswordsMatch()
+                    )
+                }
                 yield()
             }
-            is RegisterEvent.IsValidUsername -> {
-                _registerState.update {
-                    it.copy(isInvalidUsername = !event.isValid)
-                }
-            }
-            is RegisterEvent.IsValidEmail -> {
-                _registerState.update {
-                    it.copy(
-                        isInvalidEmail = !event.isValid
-                    )
-                }
-            }
-            is RegisterEvent.IsValidPassword -> {
-                _registerState.update {
-                    it.copy(
-                        isInvalidPassword = !event.isValid
-                    )
-                }
-            }
-            is RegisterEvent.IsValidConfirmPassword -> {
-                _registerState.update {
-                    it.copy(
-                        isInvalidConfirmPassword = !event.isValid
-                    )
-                }
-            }
-            is RegisterEvent.IsPasswordsMatch -> {
-                _registerState.update {
-                    it.copy(
-                        isPasswordsMatch = event.isMatch
-                    )
-                }
-            }
+//            is RegisterEvent.IsValidUsername -> {
+//                _registerState.update {
+//                    it.copy(isInvalidUsername = !event.isValid)
+//                }
+//            }
+//            is RegisterEvent.IsValidEmail -> {
+//                _registerState.update {
+//                    it.copy(
+//                        isInvalidEmail = !event.isValid
+//                    )
+//                }
+//            }
+//            is RegisterEvent.IsValidPassword -> {
+//                _registerState.update {
+//                    it.copy(
+//                        isInvalidPassword = !event.isValid
+//                    )
+//                }
+//            }
+//            is RegisterEvent.IsValidConfirmPassword -> {
+//                _registerState.update {
+//                    it.copy(
+//                        isInvalidConfirmPassword = !event.isValid
+//                    )
+//                }
+//            }
+//            is RegisterEvent.IsPasswordsMatch -> {
+//                _registerState.update {
+//                    it.copy(
+//                        isPasswordsMatch = event.isMatch
+//                    )
+//                }
+//            }
             is RegisterEvent.ShowInvalidUsernameMessage -> {
                 _registerState.update {
                     it.copy(
