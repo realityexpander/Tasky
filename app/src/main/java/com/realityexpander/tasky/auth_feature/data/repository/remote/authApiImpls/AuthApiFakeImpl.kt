@@ -23,7 +23,6 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
 
     /////////////////// FAKE API IMPLEMENTATION ///////////////////////
 
-
     override suspend fun login(
         email: Email,
         password: Password
