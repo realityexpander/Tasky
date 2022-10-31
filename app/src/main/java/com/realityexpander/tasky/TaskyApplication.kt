@@ -1,7 +1,7 @@
 package com.realityexpander.tasky
 
 import android.app.Application
-import com.realityexpander.tasky.domain.AuthInfo
+import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp

@@ -10,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.datastore.dataStore
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.realityexpander.tasky.common.settings.AppSettingsSerializer
-import com.realityexpander.tasky.presentation.NavGraphs
-import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
+import com.realityexpander.tasky.core.common.settings.AppSettingsSerializer
+import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.system.exitProcess
 
 val Context.dataStore by dataStore("app-settings.json", AppSettingsSerializer)
 
@@ -36,5 +36,10 @@ class MainActivity() : ComponentActivity() {
 
             }
         }
+    }
+
+    fun exitApp() {
+        finish()
+        exitProcess(0)
     }
 }

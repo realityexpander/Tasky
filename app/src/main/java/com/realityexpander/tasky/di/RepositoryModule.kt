@@ -1,12 +1,12 @@
 package com.realityexpander.tasky.di
 
-import com.realityexpander.tasky.data.repository.authRepositoryImpls.AuthRepositoryImpl
-import com.realityexpander.tasky.data.repository.local.authDaoImpls.AuthDaoFakeImpl
-import com.realityexpander.tasky.data.repository.local.IAuthDao
-import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiImpl
-import com.realityexpander.tasky.data.repository.remote.IAuthApi
-import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiFakeImpl
-import com.realityexpander.tasky.domain.IAuthRepository
+import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryImpl
+import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
+import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
+import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiImpl
+import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

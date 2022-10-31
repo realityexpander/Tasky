@@ -2,22 +2,22 @@ package com.realityexpander.tasky.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.realityexpander.tasky.BuildConfig
-import com.realityexpander.tasky.TaskyApplication.Companion.authInfoGlobal
-import com.realityexpander.tasky.data.repository.local.authDaoImpls.AuthDaoFakeImpl
-import com.realityexpander.tasky.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
-import com.realityexpander.tasky.data.repository.authRepositoryImpls.AuthRepositoryImpl
-import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiFakeImpl
-import com.realityexpander.tasky.data.repository.local.IAuthDao
-import com.realityexpander.tasky.data.repository.remote.IAuthApi
-import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiImpl
-import com.realityexpander.tasky.data.repository.remote.authApiImpls.TaskyApi
-import com.realityexpander.tasky.data.repository.remote.authApiImpls.TaskyApi.Companion.API_KEY
-import com.realityexpander.tasky.domain.IAuthRepository
-import com.realityexpander.tasky.domain.validation.*
-import com.realityexpander.tasky.domain.validation.validateEmail.EmailMatcherAndroidImpl
-import com.realityexpander.tasky.domain.validation.validateEmail.EmailMatcherRegexImpl
-import com.realityexpander.tasky.domain.validation.validateEmail.IValidateEmail
-import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailImpl
+import com.realityexpander.tasky.BuildConfig.API_KEY
+import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryImpl
+import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
+import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
+import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiImpl
+import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.TaskyApi
+import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
+import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.IValidateEmail
+import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.ValidateEmailImpl
+import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.emailMatcherImpls.EmailMatcherAndroidImpl
+import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.emailMatcherImpls.EmailMatcherRegexImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -60,12 +60,11 @@ object AppModule {
         val xApiKeyHeader = Interceptor { chain ->
             val request = chain.request().newBuilder()
                 .addHeader("x-api-key", API_KEY)
-//                .addHeader("Authorization", "${HOW_TO_GET_AUTH_TOKEN_HERE???}")
                 .build()
             chain.proceed(request)
         }
 
-        val client = if(BuildConfig.BUILD_TYPE == "debug") {
+        val client = if(BuildConfig.DEBUG) {
             val logging = HttpLoggingInterceptor()
 //            logging.level = HttpLoggingInterceptor.Level.BODY
             logging.level = HttpLoggingInterceptor.Level.HEADERS
