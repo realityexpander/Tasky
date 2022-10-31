@@ -11,35 +11,34 @@ import javax.inject.Inject
 // Uses the DAO pattern to access the Proto Datastore
 
 class AuthDaoImpl @Inject constructor(): IAuthDao {
-    private var authInfoEntity: AuthInfoEntity =
-        AuthInfoEntity(null, null, null) // todo replace with DataStore
+    private var authInfoEntity: AuthInfoEntity? = null
 
     override suspend fun getAuthToken(): AuthToken? {
-        return authToken(authInfoEntity.authToken)
+        return authToken(authInfoEntity?.authToken)
     }
 
     override suspend fun setAuthToken(authToken: AuthToken?) {
-        this.authInfoEntity = this.authInfoEntity.copy(authToken = authToken)
+        this.authInfoEntity = this.authInfoEntity?.copy(authToken = authToken)
     }
 
     override suspend fun clearAuthToken() {
-        this.authInfoEntity = this.authInfoEntity.copy(authToken = null)
+        this.authInfoEntity = this.authInfoEntity?.copy(authToken = null)
     }
 
     override suspend fun getAuthUsername(): Username? {
-        return username(authInfoEntity.username)
+        return username(authInfoEntity?.username)
     }
 
     override suspend fun setAuthUsername(username: Username?) {
-        this.authInfoEntity = this.authInfoEntity.copy(username = username)
+        this.authInfoEntity = this.authInfoEntity?.copy(username = username)
     }
 
     override suspend fun getAuthUserId(): UserId? {
-        return userId(authInfoEntity.userId)
+        return userId(authInfoEntity?.userId)
     }
 
     override suspend fun setAuthUserId(userId: UserId?) {
-        this.authInfoEntity = this.authInfoEntity.copy(userId = userId)
+        this.authInfoEntity = this.authInfoEntity?.copy(userId = userId)
     }
 
     override suspend fun getAuthInfo(): AuthInfo {

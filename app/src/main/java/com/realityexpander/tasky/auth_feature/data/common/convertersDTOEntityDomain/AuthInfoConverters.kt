@@ -6,37 +6,45 @@ import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 
 
 // Convert AuthInfo to AuthInfoDTO
-fun AuthInfo.toDTO(): AuthInfoDTO {
-    return AuthInfoDTO(
-        authToken = authToken,
-        userId = userId,
-        username = username,
-    )
+fun AuthInfo?.toDTO(): AuthInfoDTO? {
+    return this?.let {
+        AuthInfoDTO(
+            authToken = it.authToken,
+            userId = it.userId,
+            username = it.username
+        )
+    }
 }
 
 // Convert AuthInfoDTO to AuthInfo
-fun AuthInfoDTO.toDomain(): AuthInfo {
-    return AuthInfo(
-        authToken = authToken,
-        userId = userId,
-        username = username,
-    )
+fun AuthInfoDTO?.toDomain(): AuthInfo? {
+    return this?.let {
+        AuthInfo(
+            authToken = it.authToken,
+            userId = it.userId,
+            username = it.username
+        )
+    }
 }
 
 // Convert AuthInfo to AuthInfoEntity
-fun AuthInfo.toEntity(): AuthInfoEntity {
-    return AuthInfoEntity(
-        authToken = authToken,
-        userId = userId,
-        username = username,
-    )
+fun AuthInfo?.toEntity(): AuthInfoEntity? {
+    return this?.let {
+        AuthInfoEntity(
+            authToken = it.authToken,
+            userId = it.userId,
+            username = it.username
+        )
+    }
 }
 
 // Convert AuthInfoEntity to AuthInfo
-fun AuthInfoEntity.toDomain(): AuthInfo {
-    return AuthInfo(
-        authToken = authToken,
-        userId = userId,
-        username = username,
-    )
+fun AuthInfoEntity?.toDomain(): AuthInfo? {
+    return this?.let {
+        AuthInfo(
+            authToken = it.authToken,
+            userId = it.userId,
+            username = it.username
+        )
+    }
 }
