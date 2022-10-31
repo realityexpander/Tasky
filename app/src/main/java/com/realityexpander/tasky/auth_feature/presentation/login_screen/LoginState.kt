@@ -15,11 +15,10 @@ data class LoginState(
     val isShowInvalidPasswordMessage: Boolean = false,
 
     val isLoading: Boolean = false,
-    val isLoggedIn: Boolean = false,
-    val isError: Boolean = false,
-
-    val authInfo: AuthInfo? = null,
 
     val statusMessage: UiText = UiText.None,
+    val isError: Boolean = false,
     val errorMessage: UiText = UiText.None,
+
+    val authInfo: AuthInfo? = null,  // when not-null, the user is logged in
 )

@@ -48,14 +48,14 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    fun onSetAuthInfo(authInfo: AuthInfo) {
+    fun onSetAuthInfo(authInfo: AuthInfo?) {
         viewModelScope.launch {
 
-            // set the AuthInfo and AuthToken for this user
+            // set the AuthInfo (& AuthToken) for this user
             TaskyApplication.authInfoGlobal = authInfo
-            IAuthApi.setAuthToken(authInfo.authToken)
+            IAuthApi.setAuthToken(authInfo?.authToken)
 
-            if (authInfo.authToken != AuthInfo.NOT_LOGGED_IN.authToken
+            if( authInfo != null
                 && authRepository.authenticateAuthInfo(authInfo)
             ) {
                 _splashState.update {
@@ -63,14 +63,16 @@ class SplashViewModel @Inject constructor(
                         authInfo = authInfo,
                         authInfoChecked = true,
                         statusMessage = UiText.None, //UiText.Res(R.string.splash_logged_in)
-                    )}
+                    )
+                }
             } else {
                 _splashState.update {
                     it.copy(
                         authInfo = AuthInfo.NOT_LOGGED_IN,
                         authInfoChecked = true,
                         statusMessage = UiText.None, //UiText.Res(R.string.splash_not_logged_in)
-                    )}
+                    )
+                }
             }
         }
     }

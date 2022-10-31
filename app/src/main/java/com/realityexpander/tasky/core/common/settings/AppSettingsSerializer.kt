@@ -19,7 +19,9 @@ object AppSettingsSerializer : Serializer<AppSettings> {
             Json.decodeFromString(
                 deserializer = AppSettings.serializer(),
                 string = input.readBytes().decodeToString()
-            ).also { Log.d("APP_SETTINGS", it.toString()) }
+            ).also {
+                Log.d("APP_SETTINGS_READ", it.toString())
+            }
         } catch (e: SerializationException) {
             e.printStackTrace()
             defaultValue
@@ -33,7 +35,9 @@ object AppSettingsSerializer : Serializer<AppSettings> {
                     serializer = AppSettings.serializer(),
                     value = t
                 ).encodeToByteArray()
-                    .also { Log.d("APP_SETTINGS", t.toString()) }
+                    .also {
+                        Log.d("APP_SETTINGS_WRITE", t.toString())
+                    }
             )
         }
     }

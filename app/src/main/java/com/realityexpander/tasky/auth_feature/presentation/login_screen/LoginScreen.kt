@@ -297,9 +297,9 @@ fun LoginScreenPreview() {
                     isShowInvalidPasswordMessage = true,
                     isPasswordVisible = true,
                     isLoading = false,
-                    isLoggedIn = false,
                     errorMessage = UiText.None,  // UiText.Res(R.string.error_invalid_email),
                     statusMessage = UiText.None, // UiText.Res(R.string.login_logged_in),
+                    authInfo = null,
                 ),
                 onAction = {},
             )

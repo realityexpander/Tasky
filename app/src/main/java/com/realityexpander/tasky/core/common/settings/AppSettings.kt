@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AppSettings(
-    val authInfo: AuthInfo = AuthInfo(),
+    val authInfo: AuthInfo? = null,
     var settingsLoaded: Boolean = false  // allows us to check if the initial data is loaded
 )
 

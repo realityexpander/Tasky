@@ -55,13 +55,8 @@ fun SplashScreen(
             return@LaunchedEffect
         }
 
-        viewModel.onSetAuthInfo(
-            AuthInfo(
-                authToken = appSettings.authInfo.authToken,
-                userId = appSettings.authInfo.userId,
-                username = appSettings.authInfo.username,
-            )
-        )
+        // Settings data is now loaded, so we can set if user is logged-in (authInfo != null)
+        viewModel.onSetAuthInfo(appSettings.authInfo)
     }
 
     // After settings are Loaded (or not) - Navigate to correct screen

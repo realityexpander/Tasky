@@ -7,13 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
+import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.common.Exceptions
+import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_authInfo
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_email
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidEmail
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidPassword
-import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isLoggedIn
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isShowInvalidEmailMessage
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isShowInvalidPasswordMessage
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_password
@@ -46,8 +47,8 @@ class LoginViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false
     private val isShowInvalidPasswordMessage: Boolean =
         savedStateHandle[SAVED_STATE_isShowInvalidPasswordMessage] ?: false
-    private val isLoggedIn: Boolean =
-        savedStateHandle[SAVED_STATE_isLoggedIn] ?: false
+    private val authInfo: AuthInfo? =
+        savedStateHandle[SAVED_STATE_authInfo]
     private val statusMessage: UiText =
         savedStateHandle[SAVED_STATE_statusMessage] ?: UiText.None
     private val errorMessage: UiText =
@@ -63,7 +64,7 @@ class LoginViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_isShowInvalidEmailMessage] = state.isShowInvalidEmailMessage
         savedStateHandle[SAVED_STATE_isInvalidPassword] = state.isInvalidPassword
         savedStateHandle[SAVED_STATE_isShowInvalidPasswordMessage] = state.isShowInvalidPasswordMessage
-        savedStateHandle[SAVED_STATE_isLoggedIn] = state.isLoggedIn
+        savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
         savedStateHandle[SAVED_STATE_statusMessage] = state.statusMessage
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
 
@@ -85,7 +86,7 @@ class LoginViewModel @Inject constructor(
                 isShowInvalidEmailMessage = isShowInvalidEmailMessage,
                 isInvalidPassword = isInvalidPassword,
                 isShowInvalidPasswordMessage = isShowInvalidPasswordMessage,
-                isLoggedIn = isLoggedIn,
+                authInfo = authInfo,
                 statusMessage = statusMessage,
                 errorMessage = errorMessage
             )
@@ -232,7 +233,6 @@ class LoginViewModel @Inject constructor(
                 _loginState.update {
                     it.copy(
                         authInfo = event.authInfo,
-                        isLoggedIn = true,
                         errorMessage = UiText.None,
                         statusMessage = UiText.None, //UiText.Res(R.string.login_success, event.authInfo), // keep for debugging
                         isPasswordVisible = false,
@@ -243,7 +243,6 @@ class LoginViewModel @Inject constructor(
             is LoginEvent.LoginError -> {
                 _loginState.update {
                     it.copy(
-                        isLoggedIn = false,
                         errorMessage = event.message,
                         statusMessage = UiText.None,
                         isLoading = false
@@ -254,7 +253,6 @@ class LoginViewModel @Inject constructor(
             is LoginEvent.UnknownError -> {
                 _loginState.update {
                     it.copy(
-                        isLoggedIn = false,
                         errorMessage = if(event.message.isRes)
                             event.message
                         else
