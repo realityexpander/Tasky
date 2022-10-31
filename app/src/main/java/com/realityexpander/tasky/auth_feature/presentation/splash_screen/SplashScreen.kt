@@ -95,7 +95,7 @@ fun SplashScreen(
 
 @Composable
 fun SplashScreenContent(
-    statusMessage: UiText,
+    statusMessage: UiText? = null,
 ) {
     Box(
         modifier = Modifier
@@ -121,12 +121,14 @@ fun SplashScreenContent(
             )
             Spacer(modifier = Modifier.largeHeight())
 
-            Text(
-                text = statusMessage.get,
-                style = MaterialTheme.typography.h5,
-                color = MaterialTheme.colors.onSecondary,
-                textAlign = TextAlign.Center,
-            )
+            statusMessage?.let {
+                Text(
+                    text = statusMessage.get,
+                    style = MaterialTheme.typography.h5,
+                    color = MaterialTheme.colors.onSecondary,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }

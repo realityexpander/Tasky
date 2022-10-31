@@ -27,8 +27,8 @@ data class RegisterState(
 
     val isPasswordsMatch: Boolean = true,
 
-    val errorMessage: UiText = UiText.None,
-    val statusMessage: UiText = UiText.None,
+    val errorMessage: UiText? = null,
+    val statusMessage: UiText? = null,
 
     val authInfo: AuthInfo? = null,  // when not-null, the user is logged in
 )

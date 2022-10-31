@@ -16,9 +16,9 @@ data class LoginState(
 
     val isLoading: Boolean = false,
 
-    val statusMessage: UiText = UiText.None,
+    val statusMessage: UiText? = null,
     val isError: Boolean = false,
-    val errorMessage: UiText = UiText.None,
+    val errorMessage: UiText? = null,
 
     val authInfo: AuthInfo? = null,  // when not-null, the user is logged in
 )

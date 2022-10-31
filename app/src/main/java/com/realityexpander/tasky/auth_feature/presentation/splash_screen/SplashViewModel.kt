@@ -23,8 +23,8 @@ class SplashViewModel @Inject constructor(
 
     private val authInfo: AuthInfo? =
         savedStateHandle[UIConstants.SAVED_STATE_authInfo]
-    private val statusMessage: UiText =
-        savedStateHandle[UIConstants.SAVED_STATE_statusMessage] ?: UiText.None
+    private val statusMessage: UiText? =
+        savedStateHandle[UIConstants.SAVED_STATE_statusMessage]
 
     private val _splashState = MutableStateFlow(SplashState())
     val splashState = _splashState.onEach { state ->
@@ -62,7 +62,7 @@ class SplashViewModel @Inject constructor(
                     it.copy(
                         authInfo = authInfo,
                         authInfoChecked = true,
-                        statusMessage = UiText.None, //UiText.Res(R.string.splash_logged_in)
+                        statusMessage = null, //UiText.Res(R.string.splash_logged_in)
                     )
                 }
             } else {
@@ -70,7 +70,7 @@ class SplashViewModel @Inject constructor(
                     it.copy(
                         authInfo = AuthInfo.NOT_LOGGED_IN,
                         authInfoChecked = true,
-                        statusMessage = UiText.None, //UiText.Res(R.string.splash_not_logged_in)
+                        statusMessage = null, //UiText.Res(R.string.splash_not_logged_in)
                     )
                 }
             }

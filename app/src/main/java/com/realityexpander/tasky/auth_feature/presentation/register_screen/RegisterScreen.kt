@@ -40,7 +40,6 @@ import com.realityexpander.tasky.auth_feature.presentation.components.EmailField
 import com.realityexpander.tasky.auth_feature.presentation.components.NameField
 import com.realityexpander.tasky.auth_feature.presentation.components.PasswordField
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
-import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 
@@ -264,7 +263,7 @@ fun RegisterScreenContent(
 
             // STATUS //////////////////////////////////////////
 
-            state.errorMessage.getOrNull?.let { errorMessage ->
+            state.errorMessage?.getOrNull?.let { errorMessage ->
                 Spacer(modifier = Modifier.smallHeight())
                 Text(
                     text = "Error: $errorMessage",
@@ -272,7 +271,7 @@ fun RegisterScreenContent(
                 )
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
-            state.statusMessage.getOrNull?.let { message ->
+            state.statusMessage?.getOrNull?.let { message ->
                 Spacer(modifier = Modifier.extraSmallHeight())
                 Text(text = message)
                 Spacer(modifier = Modifier.extraSmallHeight())
@@ -355,8 +354,8 @@ fun RegisterScreenPreview() {
                     isShowInvalidConfirmPasswordMessage = false,
                     isPasswordVisible = false,
                     isLoading = false,
-                    errorMessage = UiText.None,  // UiText.Res(R.string.error_invalid_email),
-                    statusMessage = UiText.None, // UiText.Res(R.string.login_logged_in),
+                    errorMessage = null,  // UiText.Res(R.string.error_invalid_email),
+                    statusMessage = null, // UiText.Res(R.string.login_logged_in),
                     authInfo = null,
                 ),
                 onAction = {},

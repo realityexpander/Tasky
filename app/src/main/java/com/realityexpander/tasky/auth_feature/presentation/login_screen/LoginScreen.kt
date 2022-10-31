@@ -229,14 +229,14 @@ fun LoginScreenContent(
 
             // STATUS //////////////////////////////////////////
 
-            state.errorMessage.getOrNull?.let { errorMessage ->
+            state.errorMessage?.getOrNull?.let { errorMessage ->
                 Text(
                     text = "Error: $errorMessage",
                     color = Color.Red,
                 )
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
-            state.statusMessage.getOrNull?.let { message ->
+            state.statusMessage?.getOrNull?.let { message ->
                 Text(text = message)
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
