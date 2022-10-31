@@ -86,6 +86,7 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
         // simulate network call
         delay(500)
 
+        // Simulate server-side check
         authToken?.let {
             // Check the passed-in authToken against the fake tokens
             if (users.map { it.value.authToken }.contains(authToken)) {
