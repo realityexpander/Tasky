@@ -35,7 +35,7 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
             throw Exceptions.LoginException("Invalid email or password")
         }
 
-        //Simulates a server-side check/error for non-existing email
+        // Simulates a server-side check/error for non-existing email
         if (users[email] == null) {
             throw Exceptions.LoginException("Unknown email")
         }
@@ -64,7 +64,7 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
             throw Exceptions.RegisterException("Invalid username, email or password")
         }
 
-        //Simulates a server-side check/error for duplicate email
+        // Simulates a server-side check/error for duplicate email
         if (users[email] != null) {
             throw Exceptions.EmailAlreadyExistsException()
         }
