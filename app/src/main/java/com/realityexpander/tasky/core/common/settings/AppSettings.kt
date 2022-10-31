@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AppSettings(
     val authInfo: AuthInfo? = null,
-    var settingsLoaded: Boolean = false  // allows us to check if the initial data is loaded
+    var isSettingsInitialized: Boolean = false  // allows us to check if the initial data is loaded
 )
 
 suspend fun DataStore<AppSettings>.saveAuthInfo(authInfo: AuthInfo) {
@@ -16,9 +16,9 @@ suspend fun DataStore<AppSettings>.saveAuthInfo(authInfo: AuthInfo) {
     }
 }
 
-suspend fun DataStore<AppSettings>.setSettingsLoaded(firstTime: Boolean) {
+suspend fun DataStore<AppSettings>.setSettingsInitialized(firstTime: Boolean) {
     updateData { appSettings ->
-        appSettings.copy(settingsLoaded = firstTime)
+        appSettings.copy(isSettingsInitialized = firstTime)
     }
 }
 

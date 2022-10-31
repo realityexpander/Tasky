@@ -26,6 +26,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.MainActivity
@@ -43,13 +44,14 @@ import kotlinx.coroutines.launch
 
 @Composable
 @Destination
+@RootNavGraph(start = true)
 fun LoginScreen(
-    username: String? = null,
+    username: String? = "Chris Athanas", //null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    email: String? = null,
+    email: String? = "chris3@demo.com", //null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    password: String? = null,
-    confirmPassword: String? = null,
+    password: String? = "Password1", //null,
+    confirmPassword: String? = "Password1", //null,
     navigator: DestinationsNavigator,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {

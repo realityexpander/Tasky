@@ -14,10 +14,4 @@ data class AuthInfo(
     val authToken: AuthToken? = null,
     val userId: UserId? = null,
     val username: Username? = null,
-): Parcelable {
-
-    companion object {
-        val EMPTY = AuthInfo()
-        val NOT_LOGGED_IN = AuthInfo(authToken = null)
-    }
-}
+): Parcelable

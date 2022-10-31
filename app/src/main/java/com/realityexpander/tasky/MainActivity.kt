@@ -7,27 +7,31 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.dataStore
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.realityexpander.tasky.auth_feature.presentation.splash_screen.SplashScreenViewModel2
+import com.realityexpander.tasky.core.common.settings.AppSettings
 import com.realityexpander.tasky.core.common.settings.AppSettingsSerializer
+import com.realityexpander.tasky.core.common.settings.setSettingsInitialized
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.realityexpander.tasky.destinations.AgendaScreenDestination
+import com.realityexpander.tasky.destinations.LoginScreenDestination
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
 val Context.dataStore by dataStore("app-settings.json", AppSettingsSerializer)
 
 @AndroidEntryPoint
-class MainActivity() : ComponentActivity() {
+class MainActivity : ComponentActivity() {
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: SplashScreenViewModel2 by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -37,7 +41,7 @@ class MainActivity() : ComponentActivity() {
 
         installSplashScreen().apply {
             setKeepOnScreenCondition {
-                viewModel.isLoading.value
+                viewModel.splashState.value.isLoading
             }
         }
 
@@ -47,7 +51,43 @@ class MainActivity() : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = colorResource(id = R.color.tasky_green)
                 ) {
-                    DestinationsNavHost(navGraph = NavGraphs.root)
+                    val splashState by viewModel.splashState.collectAsState()
+                    val context = LocalContext.current
+
+                    val appSettings = context.dataStore.data.collectAsState( // .data is a Flow
+                        initial = AppSettings()
+                    ).value
+
+                    // Load settings from data store
+                    LaunchedEffect(key1 = appSettings) {
+                        // ignore first data (initial emit is always default state, due to it being a flow)
+                        if (!appSettings.isSettingsInitialized) {
+                            context.dataStore.setSettingsInitialized(true)
+                            return@LaunchedEffect
+                        }
+
+                        // Settings data is now loaded, so we can set if user is logged-in (authInfo != null)
+                        viewModel.onSetAuthInfo(appSettings.authInfo)
+                    }
+
+//                    LoginScreenDestination(
+//                        username = "Chris Athanas",     // TESTING ONLY
+//                        email = "chris3@demo.com",      // TESTING ONLY
+//                        password = "Password1",         // TESTING ONLY
+//                        confirmPassword = "Password1",  // TESTING ONLY
+//                    )
+
+                    if (!splashState.isLoading) {
+                        DestinationsNavHost(
+                            navGraph = NavGraphs.root,
+                            startRoute =
+                                if (splashState.authInfo != null) {
+                                    AgendaScreenDestination
+                                } else {
+                                    LoginScreenDestination
+                                },
+                        )
+                    }
                 }
 
             }
@@ -59,26 +99,3 @@ class MainActivity() : ComponentActivity() {
         exitProcess(0)
     }
 }
-
-class MainViewModel: ViewModel() {
-    private val _isLoading = MutableStateFlow(true)
-    val isLoading = _isLoading.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            //delay(1500)
-            _isLoading.value = false
-        }
-    }
-}
-
-// to scale the splash screen if XML/SVG:
-// put <path> inside a group as so:
-// <group
-//   android:scaleX="0.5"
-//   android:scaleY="0.5"
-//   android:pivotX="<half viewportWidth>"   // could also use half the width of the viewportWidth
-//   android:pivotY="<half viewportHeight>"   // could also use half the height of the viewportHeight
-//   >
-//   <path ... />
-// </group>
