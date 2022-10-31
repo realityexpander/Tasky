@@ -123,7 +123,7 @@ fun LoginScreenContent(
 
     BackHandler(true) {
         // todo: should we ask the user to quit?
-        ExitActivity.exit(context)
+        (context as MainActivity).exitApp()
     }
 
     // Check keyboard open/closed (how to make this a function?)
