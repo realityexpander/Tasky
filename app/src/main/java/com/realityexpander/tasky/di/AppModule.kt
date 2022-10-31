@@ -16,8 +16,8 @@ import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.IValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.validateEmailImpls.ValidateEmailAndroidImpl
-import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.emailMatcherImpls.EmailMatcherAndroidImpl
-import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.emailMatcherImpls.EmailMatcherRegexImpl
+import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.emailMatcher.emailMatcherImpls.EmailMatcherAndroidImpl
+import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.emailMatcher.emailMatcherImpls.EmailMatcherRegexImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

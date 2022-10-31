@@ -1,8 +1,8 @@
 package com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.validateEmailImpls
 
-import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.IEmailMatcher
+import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.emailMatcher.IEmailMatcher
 import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.IValidateEmail
-import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.emailMatcherImpls.EmailMatcherAndroidImpl
+import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.emailMatcher.emailMatcherImpls.EmailMatcherAndroidImpl
 
 class ValidateEmailAndroidImpl (
     private val emailMatcher: IEmailMatcher = EmailMatcherAndroidImpl()

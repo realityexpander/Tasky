@@ -1,6 +1,6 @@
-package com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.emailMatcherImpls
+package com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.emailMatcher.emailMatcherImpls
 
-import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.IEmailMatcher
+import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.emailMatcher.IEmailMatcher
 
 // Matches how the email is validated on the server
 class EmailMatcherRegexImpl: IEmailMatcher {
