@@ -9,6 +9,9 @@ import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.core.common.Exceptions
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_authInfo
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_email
@@ -30,6 +33,9 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
+    val validateEmail: ValidateEmail,
+    val validatePassword: ValidatePassword,
+    val validateUsername: ValidateUsername,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
