@@ -32,7 +32,7 @@ class AuthRepositoryFakeImpl(
         }
 
         val authInfoDTO: AuthInfoDTO? = try {
-            authApi.login(email, password)
+            authApi.login(email.trim(), password)
         } catch (e: Exceptions.LoginException) {
             throw e
         } catch (e: Exceptions.WrongPasswordException) {
@@ -67,7 +67,7 @@ class AuthRepositoryFakeImpl(
         }
 
         try {
-            authApi.register(username, email, password)
+            authApi.register(username.trim(), email.trim(), password)
         } catch (e: Exceptions.EmailAlreadyExistsException) {
             throw e
         } catch (e: Exception) {
