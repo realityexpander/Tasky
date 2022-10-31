@@ -7,7 +7,7 @@ import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
-import com.realityexpander.tasky.core.presentation.common.UIConstants
+import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_authInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -15,18 +15,18 @@ import kotlinx.coroutines.yield
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashScreenViewModel2 @Inject constructor(
+class SplashScreenViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val authInfo: AuthInfo? =
-        savedStateHandle[UIConstants.SAVED_STATE_authInfo]
+        savedStateHandle[SAVED_STATE_authInfo]
 
     private val _splashState = MutableStateFlow(SplashState())
     val splashState = _splashState.onEach { state ->
         // save state for process death // is this needed for splash screen?
-        savedStateHandle[UIConstants.SAVED_STATE_authInfo] = state.authInfo
+        savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SplashState())
 
     init {

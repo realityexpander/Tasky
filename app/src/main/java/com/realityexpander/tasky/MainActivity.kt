@@ -16,7 +16,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.dataStore
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.realityexpander.tasky.auth_feature.presentation.splash_screen.SplashScreenViewModel2
+import com.realityexpander.tasky.auth_feature.presentation.splash_screen.SplashScreenViewModel
 import com.realityexpander.tasky.core.common.settings.AppSettings
 import com.realityexpander.tasky.core.common.settings.AppSettingsSerializer
 import com.realityexpander.tasky.core.common.settings.setSettingsInitialized
@@ -31,7 +31,7 @@ val Context.dataStore by dataStore("app-settings.json", AppSettingsSerializer)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: SplashScreenViewModel2 by viewModels()
+    private val viewModel: SplashScreenViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
