@@ -23,10 +23,8 @@ object Exceptions {
     class WrongPasswordException: Exception(WRONG_PASSWORD)
 
     class LoginException(message: String? = null): Exception(message ?: LOGIN_ERROR)
-    class LoginNetworkException(message: String? = null) : Exception(message ?: LOGIN_ERROR)
 
     class RegisterException(message: String? = null): Exception(message ?: REGISTER_ERROR)
-    class RegisterNetworkException(message: String? = null): Exception(message ?: REGISTER_ERROR)
 
     class NetworkException(message: String? = null): Exception(message ?: NETWORK_ERROR)
     class UnknownErrorException(message: String? = null): Exception(message)

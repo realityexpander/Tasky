@@ -18,9 +18,6 @@ class AuthApiImpl @Inject constructor (
         email: Email,
         password: Password
     ): AuthInfoDTO {
-        if(email.isBlank() || password.isBlank())
-            throw Exceptions.LoginException("Invalid email or password")
-
         try {
             val response =
                 taskyApi.login(ApiCredentialsDTO(email = email, password = password))
@@ -48,16 +45,15 @@ class AuthApiImpl @Inject constructor (
                     getErrorBodyMessage(response.errorBody()?.string())
                 )
             }
-        } catch (e: Exceptions.RegisterNetworkException) {
+        } catch (e: Exceptions.NetworkException) {
+            throw e
+        } catch (e: Exceptions.UnknownErrorException) {
             throw e
         } catch (e: HttpException) {
-            throw Exceptions.LoginNetworkException("${e.message()} - ${e.code()}")
+            throw Exceptions.NetworkException("${e.message()} - ${e.code()}")
         } catch (e: java.net.UnknownHostException) {
-            throw Exceptions.LoginNetworkException(e.message)
+            throw Exceptions.NetworkException(e.message)
         } catch (e: Exception) {
-            if(e !is Exceptions.UnknownErrorException) // don't overwrite the messages from above exception
-                throw e
-
             throw Exceptions.UnknownErrorException(e.message ?: "Unknown Error")
         }
     }
@@ -67,9 +63,6 @@ class AuthApiImpl @Inject constructor (
         email: Email,
         password: Password
     ) {
-        if(username.isBlank() || email.isBlank() || password.isBlank())
-            throw Exceptions.RegisterException("Invalid username, email or password")
-
         try {
             val response =
                 taskyApi.register(
@@ -77,8 +70,7 @@ class AuthApiImpl @Inject constructor (
                     username = username,
                     email = email,
                     password = password
-                )
-                )
+                ))
 
             when(response.code()) {
                 200 -> return // Success
@@ -91,16 +83,15 @@ class AuthApiImpl @Inject constructor (
                     getErrorBodyMessage(response.errorBody()?.string())
                 )
             }
-        } catch (e: Exceptions.RegisterNetworkException) {
+        } catch (e: Exceptions.NetworkException) {
+            throw e
+        } catch (e: Exceptions.UnknownErrorException) {
             throw e
         } catch (e: HttpException) {
-            throw Exceptions.RegisterNetworkException("${e.message()} - ${e.code()}")
+            throw Exceptions.NetworkException("${e.message()} - ${e.code()}")
         } catch (e: java.net.UnknownHostException) {
-            throw Exceptions.RegisterNetworkException(e.message)
+            throw Exceptions.NetworkException(e.message)
         } catch (e: Exception) {
-            if(e !is Exceptions.UnknownErrorException) // don't overwrite the messages from above exception
-                throw e
-
             throw Exceptions.UnknownErrorException(e.message ?: "Unknown Error")
         }
     }
@@ -124,16 +115,15 @@ class AuthApiImpl @Inject constructor (
                     getErrorBodyMessage(response.errorBody()?.string())
                 )
             }
-        } catch (e: Exceptions.RegisterNetworkException) {
+        } catch (e: Exceptions.NetworkException) {
+            throw e
+        } catch (e: Exceptions.UnknownErrorException) {
             throw e
         } catch (e: HttpException) {
             throw Exceptions.NetworkException("${e.message()} - ${e.code()}")
         } catch (e: java.net.UnknownHostException) {
             throw Exceptions.NetworkException(e.message)
         } catch (e: Exception) {
-            if(e !is Exceptions.UnknownErrorException) // don't overwrite the messages from above exception
-                throw e
-
             throw Exceptions.UnknownErrorException(e.message ?: "Unknown Error")
         }
     }

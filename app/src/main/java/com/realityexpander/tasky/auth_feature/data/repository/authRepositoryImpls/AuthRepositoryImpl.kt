@@ -32,7 +32,7 @@ class AuthRepositoryImpl @Inject constructor(
             authApi.login(email, password)
         } catch (e: Exceptions.LoginException) {
             throw e
-        } catch (e: Exceptions.LoginNetworkException) {
+        } catch (e: Exceptions.NetworkException) {
             throw e
         } catch (e: Exceptions.WrongPasswordException) {
             throw e
@@ -69,7 +69,7 @@ class AuthRepositoryImpl @Inject constructor(
             authApi.register(username, email, password)
         } catch (e: Exceptions.RegisterException) {
             throw e
-        } catch (e: Exceptions.RegisterNetworkException) {
+        } catch (e: Exceptions.NetworkException) {
             throw e
         } catch (e: Exceptions.EmailAlreadyExistsException) {
             throw e

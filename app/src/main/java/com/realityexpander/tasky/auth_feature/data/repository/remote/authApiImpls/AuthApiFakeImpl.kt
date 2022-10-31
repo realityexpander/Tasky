@@ -30,11 +30,12 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
         // simulate network call
         delay(1000)
 
-        // Simulates a server side check/error
+        // Simulates a server side check/error for a valid email or password
         if (email.isBlank() || password.isBlank()) {
             throw Exceptions.LoginException("Invalid email or password")
         }
 
+        //Simulates a server-side check/error for non-existing email
         if (users[email] == null) {
             throw Exceptions.LoginException("Unknown email")
         }
@@ -58,11 +59,12 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
         // Simulate network call
         delay(1000)
 
-        // Simulates a server-side check/error for blank or duplicate emails
+        // Simulates a server-side check/error for blank email or password
         if (email.isBlank() || password.isBlank() || username.isBlank()) {
             throw Exceptions.RegisterException("Invalid username, email or password")
         }
 
+        //Simulates a server-side check/error for duplicate email
         if (users[email] != null) {
             throw Exceptions.EmailAlreadyExistsException()
         }
