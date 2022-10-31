@@ -1,17 +1,20 @@
 package com.realityexpander.tasky
 
 import androidx.compose.material.Surface
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.lifecycle.SavedStateHandle
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
-import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.validateEmailImpls.ValidateEmailAndroidImpl
 import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginScreen
 import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginViewModel
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
@@ -28,7 +31,7 @@ class AppTest {
     private lateinit var authRepository: IAuthRepository
     private val authApiFake = AuthApiFakeImpl()
     private val authDaoFake = AuthDaoFakeImpl()
-    private val validateEmail = ValidateEmailAndroidImpl()
+    private val validateEmail = ValidateEmail()
     private val validatePassword = ValidatePassword()
     private val validateUsername = ValidateUsername()
 

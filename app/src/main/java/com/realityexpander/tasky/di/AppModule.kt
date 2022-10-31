@@ -101,18 +101,6 @@ object AppModule {
         taskyApi: TaskyApi,
     ): IAuthApi = AuthApiImpl(taskyApi)
 
-//    @Provides
-//    @Singleton
-//    @Named("ValidateEmailAndroid")
-//    fun provideValidateEmailAndroid(): IValidateEmail =
-//        ValidateEmailAndroidImpl(emailMatcher = EmailMatcherAndroidImpl())
-//
-//    @Provides
-//    @Singleton
-//    @Named("ValidateEmailRegex")
-//    fun provideValidateEmailRegex(): IValidateEmail =
-//        ValidateEmailAndroidImpl(emailMatcher = EmailMatcherRegexImpl())
-
     @Provides
     @Singleton
     fun provideValidateEmail(): ValidateEmail = ValidateEmail()
