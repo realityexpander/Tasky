@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
@@ -39,6 +40,36 @@ class RegisterViewModel @Inject constructor(
     val validateUsername: ValidateUsername,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    // Get params from savedStateHandle (from another screen or after process death)
+    private val username: String =
+        Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: ""
+    private val email: String =
+        Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: ""
+    private val password: String =
+        Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: ""
+    private val confirmPassword: String =
+        Uri.decode(savedStateHandle[SAVED_STATE_confirmPassword]) ?: ""
+    private val isInvalidEmail: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false
+    private val isInvalidEmailMessageVisible: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] ?: false
+    private val isInvalidPassword: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false
+    private val isInvalidPasswordMessageVisible: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] ?: false
+    private val isInvalidConfirmPassword: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidConfirmPassword] ?: false
+    private val isInvalidConfirmPasswordMessageVisible: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidConfirmPasswordMessageVisible] ?: false
+    private val isPasswordsMatch: Boolean =
+        savedStateHandle[SAVED_STATE_isPasswordsMatch] ?: true
+    private val authInfo: AuthInfo? =
+        savedStateHandle[SAVED_STATE_authInfo]
+    private val statusMessage: UiText? =
+        savedStateHandle[SAVED_STATE_statusMessage]
+    private val errorMessage: UiText? =
+        savedStateHandle[SAVED_STATE_errorMessage]
 
     private val _registerState = MutableStateFlow(RegisterState())
     val registerState = _registerState.onEach { state ->
@@ -86,34 +117,34 @@ class RegisterViewModel @Inject constructor(
 
             // restore state after process death or from another screen (e.g. login)
             _registerState.value = RegisterState(
-                username =
-                    Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: "",
-                email =
-                    Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: "",
-                password =
-                    Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: "",
-                confirmPassword =
-                    Uri.decode(savedStateHandle[SAVED_STATE_confirmPassword]) ?: "",
-                isInvalidEmail =
-                    savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false,
-                isInvalidEmailMessageVisible =
-                    savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] ?: false,
-                isInvalidPassword =
-                    savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false,
-                isInvalidPasswordMessageVisible =
-                    savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] ?: false,
-                isInvalidConfirmPassword =
-                    savedStateHandle[SAVED_STATE_isInvalidConfirmPassword] ?: false,
-                isInvalidConfirmPasswordMessageVisible =
-                    savedStateHandle[SAVED_STATE_isInvalidConfirmPasswordMessageVisible] ?: false,
-                isPasswordsMatch =
-                    savedStateHandle[SAVED_STATE_isPasswordsMatch] ?: true,
-                authInfo =
-                    savedStateHandle[SAVED_STATE_authInfo],
-                statusMessage =
-                    savedStateHandle[SAVED_STATE_statusMessage],
-                errorMessage =
-                    savedStateHandle[SAVED_STATE_errorMessage]
+                username = username,
+                    //Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: "",
+                email = email,
+                    //Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: "",
+                password = password,
+                    //Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: "",
+                confirmPassword = confirmPassword,
+                    //Uri.decode(savedStateHandle[SAVED_STATE_confirmPassword]) ?: "",
+                isInvalidEmail = isInvalidEmail,
+                    //savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false,
+                isInvalidEmailMessageVisible = isInvalidEmailMessageVisible,
+                    //savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] ?: false,
+                isInvalidPassword = isInvalidPassword,
+                    //savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false,
+                isInvalidPasswordMessageVisible = isInvalidPasswordMessageVisible,
+                    //savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] ?: false,
+                isInvalidConfirmPassword = isInvalidConfirmPassword,
+                    //savedStateHandle[SAVED_STATE_isInvalidConfirmPassword] ?: false,
+                isInvalidConfirmPasswordMessageVisible = isInvalidConfirmPasswordMessageVisible,
+                    //savedStateHandle[SAVED_STATE_isInvalidConfirmPasswordMessageVisible] ?: false,
+                isPasswordsMatch = isPasswordsMatch,
+                    //savedStateHandle[SAVED_STATE_isPasswordsMatch] ?: true,
+                authInfo = authInfo,
+                    //savedStateHandle[SAVED_STATE_authInfo],
+                statusMessage = statusMessage,
+                    //savedStateHandle[SAVED_STATE_statusMessage],
+                errorMessage = errorMessage,
+                    //savedStateHandle[SAVED_STATE_errorMessage]
             )
             yield() // allow the registerState to be updated
 

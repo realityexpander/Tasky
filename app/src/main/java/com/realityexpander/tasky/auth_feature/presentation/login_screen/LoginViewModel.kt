@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
+import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
@@ -35,6 +36,27 @@ class LoginViewModel @Inject constructor(
     val validatePassword: ValidatePassword,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val username: String =
+        Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: ""
+    private val email: String =
+        Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: ""
+    private val password: String =
+        Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: ""
+    private val isInvalidEmail: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false
+    private val isInvalidEmailMessageVisible: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] ?: false
+    private val isInvalidPassword: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false
+    private val isInvalidPasswordMessageVisible: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] ?: false
+    private val authInfo: AuthInfo? =
+        savedStateHandle[SAVED_STATE_authInfo]
+    private val statusMessage: UiText? =
+        savedStateHandle[SAVED_STATE_statusMessage]
+    private val errorMessage: UiText? =
+        savedStateHandle[SAVED_STATE_errorMessage]
 
     private val _loginState = MutableStateFlow(LoginState())
     val loginState = _loginState.onEach { state ->
@@ -71,26 +93,26 @@ class LoginViewModel @Inject constructor(
 
             // restore state after process death
             _loginState.value = LoginState(
-                username =
-                    Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: "",
-                email =
-                    Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: "",
-                password =
-                    Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: "",
-                isInvalidEmail =
-                    savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false,
-                isInvalidEmailMessageVisible =
-                    savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] ?: false,
-                isInvalidPassword =
-                    savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false,
-                isInvalidPasswordMessageVisible =
-                    savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] ?: false,
-                authInfo =
-                    savedStateHandle[SAVED_STATE_authInfo],
-                statusMessage =
-                    savedStateHandle[SAVED_STATE_statusMessage],
-                errorMessage =
-                    savedStateHandle[SAVED_STATE_errorMessage]
+                username = username,
+//                    Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: "",
+                email = email,
+//                    Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: "",
+                password = password,
+//                    Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: "",
+                isInvalidEmail = isInvalidEmail,
+//                    savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false,
+                isInvalidEmailMessageVisible = isInvalidEmailMessageVisible,
+//                    savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] ?: false,
+                isInvalidPassword = isInvalidPassword,
+//                    savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false,
+                isInvalidPasswordMessageVisible = isInvalidPasswordMessageVisible,
+//                    savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] ?: false,
+                authInfo = authInfo,
+//                    savedStateHandle[SAVED_STATE_authInfo],
+                statusMessage = statusMessage,
+//                    savedStateHandle[SAVED_STATE_statusMessage],
+                errorMessage = errorMessage
+//                    savedStateHandle[SAVED_STATE_errorMessage]
             )
             yield() // allow loginState to be updated
 
