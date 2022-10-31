@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
-import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
@@ -16,8 +15,8 @@ import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STAT
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_email
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidEmail
-import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidPassword
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidEmailMessageVisible
+import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidPassword
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidPasswordMessageVisible
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_password
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_statusMessage
@@ -37,40 +36,29 @@ class LoginViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val username: String =
-        Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: ""
-    private val email: String =
-        Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: ""
-    private val password: String =
-        Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: ""
-    private val isInvalidEmail: Boolean =
-        savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false
-    private val isShowInvalidEmailMessage: Boolean =
-        savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] ?: false
-    private val isInvalidPassword: Boolean =
-        savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false
-    private val isShowInvalidPasswordMessage: Boolean =
-        savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] ?: false
-    private val authInfo: AuthInfo? =
-        savedStateHandle[SAVED_STATE_authInfo]
-    private val statusMessage: UiText =
-        savedStateHandle[SAVED_STATE_statusMessage] ?: UiText.None
-    private val errorMessage: UiText =
-        savedStateHandle[SAVED_STATE_errorMessage] ?: UiText.None
-
     private val _loginState = MutableStateFlow(LoginState())
     val loginState = _loginState.onEach { state ->
         // save state for process death
-        savedStateHandle[SAVED_STATE_username] = state.username
-        savedStateHandle[SAVED_STATE_email] = state.email
-        savedStateHandle[SAVED_STATE_password] = state.password
-        savedStateHandle[SAVED_STATE_isInvalidEmail] = state.isInvalidEmail
-        savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] = state.isInvalidEmailMessageVisible
-        savedStateHandle[SAVED_STATE_isInvalidPassword] = state.isInvalidPassword
-        savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] = state.isInvalidPasswordMessageVisible
-        savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
-        savedStateHandle[SAVED_STATE_statusMessage] = state.statusMessage
-        savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
+        savedStateHandle[SAVED_STATE_username] =
+            state.username
+        savedStateHandle[SAVED_STATE_email] =
+            state.email
+        savedStateHandle[SAVED_STATE_password] =
+            state.password
+        savedStateHandle[SAVED_STATE_isInvalidEmail] =
+            state.isInvalidEmail
+        savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] =
+            state.isInvalidEmailMessageVisible
+        savedStateHandle[SAVED_STATE_isInvalidPassword] =
+            state.isInvalidPassword
+        savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] =
+            state.isInvalidPasswordMessageVisible
+        savedStateHandle[SAVED_STATE_authInfo] =
+            state.authInfo
+        savedStateHandle[SAVED_STATE_statusMessage] =
+            state.statusMessage
+        savedStateHandle[SAVED_STATE_errorMessage] =
+            state.errorMessage
 
         // Validate as the user types
         if(state.email.isNotBlank()) sendEvent(LoginEvent.ValidateEmail)
@@ -83,16 +71,26 @@ class LoginViewModel @Inject constructor(
 
             // restore state after process death
             _loginState.value = LoginState(
-                username = username,
-                email = email,
-                password = password,
-                isInvalidEmail = isInvalidEmail,
-                isInvalidEmailMessageVisible = isShowInvalidEmailMessage,
-                isInvalidPassword = isInvalidPassword,
-                isInvalidPasswordMessageVisible = isShowInvalidPasswordMessage,
-                authInfo = authInfo,
-                statusMessage = statusMessage,
-                errorMessage = errorMessage
+                username =
+                    Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: "",
+                email =
+                    Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: "",
+                password =
+                    Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: "",
+                isInvalidEmail =
+                    savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false,
+                isInvalidEmailMessageVisible =
+                    savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] ?: false,
+                isInvalidPassword =
+                    savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false,
+                isInvalidPasswordMessageVisible =
+                    savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] ?: false,
+                authInfo =
+                    savedStateHandle[SAVED_STATE_authInfo],
+                statusMessage =
+                    savedStateHandle[SAVED_STATE_statusMessage],
+                errorMessage =
+                    savedStateHandle[SAVED_STATE_errorMessage]
             )
             yield() // allow loginState to be updated
 
