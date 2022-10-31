@@ -26,14 +26,14 @@ object AppSettingsSerializer : Serializer<AppSettings> {
         }
     }
 
-    override suspend fun writeTo(appSettings: AppSettings, output: OutputStream) {
+    override suspend fun writeTo(t: AppSettings, output: OutputStream) {
         withContext(Dispatchers.IO) {
             output.write(
                 Json.encodeToString(
                     serializer = AppSettings.serializer(),
-                    value = appSettings
+                    value = t
                 ).encodeToByteArray()
-                    .also { Log.d("APP_SETTINGS", appSettings.toString()) }
+                    .also { Log.d("APP_SETTINGS", t.toString()) }
             )
         }
     }
