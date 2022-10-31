@@ -11,7 +11,6 @@ import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
-import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.core.common.Exceptions
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_authInfo
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_email
@@ -35,7 +34,6 @@ class LoginViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     val validateEmail: ValidateEmail,
     val validatePassword: ValidatePassword,
-    val validateUsername: ValidateUsername,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -74,7 +72,7 @@ class LoginViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_statusMessage] = state.statusMessage
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
 
-        // Validate email as the user types
+        // Validate as the user types
         if(state.email.isNotBlank()) sendEvent(LoginEvent.ValidateEmail)
         if(state.password.isNotBlank()) sendEvent(LoginEvent.ValidatePassword)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), LoginState())
@@ -121,24 +119,10 @@ class LoginViewModel @Inject constructor(
             sendEvent(LoginEvent.LoginError(UiText.Res(R.string.error_login_error, e.message ?: "")))
         } catch(e: Exceptions.LoginException) {
             sendEvent(LoginEvent.LoginError(UiText.Res(R.string.error_login_error, e.message ?: "")))
-        } catch(e: Exceptions.InvalidEmailException) {
-            sendEvent(LoginEvent.SetIsValidEmail(false))
-        } catch(e: Exceptions.InvalidPasswordException) {
-            sendEvent(LoginEvent.SetIsValidPassword(false))
         } catch (e: Exception) {
             sendEvent(LoginEvent.UnknownError(UiText.Res(R.string.error_unknown, e.message ?: "")))
             e.printStackTrace()
         }
-    }
-
-    private fun validateEmail() {
-        val isValid = authRepository.validateEmail(loginState.value.email)
-        sendEvent(LoginEvent.SetIsValidEmail(isValid))
-    }
-
-    private fun validatePassword() {
-        val isValid = authRepository.validatePassword(loginState.value.password)
-        sendEvent(LoginEvent.SetIsValidPassword(isValid))
     }
 
     fun sendEvent(event: LoginEvent) {
@@ -183,31 +167,27 @@ class LoginViewModel @Inject constructor(
                 }
             }
             is LoginEvent.ValidateEmail -> {
-                validateEmail()
+                val isValid = validateEmail.validate(loginState.value.email)
+                _loginState.update {
+                    it.copy(
+                        isInvalidEmail = !isValid,
+                    )
+                }
                 yield()
             }
             is LoginEvent.ValidatePassword -> {
-                validatePassword()
-                yield()
-            }
-            is LoginEvent.SetIsValidEmail -> {
+                val isValid = validatePassword.validate(loginState.value.password)
                 _loginState.update {
                     it.copy(
-                        isInvalidEmail = !event.isValid,
+                        isInvalidPassword = !isValid,
                     )
                 }
+                yield()
             }
             is LoginEvent.ShowInvalidEmailMessage -> {
                 _loginState.value = _loginState.value.copy(
                     isShowInvalidEmailMessage = true
                 )
-            }
-            is LoginEvent.SetIsValidPassword -> {
-                _loginState.update {
-                    it.copy(
-                        isInvalidPassword = !event.isValid,
-                    )
-                }
             }
             is LoginEvent.ShowInvalidPasswordMessage -> {
                 _loginState.update {

@@ -47,7 +47,9 @@ class AppTest {
 
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            savedStateHandle = SavedStateHandle()
+            savedStateHandle = SavedStateHandle(),
+            validateEmail = validateEmail,
+            validatePassword = validatePassword,
         )
     }
 
@@ -69,14 +71,16 @@ class AppTest {
     }
 
     @Test
-    fun app_login_shows_email_and_password_hidden() {
+    fun app_login_shows_email_and_password_hidden_by_default() {
         // ARRANGE
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
             savedStateHandle = SavedStateHandle().apply {
                 set("email", "chris@demo.com")
                 set("password", "1234567Aa")
-            }
+            },
+            validateEmail = validateEmail,
+            validatePassword = validatePassword,
         )
 
         // ACT
@@ -105,7 +109,9 @@ class AppTest {
             savedStateHandle = SavedStateHandle().apply {
                 set("email", "chris@demo.com")
                 set("password", "1234567Aa")
-            }
+            },
+            validateEmail = validateEmail,
+            validatePassword = validatePassword,
         )
 
         // ACT
