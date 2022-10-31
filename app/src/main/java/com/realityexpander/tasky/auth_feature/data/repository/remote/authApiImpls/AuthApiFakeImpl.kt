@@ -26,12 +26,14 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
         email: Email,
         password: Password
     ): AuthInfoDTO {
-        if (email.isBlank() || password.isBlank()) {
-            throw Exceptions.LoginException("Invalid email or password")
-        }
 
         // simulate network call
         delay(1000)
+
+        // Simulates a server side check/error
+        if (email.isBlank() || password.isBlank()) {
+            throw Exceptions.LoginException("Invalid email or password")
+        }
 
         if (users[email] == null) {
             throw Exceptions.LoginException("Unknown email")
@@ -53,12 +55,13 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
         email: Email,
         password: Password
     ) {
+        // Simulate network call
+        delay(1000)
+
+        // Simulates a server-side check/error for blank or duplicate emails
         if (email.isBlank() || password.isBlank() || username.isBlank()) {
             throw Exceptions.RegisterException("Invalid username, email or password")
         }
-
-        // simulate network call
-        delay(1000)
 
         if (users[email] != null) {
             throw Exceptions.EmailAlreadyExistsException()
@@ -77,7 +80,9 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
         )
     }
 
-    override suspend fun authenticate(authToken: AuthToken?): Boolean {
+    override suspend fun authenticate(
+        authToken: AuthToken?
+    ): Boolean {
         // simulate network call
         delay(500)
 
