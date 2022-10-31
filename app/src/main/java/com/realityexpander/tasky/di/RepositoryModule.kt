@@ -36,15 +36,15 @@ abstract class RepositoryModule {
     @Singleton
     @AuthApiFakeUsingBinds
     abstract fun bindAuthApiFake(
-        authApiFakeImpl: AuthApiFakeImpl
-    ): IAuthApi
+        authApiFakeImpl: AuthApiFakeImpl // <-- provides this instance...
+    ): IAuthApi // <-- ... for this interface.
 
     @Binds
     @Singleton
     @AuthApiProdUsingBinds
     abstract fun bindAuthApiProd(
-        authApiImpl: AuthApiImpl
-    ): IAuthApi
+        authApiImpl: AuthApiImpl // <-- provides this instance...
+    ): IAuthApi // <-- ... for this interface.
 
     @Binds
     @Singleton
