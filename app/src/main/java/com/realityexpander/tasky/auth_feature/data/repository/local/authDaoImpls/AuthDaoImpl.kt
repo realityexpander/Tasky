@@ -41,11 +41,11 @@ class AuthDaoImpl @Inject constructor(): IAuthDao {
         this.authInfoEntity = this.authInfoEntity?.copy(userId = userId)
     }
 
-    override suspend fun getAuthInfo(): AuthInfo {
+    override suspend fun getAuthInfo(): AuthInfo? {
         return authInfoEntity.toDomain()
     }
 
-    override suspend fun setAuthInfo(authInfo: AuthInfo) {
+    override suspend fun setAuthInfo(authInfo: AuthInfo?) {
         this.authInfoEntity = authInfo.toEntity()
     }
 

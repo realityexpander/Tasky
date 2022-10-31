@@ -20,9 +20,9 @@ interface IAuthDao {
 
     suspend fun clearAuthToken()
 
-    suspend fun getAuthInfo(): AuthInfo
+    suspend fun getAuthInfo(): AuthInfo?
 
-    suspend fun setAuthInfo(authInfo: AuthInfo)
+    suspend fun setAuthInfo(authInfo: AuthInfo?)
 
     suspend fun clearAuthInfo()
 }
