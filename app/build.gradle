@@ -153,6 +153,9 @@ dependencies {
     implementation "androidx.datastore:datastore:1.0.0"
     implementation "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
 
+    // SplashScreen
+    implementation "androidx.core:core-splashscreen:1.0.0"
+
     // For testing
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
