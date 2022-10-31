@@ -17,12 +17,6 @@ sealed class RegisterEvent {
     object ValidateConfirmPassword : RegisterEvent()
     object ValidatePasswordsMatch : RegisterEvent()
 
-    data class IsValidUsername(val isValid: Boolean) : RegisterEvent()
-    data class IsValidEmail(val isValid: Boolean) : RegisterEvent()
-    data class IsValidPassword(val isValid: Boolean) : RegisterEvent()
-    data class IsValidConfirmPassword(val isValid: Boolean) : RegisterEvent()
-    data class IsPasswordsMatch(val isMatch: Boolean) : RegisterEvent()
-
     object ShowInvalidUsernameMessage : RegisterEvent()
     object ShowInvalidEmailMessage : RegisterEvent()
     object ShowInvalidPasswordMessage : RegisterEvent()
@@ -39,6 +33,4 @@ sealed class RegisterEvent {
 
     object EmailAlreadyExists : RegisterEvent()
     data class UnknownError(val message: UiText) : RegisterEvent()
-
-
 }

@@ -66,10 +66,10 @@ class RegisterViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_isPasswordsMatch] ?: true
     private val authInfo: AuthInfo? =
         savedStateHandle[SAVED_STATE_authInfo]
-    private val statusMessage: UiText =
-        savedStateHandle[SAVED_STATE_statusMessage] ?: UiText.None
-    private val errorMessage: UiText =
-        savedStateHandle[SAVED_STATE_errorMessage] ?: UiText.None
+    private val statusMessage: UiText? =
+        savedStateHandle[SAVED_STATE_statusMessage]
+    private val errorMessage: UiText? =
+        savedStateHandle[SAVED_STATE_errorMessage]
 
     private val _registerState = MutableStateFlow(RegisterState())
     val registerState = _registerState.onEach { state ->
@@ -149,12 +149,6 @@ class RegisterViewModel @Inject constructor(
             sendEvent(RegisterEvent.EmailAlreadyExists)
         } catch(e: Exceptions.RegisterException) {
             sendEvent(RegisterEvent.RegisterError(UiText.Res(R.string.register_register_error, e.message ?: "")))
-        } catch(e: Exceptions.InvalidUsernameException) {
-            sendEvent(RegisterEvent.IsValidUsername(false))
-        } catch(e: Exceptions.InvalidEmailException) {
-            sendEvent(RegisterEvent.IsValidEmail(false))
-        } catch(e: Exceptions.InvalidPasswordException) {
-            sendEvent(RegisterEvent.IsValidPassword(false))
         } catch(e: Exceptions.NetworkException) {
             sendEvent(RegisterEvent.RegisterError(UiText.Res(R.string.register_network_error, e.message ?: "")))
         } catch (e: Exception) {
@@ -339,7 +333,7 @@ class RegisterViewModel @Inject constructor(
                 _registerState.update {
                     it.copy(
                         errorMessage = UiText.Res(R.string.register_error_email_exists),
-                        statusMessage = UiText.None
+                        statusMessage = null
                     )
                 }
                 sendEvent(RegisterEvent.SetIsLoading(false))
@@ -347,7 +341,7 @@ class RegisterViewModel @Inject constructor(
             is RegisterEvent.RegisterSuccess -> {
                 _registerState.update {
                     it.copy(
-                        errorMessage = UiText.None,
+                        errorMessage = null,
                         statusMessage = UiText.Res(R.string.register_success),
                         isPasswordVisible = false
                     )
@@ -358,7 +352,7 @@ class RegisterViewModel @Inject constructor(
                 _registerState.update {
                     it.copy(
                         errorMessage = event.message,
-                        statusMessage = UiText.None
+                        statusMessage = null
                     )
                 }
                 sendEvent(RegisterEvent.SetIsLoading(false))
