@@ -228,6 +228,7 @@ fun LoginScreenContent(
 
             AnimatedVisibility(state.errorMessage != null) {
                 state.errorMessage?.getOrNull?.let { errorMessage ->
+                    Spacer(modifier = Modifier.extraSmallHeight())
                     Text(
                         text = "Error: $errorMessage",
                         color = Color.Red,
@@ -239,6 +240,7 @@ fun LoginScreenContent(
             }
             AnimatedVisibility(state.statusMessage != null) {
                 state.statusMessage?.getOrNull?.let { message ->
+                    Spacer(modifier = Modifier.extraSmallHeight())
                     Text(text = message)
                     Spacer(modifier = Modifier.extraSmallHeight())
                 }

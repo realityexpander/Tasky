@@ -118,33 +118,19 @@ class RegisterViewModel @Inject constructor(
             // restore state after process death or from another screen (e.g. login)
             _registerState.value = RegisterState(
                 username = username,
-                    //Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: "",
                 email = email,
-                    //Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: "",
                 password = password,
-                    //Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: "",
                 confirmPassword = confirmPassword,
-                    //Uri.decode(savedStateHandle[SAVED_STATE_confirmPassword]) ?: "",
                 isInvalidEmail = isInvalidEmail,
-                    //savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false,
                 isInvalidEmailMessageVisible = isInvalidEmailMessageVisible,
-                    //savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] ?: false,
                 isInvalidPassword = isInvalidPassword,
-                    //savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false,
                 isInvalidPasswordMessageVisible = isInvalidPasswordMessageVisible,
-                    //savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] ?: false,
                 isInvalidConfirmPassword = isInvalidConfirmPassword,
-                    //savedStateHandle[SAVED_STATE_isInvalidConfirmPassword] ?: false,
                 isInvalidConfirmPasswordMessageVisible = isInvalidConfirmPasswordMessageVisible,
-                    //savedStateHandle[SAVED_STATE_isInvalidConfirmPasswordMessageVisible] ?: false,
                 isPasswordsMatch = isPasswordsMatch,
-                    //savedStateHandle[SAVED_STATE_isPasswordsMatch] ?: true,
                 authInfo = authInfo,
-                    //savedStateHandle[SAVED_STATE_authInfo],
                 statusMessage = statusMessage,
-                    //savedStateHandle[SAVED_STATE_statusMessage],
                 errorMessage = errorMessage,
-                    //savedStateHandle[SAVED_STATE_errorMessage]
             )
             yield() // allow the registerState to be updated
 

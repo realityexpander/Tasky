@@ -260,11 +260,13 @@ fun RegisterScreenContent(
                     )
                 }
             }
+            Spacer(modifier = Modifier.mediumHeight())
 
             // STATUS //////////////////////////////////////////
 
             AnimatedVisibility(state.errorMessage != null) {
                 state.errorMessage?.getOrNull?.let { errorMessage ->
+                    Spacer(modifier = Modifier.extraSmallHeight())
                     Text(
                         text = "Error: $errorMessage",
                         color = Color.Red,

@@ -94,25 +94,15 @@ class LoginViewModel @Inject constructor(
             // restore state after process death
             _loginState.value = LoginState(
                 username = username,
-//                    Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: "",
                 email = email,
-//                    Uri.decode(savedStateHandle[SAVED_STATE_email]) ?: "",
                 password = password,
-//                    Uri.decode(savedStateHandle[SAVED_STATE_password]) ?: "",
                 isInvalidEmail = isInvalidEmail,
-//                    savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false,
                 isInvalidEmailMessageVisible = isInvalidEmailMessageVisible,
-//                    savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] ?: false,
                 isInvalidPassword = isInvalidPassword,
-//                    savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false,
                 isInvalidPasswordMessageVisible = isInvalidPasswordMessageVisible,
-//                    savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] ?: false,
                 authInfo = authInfo,
-//                    savedStateHandle[SAVED_STATE_authInfo],
                 statusMessage = statusMessage,
-//                    savedStateHandle[SAVED_STATE_statusMessage],
                 errorMessage = errorMessage
-//                    savedStateHandle[SAVED_STATE_errorMessage]
             )
             yield() // allow loginState to be updated
 
