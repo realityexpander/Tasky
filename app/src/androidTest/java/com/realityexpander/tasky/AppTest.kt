@@ -11,7 +11,7 @@ import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpl
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
-import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.ValidateEmailImpl
+import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.validateEmailImpls.ValidateEmailAndroidImpl
 import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginScreen
 import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginViewModel
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
@@ -28,7 +28,7 @@ class AppTest {
     private lateinit var authRepository: IAuthRepository
     private val authApiFake = AuthApiFakeImpl()
     private val authDaoFake = AuthDaoFakeImpl()
-    private val validateEmail = ValidateEmailImpl()
+    private val validateEmail = ValidateEmailAndroidImpl()
     private val validatePassword = ValidatePassword()
     private val validateUsername = ValidateUsername()
 

@@ -35,7 +35,7 @@ import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
-import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.ValidateEmailRegexImpl
+import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.validateEmailImpls.ValidateEmailRegexImpl
 import com.realityexpander.tasky.auth_feature.presentation.components.EmailField
 import com.realityexpander.tasky.auth_feature.presentation.components.NameField
 import com.realityexpander.tasky.auth_feature.presentation.components.PasswordField
