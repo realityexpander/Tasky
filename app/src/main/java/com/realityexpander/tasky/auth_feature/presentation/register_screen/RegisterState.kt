@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.auth_feature.presentation.register_screen
 
+import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 
 data class RegisterState(
@@ -10,7 +11,6 @@ data class RegisterState(
     val isPasswordVisible: Boolean = false,
 
     val isLoading: Boolean = false,
-    val isLoggedIn: Boolean = false,
     val isError: Boolean = false,
 
     val isInvalidUsername: Boolean = false,
@@ -29,4 +29,6 @@ data class RegisterState(
 
     val errorMessage: UiText = UiText.None,
     val statusMessage: UiText = UiText.None,
+
+    val authInfo: AuthInfo? = null,  // when not-null, the user is logged in
 )

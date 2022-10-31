@@ -272,11 +272,6 @@ fun RegisterScreenContent(
                 )
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
-            if (state.isLoggedIn) {
-                Spacer(modifier = Modifier.smallHeight())
-                Text(text = stringResource(R.string.register_registered))
-                Spacer(modifier = Modifier.extraSmallHeight())
-            }
             state.statusMessage.getOrNull?.let { message ->
                 Spacer(modifier = Modifier.extraSmallHeight())
                 Text(text = message)
@@ -360,9 +355,9 @@ fun RegisterScreenPreview() {
                     isShowInvalidConfirmPasswordMessage = false,
                     isPasswordVisible = false,
                     isLoading = false,
-                    isLoggedIn = false,
                     errorMessage = UiText.None,  // UiText.Res(R.string.error_invalid_email),
                     statusMessage = UiText.None, // UiText.Res(R.string.login_logged_in),
+                    authInfo = null,
                 ),
                 onAction = {},
             )

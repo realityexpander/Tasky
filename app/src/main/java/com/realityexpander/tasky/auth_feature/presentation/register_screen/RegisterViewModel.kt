@@ -5,15 +5,16 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.common.Exceptions
+import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_authInfo
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_confirmPassword
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_email
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidConfirmPassword
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidEmail
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidPassword
-import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isLoggedIn
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isPasswordsMatch
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isShowInvalidConfirmPasswordMessage
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isShowInvalidEmailMessage
@@ -30,8 +31,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-//    @AuthRepositoryFakeUsingProvides
-//    @AuthRepositoryProd_AuthApiProd_AuthDaoFake
     private val authRepository: IAuthRepository,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -59,8 +58,8 @@ class RegisterViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_isShowInvalidConfirmPasswordMessage] ?: false
     private val isPasswordsMatch: Boolean =
         savedStateHandle[SAVED_STATE_isPasswordsMatch] ?: true
-    private val isLoggedIn: Boolean =
-        savedStateHandle[SAVED_STATE_isLoggedIn] ?: false
+    private val authInfo: AuthInfo? =
+        savedStateHandle[SAVED_STATE_authInfo]
     private val statusMessage: UiText =
         savedStateHandle[SAVED_STATE_statusMessage] ?: UiText.None
     private val errorMessage: UiText =
@@ -80,7 +79,7 @@ class RegisterViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_isInvalidConfirmPassword] = state.isInvalidConfirmPassword
         savedStateHandle[SAVED_STATE_isShowInvalidConfirmPasswordMessage] = state.isShowInvalidConfirmPasswordMessage
         savedStateHandle[SAVED_STATE_isPasswordsMatch] = state.isPasswordsMatch
-        savedStateHandle[SAVED_STATE_isLoggedIn] = state.isLoggedIn
+        savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
         savedStateHandle[SAVED_STATE_statusMessage] = state.statusMessage
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
 
@@ -109,7 +108,7 @@ class RegisterViewModel @Inject constructor(
                 isInvalidConfirmPassword = isInvalidConfirmPassword,
                 isShowInvalidConfirmPasswordMessage = isShowInvalidConfirmPasswordMessage,
                 isPasswordsMatch = isPasswordsMatch,
-                isLoggedIn = isLoggedIn,
+                authInfo = authInfo,
                 statusMessage = statusMessage,
                 errorMessage = errorMessage,
             )
@@ -367,7 +366,6 @@ class RegisterViewModel @Inject constructor(
             is RegisterEvent.EmailAlreadyExists -> {
                 _registerState.update {
                     it.copy(
-                        isLoggedIn = false,
                         errorMessage = UiText.Res(R.string.register_error_email_exists),
                         statusMessage = UiText.None
                     )
@@ -387,7 +385,6 @@ class RegisterViewModel @Inject constructor(
             is RegisterEvent.RegisterError -> {
                 _registerState.update {
                     it.copy(
-                        isLoggedIn = false,
                         errorMessage = event.message,
                         statusMessage = UiText.None
                     )
@@ -397,7 +394,6 @@ class RegisterViewModel @Inject constructor(
             is RegisterEvent.UnknownError -> {
                 _registerState.update {
                     it.copy(
-                        isLoggedIn = false,
                         errorMessage = if(event.message.isRes)
                             event.message
                         else

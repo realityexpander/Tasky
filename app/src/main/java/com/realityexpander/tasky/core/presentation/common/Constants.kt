@@ -14,7 +14,6 @@ object UIConstants {
     const val SAVED_STATE_isInvalidConfirmPassword = "isInvalidConfirmPassword"
     const val SAVED_STATE_isShowInvalidConfirmPasswordMessage = "isShowInvalidConfirmPasswordMessage"
     const val SAVED_STATE_isPasswordsMatch = "isPasswordsMatch"
-    const val SAVED_STATE_isLoggedIn = "isLoggedIn"
     const val SAVED_STATE_statusMessage = "statusMessage"
     const val SAVED_STATE_errorMessage = "errorMessage"
 
