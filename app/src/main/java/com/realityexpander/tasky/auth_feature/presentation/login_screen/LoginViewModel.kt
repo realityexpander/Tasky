@@ -17,8 +17,8 @@ import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STAT
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidEmail
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidPassword
-import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isShowInvalidEmailMessage
-import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isShowInvalidPasswordMessage
+import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidEmailMessageVisible
+import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidPasswordMessageVisible
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_password
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_statusMessage
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_username
@@ -46,11 +46,11 @@ class LoginViewModel @Inject constructor(
     private val isInvalidEmail: Boolean =
         savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false
     private val isShowInvalidEmailMessage: Boolean =
-        savedStateHandle[SAVED_STATE_isShowInvalidEmailMessage] ?: false
+        savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] ?: false
     private val isInvalidPassword: Boolean =
         savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false
     private val isShowInvalidPasswordMessage: Boolean =
-        savedStateHandle[SAVED_STATE_isShowInvalidPasswordMessage] ?: false
+        savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] ?: false
     private val authInfo: AuthInfo? =
         savedStateHandle[SAVED_STATE_authInfo]
     private val statusMessage: UiText =
@@ -65,9 +65,9 @@ class LoginViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_email] = state.email
         savedStateHandle[SAVED_STATE_password] = state.password
         savedStateHandle[SAVED_STATE_isInvalidEmail] = state.isInvalidEmail
-        savedStateHandle[SAVED_STATE_isShowInvalidEmailMessage] = state.isShowInvalidEmailMessage
+        savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] = state.isInvalidEmailMessageVisible
         savedStateHandle[SAVED_STATE_isInvalidPassword] = state.isInvalidPassword
-        savedStateHandle[SAVED_STATE_isShowInvalidPasswordMessage] = state.isShowInvalidPasswordMessage
+        savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] = state.isInvalidPasswordMessageVisible
         savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
         savedStateHandle[SAVED_STATE_statusMessage] = state.statusMessage
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
@@ -87,9 +87,9 @@ class LoginViewModel @Inject constructor(
                 email = email,
                 password = password,
                 isInvalidEmail = isInvalidEmail,
-                isShowInvalidEmailMessage = isShowInvalidEmailMessage,
+                isInvalidEmailMessageVisible = isShowInvalidEmailMessage,
                 isInvalidPassword = isInvalidPassword,
-                isShowInvalidPasswordMessage = isShowInvalidPasswordMessage,
+                isInvalidPasswordMessageVisible = isShowInvalidPasswordMessage,
                 authInfo = authInfo,
                 statusMessage = statusMessage,
                 errorMessage = errorMessage
@@ -144,7 +144,7 @@ class LoginViewModel @Inject constructor(
                     it.copy(
                         email = event.email,
                         isInvalidEmail = false,
-                        isShowInvalidEmailMessage = false,
+                        isInvalidEmailMessageVisible = false,
                         errorMessage = UiText.None,
                     )
                 }
@@ -154,7 +154,7 @@ class LoginViewModel @Inject constructor(
                     it.copy(
                         password = event.password,
                         isInvalidPassword = false,
-                        isShowInvalidPasswordMessage = false,
+                        isInvalidPasswordMessageVisible = false,
                         errorMessage = UiText.None,
                     )
                 }
@@ -186,13 +186,13 @@ class LoginViewModel @Inject constructor(
             }
             is LoginEvent.ShowInvalidEmailMessage -> {
                 _loginState.value = _loginState.value.copy(
-                    isShowInvalidEmailMessage = true
+                    isInvalidEmailMessageVisible = true
                 )
             }
             is LoginEvent.ShowInvalidPasswordMessage -> {
                 _loginState.update {
                     it.copy(
-                        isShowInvalidPasswordMessage = true
+                        isInvalidPasswordMessageVisible = true
                     )
                 }
             }

@@ -16,12 +16,12 @@ import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STAT
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_email
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidConfirmPassword
+import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidConfirmPasswordMessageVisible
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidEmail
+import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidEmailMessageVisible
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidPassword
+import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isInvalidPasswordMessageVisible
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isPasswordsMatch
-import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isShowInvalidConfirmPasswordMessage
-import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isShowInvalidEmailMessage
-import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isShowInvalidPasswordMessage
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_password
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_statusMessage
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_username
@@ -52,16 +52,16 @@ class RegisterViewModel @Inject constructor(
         Uri.decode(savedStateHandle[SAVED_STATE_confirmPassword]) ?: ""
     private val isInvalidEmail: Boolean =
         savedStateHandle[SAVED_STATE_isInvalidEmail] ?: false
-    private val isShowInvalidEmailMessage: Boolean =
-        savedStateHandle[SAVED_STATE_isShowInvalidEmailMessage] ?: false
+    private val isInvalidEmailMessageVisible: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] ?: false
     private val isInvalidPassword: Boolean =
         savedStateHandle[SAVED_STATE_isInvalidPassword] ?: false
-    private val isShowInvalidPasswordMessage: Boolean =
-        savedStateHandle[SAVED_STATE_isShowInvalidPasswordMessage] ?: false
+    private val isInvalidPasswordMessageVisible: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] ?: false
     private val isInvalidConfirmPassword: Boolean =
         savedStateHandle[SAVED_STATE_isInvalidConfirmPassword] ?: false
-    private val isShowInvalidConfirmPasswordMessage: Boolean =
-        savedStateHandle[SAVED_STATE_isShowInvalidConfirmPasswordMessage] ?: false
+    private val isInvalidConfirmPasswordMessageVisible: Boolean =
+        savedStateHandle[SAVED_STATE_isInvalidConfirmPasswordMessageVisible] ?: false
     private val isPasswordsMatch: Boolean =
         savedStateHandle[SAVED_STATE_isPasswordsMatch] ?: true
     private val authInfo: AuthInfo? =
@@ -79,11 +79,11 @@ class RegisterViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_password] = state.password
         savedStateHandle[SAVED_STATE_confirmPassword] = state.confirmPassword
         savedStateHandle[SAVED_STATE_isInvalidEmail] = state.isInvalidEmail
-        savedStateHandle[SAVED_STATE_isShowInvalidEmailMessage] = state.isShowInvalidEmailMessage
+        savedStateHandle[SAVED_STATE_isInvalidEmailMessageVisible] = state.isInvalidEmailMessageVisible
         savedStateHandle[SAVED_STATE_isInvalidPassword] = state.isInvalidPassword
-        savedStateHandle[SAVED_STATE_isShowInvalidPasswordMessage] = state.isShowInvalidPasswordMessage
+        savedStateHandle[SAVED_STATE_isInvalidPasswordMessageVisible] = state.isInvalidPasswordMessageVisible
         savedStateHandle[SAVED_STATE_isInvalidConfirmPassword] = state.isInvalidConfirmPassword
-        savedStateHandle[SAVED_STATE_isShowInvalidConfirmPasswordMessage] = state.isShowInvalidConfirmPasswordMessage
+        savedStateHandle[SAVED_STATE_isInvalidConfirmPasswordMessageVisible] = state.isInvalidConfirmPasswordMessageVisible
         savedStateHandle[SAVED_STATE_isPasswordsMatch] = state.isPasswordsMatch
         savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
         savedStateHandle[SAVED_STATE_statusMessage] = state.statusMessage
@@ -108,11 +108,11 @@ class RegisterViewModel @Inject constructor(
                 password = password,
                 confirmPassword = confirmPassword,
                 isInvalidEmail = isInvalidEmail,
-                isShowInvalidEmailMessage = isShowInvalidEmailMessage,
+                isInvalidEmailMessageVisible = isInvalidEmailMessageVisible,
                 isInvalidPassword = isInvalidPassword,
-                isShowInvalidPasswordMessage = isShowInvalidPasswordMessage,
+                isInvalidPasswordMessageVisible = isInvalidPasswordMessageVisible,
                 isInvalidConfirmPassword = isInvalidConfirmPassword,
-                isShowInvalidConfirmPasswordMessage = isShowInvalidConfirmPasswordMessage,
+                isInvalidConfirmPasswordMessageVisible = isInvalidConfirmPasswordMessageVisible,
                 isPasswordsMatch = isPasswordsMatch,
                 authInfo = authInfo,
                 statusMessage = statusMessage,
@@ -187,7 +187,7 @@ class RegisterViewModel @Inject constructor(
                     it.copy(
                         username = event.username,
                         isInvalidUsername = false,
-                        isShowInvalidUsernameMessage = false
+                        isInvalidUsernameMessageVisible = false
                     )
                 }
             }
@@ -196,7 +196,7 @@ class RegisterViewModel @Inject constructor(
                     it.copy(
                         email = event.email,
                         isInvalidEmail = false,
-                        isShowInvalidEmailMessage = false
+                        isInvalidEmailMessageVisible = false
                     )
                 }
             }
@@ -205,7 +205,7 @@ class RegisterViewModel @Inject constructor(
                     it.copy(
                         password = event.password,
                         isInvalidPassword = false,
-                        isShowInvalidPasswordMessage = false,
+                        isInvalidPasswordMessageVisible = false,
                         isPasswordsMatch = false
                     )
                 }
@@ -215,7 +215,7 @@ class RegisterViewModel @Inject constructor(
                     it.copy(
                         confirmPassword = event.confirmPassword,
                         isInvalidConfirmPassword = false,
-                        isShowInvalidConfirmPasswordMessage = false,
+                        isInvalidConfirmPasswordMessageVisible = false,
                         isPasswordsMatch = false
                     )
                 }
@@ -270,28 +270,28 @@ class RegisterViewModel @Inject constructor(
             is RegisterEvent.ShowInvalidUsernameMessage -> {
                 _registerState.update {
                     it.copy(
-                        isShowInvalidUsernameMessage = true
+                        isInvalidUsernameMessageVisible = true
                     )
                 }
             }
             is RegisterEvent.ShowInvalidEmailMessage -> {
                 _registerState.update {
                     it.copy(
-                        isShowInvalidEmailMessage = true
+                        isInvalidEmailMessageVisible = true
                     )
                 }
             }
             is RegisterEvent.ShowInvalidPasswordMessage -> {
                 _registerState.update {
                     it.copy(
-                        isShowInvalidPasswordMessage = true
+                        isInvalidPasswordMessageVisible = true
                     )
                 }
             }
             is RegisterEvent.ShowInvalidConfirmPasswordMessage -> {
                 _registerState.update {
                     it.copy(
-                        isShowInvalidConfirmPasswordMessage = true
+                        isInvalidConfirmPasswordMessageVisible = true
                     )
                 }
             }

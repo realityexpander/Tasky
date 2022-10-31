@@ -173,7 +173,7 @@ fun LoginScreenContent(
                     onAction(LoginEvent.UpdateEmail(it))
                 }
             )
-            if (state.isInvalidEmail && state.isShowInvalidEmailMessage) {
+            if (state.isInvalidEmail && state.isInvalidEmailMessageVisible) {
                 Text(text = stringResource(R.string.error_invalid_email), color = Color.Red)
             }
             Spacer(modifier = Modifier.smallHeight())
@@ -197,7 +197,7 @@ fun LoginScreenContent(
                     performLogin()
                 }
             )
-            if (state.isInvalidPassword && state.isShowInvalidPasswordMessage) {
+            if (state.isInvalidPassword && state.isInvalidPasswordMessageVisible) {
                 Text(text = stringResource(R.string.error_invalid_password), color = Color.Red)
             }
             Spacer(modifier = Modifier.mediumHeight())
@@ -293,8 +293,8 @@ fun LoginScreenPreview() {
                     password = "123456Aa",
                     isInvalidEmail = false,
                     isInvalidPassword = false,
-                    isShowInvalidEmailMessage = false,
-                    isShowInvalidPasswordMessage = true,
+                    isInvalidEmailMessageVisible = false,
+                    isInvalidPasswordMessageVisible = true,
                     isPasswordVisible = true,
                     isLoading = false,
                     errorMessage = UiText.None,  // UiText.Res(R.string.error_invalid_email),
