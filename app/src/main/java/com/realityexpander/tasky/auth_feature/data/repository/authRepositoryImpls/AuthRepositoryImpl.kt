@@ -24,6 +24,7 @@ class AuthRepositoryImpl @Inject constructor(
         email: Email,
         password: Password
     ): AuthInfo {
+        // Sanity check to be sure the email and password are valid
         if(!validateEmail.validate(email)) {
             throw Exceptions.InvalidEmailException()
         }
@@ -57,6 +58,7 @@ class AuthRepositoryImpl @Inject constructor(
         email: Email,
         password: Password
     ) {
+        // Sanity check to be sure the username, email, and password are valid
         if(!validateUsername.validate(username)) {
             throw Exceptions.InvalidUsernameException()
         }
@@ -82,8 +84,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    // todo: move these to the interface, and allow authDao and authApi to be defined in the interface
-
+    // todo: move these to the interface, and allow authDao and authApi to be defined in the interface?
     override suspend fun getAuthToken(): AuthToken? {
         return authDao.getAuthToken()
     }
