@@ -156,7 +156,7 @@ fun RegisterScreenContent(
                     onAction(RegisterEvent.UpdateUsername(it))
                 }
             )
-            if (state.isInvalidUsername && state.isInvalidUsernameMessageVisible) {
+            AnimatedVisibility (state.isInvalidUsername && state.isInvalidUsernameMessageVisible) {
                 Text(text = stringResource(R.string.error_invalid_username), color = Color.Red)
             }
             Spacer(modifier = Modifier.smallHeight())
@@ -170,7 +170,7 @@ fun RegisterScreenContent(
                     onAction(RegisterEvent.UpdateEmail(it))
                 }
             )
-            if (state.isInvalidEmail && state.isInvalidEmailMessageVisible) {
+            AnimatedVisibility (state.isInvalidEmail && state.isInvalidEmailMessageVisible) {
                 Text(text = stringResource(R.string.error_invalid_email), color = Color.Red)
             }
             Spacer(modifier = Modifier.smallHeight())
@@ -212,7 +212,7 @@ fun RegisterScreenContent(
                     performRegister()
                 },
             )
-            if (state.isInvalidConfirmPassword && state.isInvalidConfirmPasswordMessageVisible) {
+            AnimatedVisibility (state.isInvalidConfirmPassword && state.isInvalidConfirmPasswordMessageVisible) {
                 Text(
                     text = stringResource(R.string.error_invalid_confirm_password),
                     color = Color.Red
@@ -220,7 +220,7 @@ fun RegisterScreenContent(
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
             // • SHOW IF MATCHING PASSWORDS
-            if (!state.isPasswordsMatch) {
+            AnimatedVisibility (!state.isPasswordsMatch) {
                 Text(
                     text = stringResource(R.string.register_error_passwords_do_not_match),
                     color = Color.Red
@@ -228,7 +228,7 @@ fun RegisterScreenContent(
                 Spacer(modifier = Modifier.extraSmallHeight())
             }
             // • SHOW PASSWORD REQUIREMENTS
-            if (state.isInvalidPasswordMessageVisible || state.isInvalidConfirmPasswordMessageVisible) {
+            AnimatedVisibility(state.isInvalidPasswordMessageVisible || state.isInvalidConfirmPasswordMessageVisible) {
                 Text(
                     text = stringResource(R.string.register_password_requirements),
                     color = Color.Red
@@ -263,18 +263,23 @@ fun RegisterScreenContent(
 
             // STATUS //////////////////////////////////////////
 
-            state.errorMessage?.getOrNull?.let { errorMessage ->
-                Spacer(modifier = Modifier.smallHeight())
-                Text(
-                    text = "Error: $errorMessage",
-                    color = Color.Red,
-                )
-                Spacer(modifier = Modifier.extraSmallHeight())
+            AnimatedVisibility(state.errorMessage != null) {
+                state.errorMessage?.getOrNull?.let { errorMessage ->
+                    Text(
+                        text = "Error: $errorMessage",
+                        color = Color.Red,
+                        modifier = Modifier
+                            .animateContentSize()
+                    )
+                    Spacer(modifier = Modifier.extraSmallHeight())
+                }
             }
-            state.statusMessage?.getOrNull?.let { message ->
-                Spacer(modifier = Modifier.extraSmallHeight())
-                Text(text = message)
-                Spacer(modifier = Modifier.extraSmallHeight())
+            AnimatedVisibility(state.statusMessage != null) {
+                state.statusMessage?.getOrNull?.let { message ->
+                    Spacer(modifier = Modifier.extraSmallHeight())
+                    Text(text = message)
+                    Spacer(modifier = Modifier.extraSmallHeight())
+                }
             }
 
 

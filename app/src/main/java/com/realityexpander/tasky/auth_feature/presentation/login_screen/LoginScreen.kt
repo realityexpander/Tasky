@@ -3,10 +3,7 @@ package com.realityexpander.tasky.auth_feature.presentation.login_screen
 import android.content.res.Configuration
 import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -173,7 +170,7 @@ fun LoginScreenContent(
                     onAction(LoginEvent.UpdateEmail(it))
                 }
             )
-            if (state.isInvalidEmail && state.isInvalidEmailMessageVisible) {
+            AnimatedVisibility(state.isInvalidEmail && state.isInvalidEmailMessageVisible) {
                 Text(text = stringResource(R.string.error_invalid_email), color = Color.Red)
             }
             Spacer(modifier = Modifier.smallHeight())
@@ -197,7 +194,7 @@ fun LoginScreenContent(
                     performLogin()
                 }
             )
-            if (state.isInvalidPassword && state.isInvalidPasswordMessageVisible) {
+            AnimatedVisibility(state.isInvalidPassword && state.isInvalidPasswordMessageVisible) {
                 Text(text = stringResource(R.string.error_invalid_password), color = Color.Red)
             }
             Spacer(modifier = Modifier.mediumHeight())
@@ -229,16 +226,22 @@ fun LoginScreenContent(
 
             // STATUS //////////////////////////////////////////
 
-            state.errorMessage?.getOrNull?.let { errorMessage ->
-                Text(
-                    text = "Error: $errorMessage",
-                    color = Color.Red,
-                )
-                Spacer(modifier = Modifier.extraSmallHeight())
+            AnimatedVisibility(state.errorMessage != null) {
+                state.errorMessage?.getOrNull?.let { errorMessage ->
+                    Text(
+                        text = "Error: $errorMessage",
+                        color = Color.Red,
+                        modifier = Modifier
+                            .animateContentSize()
+                    )
+                    Spacer(modifier = Modifier.extraSmallHeight())
+                }
             }
-            state.statusMessage?.getOrNull?.let { message ->
-                Text(text = message)
-                Spacer(modifier = Modifier.extraSmallHeight())
+            AnimatedVisibility(state.statusMessage != null) {
+                state.statusMessage?.getOrNull?.let { message ->
+                    Text(text = message)
+                    Spacer(modifier = Modifier.extraSmallHeight())
+                }
             }
 
             Box(
