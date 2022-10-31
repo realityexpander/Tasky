@@ -33,7 +33,6 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.presentation.components.EmailField
 import com.realityexpander.tasky.auth_feature.presentation.components.PasswordField
 import com.realityexpander.tasky.core.common.settings.saveAuthInfo
@@ -89,21 +88,8 @@ fun LoginScreenContent(
         focusManager.clearFocus()
     }
 
-    fun navigateToRegister() {
-        navigator.navigate(
-            RegisterScreenDestination(
-                username = username,
-                email = state.email,
-                password = state.password,
-                confirmPassword = confirmPassword
-            )
-        ) {
-            launchSingleTop = true
-            restoreState = true
-        }
-    }
-
-    fun navigateToAgenda(authInfo: AuthInfo) {
+    // When authInfo is not null, we are Logged in -> navigate to AgendaScreen
+    state.authInfo?.let { authInfo ->
         scope.launch {
 
             // Save the AuthInfo in the dataStore
@@ -120,6 +106,19 @@ fun LoginScreenContent(
         }
     }
 
+    fun navigateToRegister() {
+        navigator.navigate(
+            RegisterScreenDestination(
+                username = username,
+                email = state.email,
+                password = state.password,
+                confirmPassword = confirmPassword
+            )
+        ) {
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
 
     BackHandler(true) {
         // todo: should we ask the user to quit?
@@ -236,16 +235,6 @@ fun LoginScreenContent(
                     color = Color.Red,
                 )
                 Spacer(modifier = Modifier.extraSmallHeight())
-            }
-            if (state.isLoggedIn) {
-                //Text(text = stringResource(R.string.login_logged_in)) // keep for debugging
-                //Spacer(modifier = Modifier.extraSmallHeight())
-
-                state.authInfo?.let { authInfo ->
-                    navigateToAgenda(authInfo)
-                } ?: run {
-                    onAction(LoginEvent.LoginError(UiText.Res(R.string.error_login_error, "authInfo is null")))
-                }
             }
             state.statusMessage.getOrNull?.let { message ->
                 Text(text = message)
