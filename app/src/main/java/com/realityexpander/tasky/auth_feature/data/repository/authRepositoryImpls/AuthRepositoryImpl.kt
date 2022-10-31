@@ -20,7 +20,10 @@ class AuthRepositoryImpl @Inject constructor(
     override val validateUsername: ValidateUsername,
 ): IAuthRepository {
 
-    override suspend fun login(email: Email, password: Password): AuthInfo {
+    override suspend fun login(
+        email: Email,
+        password: Password
+    ): AuthInfo {
         if(!validateEmail.validate(email)) {
             throw Exceptions.InvalidEmailException()
         }
@@ -28,7 +31,7 @@ class AuthRepositoryImpl @Inject constructor(
             throw Exceptions.InvalidPasswordException()
         }
 
-        val authInfoDTO: AuthInfoDTO = try {
+        val authInfoDTO: AuthInfoDTO? = try {
             authApi.login(email, password)
         } catch (e: Exceptions.LoginException) {
             throw e
@@ -42,12 +45,11 @@ class AuthRepositoryImpl @Inject constructor(
 
         val authInfo = authInfoDTO.toDomain()
 
-        if(authInfoDTO.authToken != "") {
+        authInfo?.let {
             authDao.setAuthInfo(authInfo)
             return authDao.getAuthInfo()
-        } else {
-            throw Exceptions.LoginException("No Token")
-        }
+                ?: throw Exceptions.LoginException("No AuthInfo")
+        } ?: throw Exceptions.LoginException("No AuthInfo")
     }
 
     override suspend fun register(

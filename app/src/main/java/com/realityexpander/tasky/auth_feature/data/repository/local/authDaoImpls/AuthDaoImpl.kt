@@ -50,6 +50,6 @@ class AuthDaoImpl @Inject constructor(): IAuthDao {
     }
 
     override suspend fun clearAuthInfo() {
-        this.authInfoEntity = AuthInfoEntity(null, null, null)
+        this.authInfoEntity = null
     }
 }

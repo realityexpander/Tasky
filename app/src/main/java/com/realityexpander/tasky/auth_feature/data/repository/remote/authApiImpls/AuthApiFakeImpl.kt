@@ -23,10 +23,12 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
 
     /////////////////// FAKE API IMPLEMENTATION ///////////////////////
 
+
     override suspend fun login(
         email: Email,
         password: Password
-    ): AuthInfoDTO {
+    ): @Suppress("RedundantNullableReturnType")
+       AuthInfoDTO? {  // always returns non-null to maintain consistency with real API
 
         // simulate network call
         delay(1000)
@@ -155,12 +157,12 @@ suspend fun main() {
 
     val authApiFakeImpl = AuthApiFakeImpl()
     var user = authApiFakeImpl.login("chris@demo.com", "Password1")
-    IAuthApi.setAuthToken(user.authToken)
+    IAuthApi.setAuthToken(user?.authToken)
 
     println("user=$user")
 
     println("AuthApiFakeImpl.authenticate() Logged in user")
-    println("  user.authToken is valid=" + assert(authApiFakeImpl.authenticate(user.authToken)))
+    println("  user.authToken is valid=" + assert(authApiFakeImpl.authenticate(user?.authToken)))
     println("  logged-in user authToken is valid=" + assert(authApiFakeImpl.authenticate()))
 
     println()
@@ -168,15 +170,15 @@ suspend fun main() {
     IAuthApi.setAuthToken(null)
     println("AuthApiFakeImpl.authenticate() Logged out user has no authToken")
     println("   IAuthApi.authToken=null, token is NOT valid locally=" + assert(!authApiFakeImpl.authenticate()))
-    println("   user.authToken still valid on server=" + assert(authApiFakeImpl.authenticate(user.authToken)))
+    println("   user.authToken still valid on server=" + assert(authApiFakeImpl.authenticate(user?.authToken)))
 
     println()
 
     user = authApiFakeImpl.login("chris@demo.com", "Password1")
     authApiFakeImpl.expireToken("chris@demo.com") // server expires the token
     println("AuthApiFakeImpl.authenticate() Expired token (server side) when user is still logged in")
-    println("   logged-in user authToken is valid & not null=" + assert(user.authToken != null))
-    println("   user.authToken is INVALID on server=" + assert(!authApiFakeImpl.authenticate(user.authToken)))
+    println("   logged-in user authToken is valid & not null=" + assert(user?.authToken != null))
+    println("   user.authToken is INVALID on server=" + assert(!authApiFakeImpl.authenticate(user?.authToken)))
     println("   logged-in user is NOT able to authenticate their token=" + assert(!authApiFakeImpl.authenticate()))
 
     println()

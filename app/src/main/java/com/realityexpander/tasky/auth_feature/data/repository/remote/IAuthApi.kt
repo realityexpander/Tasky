@@ -6,12 +6,11 @@ import com.realityexpander.tasky.core.common.Email
 import com.realityexpander.tasky.core.common.Password
 import com.realityexpander.tasky.core.common.Username
 
-
 interface IAuthApi {
     suspend fun login(
         email: Email,
         password: Password
-    ): AuthInfoDTO
+    ): AuthInfoDTO?
 
     suspend fun register(
         username: Username,

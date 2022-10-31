@@ -27,7 +27,7 @@ class AuthRepositoryFakeImpl(
             throw Exceptions.InvalidPasswordException()
         }
 
-        val authInfoDTO: AuthInfoDTO = try {
+        val authInfoDTO: AuthInfoDTO? = try {
             authApi.login(email, password)
         } catch (e: Exceptions.LoginException) {
             throw e
@@ -39,12 +39,11 @@ class AuthRepositoryFakeImpl(
 
         val authInfo = authInfoDTO.toDomain()
 
-        if(!authInfo.authToken.isNullOrBlank()) {
+        authInfo?.let {
             authDao.setAuthInfo(authInfo)
             return authDao.getAuthInfo()
-        } else {
-            throw Exceptions.LoginException("No AuthInfo")
-        }
+                ?: throw Exceptions.LoginException("No AuthInfo")
+        } ?: throw Exceptions.LoginException("No AuthInfo")
     }
 
     override suspend fun register(

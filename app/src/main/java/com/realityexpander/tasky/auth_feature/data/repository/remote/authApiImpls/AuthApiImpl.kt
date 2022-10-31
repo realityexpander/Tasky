@@ -33,8 +33,7 @@ class AuthApiImpl @Inject constructor (
                         ),
                         username(response.body()?.username
                             ?: throw Exceptions.LoginException("No Full Name")
-                    )
-                    )
+                    ))
                 }
                 409 -> throw Exceptions.LoginException(
                     getErrorBodyMessage(response.errorBody()?.string())
@@ -48,6 +47,8 @@ class AuthApiImpl @Inject constructor (
         } catch (e: Exceptions.NetworkException) {
             throw e
         } catch (e: Exceptions.UnknownErrorException) {
+            throw e
+        } catch (e: Exceptions.LoginException) {
             throw e
         } catch (e: HttpException) {
             throw Exceptions.NetworkException("${e.message()} - ${e.code()}")
@@ -129,8 +130,6 @@ class AuthApiImpl @Inject constructor (
     }
 
 }
-
-
 
 
 
