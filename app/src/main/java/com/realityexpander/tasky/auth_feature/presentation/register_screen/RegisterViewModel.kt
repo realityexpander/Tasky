@@ -138,6 +138,7 @@ class RegisterViewModel @Inject constructor(
     ) {
         try {
             authRepository.register(username, email, password)
+
             sendEvent(RegisterEvent.RegisterSuccess(UiText.Res(R.string.register_success)))
         } catch(e: Exceptions.EmailAlreadyExistsException) {
             sendEvent(RegisterEvent.EmailAlreadyExists)
