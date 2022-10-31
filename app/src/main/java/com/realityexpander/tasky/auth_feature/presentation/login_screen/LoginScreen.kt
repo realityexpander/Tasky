@@ -33,7 +33,7 @@ import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.auth_feature.presentation.components.EmailField
 import com.realityexpander.tasky.auth_feature.presentation.components.PasswordField
-import com.realityexpander.tasky.core.common.settings.saveAuthInfo
+import com.realityexpander.tasky.core.data.settings.saveAuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme

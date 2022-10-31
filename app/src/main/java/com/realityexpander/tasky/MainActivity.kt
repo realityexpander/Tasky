@@ -17,9 +17,9 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.dataStore
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.realityexpander.tasky.auth_feature.presentation.splash_screen.SplashScreenViewModel
-import com.realityexpander.tasky.core.common.settings.AppSettings
-import com.realityexpander.tasky.core.common.settings.AppSettingsSerializer
-import com.realityexpander.tasky.core.common.settings.setSettingsInitialized
+import com.realityexpander.tasky.core.data.settings.AppSettings
+import com.realityexpander.tasky.core.data.settings.AppSettingsSerializer
+import com.realityexpander.tasky.core.data.settings.setSettingsInitialized
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination

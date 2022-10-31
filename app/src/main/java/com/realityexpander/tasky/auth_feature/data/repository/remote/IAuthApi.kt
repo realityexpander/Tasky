@@ -1,10 +1,10 @@
 package com.realityexpander.tasky.auth_feature.data.repository.remote
 
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
-import com.realityexpander.tasky.core.common.AuthToken
-import com.realityexpander.tasky.core.common.Email
-import com.realityexpander.tasky.core.common.Password
-import com.realityexpander.tasky.core.common.Username
+import com.realityexpander.tasky.core.util.AuthToken
+import com.realityexpander.tasky.core.util.Email
+import com.realityexpander.tasky.core.util.Password
+import com.realityexpander.tasky.core.util.Username
 
 interface IAuthApi {
     suspend fun login(

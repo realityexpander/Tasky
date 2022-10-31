@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.core.common
+package com.realityexpander.tasky.core.util
 
 typealias Username = String
 typealias Email = String

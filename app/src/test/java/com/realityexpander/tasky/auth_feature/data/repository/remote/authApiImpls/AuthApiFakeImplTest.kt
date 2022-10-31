@@ -2,7 +2,7 @@ package com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImp
 
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
-import com.realityexpander.tasky.core.common.Exceptions.EMAIL_ALREADY_EXISTS
+import com.realityexpander.tasky.core.util.Exceptions.EMAIL_ALREADY_EXISTS
 import junit.framework.TestCase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

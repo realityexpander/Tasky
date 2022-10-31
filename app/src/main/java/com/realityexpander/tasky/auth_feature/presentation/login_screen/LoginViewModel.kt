@@ -11,7 +11,7 @@ import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
-import com.realityexpander.tasky.core.common.Exceptions
+import com.realityexpander.tasky.core.util.Exceptions
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_authInfo
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_email
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_errorMessage

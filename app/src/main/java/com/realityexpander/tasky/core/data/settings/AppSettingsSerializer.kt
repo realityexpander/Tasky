@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.core.common.settings
+package com.realityexpander.tasky.core.data.settings
 
 import android.util.Log
 import androidx.datastore.core.Serializer

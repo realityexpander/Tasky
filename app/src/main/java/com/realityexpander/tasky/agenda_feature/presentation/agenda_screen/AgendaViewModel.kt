@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
-import com.realityexpander.tasky.core.common.Exceptions
+import com.realityexpander.tasky.core.util.Exceptions
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

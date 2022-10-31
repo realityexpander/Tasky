@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.core.common
+package com.realityexpander.tasky.core.util
 
 import android.content.Context
 import android.content.res.Resources

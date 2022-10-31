@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.core.common.settings
+package com.realityexpander.tasky.core.data.settings
 
 import androidx.datastore.core.DataStore
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo

@@ -5,7 +5,7 @@ import com.realityexpander.tasky.auth_feature.data.common.convertersDTOEntityDom
 import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
 import com.realityexpander.tasky.auth_feature.data.repository.local.entities.AuthInfoEntity
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
-import com.realityexpander.tasky.core.common.*
+import com.realityexpander.tasky.core.util.*
 import javax.inject.Inject
 
 // Uses the DAO pattern to access the Proto Datastore

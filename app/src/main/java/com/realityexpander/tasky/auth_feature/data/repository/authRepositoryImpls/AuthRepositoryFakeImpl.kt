@@ -9,7 +9,7 @@ import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
-import com.realityexpander.tasky.core.common.*
+import com.realityexpander.tasky.core.util.*
 import kotlin.coroutines.cancellation.CancellationException
 
 class AuthRepositoryFakeImpl(
