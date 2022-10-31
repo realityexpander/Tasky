@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.domain.validation
 
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.Test

@@ -33,9 +33,9 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
-import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.validateEmailImpls.ValidateEmailRegexImpl
 import com.realityexpander.tasky.auth_feature.presentation.components.EmailField
 import com.realityexpander.tasky.auth_feature.presentation.components.NameField
 import com.realityexpander.tasky.auth_feature.presentation.components.PasswordField
@@ -397,7 +397,7 @@ fun RegisterScreenPreview_Interactive() {
                         authApi = AuthApiFakeImpl(),
                         authDao = AuthDaoFakeImpl(),
                         validateUsername = ValidateUsername(),
-                        validateEmail = ValidateEmailRegexImpl(),
+                        validateEmail = ValidateEmail(),
                         validatePassword = ValidatePassword(),
                     ),
                     savedStateHandle = SavedStateHandle().apply {

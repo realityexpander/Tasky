@@ -12,12 +12,9 @@ import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpl
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiImpl
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.TaskyApi
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
-import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.IValidateEmail
-import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.validateEmailImpls.ValidateEmailAndroidImpl
-import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.emailMatcher.emailMatcherImpls.EmailMatcherAndroidImpl
-import com.realityexpander.tasky.auth_feature.domain.validation.validateEmail.emailMatcher.emailMatcherImpls.EmailMatcherRegexImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -104,17 +101,21 @@ object AppModule {
         taskyApi: TaskyApi,
     ): IAuthApi = AuthApiImpl(taskyApi)
 
-    @Provides
-    @Singleton
-    @Named("ValidateEmailAndroid")
-    fun provideValidateEmailAndroid(): IValidateEmail =
-        ValidateEmailAndroidImpl(emailMatcher = EmailMatcherAndroidImpl())
+//    @Provides
+//    @Singleton
+//    @Named("ValidateEmailAndroid")
+//    fun provideValidateEmailAndroid(): IValidateEmail =
+//        ValidateEmailAndroidImpl(emailMatcher = EmailMatcherAndroidImpl())
+//
+//    @Provides
+//    @Singleton
+//    @Named("ValidateEmailRegex")
+//    fun provideValidateEmailRegex(): IValidateEmail =
+//        ValidateEmailAndroidImpl(emailMatcher = EmailMatcherRegexImpl())
 
     @Provides
     @Singleton
-    @Named("ValidateEmailRegex")
-    fun provideValidateEmailRegex(): IValidateEmail =
-        ValidateEmailAndroidImpl(emailMatcher = EmailMatcherRegexImpl())
+    fun provideValidateEmail(): ValidateEmail = ValidateEmail()
 
     @Provides
     @Singleton
@@ -133,7 +134,7 @@ object AppModule {
                 authDao = AuthDaoFakeImpl(),
                 validateUsername = provideValidateUsername(),
                 validatePassword = provideValidatePassword(),
-                validateEmail = provideValidateEmailRegex(),
+                validateEmail = provideValidateEmail(),
             )
         } else {
             return provideAuthRepositoryProd(
@@ -143,7 +144,7 @@ object AppModule {
                 authDao = AuthDaoFakeImpl(),  // why cant we use the implementation from @Binds here?
                 validateUsername = provideValidateUsername(),
                 validatePassword = provideValidatePassword(),
-                validateEmail = provideValidateEmailRegex(),
+                validateEmail = provideValidateEmail(),
             )
         }
     }
@@ -156,7 +157,7 @@ object AppModule {
         @AuthApiProdUsingProvides authApi: IAuthApi,
         @AuthDaoFakeUsingBinds authDao: IAuthDao,
         validateUsername: ValidateUsername,
-        @Named("ValidateEmailRegex") validateEmail: IValidateEmail,
+        validateEmail: ValidateEmail,
         validatePassword: ValidatePassword
     ): IAuthRepository =
         AuthRepositoryImpl(
@@ -174,7 +175,7 @@ object AppModule {
         @AuthApiFakeUsingBinds authApi: IAuthApi,
         @AuthDaoFakeUsingBinds authDao: IAuthDao,
         validateUsername: ValidateUsername,
-        @Named("ValidateEmailRegex") validateEmail: IValidateEmail,
+        validateEmail: ValidateEmail,
         validatePassword: ValidatePassword
     ): IAuthRepository =
         AuthRepositoryFakeImpl(
