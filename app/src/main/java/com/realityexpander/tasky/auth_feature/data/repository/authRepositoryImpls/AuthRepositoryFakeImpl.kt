@@ -10,6 +10,7 @@ import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.core.common.*
+import kotlin.coroutines.cancellation.CancellationException
 
 class AuthRepositoryFakeImpl(
     private val authDao: IAuthDao,
@@ -36,6 +37,8 @@ class AuthRepositoryFakeImpl(
         } catch (e: Exceptions.LoginException) {
             throw e
         } catch (e: Exceptions.WrongPasswordException) {
+            throw e
+        } catch(e: CancellationException) {
             throw e
         } catch (e: Exception) {
             throw Exceptions.UnknownErrorException(e.message)
@@ -69,6 +72,8 @@ class AuthRepositoryFakeImpl(
         try {
             authApi.register(username.trim(), email.trim(), password)
         } catch (e: Exceptions.EmailAlreadyExistsException) {
+            throw e
+        } catch(e: CancellationException) {
             throw e
         } catch (e: Exception) {
             throw Exceptions.UnknownErrorException(e.message)

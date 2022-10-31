@@ -11,6 +11,7 @@ import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.core.common.*
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 class AuthRepositoryImpl @Inject constructor(
     private val authDao: IAuthDao,
@@ -39,6 +40,8 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: Exceptions.NetworkException) {
             throw e
         } catch (e: Exceptions.WrongPasswordException) {
+            throw e
+        } catch(e: CancellationException) {
             throw e
         } catch (e: Exception) {
             throw Exceptions.UnknownErrorException(e.message)
@@ -78,6 +81,8 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: Exceptions.EmailAlreadyExistsException) {
             throw e
         } catch (e: Exceptions.UnknownErrorException) {
+            throw e
+        } catch(e: CancellationException) {
             throw e
         } catch (e: Exception) {
             throw Exceptions.UnknownErrorException(e.message)

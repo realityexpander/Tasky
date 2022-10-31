@@ -7,6 +7,7 @@ import com.realityexpander.tasky.core.common.*
 import com.realityexpander.tasky.core.data.remote.utils.getErrorBodyMessage
 import retrofit2.HttpException
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 // Uses real network API & Retrofit calls
 
@@ -54,6 +55,8 @@ class AuthApiImpl @Inject constructor (
             throw Exceptions.NetworkException("${e.message()} - ${e.code()}")
         } catch (e: java.net.UnknownHostException) {
             throw Exceptions.NetworkException(e.message)
+        } catch(e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             throw Exceptions.UnknownErrorException(e.message ?: "Unknown Error")
         }
@@ -94,6 +97,8 @@ class AuthApiImpl @Inject constructor (
             throw Exceptions.NetworkException("${e.message()} - ${e.code()}")
         } catch (e: java.net.UnknownHostException) {
             throw Exceptions.NetworkException(e.message)
+        } catch(e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             throw Exceptions.UnknownErrorException(e.message ?: "Unknown Error")
         }
@@ -126,6 +131,8 @@ class AuthApiImpl @Inject constructor (
             throw Exceptions.NetworkException("${e.message()} - ${e.code()}")
         } catch (e: java.net.UnknownHostException) {
             throw Exceptions.NetworkException(e.message)
+        } catch(e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             throw Exceptions.UnknownErrorException(e.message ?: "Unknown Error")
         }
