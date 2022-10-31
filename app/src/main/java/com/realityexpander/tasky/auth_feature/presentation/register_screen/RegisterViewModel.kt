@@ -149,7 +149,7 @@ class RegisterViewModel @Inject constructor(
             sendEvent(RegisterEvent.IsValidEmail(false))
         } catch(e: Exceptions.InvalidPasswordException) {
             sendEvent(RegisterEvent.IsValidPassword(false))
-        } catch(e: Exceptions.RegisterNetworkException) {
+        } catch(e: Exceptions.NetworkException) {
             sendEvent(RegisterEvent.RegisterError(UiText.Res(R.string.register_network_error, e.message ?: "")))
         } catch (e: Exception) {
             sendEvent(RegisterEvent.UnknownError(UiText.Res( R.string.error_unknown, e.message ?: "")))

@@ -9,6 +9,7 @@ import javax.inject.Inject
 // Fake implementation of the API for testing purposes
 // Has a delay of 1 second to simulate network latency.
 // Uses fake tokens.
+// Simulates server responses.
 
 data class AuthInfoFakeEntity(
     var authToken: AuthToken? = null,

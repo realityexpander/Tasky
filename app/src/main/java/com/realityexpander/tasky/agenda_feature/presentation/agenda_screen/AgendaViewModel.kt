@@ -8,7 +8,10 @@ import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.common.Exceptions
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import javax.inject.Inject
@@ -141,7 +144,7 @@ class AgendaViewModel @Inject constructor(
             sendEvent(AgendaEvent.IsValidEmail(false))
         } catch(e: Exceptions.InvalidPasswordException) {
             sendEvent(AgendaEvent.IsValidPassword(false))
-        } catch(e: Exceptions.RegisterNetworkException) {
+        } catch(e: Exceptions.NetworkException) {
             sendEvent(
                 AgendaEvent.RegisterError(
                     UiText.Res(
