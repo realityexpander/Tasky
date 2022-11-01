@@ -18,7 +18,7 @@ import androidx.datastore.dataStore
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.realityexpander.tasky.auth_feature.presentation.splash_screen.MainActivityViewModel
 import com.realityexpander.tasky.core.data.settings.AppSettingsSerializer
-import com.realityexpander.tasky.core.data.settings.setSettingsInitialized
+import com.realityexpander.tasky.core.data.settings.saveSettingsInitialized
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
 
                         // Confirm the settings file is created and initialized
                         if (!appSettings.isSettingsInitialized) {
-                            context.dataStore.setSettingsInitialized(true)
+                            context.dataStore.saveSettingsInitialized(true)
                         }
 
                         // Set user is logged-in status

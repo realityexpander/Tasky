@@ -16,7 +16,7 @@ suspend fun DataStore<AppSettings>.saveAuthInfo(authInfo: AuthInfo) {
     }
 }
 
-suspend fun DataStore<AppSettings>.setSettingsInitialized(firstTime: Boolean) {
+suspend fun DataStore<AppSettings>.saveSettingsInitialized(firstTime: Boolean) {
     updateData { appSettings ->
         appSettings.copy(isSettingsInitialized = firstTime)
     }

@@ -106,6 +106,8 @@ object AppModule {
             .create()
     }
 
+    ////////// AUTHENTICATION REPOSITORY //////////
+
     @Provides
     @Singleton
     fun provideValidateEmail(): ValidateEmail = ValidateEmail()
@@ -221,6 +223,8 @@ object AppModule {
     fun provideAuthApiProd(
         taskyApi: TaskyApi,
     ): IAuthApi = AuthApiImpl(taskyApi)
+
+    ////////// AGENDA REPOSITORY //////////
 }
 
 @Qualifier

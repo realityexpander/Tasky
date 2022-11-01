@@ -1,6 +1,5 @@
 package com.realityexpander.tasky.core.data.settings
 
-import android.util.Log
 import androidx.datastore.core.Serializer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,7 +19,7 @@ object AppSettingsSerializer : Serializer<AppSettings> {
                 deserializer = AppSettings.serializer(),
                 string = input.readBytes().decodeToString()
             ).also {
-                Log.d("APP_SETTINGS_READ", it.toString())
+                // Log.d("APP_SETTINGS_READ", it.toString())
             }
         } catch (e: SerializationException) {
             e.printStackTrace()
@@ -36,7 +35,7 @@ object AppSettingsSerializer : Serializer<AppSettings> {
                     value = t
                 ).encodeToByteArray()
                     .also {
-                        Log.d("APP_SETTINGS_WRITE", t.toString())
+                        // Log.d("APP_SETTINGS_WRITE", t.toString())
                     }
             )
         }
