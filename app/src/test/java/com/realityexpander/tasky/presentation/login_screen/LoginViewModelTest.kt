@@ -6,18 +6,19 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.realityexpander.tasky.CoroutineTestRule
 import com.realityexpander.tasky.MainCoroutineRule
-import com.realityexpander.tasky.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
-import com.realityexpander.tasky.data.repository.local.authDaoImpls.AuthDaoFakeImpl
-import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiFakeImpl
-import com.realityexpander.tasky.domain.IAuthRepository
-import com.realityexpander.tasky.domain.validation.EmailMatcherFakeImpl
-import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailImpl
-import com.realityexpander.tasky.domain.validation.ValidatePassword
-import com.realityexpander.tasky.domain.validation.ValidateUsername
+import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
+import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
+import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginEvent
+import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginViewModel
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.mockkStatic
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -36,7 +37,7 @@ class LoginViewModelTest {
     private lateinit var authRepository: IAuthRepository
     private val authApiFake = AuthApiFakeImpl()
     private val authDaoFake = AuthDaoFakeImpl()
-    private val validateEmail = ValidateEmailImpl(EmailMatcherFakeImpl())
+    private val validateEmail = ValidateEmail()
     private val validatePassword = ValidatePassword()
     private val validateUsername = ValidateUsername()
 
@@ -57,12 +58,14 @@ class LoginViewModelTest {
 
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            savedStateHandle = SavedStateHandle()
+            savedStateHandle = SavedStateHandle(),
+            validateEmail = validateEmail,
+            validatePassword = validatePassword,
         )
     }
 
     @Test
-    fun `LoginViewModel contains email and password`() {
+    fun `LoginViewModel contains expected email and password`() {
         // ARRANGE
         val expectedEmail = "chris@demo.com"
         val expectedPassword = "Ab3456789"
@@ -71,7 +74,9 @@ class LoginViewModelTest {
             savedStateHandle = SavedStateHandle().apply {
                 set("email", expectedEmail)
                 set("password", expectedPassword)
-            }
+            },
+            validateEmail = validateEmail,
+            validatePassword = validatePassword,
         )
 
         // ACT
@@ -101,7 +106,9 @@ class LoginViewModelTest {
         // ARRANGE
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            savedStateHandle = SavedStateHandle()
+            savedStateHandle = SavedStateHandle(),
+            validateEmail = validateEmail,
+            validatePassword = validatePassword,
         )
 
         // ACT

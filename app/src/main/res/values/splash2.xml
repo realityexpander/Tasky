@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- background color for splash screen -->
+        <item name="windowSplashScreenBackground">@color/tasky_green</item>
+
+        <!-- for must include even if not animated -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/tasky_logo_for_splash</item>
+
+        <!-- for animation duration -->
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+
+        <!-- For Android 12 only, the color of the background circle for the splash screen icon. -->
+        <item name="windowSplashScreenIconBackgroundColor">@color/tasky_green</item>
+
+        <!-- After splash screen is shown, use the following theme -->
+        <item name="postSplashScreenTheme">@style/Theme.Tasky</item>
+
+    </style>
+</resources>

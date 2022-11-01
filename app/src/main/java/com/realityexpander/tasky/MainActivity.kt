@@ -4,26 +4,45 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.dataStore
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.realityexpander.tasky.common.settings.AppSettingsSerializer
-import com.realityexpander.tasky.presentation.NavGraphs
-import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
+import com.realityexpander.tasky.auth_feature.presentation.splash_screen.MainActivityViewModel
+import com.realityexpander.tasky.core.data.settings.AppSettingsSerializer
+import com.realityexpander.tasky.core.data.settings.setSettingsInitialized
+import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.realityexpander.tasky.destinations.AgendaScreenDestination
+import com.realityexpander.tasky.destinations.LoginScreenDestination
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlin.system.exitProcess
 
 val Context.dataStore by dataStore("app-settings.json", AppSettingsSerializer)
 
 @AndroidEntryPoint
-class MainActivity() : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+class MainActivity : ComponentActivity() {
 
+    private val viewModel: MainActivityViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
 //        waitForDebugger() // for testing process death
 
         super.onCreate(savedInstanceState)
+
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                viewModel.splashState.value.isLoading
+            }
+        }
 
         setContent {
             TaskyTheme {
@@ -31,10 +50,40 @@ class MainActivity() : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = colorResource(id = R.color.tasky_green)
                 ) {
-                    DestinationsNavHost(navGraph = NavGraphs.root)
-                }
+                    val splashState by viewModel.splashState.collectAsState()
+                    val context = LocalContext.current
 
+                    // Load Settings (or initialize them)
+                    LaunchedEffect(true) {
+                        val appSettings = context.dataStore.data.first()
+
+                        // Confirm the settings file is created and initialized
+                        if (!appSettings.isSettingsInitialized) {
+                            context.dataStore.setSettingsInitialized(true)
+                        }
+
+                        // Set user is logged-in status
+                        viewModel.onSetAuthInfo(appSettings.authInfo)
+                    }
+
+                    if (!splashState.isLoading) {
+                        DestinationsNavHost(
+                            navGraph = NavGraphs.root,
+                            startRoute =
+                                if (splashState.authInfo != null) {
+                                    AgendaScreenDestination
+                                } else {
+                                    LoginScreenDestination
+                                },
+                        )
+                    }
+                }
             }
         }
+    }
+
+    fun exitApp() {
+        finish()
+        exitProcess(0)
     }
 }

@@ -1,6 +1,6 @@
 package com.realityexpander.tasky
 
-import com.realityexpander.tasky.common.DispatcherProvider
+import com.realityexpander.tasky.core.util.DispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

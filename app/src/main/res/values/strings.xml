@@ -16,7 +16,7 @@
     <string name="register_registered">Registered!</string>
     <string name="register_register_error">Register error - %s</string>
     <string name="register_error_email_exists">Email already exists - try logging in!</string>
-    <string name="register_error_passwords_do_not_match">Passwords do not match</string>
+    <string name="register_error_passwords_do_not_match">Passwords do not match.</string>
     <string name="register_password_requirements">Password must be at between 9 and 30 characters
          long, contain at least one number, one uppercase letter and one lowercase letter.</string>
     <string name="register_label_confirm_password">Confirm password</string>

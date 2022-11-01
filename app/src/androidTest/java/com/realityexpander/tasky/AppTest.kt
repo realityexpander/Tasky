@@ -1,20 +1,23 @@
 package com.realityexpander.tasky
 
 import androidx.compose.material.Surface
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.lifecycle.SavedStateHandle
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.realityexpander.tasky.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
-import com.realityexpander.tasky.data.repository.local.authDaoImpls.AuthDaoFakeImpl
-import com.realityexpander.tasky.data.repository.remote.authApiImpls.AuthApiFakeImpl
-import com.realityexpander.tasky.domain.IAuthRepository
-import com.realityexpander.tasky.domain.validation.validateEmail.ValidateEmailImpl
-import com.realityexpander.tasky.domain.validation.ValidatePassword
-import com.realityexpander.tasky.domain.validation.ValidateUsername
-import com.realityexpander.tasky.presentation.login_screen.LoginScreen
-import com.realityexpander.tasky.presentation.login_screen.LoginViewModel
-import com.realityexpander.tasky.presentation.ui.theme.TaskyTheme
+import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
+import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
+import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginScreen
+import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginViewModel
+import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -28,7 +31,7 @@ class AppTest {
     private lateinit var authRepository: IAuthRepository
     private val authApiFake = AuthApiFakeImpl()
     private val authDaoFake = AuthDaoFakeImpl()
-    private val validateEmail = ValidateEmailImpl()
+    private val validateEmail = ValidateEmail()
     private val validatePassword = ValidatePassword()
     private val validateUsername = ValidateUsername()
 
@@ -44,7 +47,9 @@ class AppTest {
 
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            savedStateHandle = SavedStateHandle()
+            savedStateHandle = SavedStateHandle(),
+            validateEmail = validateEmail,
+            validatePassword = validatePassword,
         )
     }
 
@@ -66,14 +71,16 @@ class AppTest {
     }
 
     @Test
-    fun app_login_shows_email_and_password_hidden() {
+    fun app_login_shows_email_and_password_hidden_by_default() {
         // ARRANGE
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
             savedStateHandle = SavedStateHandle().apply {
                 set("email", "chris@demo.com")
                 set("password", "1234567Aa")
-            }
+            },
+            validateEmail = validateEmail,
+            validatePassword = validatePassword,
         )
 
         // ACT
@@ -102,7 +109,9 @@ class AppTest {
             savedStateHandle = SavedStateHandle().apply {
                 set("email", "chris@demo.com")
                 set("password", "1234567Aa")
-            }
+            },
+            validateEmail = validateEmail,
+            validatePassword = validatePassword,
         )
 
         // ACT
