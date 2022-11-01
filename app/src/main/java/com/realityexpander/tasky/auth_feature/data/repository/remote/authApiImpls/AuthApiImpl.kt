@@ -3,8 +3,8 @@ package com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImp
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.ApiCredentialsDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
-import com.realityexpander.tasky.core.util.*
 import com.realityexpander.tasky.core.data.remote.utils.getErrorBodyMessage
+import com.realityexpander.tasky.core.util.*
 import retrofit2.HttpException
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
@@ -104,15 +104,10 @@ class AuthApiImpl @Inject constructor (
         }
     }
 
-    // Pass a null AuthToken to use the current user's token
-    override suspend fun authenticate(authToken: AuthToken?): Boolean {
+    override suspend fun authenticate(): Boolean {
         try {
-            val response =  authToken?.let {
-                // Use the provided token
-                taskyApi.authenticate(IAuthApi.createAuthorizationHeader(authToken))
-            } ?:
-                // Use the current user's AuthToken from the IAuthApi companion object
-                taskyApi.authenticate()
+            // Use the current user's AuthToken from the IAuthApi companion object
+            val response = taskyApi.authenticate()
 
             return when(response.code()) {
                 200 -> true // Success
@@ -138,51 +133,34 @@ class AuthApiImpl @Inject constructor (
         }
     }
 
+    override suspend fun authenticateAuthToken(authToken: AuthToken?): Boolean {
+        authToken ?: return false
+
+        try {
+            val response =
+                taskyApi.authenticateAuthToken(authToken)
+
+            return when(response.code()) {
+                200 -> true // Success
+                401 -> false
+                else -> throw Exceptions.UnknownErrorException(
+                    "${response.message()} - " +
+                            "${response.code()} - " +
+                            getErrorBodyMessage(response.errorBody()?.string())
+                )
+            }
+        } catch (e: Exceptions.NetworkException) {
+            throw e
+        } catch (e: Exceptions.UnknownErrorException) {
+            throw e
+        } catch (e: HttpException) {
+            throw Exceptions.NetworkException("${e.message()} - ${e.code()}")
+        } catch (e: java.net.UnknownHostException) {
+            throw Exceptions.NetworkException(e.message)
+        } catch(e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            throw Exceptions.UnknownErrorException(e.message ?: "Unknown Error")
+        }
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

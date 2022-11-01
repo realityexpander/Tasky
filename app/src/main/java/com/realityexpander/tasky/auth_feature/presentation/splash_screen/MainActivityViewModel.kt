@@ -3,8 +3,6 @@ package com.realityexpander.tasky.auth_feature.presentation.splash_screen
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.realityexpander.tasky.TaskyApplication
-import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_authInfo
@@ -15,7 +13,7 @@ import kotlinx.coroutines.yield
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashScreenViewModel @Inject constructor(
+class MainActivityViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -25,7 +23,7 @@ class SplashScreenViewModel @Inject constructor(
 
     private val _splashState = MutableStateFlow(SplashState())
     val splashState = _splashState.onEach { state ->
-        // save state for process death // is this needed for splash screen?
+        // save state for process death
         savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SplashState())
 
@@ -33,7 +31,7 @@ class SplashScreenViewModel @Inject constructor(
         viewModelScope.launch {
             yield() // allow the splashState to be initialized
 
-            // restore state after process death -- // is this needed for splash screen?
+            // restore state after process death  // -- is this needed for splash screen?
             _splashState.update {
                 it.copy(
                     authInfo = authInfo,
@@ -47,18 +45,19 @@ class SplashScreenViewModel @Inject constructor(
         viewModelScope.launch {
 
             // set the AuthInfo (& AuthToken) for this user
-            TaskyApplication.authInfoGlobal = authInfo
-            IAuthApi.setAuthToken(authInfo?.authToken)
+            authRepository.setAuthInfo(authInfo)
 
             if (authInfo != null
-                && authRepository.authenticateAuthInfo(authInfo)
+                && authRepository.authenticate()
             ) {
+                // User is authenticated
                 _splashState.update {
                     it.copy(
                         authInfo = authInfo,
                         isLoading = false,
                 )}
             } else {
+                // User is not authenticated
                 _splashState.update {
                     it.copy(
                         authInfo = null,
@@ -77,5 +76,5 @@ class SplashScreenViewModel @Inject constructor(
 //   android:pivotX="<half viewportWidth>"   // could also use half the width of the viewportWidth
 //   android:pivotY="<half viewportHeight>"   // could also use half the height of the viewportHeight
 //   >
-//   <path ... /> // could be multiple <paths/>
+//   <path ... /> // could be multiple `paths`
 // </group>

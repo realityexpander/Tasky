@@ -16,14 +16,14 @@ import androidx.compose.ui.res.colorResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.dataStore
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.realityexpander.tasky.auth_feature.presentation.splash_screen.SplashScreenViewModel
-import com.realityexpander.tasky.core.data.settings.AppSettings
+import com.realityexpander.tasky.auth_feature.presentation.splash_screen.MainActivityViewModel
 import com.realityexpander.tasky.core.data.settings.AppSettingsSerializer
 import com.realityexpander.tasky.core.data.settings.setSettingsInitialized
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
 import kotlin.system.exitProcess
 
 val Context.dataStore by dataStore("app-settings.json", AppSettingsSerializer)
@@ -31,10 +31,9 @@ val Context.dataStore by dataStore("app-settings.json", AppSettingsSerializer)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: SplashScreenViewModel by viewModels()
+    private val viewModel: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
 //        waitForDebugger() // for testing process death
 
         super.onCreate(savedInstanceState)
@@ -54,19 +53,16 @@ class MainActivity : ComponentActivity() {
                     val splashState by viewModel.splashState.collectAsState()
                     val context = LocalContext.current
 
-                    val appSettings = context.dataStore.data.collectAsState( // .data is a Flow
-                        initial = AppSettings()
-                    ).value
+                    // Load Settings (or initialize them)
+                    LaunchedEffect(true) {
+                        val appSettings = context.dataStore.data.first()
 
-                    // Load settings from data store
-                    LaunchedEffect(key1 = appSettings) {
-                        // ignore first data (initial emit is always default state, due to it being a flow)
+                        // Confirm the settings file is created and initialized
                         if (!appSettings.isSettingsInitialized) {
                             context.dataStore.setSettingsInitialized(true)
-                            return@LaunchedEffect
                         }
 
-                        // Settings data is now loaded, so we can set if user is logged-in (authInfo != null)
+                        // Set user is logged-in status
                         viewModel.onSetAuthInfo(appSettings.authInfo)
                     }
 
@@ -82,7 +78,6 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
-
             }
         }
     }

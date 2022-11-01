@@ -9,7 +9,10 @@ import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
-import com.realityexpander.tasky.core.util.*
+import com.realityexpander.tasky.core.util.Email
+import com.realityexpander.tasky.core.util.Exceptions
+import com.realityexpander.tasky.core.util.Password
+import com.realityexpander.tasky.core.util.Username
 import kotlin.coroutines.cancellation.CancellationException
 
 class AuthRepositoryFakeImpl(
@@ -80,19 +83,25 @@ class AuthRepositoryFakeImpl(
         }
     }
 
-    override suspend fun getAuthToken(): AuthToken? {
-        return authDao.getAuthToken()
-    }
-
     override suspend fun getAuthInfo(): AuthInfo? {
         return authDao.getAuthInfo()
     }
 
+    override suspend fun setAuthInfo(authInfo: AuthInfo?) {
+        authApi.setAuthToken(authInfo?.authToken)
+        authDao.setAuthInfo(authInfo)
+    }
+
     override suspend fun clearAuthInfo() {
+        authApi.clearAuthToken()
         authDao.clearAuthInfo()
     }
 
+    override suspend fun authenticate(): Boolean {
+        return authApi.authenticate()
+    }
+
     override suspend fun authenticateAuthInfo(authInfo: AuthInfo?): Boolean {
-        return authApi.authenticate(authInfo?.authToken)
+        return authApi.authenticateAuthToken(authInfo?.authToken)
     }
 }

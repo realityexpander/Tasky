@@ -9,7 +9,10 @@ import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
-import com.realityexpander.tasky.core.util.*
+import com.realityexpander.tasky.core.util.Email
+import com.realityexpander.tasky.core.util.Exceptions
+import com.realityexpander.tasky.core.util.Password
+import com.realityexpander.tasky.core.util.Username
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -89,17 +92,32 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    // todo: move these to the interface, and allow authDao and authApi to be defined in the interface?
-    override suspend fun getAuthToken(): AuthToken? {
-        return authDao.getAuthToken()
-    }
-
     override suspend fun getAuthInfo(): AuthInfo? {
         return authDao.getAuthInfo()
     }
 
+    override suspend fun setAuthInfo(authInfo: AuthInfo?) {
+        authApi.setAuthToken(authInfo?.authToken)
+        authDao.setAuthInfo(authInfo)
+    }
+
     override suspend fun clearAuthInfo() {
+        authApi.clearAuthToken()
         authDao.clearAuthInfo()
+    }
+
+    override suspend fun authenticate(): Boolean {
+        return try {
+            authApi.authenticate()
+        } catch (e: Exceptions.NetworkException) {
+            throw e
+        } catch (e: Exceptions.UnknownErrorException) {
+            throw e
+        } catch(e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            throw Exceptions.UnknownErrorException(e.message)
+        }
     }
 
     override suspend fun authenticateAuthInfo(authInfo: AuthInfo?): Boolean {
@@ -107,7 +125,9 @@ class AuthRepositoryImpl @Inject constructor(
         if(authInfo.authToken.isNullOrBlank()) return false
 
         return try {
-            authApi.authenticate(authInfo.authToken)
+            authApi.authenticateAuthToken(authInfo.authToken)
+        } catch(e: CancellationException) {
+            false
         } catch (e: Exception) {
             false
         }

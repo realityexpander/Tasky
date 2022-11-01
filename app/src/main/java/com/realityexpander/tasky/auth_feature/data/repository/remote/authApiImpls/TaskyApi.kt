@@ -1,10 +1,10 @@
 package com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls
 
 import com.realityexpander.tasky.BuildConfig
-import com.realityexpander.tasky.BuildConfig.API_KEY
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.ApiCredentialsDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
-import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
+import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
+import com.realityexpander.tasky.core.util.AuthToken
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -22,10 +22,14 @@ interface TaskyApi {
 
     @GET("authenticate")
     suspend fun authenticate(
-        //authToken: String = ""
-        @Header("Authorization") authorizationHeader: String? = IAuthApi.authorizationHeader
+        // Uses the Authorization Header created in the the interceptor
     ): Response<Void>
 
+    @GET("authenticate")
+    suspend fun authenticateAuthToken(
+        authToken: AuthToken?,
+        @Header("Authorization") authorizationHeader: String = createAuthorizationHeader(authToken),
+    ): Response<Void>
 
     companion object {
         const val BASE_URL = "https://tasky.pl-coding.com/"

@@ -5,13 +5,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.TaskyApplication
-import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
-import com.realityexpander.tasky.core.util.Exceptions
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_authInfo
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_email
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_errorMessage
@@ -23,6 +20,7 @@ import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STAT
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_statusMessage
 import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_username
 import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.util.Exceptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -121,8 +119,8 @@ class LoginViewModel @Inject constructor(
         try {
             val authInfo = authRepository.login(email, password)
 
-            TaskyApplication.authInfoGlobal = authInfo // will be saved in datastore in the LoginScreen composable
-            IAuthApi.setAuthToken(authInfo.authToken)
+            // will be saved in datastore in the LoginScreen composable
+            authRepository.setAuthInfo(authInfo)
 
             sendEvent(LoginEvent.LoginSuccess(authInfo))
         } catch(e: Exceptions.WrongPasswordException) {

@@ -38,18 +38,18 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
         }
 
         // Simulates a server-side check/error for non-existing email
-        if (users[email] == null) {
+        if (users_onServer[email] == null) {
             throw Exceptions.LoginException("Unknown email")
         }
 
-        if(users[email]?.password != password) {
+        if(users_onServer[email]?.password != password) {
             throw Exceptions.WrongPasswordException()
         }
 
         return AuthInfoDTO(
-            authToken(generateAuthToken(email)),
-            userId(generateUserId(email)),
-            username(users[email]?.username ?: "Username Missing")
+            authToken(generateAuthToken_onServer(email)),
+            userId(generateUserId_onServer(email)),
+            username(users_onServer[email]?.username ?: "Username Missing")
         )
     }
 
@@ -67,24 +67,33 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
         }
 
         // Simulates a server-side check/error for duplicate email
-        if (users[email] != null) {
+        if (users_onServer[email] != null) {
             throw Exceptions.EmailAlreadyExistsException()
         }
 
-        users[email] = AuthInfoFakeEntity(
+        users_onServer[email] = AuthInfoFakeEntity(
             username = username,
-            authToken = generateAuthToken(email),
-            userId = generateUserId(email),
+            authToken = generateAuthToken_onServer(email),
+            userId = generateUserId_onServer(email),
             password = password,
         )
         AuthInfoDTO(
-            authToken(generateAuthToken(email)),
-            userId(generateUserId(email)),
-            username(users[email]?.username ?: "Username Missing")
+            authToken(generateAuthToken_onServer(email)),
+            userId(generateUserId_onServer(email)),
+            username(users_onServer[email]?.username ?: "Username Missing")
         )
     }
 
-    override suspend fun authenticate(
+    // Authenticate the logged-in user
+    override suspend fun authenticate(): Boolean {
+        // Simulate network call
+        delay(500)
+
+        return authenticateAuthToken(IAuthApi.authToken)
+    }
+
+    // Authenticate any token
+    override suspend fun authenticateAuthToken(
         authToken: AuthToken?
     ): Boolean {
         // simulate network call
@@ -92,15 +101,8 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
 
         // Simulate server-side check
         authToken?.let {
-            // Check the passed-in authToken against the fake tokens
-            if (users.map { it.value.authToken }.contains(authToken)) {
-                return true
-            }
-        } ?: run {
-            // Check the logged-in user token if no token is provided
-            if(IAuthApi.authToken != null
-                && (IAuthApi.authToken?.startsWith("token") == true)
-            ) {
+            // Check the passed-in authToken against the fake user database
+            if (users_onServer.map { it.value.authToken }.contains(authToken)) {
                 return true
             }
         }
@@ -110,37 +112,37 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
 
     /////////////// Server simulation functions //////////////////////
 
-    private val users =
+    private val users_onServer =
         mutableMapOf<Email, AuthInfoFakeEntity>()
 
     init {
         // Setup fake users
-        users["chris@demo.com"] =
+        users_onServer["chris@demo.com"] =
             AuthInfoFakeEntity(
                 username = "Chris Athanas",
-                authToken = generateAuthToken("chris@demo.com"),
-                userId = generateUserId("chris@demo.com") ,
+                authToken = generateAuthToken_onServer("chris@demo.com"),
+                userId = generateUserId_onServer("chris@demo.com") ,
                 password = "Password1",
             )
-        users["a@aa.com"] =
+        users_onServer["a@aa.com"] =
             AuthInfoFakeEntity(
                 username = "Bilbo Baggins",
-                authToken = generateAuthToken("a@aa.com"),
-                userId = generateUserId("a@aa.com"),
+                authToken = generateAuthToken_onServer("a@aa.com"),
+                userId = generateUserId_onServer("a@aa.com"),
                 password = "Password1",
             )
     }
 
-    private fun generateAuthToken(email: Email): AuthToken {
+    private fun generateAuthToken_onServer(email: Email): AuthToken {
         return authToken("token for $email") as AuthToken
     }
 
-    private fun generateUserId(email: Email): UserId {
+    private fun generateUserId_onServer(email: Email): UserId {
         return userId("id for $email") as UserId
     }
 
-    fun expireToken(email: Email) {
-        users[email]?.authToken = null
+    fun expireToken_onServer(email: Email) {
+        users_onServer[email]?.authToken = null
     }
 }
 
@@ -156,44 +158,54 @@ suspend fun main() {
 
     val authApiFakeImpl = AuthApiFakeImpl()
     var user = authApiFakeImpl.login("chris@demo.com", "Password1")
-    IAuthApi.setAuthToken(user?.authToken)
+    authApiFakeImpl.setAuthToken(user?.authToken) // set the AuthToken for the logged-in user
 
     println("user=$user")
 
     println("AuthApiFakeImpl.authenticate() Logged in user")
-    println("  user.authToken is valid=" + assert(authApiFakeImpl.authenticate(user?.authToken)))
-    println("  logged-in user authToken is valid=" + assert(authApiFakeImpl.authenticate()))
+    println("  user.authToken is valid=" +
+                assert(authApiFakeImpl.authenticate()))
+    println("  logged-in user authToken is valid=" +
+                assert(authApiFakeImpl.authenticate()))
 
     println()
 
-    IAuthApi.setAuthToken(null)
+    authApiFakeImpl.clearAuthToken() // clear the AuthToken for the logged-in user
     println("AuthApiFakeImpl.authenticate() Logged out user has no authToken")
-    println("   IAuthApi.authToken=null, token is NOT valid locally=" + assert(!authApiFakeImpl.authenticate()))
-    println("   user.authToken still valid on server=" + assert(authApiFakeImpl.authenticate(user?.authToken)))
+    println("   IAuthApi.authToken=null, token is NOT valid locally=" +
+                assert(!authApiFakeImpl.authenticate()))
+    println("   user.authToken still valid on server=" +
+                assert(authApiFakeImpl.authenticate()))
 
     println()
 
     user = authApiFakeImpl.login("chris@demo.com", "Password1")
-    authApiFakeImpl.expireToken("chris@demo.com") // server expires the token
+    authApiFakeImpl.expireToken_onServer("chris@demo.com") // server expires the token
     println("AuthApiFakeImpl.authenticate() Expired token (server side) when user is still logged in")
-    println("   logged-in user authToken is valid & not null=" + assert(user?.authToken != null))
-    println("   user.authToken is INVALID on server=" + assert(!authApiFakeImpl.authenticate(user?.authToken)))
-    println("   logged-in user is NOT able to authenticate their token=" + assert(!authApiFakeImpl.authenticate()))
+    println("   logged-in user authToken is valid & not null=" +
+                assert(user?.authToken != null))
+    println("   user.authToken is INVALID on server=" +
+                assert(!authApiFakeImpl.authenticate()))
+    println("   logged-in user is NOT able to authenticate their token=" +
+                assert(!authApiFakeImpl.authenticate()))
 
     println()
 
-    println("AuthApiFakeImpl.authenticate() Invalid token")
-    println("   invalid authToken is INVALID=" + assert(!authApiFakeImpl.authenticate(authToken("invalid token"))))
+    println("AuthApiFakeImpl.authenticateAuthToken() Invalid token")
+    println("   invalid authToken is INVALID=" +
+                assert(!authApiFakeImpl.authenticateAuthToken("invalid token")))
 
     println()
 
-    println("AuthApiFakeImpl.authenticate() Null token")
-    println("   null authToken is INVALID=" + assert(!authApiFakeImpl.authenticate(null)))
+    println("AuthApiFakeImpl.authenticateAuthToken() Null token")
+    println("   null authToken is INVALID=" +
+                assert(!authApiFakeImpl.authenticateAuthToken(null)))
 
     println()
 
-    println("AuthApiFakeImpl.authenticate() Blank token")
-    println("   blank authToken is INVALID=" + assert(!authApiFakeImpl.authenticate(authToken(""))))
+    println("AuthApiFakeImpl.authenticateAuthToken() Blank token")
+    println("   blank authToken is INVALID=" +
+                assert(!authApiFakeImpl.authenticateAuthToken(authToken(""))))
 
     println()
 }

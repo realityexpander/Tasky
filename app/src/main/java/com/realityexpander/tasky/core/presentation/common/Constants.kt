@@ -19,5 +19,6 @@ object UIConstants {
 
     // App-wide
     const val SAVED_STATE_authInfo = "authInfo"
+    const val SAVED_STATE_isLoaded = "isLoaded"
 
 }

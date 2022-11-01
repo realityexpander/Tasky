@@ -25,7 +25,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.core.presentation.common.modifiers.largeHeight
 import com.realityexpander.tasky.core.presentation.common.modifiers.mediumHeight
 import com.realityexpander.tasky.core.presentation.common.modifiers.taskyScreenTopCorners
@@ -40,8 +39,6 @@ fun AgendaScreen(
 //    email: String? = null,
 //    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
 //    password: String? = null,
-//    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-//    confirmPassword: String? = null,
     navigator: DestinationsNavigator,
     viewModel: AgendaViewModel = hiltViewModel(),
 ) {
@@ -65,26 +62,11 @@ fun AgendaScreenContent(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
-    fun performRegister() {
-        onAction(
-            AgendaEvent.Register(
-                username = state.username,
-                email = state.email,
-                password = state.password,
-                confirmPassword = state.confirmPassword,
-            )
-        )
-
-        focusManager.clearFocus()
-    }
-
     fun navigateToLogin() {
         navigator.navigate(
             LoginScreenDestination(
-                username = state.username,  // saved here in case the user comes back to registration
+                username = state.username,
                 email = state.email,
-                password = state.password,
-                confirmPassword = state.confirmPassword  // saved here in case the comes goes back to registration
             )
         ) {
             popUpTo(LoginScreenDestination.route) {
@@ -96,8 +78,10 @@ fun AgendaScreenContent(
     }
 
     // Guard against invalid authentication state
-    if (TaskyApplication.authInfoGlobal?.authToken == null) {
-        navigateToLogin()
+    SideEffect {
+        if (state.isLoaded && state.authInfo == null) {
+            navigateToLogin()
+        }
     }
 
     BackHandler(true) {
@@ -145,7 +129,7 @@ fun AgendaScreenContent(
             Spacer(modifier = Modifier.mediumHeight())
 
             Text(
-                "Hello, " + (TaskyApplication.authInfoGlobal?.username ?: "No username"),
+                "Hello, " + (state.authInfo?.username ?: "No username"),
                 color = MaterialTheme.colors.onSurface
             )
 //

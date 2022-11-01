@@ -1,16 +1,18 @@
 package com.realityexpander.tasky.di
 
+import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.realityexpander.tasky.BuildConfig
-import com.realityexpander.tasky.BuildConfig.API_KEY
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryImpl
 import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
-import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoImpl
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiImpl
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.TaskyApi
+import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.TaskyApi.Companion.API_KEY
+import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
@@ -18,7 +20,10 @@ import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -47,18 +52,35 @@ object AppModule {
             ignoreUnknownKeys = true
             isLenient = true
         }
+
         return json.asConverterFactory(contentType)
     }
 
     @Provides
     @Singleton
-    fun provideTaskyApi(converterFactory: Converter.Factory): TaskyApi {
+    fun provideTaskyApi(
+        converterFactory: Converter.Factory,
+        @AuthDaoProdUsingBinds authDao: IAuthDao,
+    ): TaskyApi {
 
-        val xApiKeyHeader = Interceptor { chain ->
-            val request = chain.request().newBuilder()
-                .addHeader("x-api-key", API_KEY)
-                .build()
-            chain.proceed(request)
+        val addHeadersInterceptor = Interceptor { chain ->
+
+            runBlocking(Dispatchers.IO) {
+                val authToken = authDao.getAuthToken()
+                val request = chain.request().newBuilder()
+                    .addHeader("x-api-key", API_KEY)
+                    .addHeader("Authorization",
+                        createAuthorizationHeader( authToken ?: "NULL_AUTH_TOKEN"))
+                    .build()
+
+                chain.proceed(request)
+            }
+
+//            val request = chain.request().newBuilder()
+//                .addHeader("x-api-key", API_KEY)
+//                .addHeader("Authorization", IAuthApi.authorizationHeader ?: "NULL_AUTH_TOKEN")
+//                .build()
+//            chain.proceed(request)
         }
 
         val client = if(BuildConfig.DEBUG) {
@@ -67,12 +89,12 @@ object AppModule {
             logging.level = HttpLoggingInterceptor.Level.HEADERS
 
             OkHttpClient.Builder()
-                .addInterceptor(xApiKeyHeader)
+                .addInterceptor(addHeadersInterceptor)
                 .addInterceptor(logging)
                 .build()
         } else {
             OkHttpClient.Builder()
-                .addInterceptor(xApiKeyHeader)
+                .addInterceptor(addHeadersInterceptor)
                 .build()
         }
 
@@ -83,23 +105,6 @@ object AppModule {
             .build()
             .create()
     }
-
-    @Provides
-    @Singleton
-    @AuthApiFakeUsingProvides
-    fun provideAuthApiFakeImpl(
-        /* no dependencies */
-    ): IAuthApi = AuthApiFakeImpl()
-
-    // Is there a way to have Hilt instantiate `TaskyApi` using @Binds?
-    // Or is this the only way to instantiate a dependency for when creating an
-    //   implementation of an interface that requires an argument?
-    @Provides
-    @Singleton
-    @AuthApiProdUsingProvides
-    fun provideAuthApiProd(
-        taskyApi: TaskyApi,
-    ): IAuthApi = AuthApiImpl(taskyApi)
 
     @Provides
     @Singleton
@@ -115,53 +120,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(converterFactory: Converter.Factory): IAuthRepository {
-        if (USE_FAKE_REPOSITORY) {
-            return provideAuthRepositoryFake(
-                authApi = provideAuthApiFakeImpl(),
-                authDao = AuthDaoFakeImpl(),
-                validateUsername = provideValidateUsername(),
-                validatePassword = provideValidatePassword(),
-                validateEmail = provideValidateEmail(),
-            )
-        } else {
-            return provideAuthRepositoryProd(
-                authApi = provideAuthApiProd(
-                    provideTaskyApi(converterFactory)
-                ),
-                authDao = AuthDaoFakeImpl(),  // why cant we use the implementation from @Binds here?
-                validateUsername = provideValidateUsername(),
-                validatePassword = provideValidatePassword(),
-                validateEmail = provideValidateEmail(),
-            )
-        }
-    }
-
-    @Provides
-    @Singleton
-    @AuthRepositoryProd_AuthApiProd_AuthDaoFake
-    fun provideAuthRepositoryProd(
-//        @AuthApiProdUsingBinds authApi: IAuthApi,  // How to add `TaskApi` to the `authApi`? (instead of using @AuthApiProdUsingProvides above)
-        @AuthApiProdUsingProvides authApi: IAuthApi,
-        @AuthDaoFakeUsingBinds authDao: IAuthDao,
-        validateUsername: ValidateUsername,
-        validateEmail: ValidateEmail,
-        validatePassword: ValidatePassword
-    ): IAuthRepository =
-        AuthRepositoryImpl(
-            authApi = authApi,
-            authDao = authDao, // use fake repo until we implement database
-            validateUsername = validateUsername,
-            validateEmail = validateEmail,
-            validatePassword = validatePassword
-        )
-
-    @Provides
-    @Singleton
     @AuthRepositoryFakeUsingProvides
     fun provideAuthRepositoryFake(
-        @AuthApiFakeUsingBinds authApi: IAuthApi,
-        @AuthDaoFakeUsingBinds authDao: IAuthDao,
+        @AuthApiFakeUsingBinds authApi: IAuthApi, // if authApi is not passed in, it will use the @annotated implementation
+        @AuthDaoFakeUsingBinds authDao: IAuthDao, // if authDao is not passed in, it will use the @annotated implementation
         validateUsername: ValidateUsername,
         validateEmail: ValidateEmail,
         validatePassword: ValidatePassword
@@ -173,6 +135,92 @@ object AppModule {
             validateEmail = validateEmail,
             validatePassword = validatePassword
         )
+
+    @Provides
+    @Singleton
+    @AuthRepositoryProdUsingProvides
+    fun provideAuthRepositoryProd(
+        @AuthApiProdUsingBinds authApi: IAuthApi, // if authApi is not passed in, it will use the @annotated implementation
+        @AuthDaoProdUsingBinds authDao: IAuthDao, // if authDao is not passed in, it will use the @annotated implementation
+        validateUsername: ValidateUsername,
+        validateEmail: ValidateEmail,
+        validatePassword: ValidatePassword
+    ): IAuthRepository =
+        AuthRepositoryImpl(
+            authApi = authApi,
+            authDao = authDao,
+            validateUsername = validateUsername,
+            validateEmail = validateEmail,
+            validatePassword = validatePassword
+        )
+
+    @Provides
+    @Singleton
+    // Hilt chooses this one as the `default` implementation because its not annotated with @Named
+    fun provideAuthRepository(
+        @AuthApiFakeUsingBinds authApiFake: IAuthApi,
+        @AuthApiProdUsingBinds authApiProd: IAuthApi,
+
+        @AuthDaoFakeUsingBinds authDaoFake: IAuthDao,
+        @AuthDaoProdUsingBinds authDaoProd: IAuthDao,
+
+        validateEmail: ValidateEmail,
+        validatePassword: ValidatePassword,
+        validateUsername: ValidateUsername,
+    ): IAuthRepository {
+        // This function calls the `provideAuthRepositoryXXXX` functions above,
+        //   depending on if we are using the `Fake` or `Prod` implementation.
+
+        if (USE_FAKE_REPOSITORY) {
+            // Since we are using the @annotated parameters, these values will be passed
+            //   into the provideAuthRepositoryFake function. It will override the @annotations
+            //   in the function signature and use these values instead.
+            return provideAuthRepositoryFake(
+                authApi = authApiFake,
+                authDao = authDaoFake,
+                validateUsername = validateUsername,
+                validatePassword = validatePassword,
+                validateEmail = validateEmail,
+            )
+        } else {
+            // Since we are using the @annotated parameters, these values will be passed
+            //   into the provideAuthRepositoryProd function. It will override the @annotations
+            //   in the function signature and use these values instead.
+            return provideAuthRepositoryProd(
+                authApi = authApiProd,
+                authDao = authDaoProd,
+                validateUsername = validateUsername,
+                validatePassword = validatePassword,
+                validateEmail = validateEmail
+            )
+        }
+    }
+
+    //////////////////////////////////////
+    /// Unused but left here for reference
+
+    @Provides
+    @Singleton
+    @AuthDaoProdUsingProvides
+    fun provideAuthDaoProd(
+        @ApplicationContext context: Context
+    ): IAuthDao {
+        return AuthDaoImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    @AuthApiFakeUsingProvides
+    fun provideAuthApiFakeImpl(
+        /* no dependencies */
+    ): IAuthApi = AuthApiFakeImpl()
+
+    @Provides
+    @Singleton
+    @AuthApiProdUsingProvides
+    fun provideAuthApiProd(
+        taskyApi: TaskyApi,
+    ): IAuthApi = AuthApiImpl(taskyApi)
 }
 
 @Qualifier
@@ -182,6 +230,14 @@ annotation class AuthDaoFakeUsingBinds
 @Qualifier
 @Named("AuthDao.PROD.usingBinds")
 annotation class AuthDaoProdUsingBinds
+
+@Qualifier
+@Named("AuthDao.FAKE.usingProvides")
+annotation class AuthDaoFakeUsingProvides
+
+@Qualifier
+@Named("AuthDao.PROD.usingProvides")
+annotation class AuthDaoProdUsingProvides
 
 @Qualifier
 @Named("AuthApi.FAKE.usingBinds")
@@ -204,9 +260,13 @@ annotation class AuthApiProdUsingProvides
 annotation class AuthRepositoryFakeUsingProvides
 
 @Qualifier
-@Named("AuthRepository.PROD.usingBinds")
-annotation class AuthRepositoryProdUsingBinds
+@Named("AuthRepository.PROD.usingProvides")
+annotation class AuthRepositoryProdUsingProvides
 
 @Qualifier
-@Named("AuthRepository.PROD w/ AuthApi.PROD, AuthDao.FAKE")
-annotation class AuthRepositoryProd_AuthApiProd_AuthDaoFake
+@Named("AuthRepository.FAKE.usingBinds")
+annotation class AuthRepositoryFakeUsingBinds
+
+@Qualifier
+@Named("AuthRepository.PROD.usingBinds")
+annotation class AuthRepositoryProdUsingBinds

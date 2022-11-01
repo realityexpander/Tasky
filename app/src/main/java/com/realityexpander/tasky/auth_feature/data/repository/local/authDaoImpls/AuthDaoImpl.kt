@@ -1,55 +1,102 @@
 package com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls
 
-import com.realityexpander.tasky.auth_feature.data.common.convertersDTOEntityDomain.toDomain
-import com.realityexpander.tasky.auth_feature.data.common.convertersDTOEntityDomain.toEntity
+import android.content.Context
 import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
-import com.realityexpander.tasky.auth_feature.data.repository.local.entities.AuthInfoEntity
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
-import com.realityexpander.tasky.core.util.*
+import com.realityexpander.tasky.core.util.AuthToken
+import com.realityexpander.tasky.core.util.UserId
+import com.realityexpander.tasky.core.util.Username
+import com.realityexpander.tasky.dataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 // Uses the DAO pattern to access the Proto Datastore
 
-class AuthDaoImpl @Inject constructor(): IAuthDao {
-    private var authInfoEntity: AuthInfoEntity? = null
+class AuthDaoImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
+): IAuthDao {
 
     override suspend fun getAuthToken(): AuthToken? {
-        return authToken(authInfoEntity?.authToken)
+        return CoroutineScope(Dispatchers.IO).async {
+            context.dataStore.data.first()
+                .authInfo?.authToken
+        }.await()
     }
 
     override suspend fun setAuthToken(authToken: AuthToken?) {
-        this.authInfoEntity = this.authInfoEntity?.copy(authToken = authToken)
+        context.dataStore.updateData { appSettings ->
+            appSettings.copy(
+                authInfo = appSettings.authInfo
+                    ?.copy(authToken = authToken)
+            )
+        }
     }
 
     override suspend fun clearAuthToken() {
-        this.authInfoEntity = this.authInfoEntity?.copy(authToken = null)
+        context.dataStore.updateData { appSettings ->
+            appSettings.copy(
+                authInfo = appSettings.authInfo
+                    ?.copy(authToken = null)
+            )
+        }
     }
 
     override suspend fun getAuthUsername(): Username? {
-        return username(authInfoEntity?.username)
+        return CoroutineScope(Dispatchers.IO).async {
+            context.dataStore.data.first()
+                .authInfo?.username
+        }.await()
     }
 
     override suspend fun setAuthUsername(username: Username?) {
-        this.authInfoEntity = this.authInfoEntity?.copy(username = username)
+        context.dataStore.updateData { appSettings ->
+            appSettings.copy(
+                authInfo = appSettings.authInfo
+                    ?.copy(username = username)
+            )
+        }
     }
 
     override suspend fun getAuthUserId(): UserId? {
-        return userId(authInfoEntity?.userId)
+        return CoroutineScope(Dispatchers.IO).async {
+            context.dataStore.data.first()
+                .authInfo?.userId
+        }.await()
     }
 
     override suspend fun setAuthUserId(userId: UserId?) {
-        this.authInfoEntity = this.authInfoEntity?.copy(userId = userId)
+        context.dataStore.updateData { appSettings ->
+            appSettings.copy(
+                authInfo = appSettings.authInfo
+                    ?.copy(userId = userId)
+            )
+        }
     }
 
     override suspend fun getAuthInfo(): AuthInfo? {
-        return authInfoEntity.toDomain()
+        return CoroutineScope(Dispatchers.IO).async {
+            context.dataStore.data.first()
+                .authInfo
+        }.await()
     }
 
     override suspend fun setAuthInfo(authInfo: AuthInfo?) {
-        this.authInfoEntity = authInfo.toEntity()
+        context.dataStore.updateData { appSettings ->
+            appSettings.copy(
+                authInfo = authInfo
+            )
+        }
     }
 
     override suspend fun clearAuthInfo() {
-        this.authInfoEntity = null
+        context.dataStore.updateData { appSettings ->
+            appSettings.copy(
+                authInfo = null
+            )
+        }
     }
 }
