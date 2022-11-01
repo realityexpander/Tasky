@@ -170,12 +170,13 @@ suspend fun main() {
 
     println()
 
+    val authTokenOnServer = user?.authToken
     authApiFakeImpl.clearAuthToken() // clear the AuthToken for the logged-in user
     println("AuthApiFakeImpl.authenticate() Logged out user has no authToken")
     println("   IAuthApi.authToken=null, token is NOT valid locally=" +
                 assert(!authApiFakeImpl.authenticate()))
     println("   user.authToken still valid on server=" +
-                assert(authApiFakeImpl.authenticate()))
+                assert(authApiFakeImpl.authenticateAuthToken(authTokenOnServer)))
 
     println()
 
