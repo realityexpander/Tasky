@@ -1,33 +1,43 @@
 package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 
+import android.content.res.Configuration
 import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.MainActivity
-import com.realityexpander.tasky.R
-import com.realityexpander.tasky.core.presentation.common.modifiers.largeHeight
+import com.realityexpander.tasky.auth_feature.domain.AuthInfo
+import com.realityexpander.tasky.core.presentation.common.modifiers.DP
+import com.realityexpander.tasky.core.presentation.common.modifiers.extraSmallHeight
 import com.realityexpander.tasky.core.presentation.common.modifiers.mediumHeight
 import com.realityexpander.tasky.core.presentation.common.modifiers.taskyScreenTopCorners
+import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 
 @Composable
@@ -77,9 +87,10 @@ fun AgendaScreenContent(
         }
     }
 
-    // Guard against invalid authentication state
+    // Guard against invalid authentication state OR perform logout
     SideEffect {
         if (state.isLoaded && state.authInfo == null) {
+            onAction(AgendaEvent.SetIsLoaded(false))
             navigateToLogin()
         }
     }
@@ -109,16 +120,65 @@ fun AgendaScreenContent(
             .fillMaxSize()
             .background(color = MaterialTheme.colors.onSurface)
     ) col1@ {
-        Spacer(modifier = Modifier.largeHeight())
-        Text(
-            text = stringResource(R.string.agenda_title),
-            style = MaterialTheme.typography.h5,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colors.surface,
-            modifier = Modifier
-                .align(alignment = Alignment.CenterHorizontally)
-        )
         Spacer(modifier = Modifier.mediumHeight())
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = DP.small, end = DP.small)
+        ) {
+            Row(
+                modifier = Modifier
+                    .alignByBaseline()
+            ) {
+                Text(
+                    text = "MARCH", //stringResource(R.string.agenda_title),
+                    style = MaterialTheme.typography.h3,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.surface,
+                    modifier = Modifier
+                        .wrapContentWidth(Alignment.Start)
+                        .alignByBaseline()
+                        .align(Alignment.CenterVertically)
+                        .clickable {
+                            onAction(AgendaEvent.ToggleLogoutDropdown)
+                        }
+                )
+                Icon(
+                    imageVector = if (state.isLogoutDropdownShowing)
+                        Icons.Filled.KeyboardArrowUp
+                    else
+                        Icons.Filled.KeyboardArrowDown,
+                    tint = MaterialTheme.colors.surface,
+                    contentDescription = "Logout dropdown",
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .clickable {
+                            onAction(AgendaEvent.ToggleLogoutDropdown)
+                        }
+                )
+            }
+            Text(
+                text = "CA", //stringResource(R.string.agenda_title),
+                style = MaterialTheme.typography.h4,
+                textAlign = TextAlign.End,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.onSurface,
+                modifier = Modifier
+                    .alignByBaseline()
+                    .align(Alignment.CenterVertically)
+                    .weight(1f)
+                    .wrapContentWidth(Alignment.End)
+                    .padding(DP.tiny)
+                    .drawBehind {
+                        drawCircle(
+                            color = Color.Black,
+                            radius = this.size.maxDimension*.7f
+                        )
+                    }
+            )
+
+        }
+        Spacer(modifier = Modifier.extraSmallHeight())
 
         Column(
             modifier = Modifier
@@ -132,121 +192,6 @@ fun AgendaScreenContent(
                 "Hello, " + (state.authInfo?.username ?: "No username"),
                 color = MaterialTheme.colors.onSurface
             )
-//
-//            // • USERNAME
-//            NameField(
-//                value = state.username,
-//                label = null,
-//                isError = state.isInvalidUsername,
-//                onValueChange = {
-//                    onAction(RegisterEvent.UpdateUsername(it))
-//                }
-//            )
-//            if (state.isInvalidUsername && state.isShowInvalidUsernameMessage) {
-//                Text(text = stringResource(R.string.error_invalid_username), color = Color.Red)
-//            }
-//            Spacer(modifier = Modifier.smallHeight())
-//
-//            // • EMAIL
-//            EmailField(
-//                value = state.email,
-//                label = null,
-//                isError = state.isInvalidEmail,
-//                onValueChange = {
-//                    onAction(RegisterEvent.UpdateEmail(it))
-//                }
-//            )
-//            if (state.isInvalidEmail && state.isShowInvalidEmailMessage) {
-//                Text(text = stringResource(R.string.error_invalid_email), color = Color.Red)
-//            }
-//            Spacer(modifier = Modifier.smallHeight())
-//
-//            // • PASSWORD
-//            PasswordField(
-//                value = state.password,
-//                label = null,
-//                isError = state.isInvalidPassword,
-//                onValueChange = {
-//                    onAction(RegisterEvent.UpdatePassword(it))
-//                },
-//                isPasswordVisible = state.isPasswordVisible,
-//                clickTogglePasswordVisibility = {
-//                    onAction(RegisterEvent.SetIsPasswordVisible(!state.isPasswordVisible))
-//                },
-//                imeAction = ImeAction.Next,
-//            )
-//            if (state.isInvalidPassword && state.isShowInvalidPasswordMessage) {
-//                Text(text = stringResource(R.string.error_invalid_password), color = Color.Red)
-//            }
-//            Spacer(modifier = Modifier.smallHeight())
-//
-//            // • CONFIRM PASSWORD
-//            PasswordField(
-//                label = null, //stringResource(R.string.register_label_confirm_password),
-//                placeholder = stringResource(R.string.register_placeholder_confirm_password),
-//                value = state.confirmPassword,
-//                isError = state.isInvalidConfirmPassword,
-//                onValueChange = {
-//                    onAction(RegisterEvent.UpdateConfirmPassword(it))
-//                },
-//                isPasswordVisible = state.isPasswordVisible,
-//                clickTogglePasswordVisibility = {
-//                    onAction(RegisterEvent.SetIsPasswordVisible(!state.isPasswordVisible))
-//                },
-//                imeAction = ImeAction.Done,
-//                doneAction = {
-//                    performRegister()
-//                },
-//            )
-//            if (state.isInvalidConfirmPassword && state.isShowInvalidConfirmPasswordMessage) {
-//                Text(
-//                    text = stringResource(R.string.error_invalid_confirm_password),
-//                    color = Color.Red
-//                )
-//                Spacer(modifier = Modifier.extraSmallHeight())
-//            }
-//            // • SHOW IF MATCHING PASSWORDS
-//            if (!state.isPasswordsMatch) {
-//                Text(
-//                    text = stringResource(R.string.register_error_passwords_do_not_match),
-//                    color = Color.Red
-//                )
-//                Spacer(modifier = Modifier.extraSmallHeight())
-//            }
-//            // • SHOW PASSWORD REQUIREMENTS
-//            if (state.isShowInvalidPasswordMessage || state.isShowInvalidConfirmPasswordMessage) {
-//                Text(
-//                    text = stringResource(R.string.register_password_requirements),
-//                    color = Color.Red
-//                )
-//                Spacer(modifier = Modifier.extraSmallHeight())
-//            }
-//            Spacer(modifier = Modifier.mediumHeight())
-//
-//            // • REGISTER BUTTON
-//            Button(
-//                onClick = {
-//                    performRegister()
-//                },
-//                enabled = !state.isLoading,
-//                modifier = Modifier
-//                    .taskyWideButton(color = MaterialTheme.colors.primary)
-//                    .align(alignment = Alignment.CenterHorizontally)
-//            ) {
-//                Text(
-//                    text = stringResource(R.string.register_button),
-//                    fontSize = MaterialTheme.typography.button.fontSize,
-//                )
-//                if (state.isLoading) {
-//                    CircularProgressIndicator(
-//                        modifier = Modifier
-//                            .padding(start = DP.small)
-//                            .size(16.dp)
-//                            .align(alignment = Alignment.CenterVertically)
-//                    )
-//                }
-//            }
-//
 //            // STATUS //////////////////////////////////////////
 //
 //            state.errorMessage.getOrNull?.let { errorMessage ->
@@ -257,17 +202,11 @@ fun AgendaScreenContent(
 //                )
 //                Spacer(modifier = Modifier.extraSmallHeight())
 //            }
-//            if (state.isLoggedIn) {
-//                Spacer(modifier = Modifier.smallHeight())
-//                Text(text = stringResource(R.string.register_registered))
-//                Spacer(modifier = Modifier.extraSmallHeight())
-//            }
 //            state.statusMessage.getOrNull?.let { message ->
 //                Spacer(modifier = Modifier.extraSmallHeight())
 //                Text(text = message)
 //                Spacer(modifier = Modifier.extraSmallHeight())
 //            }
-//
 //
 //            Box(
 //                modifier = Modifier
@@ -320,6 +259,28 @@ fun AgendaScreenContent(
 //            })
 //    )
 
+@Composable
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showSystemUi = false,
+    name = "Agenda Screen Dark",
+    apiLevel = 28
+)
+fun AgendaScreenPreview() {
+    TaskyTheme {
+        AgendaScreenContent(
+            state = AgendaState(
+                authInfo = AuthInfo(
+                    username = "username",
+                ),
+                isLoaded = true,
+            ),
+            onAction = {},
+            navigator = EmptyDestinationsNavigator,
+        )
+    }
+}
 
 //@Composable
 //@Preview(
