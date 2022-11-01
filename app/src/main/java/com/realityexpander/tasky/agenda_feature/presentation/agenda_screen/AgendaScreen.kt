@@ -246,6 +246,17 @@ fun AgendaScreenContent(
     }
 }
 
+fun getUserAcronym(username: String): String {
+    if(username.isBlank()) return ""
+
+    val words = username.split(" ")
+    if (words.size > 1) {
+        return words[0].substring(0, 1) + words[1].substring(0, 1)
+    }
+
+    return username.substring(0, 2)
+}
+
 
 //    // • BACK TO SIGN IN BUTTON (alternate design)
 //    Text(
