@@ -318,7 +318,6 @@ fun RegisterScreenContent(
                             modifier = Modifier
                                 .align(alignment = Alignment.CenterVertically)
                                 .size(DP.extraLarge)
-
                         )
                     }
                 }
