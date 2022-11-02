@@ -15,7 +15,7 @@ fun Modifier.taskyWideButton(color: Color = Color.White): Modifier =
     .clip(shape = TaskyShapes.WideButtonRoundedCorners)
     .background(color = color)
 
-fun Modifier.taskyMediumButton(color: Color = Color.White): Modifier =
+fun Modifier.taskySmallButton(color: Color = Color.White): Modifier =
     extraLargeHeight()
     .extraLargeWidth()
     .clip(shape = TaskyShapes.MediumButtonRoundedCorners)

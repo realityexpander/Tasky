@@ -89,6 +89,7 @@ fun AgendaScreenContent(
             LoginScreenDestination(
                 username = state.username,
                 email = state.email,
+                password = null,
             )
         ) {
             popUpTo(LoginScreenDestination.route) {

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
@@ -40,6 +41,7 @@ import com.realityexpander.tasky.auth_feature.presentation.components.EmailField
 import com.realityexpander.tasky.auth_feature.presentation.components.NameField
 import com.realityexpander.tasky.auth_feature.presentation.components.PasswordField
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
+import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 
@@ -131,7 +133,7 @@ fun RegisterScreenContent(
         Spacer(modifier = Modifier.largeHeight())
         Text(
             text = stringResource(R.string.register_title),
-            style = MaterialTheme.typography.h5,
+            style = MaterialTheme.typography.h2,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colors.surface,
             modifier = Modifier
@@ -306,15 +308,17 @@ fun RegisterScreenContent(
                             navigateToLogin()
                         },
                         modifier = Modifier
+                            .clip(shape = TaskyShapes.MediumButtonRoundedCorners)
                             .align(alignment = Alignment.BottomStart)
-                            .taskyMediumButton(color = MaterialTheme.colors.primary)
+                            .width(DP.huge)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.ChevronLeft,
                             contentDescription = stringResource(R.string.register_description_back),
                             modifier = Modifier
-                                .size(DP.large)
                                 .align(alignment = Alignment.CenterVertically)
+                                .size(DP.extraLarge)
+
                         )
                     }
                 }
