@@ -22,11 +22,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.core.view.ViewCompat
@@ -77,8 +79,8 @@ fun AgendaScreenContent(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
-    var mTextFieldSize by remember { mutableStateOf(Size.Zero)}
-    var mTextFieldOffset by remember { mutableStateOf(Offset.Zero)}
+    var logoutButtonSize by remember { mutableStateOf(Size.Zero)}
+    var logoutButtonOffset by remember { mutableStateOf(Offset.Zero)}
 
     val acronymColor = Color(MaterialTheme.colors.surface.toArgb())
 
@@ -125,6 +127,49 @@ fun AgendaScreenContent(
         }
     }
 
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
+        // • User logout dropdown
+        DropdownMenu(
+            expanded = state.isLogoutDropdownShowing,
+            onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
+            offset = DpOffset(
+                x = logoutButtonOffset.x.dp - logoutButtonSize.width.dp * 3f,
+                y = 0.dp
+            ),
+            modifier = Modifier
+                .width(with(LocalDensity.current) {
+                    (logoutButtonSize.width * 6f).toDp()
+                })
+                .background(color = MaterialTheme.colors.onSurface)
+        ) {
+            DropdownMenuItem(
+                onClick = {
+                    onAction(AgendaEvent.ToggleLogoutDropdown)
+                    onAction(AgendaEvent.Logout)
+                }) {
+                Text(
+                    text = "Logout",
+                    style = MaterialTheme.typography.body1,
+                    color = MaterialTheme.colors.surface,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.weight(1f)
+                )
+                Icon(
+                    imageVector = Icons.Filled.Logout,
+                    contentDescription = "Logout",
+                    tint = MaterialTheme.colors.surface,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(DP.tiny)
+                )
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -141,7 +186,7 @@ fun AgendaScreenContent(
                     .alignByBaseline()
             ) {
                 Text(
-                    text = "MARCH", //stringResource(R.string.agenda_title),
+                    text = "AUGUST", //stringResource(R.string.agenda_title),
                     style = MaterialTheme.typography.h4,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colors.surface,
@@ -159,9 +204,6 @@ fun AgendaScreenContent(
                     contentDescription = "Logout dropdown",
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .clickable {
-                            onAction(AgendaEvent.ToggleLogoutDropdown)
-                        }
                 )
             }
             Text(
@@ -182,14 +224,17 @@ fun AgendaScreenContent(
                             radius = this.size.maxDimension * .7f
                         )
                     }
+                    .clickable {
+                        onAction(AgendaEvent.ToggleLogoutDropdown)
+                    }
                     .onGloballyPositioned { coordinates ->
                         // This value is used to assign to
                         // the DropDown the same width
-                        mTextFieldSize = coordinates.size.toSize()
-                        mTextFieldOffset = coordinates.localToRoot(
+                        logoutButtonSize = coordinates.size.toSize()
+                        logoutButtonOffset = coordinates.localToRoot(
                             Offset.Zero
                         )
-                    },
+                    }
             )
 
         }
@@ -207,7 +252,8 @@ fun AgendaScreenContent(
                 "Hello, " + (state.authInfo?.username ?: "No username"),
                 color = MaterialTheme.colors.onSurface
             )
-//            // STATUS //////////////////////////////////////////
+
+            ////// STATUS ///////
 //
 //            state.errorMessage.getOrNull?.let { errorMessage ->
 //                Spacer(modifier = Modifier.smallHeight())
@@ -257,56 +303,18 @@ fun AgendaScreenContent(
 //                    }
 //                }
 //            }
-
-            DropdownMenu(
-                expanded = true, //state.isLogoutDropdownShowing,
-                onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
-                modifier = Modifier
-                    .width(250.dp) //mTextFieldSize.width.dp)
-                    .offset(
-                        x = 750.dp, //mTextFieldOffset.x.dp,
-                        y = 500.dp, //mTextFieldOffset.y.dp
-                    )
-                    .background(color = MaterialTheme.colors.surface)
-//                modifier = Modifier
-//                    .width(with(LocalDensity.current) {
-//                        200.dp //mTextFieldSize.width.toDp()
-//                    })
-//                    .offset(
-//                        x = with(LocalDensity.current) {
-//                            200.dp  //mTextFieldOffset.x.toDp()
-//                        },
-//                        y = with(LocalDensity.current) {
-//                            100.dp //mTextFieldOffset.y.toDp()
-//                        }
-//                    )
-            ) {
-                DropdownMenuItem(
-                    onClick = {
-                        onAction(AgendaEvent.ToggleLogoutDropdown)
-                    }) {
-                    Text(
-                        text = "Logout",
-                        style = MaterialTheme.typography.body1,
-                        //color = MaterialTheme.colors.onSurface,
-                        color = Color.White,
-                    )
-                    Icon(
-                        imageVector = Icons.Filled.Logout,
-                        contentDescription = "Logout",
-                        tint = Color.White,
-                    )
-                }
-            }
         }
-
     }
 }
 
 fun getUserAcronym(username: String): String {
-    if(username.isBlank()) return ""
+    if(username.isBlank()) return "??"
+    if(username.length<2) return username.uppercase()
+
+    println("username: $username")
 
     val words = username.split(" ")
+    println("words: $words, size: ${words.size}")
     if (words.size > 1) {
         return (words[0].substring(0, 1) + words[1].substring(0, 1)).uppercase()
     }
@@ -348,7 +356,7 @@ fun AgendaScreenPreview() {
     apiLevel = 28,
     widthDp = 350,
 )
-fun AgendacreenPreview_NightMode_NO() {
+fun AgendScreenPreview_NightMode_NO() {
     AgendaScreenPreview()
 }
 
