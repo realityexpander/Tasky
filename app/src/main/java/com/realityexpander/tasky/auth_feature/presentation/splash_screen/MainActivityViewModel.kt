@@ -17,29 +17,8 @@ class MainActivityViewModel @Inject constructor(
 //    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-//    private val authInfo: AuthInfo? =
-//        savedStateHandle[SAVED_STATE_authInfo]
-
     private val _splashState = MutableStateFlow(SplashState())
     val splashState = _splashState.asStateFlow()
-//        .onEach { state ->
-        // save state for process death
-//        savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
-//    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SplashState())
-
-//    init {
-//        viewModelScope.launch {
-//            yield() // allow the splashState to be initialized
-//
-//            // restore state after process death  // -- is this needed for splash screen?
-//            _splashState.update {
-//                it.copy(
-//                    authInfo = authInfo,
-//                    isLoading = true,
-//                )}
-//            yield() // allow the splashState to be restored
-//        }
-//    }
 
     fun onSetAuthInfo(authInfo: AuthInfo?) {
         viewModelScope.launch {
