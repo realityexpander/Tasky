@@ -68,7 +68,7 @@ class AgendaViewModel @Inject constructor(
         }
     }
 
-    fun logout() {
+    private fun logout() {
         viewModelScope.launch {
             authRepository.clearAuthInfo()
             yield()

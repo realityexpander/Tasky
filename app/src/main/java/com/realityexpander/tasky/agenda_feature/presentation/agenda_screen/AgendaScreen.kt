@@ -181,19 +181,15 @@ fun AgendaScreenContent(
                         drawCircle(
                             color = acronymColor, //Color.Black,
                             radius = this.size.maxDimension * .7f
-                        )
-                    }
+                    )}
                     .clickable {
                         onAction(AgendaEvent.ToggleLogoutDropdown)
                     }
                     .onGloballyPositioned { coordinates ->
-                        // This value is used to assign to
-                        // the DropDown the same width
                         logoutButtonSize = coordinates.size.toSize()
                         logoutButtonOffset = coordinates.localToRoot(
                             Offset.Zero
-                        )
-                    }
+                    )}
             )
 
         }
@@ -343,7 +339,7 @@ fun AgendaScreenPreview() {
     apiLevel = 28,
     widthDp = 350,
 )
-fun AgendScreenPreview_NightMode_NO() {
+fun AgendaScreenPreview_NightMode_NO() {
     AgendaScreenPreview()
 }
 
