@@ -8,23 +8,27 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,6 +41,7 @@ import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.common.modifiers.extraSmallHeight
 import com.realityexpander.tasky.core.presentation.common.modifiers.mediumHeight
 import com.realityexpander.tasky.core.presentation.common.modifiers.taskyScreenTopCorners
+import com.realityexpander.tasky.core.presentation.theme.TaskyLightBlue
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 
@@ -71,6 +76,11 @@ fun AgendaScreenContent(
 
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+
+    var mTextFieldSize by remember { mutableStateOf(Size.Zero)}
+    var mTextFieldOffset by remember { mutableStateOf(Offset.Zero)}
+
+    val acronymColor = Color(MaterialTheme.colors.surface.toArgb())
 
     fun navigateToLogin() {
         navigator.navigate(
@@ -132,7 +142,7 @@ fun AgendaScreenContent(
             ) {
                 Text(
                     text = "MARCH", //stringResource(R.string.agenda_title),
-                    style = MaterialTheme.typography.h3,
+                    style = MaterialTheme.typography.h4,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colors.surface,
                     modifier = Modifier
@@ -140,14 +150,11 @@ fun AgendaScreenContent(
                         .alignByBaseline()
                         .align(Alignment.CenterVertically)
                         .clickable {
-                            onAction(AgendaEvent.ToggleLogoutDropdown)
+                            // show date picker
                         }
                 )
                 Icon(
-                    imageVector = if (state.isLogoutDropdownShowing)
-                        Icons.Filled.KeyboardArrowUp
-                    else
-                        Icons.Filled.KeyboardArrowDown,
+                    imageVector = Icons.Filled.ArrowDropDown,
                     tint = MaterialTheme.colors.surface,
                     contentDescription = "Logout dropdown",
                     modifier = Modifier
@@ -158,11 +165,11 @@ fun AgendaScreenContent(
                 )
             }
             Text(
-                text = "CA", //stringResource(R.string.agenda_title),
-                style = MaterialTheme.typography.h4,
+                text = getUserAcronym(state.authInfo?.username ?: "??"),
+                style = MaterialTheme.typography.h5,
                 textAlign = TextAlign.End,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.onSurface,
+                color = TaskyLightBlue, //MaterialTheme.colors.onSurface,
                 modifier = Modifier
                     .alignByBaseline()
                     .align(Alignment.CenterVertically)
@@ -171,10 +178,18 @@ fun AgendaScreenContent(
                     .padding(DP.tiny)
                     .drawBehind {
                         drawCircle(
-                            color = Color.Black,
-                            radius = this.size.maxDimension*.7f
+                            color = acronymColor, //Color.Black,
+                            radius = this.size.maxDimension * .7f
                         )
                     }
+                    .onGloballyPositioned { coordinates ->
+                        // This value is used to assign to
+                        // the DropDown the same width
+                        mTextFieldSize = coordinates.size.toSize()
+                        mTextFieldOffset = coordinates.localToRoot(
+                            Offset.Zero
+                        )
+                    },
             )
 
         }
@@ -242,7 +257,49 @@ fun AgendaScreenContent(
 //                    }
 //                }
 //            }
+
+            DropdownMenu(
+                expanded = true, //state.isLogoutDropdownShowing,
+                onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
+                modifier = Modifier
+                    .width(250.dp) //mTextFieldSize.width.dp)
+                    .offset(
+                        x = 750.dp, //mTextFieldOffset.x.dp,
+                        y = 500.dp, //mTextFieldOffset.y.dp
+                    )
+                    .background(color = MaterialTheme.colors.surface)
+//                modifier = Modifier
+//                    .width(with(LocalDensity.current) {
+//                        200.dp //mTextFieldSize.width.toDp()
+//                    })
+//                    .offset(
+//                        x = with(LocalDensity.current) {
+//                            200.dp  //mTextFieldOffset.x.toDp()
+//                        },
+//                        y = with(LocalDensity.current) {
+//                            100.dp //mTextFieldOffset.y.toDp()
+//                        }
+//                    )
+            ) {
+                DropdownMenuItem(
+                    onClick = {
+                        onAction(AgendaEvent.ToggleLogoutDropdown)
+                    }) {
+                    Text(
+                        text = "Logout",
+                        style = MaterialTheme.typography.body1,
+                        //color = MaterialTheme.colors.onSurface,
+                        color = Color.White,
+                    )
+                    Icon(
+                        imageVector = Icons.Filled.Logout,
+                        contentDescription = "Logout",
+                        tint = Color.White,
+                    )
+                }
+            }
         }
+
     }
 }
 
@@ -251,24 +308,12 @@ fun getUserAcronym(username: String): String {
 
     val words = username.split(" ")
     if (words.size > 1) {
-        return words[0].substring(0, 1) + words[1].substring(0, 1)
+        return (words[0].substring(0, 1) + words[1].substring(0, 1)).uppercase()
     }
 
-    return username.substring(0, 2)
+    return username.substring(0, 2).uppercase()
 }
 
-
-//    // • BACK TO SIGN IN BUTTON (alternate design)
-//    Text(
-//        text = stringResource(R.string.register_already_a_member_sign_in),
-//        style = MaterialTheme.typography.body2,
-//        color = MaterialTheme.colors.primaryVariant,
-//        modifier = Modifier
-//            .align(alignment = Alignment.CenterHorizontally)
-//            .clickable(onClick = {
-//                navigateToLogin()
-//            })
-//    )
 
 @Composable
 @Preview(
@@ -276,14 +321,16 @@ fun getUserAcronym(username: String): String {
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     showSystemUi = false,
     name = "Agenda Screen Dark",
-    apiLevel = 28
+    apiLevel = 28,
+    widthDp = 350,
+    group= "Night Mode=true"
 )
 fun AgendaScreenPreview() {
     TaskyTheme {
         AgendaScreenContent(
             state = AgendaState(
                 authInfo = AuthInfo(
-                    username = "username",
+                    username = "Chris Athanas",
                 ),
                 isLoaded = true,
             ),
@@ -293,96 +340,17 @@ fun AgendaScreenPreview() {
     }
 }
 
-//@Composable
-//@Preview(
-//    showBackground = true,
-//    uiMode = Configuration.UI_MODE_NIGHT_YES,
-//    group= "Night Mode=true"
-//)
-//fun RegisterScreenPreview() {
-//    TaskyTheme {
-//        Surface {
-//            RegisterScreenContent(
-//                navigator = EmptyDestinationsNavigator,
-//                state = RegisterState(
-//                    email = "chris@demo.com",
-//                    password = "1234567Az",
-//                    confirmPassword = "1234567Az",
-//                    isInvalidEmail = false,
-//                    isInvalidPassword = false,
-//                    isInvalidConfirmPassword = false,
-//                    isPasswordsMatch = true,
-//                    isShowInvalidEmailMessage = false,
-//                    isShowInvalidPasswordMessage = false,
-//                    isShowInvalidConfirmPasswordMessage = false,
-//                    isPasswordVisible = false,
-//                    isLoading = false,
-//                    isLoggedIn = false,
-//                    errorMessage = UiText.None,  // UiText.Res(R.string.error_invalid_email),
-//                    statusMessage = UiText.None, // UiText.Res(R.string.login_logged_in),
-//                ),
-//                onAction = {},
-//            )
-//        }
-//    }
-//}
-//
-//@Composable
-//@Preview(
-//    showBackground = true,
-//    uiMode = Configuration.UI_MODE_NIGHT_NO,
-//    group="Night Mode=false"
-//)
-//fun RegisterScreenPreview_NightMode_NO() {
-//    RegisterScreenPreview()
-//}
-//
-//@Composable
-//@Preview(
-//    showBackground = true,
-//    uiMode = Configuration.UI_MODE_NIGHT_YES,
-//    group = "ViewModel"
-//)
-//fun RegisterScreenPreview_Interactive() {
-//    TaskyTheme {
-//        Surface {
-//            RegisterScreen(
-//                email = "hello",
-//                navigator = EmptyDestinationsNavigator,
-//                viewModel = RegisterViewModel(
-//                    authRepository = AuthRepositoryFakeImpl(
-//                        authApi = AuthApiFakeImpl(),
-//                        authDao = AuthDaoFakeImpl(),
-//                        validateUsername = ValidateUsername(),
-//                        validateEmail = ValidateEmailRegexImpl(),
-//                        validatePassword = ValidatePassword(),
-//                    ),
-//                    savedStateHandle = SavedStateHandle().apply {
-//                        // For Live Preview / interactive mode
-//                        set("username", "c")
-//                        set("email", "chris@demo.com")
-//                        set("password", "123456Aa")
-//                        set("confirmPassword", "123456Aa")
-//                        set("invalidUsername", true)
-//                        set("invalidEmail", true)
-////                        set("invalidPassword", true)
-////                        set("invalidConfirmPassword", true)
-////                        set("isPasswordsMatch", false)
-//                        set("isShowInvalidUsernameMessage", true)
-//                        set("isShowInvalidEmailMessage", true)
-////                        set("isShowInvalidPasswordMessage", true)
-////                        set("isShowInvalidConfirmPasswordMessage", true)
-////                        set("isLoading", true)
-////                        set("errorMessage", "Error Message")
-////                        set("statusMessage", "Status Message")
-////                        set("isLoggedIn", true)
-//                    }
-//                )
-//            )
-//        }
-//    }
-//}
-
+@Composable
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    group="Night Mode=false",
+    apiLevel = 28,
+    widthDp = 350,
+)
+fun AgendacreenPreview_NightMode_NO() {
+    AgendaScreenPreview()
+}
 
 
 
