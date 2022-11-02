@@ -38,6 +38,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.MainActivity
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.getUserAcronym
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.common.modifiers.extraSmallHeight
@@ -125,49 +126,6 @@ fun AgendaScreenContent(
 
         onDispose {
             view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
-        }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-    ) {
-        // • User logout dropdown
-        DropdownMenu(
-            expanded = state.isLogoutDropdownShowing,
-            onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
-            offset = DpOffset(
-                x = logoutButtonOffset.x.dp - logoutButtonSize.width.dp * 3f,
-                y = 0.dp
-            ),
-            modifier = Modifier
-                .width(with(LocalDensity.current) {
-                    (logoutButtonSize.width * 6f).toDp()
-                })
-                .background(color = MaterialTheme.colors.onSurface)
-        ) {
-            DropdownMenuItem(
-                onClick = {
-                    onAction(AgendaEvent.ToggleLogoutDropdown)
-                    onAction(AgendaEvent.Logout)
-                }) {
-                Text(
-                    text = "Logout",
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.surface,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.weight(1f)
-                )
-                Icon(
-                    imageVector = Icons.Filled.Logout,
-                    contentDescription = "Logout",
-                    tint = MaterialTheme.colors.surface,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(DP.tiny)
-                )
-            }
         }
     }
 
@@ -306,21 +264,49 @@ fun AgendaScreenContent(
 //            }
         }
     }
-}
 
-fun getUserAcronym(username: String): String {
-    if(username.isBlank()) return "??"
-    if(username.length<2) return username.uppercase()
-
-    println("username: $username")
-
-    val words = username.split(" ")
-    println("words: $words, size: ${words.size}")
-    if (words.size > 1) {
-        return (words[0].substring(0, 1) + words[1].substring(0, 1)).uppercase()
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
+        // • User logout dropdown
+        DropdownMenu(
+            expanded = state.isLogoutDropdownShowing,
+            onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
+            offset = DpOffset(
+                x = logoutButtonOffset.x.dp - logoutButtonSize.width.dp * 3f,
+                y = 0.dp
+            ),
+            modifier = Modifier
+                .width(with(LocalDensity.current) {
+                    (logoutButtonSize.width * 6f).toDp()
+                })
+                .background(color = MaterialTheme.colors.onSurface)
+        ) {
+            DropdownMenuItem(
+                onClick = {
+                    onAction(AgendaEvent.ToggleLogoutDropdown)
+                    onAction(AgendaEvent.Logout)
+                }) {
+                Text(
+                    text = "Logout",
+                    style = MaterialTheme.typography.body1,
+                    color = MaterialTheme.colors.surface,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.weight(1f)
+                )
+                Icon(
+                    imageVector = Icons.Filled.Logout,
+                    contentDescription = "Logout",
+                    tint = MaterialTheme.colors.surface,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(DP.tiny)
+                )
+            }
+        }
     }
-
-    return username.substring(0, 2).uppercase()
 }
 
 
