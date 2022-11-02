@@ -69,6 +69,7 @@ fun RegisterScreen(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RegisterScreenContent(
     state: RegisterState,
@@ -302,24 +303,29 @@ fun RegisterScreenContent(
                         .background(color = MaterialTheme.colors.surface)
                         .align(alignment = Alignment.BottomStart)
                 ) {
-                    // • BACK TO SIGN IN BUTTON
-                    Button(
-                        onClick = {
-                            navigateToLogin()
-                        },
-                        modifier = Modifier
-                            .clip(shape = TaskyShapes.MediumButtonRoundedCorners)
-                            .align(alignment = Alignment.BottomStart)
-                            .width(DP.huge)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.ChevronLeft,
-                            contentDescription = stringResource(R.string.register_description_back),
+                    // • BACK TO LOGIN BUTTON
+                    CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) { // allows smaller touch-targets
+                        IconButton(
+                            onClick = {
+                                navigateToLogin()
+                            },
                             modifier = Modifier
-                                .align(alignment = Alignment.CenterVertically)
-                                .size(DP.extraLarge)
-                        )
-                    }
+                                .size(DP.XXLarge)
+                                .clip(shape = TaskyShapes.MediumButtonRoundedCorners)
+                                .background(color = MaterialTheme.colors.onSurface)
+                                .align(alignment = Alignment.BottomStart)
+                        ) {
+                                Icon(
+                                    tint = MaterialTheme.colors.surface,
+                                    imageVector = Icons.Filled.ChevronLeft,
+                                    contentDescription = stringResource(R.string.register_description_back),
+                                    modifier = Modifier
+                                        .align(alignment = Alignment.Center)
+                                        .size(DP.XXLarge)
+                                        .padding(start = 9.dp, end = 9.dp) // fine tunes the icon size (weird)
+                                )
+                            }
+                        }
                 }
             }
         }
@@ -327,7 +333,7 @@ fun RegisterScreenContent(
 }
 
 
-//    // • BACK TO SIGN IN BUTTON (alternate design)
+//    // • BACK TO LOG IN BUTTON (alternate design)
 //    Text(
 //        text = stringResource(R.string.register_already_a_member_sign_in),
 //        style = MaterialTheme.typography.body2,
