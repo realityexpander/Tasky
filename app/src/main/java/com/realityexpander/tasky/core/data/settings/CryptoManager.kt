@@ -112,7 +112,7 @@ class CryptoManager {
     }
 
     companion object {
-        const val KEYSTORE_ENTRY_NAME = "secretTasky"
+        private const val KEYSTORE_ENTRY_NAME = "secretTasky"
         private const val ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
         private const val BLOCK_MODE = KeyProperties.BLOCK_MODE_CBC
         private const val PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7 // uses variable block size
