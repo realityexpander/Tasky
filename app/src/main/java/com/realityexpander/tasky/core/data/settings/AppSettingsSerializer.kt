@@ -9,20 +9,35 @@ import kotlinx.serialization.json.Json
 import java.io.InputStream
 import java.io.OutputStream
 
-object AppSettingsSerializer : Serializer<AppSettings> {
+class AppSettingsSerializer(
+    private val encrypted: Boolean = true
+) : Serializer<AppSettings> {
 
     override val defaultValue: AppSettings
         get() = AppSettings()
 
+    private val cryptoManager: CryptoManager by lazy {
+        CryptoManager()
+    }
+
     override suspend fun readFrom(input: InputStream): AppSettings {
         return try {
+            val inputBytes = if(encrypted) {
+                cryptoManager.decrypt(input)
+            } else {
+                input.readBytes()
+            }
+
             Json.decodeFromString(
                 deserializer = AppSettings.serializer(),
-                string = input.readBytes().decodeToString()
+                string = inputBytes.decodeToString()
             ).also {
-                Log.d("APP_SETTINGS_READ", it.toString())
+                if(!encrypted) Log.d("APP_SETTINGS_READ", it.toString())
             }
         } catch (e: SerializationException) {
+            e.printStackTrace()
+            defaultValue
+        } catch(e: Exception) {
             e.printStackTrace()
             defaultValue
         }
@@ -30,15 +45,25 @@ object AppSettingsSerializer : Serializer<AppSettings> {
 
     override suspend fun writeTo(t: AppSettings, output: OutputStream) {
         withContext(Dispatchers.IO) {
-            output.write(
-                Json.encodeToString(
-                    serializer = AppSettings.serializer(),
-                    value = t
-                ).encodeToByteArray()
-                    .also {
-                        Log.d("APP_SETTINGS_WRITE", t.toString())
-                    }
-            )
+            try {
+                val outputBytes =
+                    Json.encodeToString(
+                        serializer = AppSettings.serializer(),
+                        value = t
+                    ).encodeToByteArray()
+
+                if (encrypted) {
+                    cryptoManager.encrypt(
+                        bytes = outputBytes,
+                        outputStream = output
+                    )
+                } else {
+                    output.write(outputBytes)
+                    Log.d("APP_SETTINGS_WRITE", t.toString())
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

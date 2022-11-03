@@ -66,11 +66,27 @@ object AppModule {
         val addHeadersInterceptor = Interceptor { chain ->
 
             runBlocking(Dispatchers.IO) {
-                val authToken = authDao.getAuthToken()
-                val request = chain.request().newBuilder()
+
+                val requestBuilder = chain.request().newBuilder()
                     .addHeader("x-api-key", API_KEY)
-                    .addHeader("Authorization",
-                        createAuthorizationHeader( authToken ?: "NULL_AUTH_TOKEN"))
+
+                // Check for a valid AuthToken in the IAuthApi Companion object.
+                //   If not valid, attempt to get it from the AuthDao.
+                //   If valid, set it in the IAuthApi Companion object, for faster access.
+                if(IAuthApi.authToken == null) {
+                    val authToken = authDao.getAuthToken() // could take a while.
+                    if(authToken != null) {
+                        IAuthApi.authToken = authToken
+                    }
+                }
+
+                // If AuthToken is valid, add it to the request.
+                if(IAuthApi.authToken != null) {
+                    requestBuilder
+                        .addHeader("Authorization", createAuthorizationHeader(IAuthApi.authToken!!))
+                }
+
+                val request = requestBuilder
                     .build()
 
                 chain.proceed(request)
@@ -105,6 +121,8 @@ object AppModule {
             .build()
             .create()
     }
+
+    ////////// AUTHENTICATION REPOSITORY //////////
 
     @Provides
     @Singleton
@@ -221,6 +239,8 @@ object AppModule {
     fun provideAuthApiProd(
         taskyApi: TaskyApi,
     ): IAuthApi = AuthApiImpl(taskyApi)
+
+    ////////// AGENDA REPOSITORY //////////
 }
 
 @Qualifier

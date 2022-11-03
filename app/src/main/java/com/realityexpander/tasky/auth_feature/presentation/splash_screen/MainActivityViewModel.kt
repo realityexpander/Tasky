@@ -1,45 +1,24 @@
 package com.realityexpander.tasky.auth_feature.presentation.splash_screen
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
-import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_authInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.yield
 import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
-    private val savedStateHandle: SavedStateHandle,
+//    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val authInfo: AuthInfo? =
-        savedStateHandle[SAVED_STATE_authInfo]
-
     private val _splashState = MutableStateFlow(SplashState())
-    val splashState = _splashState.onEach { state ->
-        // save state for process death
-        savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SplashState())
-
-    init {
-        viewModelScope.launch {
-            yield() // allow the splashState to be initialized
-
-            // restore state after process death  // -- is this needed for splash screen?
-            _splashState.update {
-                it.copy(
-                    authInfo = authInfo,
-                    isLoading = true,
-                )}
-            yield() // allow the splashState to be restored
-        }
-    }
+    val splashState = _splashState.asStateFlow()
 
     fun onSetAuthInfo(authInfo: AuthInfo?) {
         viewModelScope.launch {
@@ -47,7 +26,7 @@ class MainActivityViewModel @Inject constructor(
             // set the AuthInfo (& AuthToken) for this user
             authRepository.setAuthInfo(authInfo)
 
-            if (authInfo != null
+            if( authInfo != null
                 && authRepository.authenticate()
             ) {
                 // User is authenticated

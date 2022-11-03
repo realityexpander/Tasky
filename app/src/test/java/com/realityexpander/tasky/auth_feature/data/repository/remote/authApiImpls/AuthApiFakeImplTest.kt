@@ -106,7 +106,7 @@ class AuthApiFakeImplTest {
         // ACT
         runTest {
             val authInfoDTO = authApiFakeImpl.login(email, password)
-            val authenticated = authApiFakeImpl.authenticate(authInfoDTO?.authToken)
+            val authenticated = authApiFakeImpl.authenticate()
 
             // ASSERT
             assertTrue(authenticated)
@@ -123,7 +123,7 @@ class AuthApiFakeImplTest {
         // ACT
         runTest {
             val authInfoDTO: AuthInfo? = null
-            val authenticated = authApiFakeImpl.authenticate(authInfoDTO?.authToken)
+            val authenticated = authApiFakeImpl.authenticate()
 
             // ASSERT
             assertFalse(authenticated)

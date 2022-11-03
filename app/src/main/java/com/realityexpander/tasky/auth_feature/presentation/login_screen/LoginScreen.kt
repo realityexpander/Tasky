@@ -147,7 +147,7 @@ fun LoginScreenContent(
         Spacer(modifier = Modifier.largeHeight())
         Text(
             text = stringResource(R.string.login_title),
-            style = MaterialTheme.typography.h5,
+            style = MaterialTheme.typography.h2,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colors.surface,
             modifier = Modifier

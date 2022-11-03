@@ -19,32 +19,32 @@ val Typography = Typography(
     h1 = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.Bold,
-        fontSize = 96.sp
+        fontSize = 32.sp
     ),
     h2 = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.Bold,
-        fontSize = 60.sp
+        fontSize = 28.sp
     ),
     h3 = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.Bold,
-        fontSize = 48.sp
+        fontSize = 22.sp
     ),
     h4 = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.Bold,
-        fontSize = 34.sp
+        fontSize = 18.sp
     ),
     h5 = TextStyle(
         fontFamily = fonts,
-        fontWeight = FontWeight.Bold,
-        fontSize = 28.sp
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
     ),
     h6 = TextStyle(
         fontFamily = fonts,
-        fontWeight = FontWeight.Bold,
-        fontSize = 20.sp
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp
     ),
     subtitle1 = TextStyle(
         fontFamily = fonts,

@@ -6,10 +6,13 @@ import com.realityexpander.tasky.core.presentation.common.util.UiText
 data class AgendaState(
     val username: String = "",
     val email: String = "",
+    val authInfo: AuthInfo? = null,
 
     val isLoaded: Boolean = false,
+    val isLoading: Boolean = false,
 
     val errorMessage: UiText = UiText.None,
 
-    val authInfo: AuthInfo? = null
+    val isLogoutDropdownShowing: Boolean = false,
+
 )

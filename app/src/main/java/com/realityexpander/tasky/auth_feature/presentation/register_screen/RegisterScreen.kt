@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
@@ -40,6 +41,7 @@ import com.realityexpander.tasky.auth_feature.presentation.components.EmailField
 import com.realityexpander.tasky.auth_feature.presentation.components.NameField
 import com.realityexpander.tasky.auth_feature.presentation.components.PasswordField
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
+import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 
@@ -67,6 +69,7 @@ fun RegisterScreen(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RegisterScreenContent(
     state: RegisterState,
@@ -131,7 +134,7 @@ fun RegisterScreenContent(
         Spacer(modifier = Modifier.largeHeight())
         Text(
             text = stringResource(R.string.register_title),
-            style = MaterialTheme.typography.h5,
+            style = MaterialTheme.typography.h2,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colors.surface,
             modifier = Modifier
@@ -300,23 +303,29 @@ fun RegisterScreenContent(
                         .background(color = MaterialTheme.colors.surface)
                         .align(alignment = Alignment.BottomStart)
                 ) {
-                    // • BACK TO SIGN IN BUTTON
-                    Button(
-                        onClick = {
-                            navigateToLogin()
-                        },
-                        modifier = Modifier
-                            .align(alignment = Alignment.BottomStart)
-                            .taskyMediumButton(color = MaterialTheme.colors.primary)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.ChevronLeft,
-                            contentDescription = stringResource(R.string.register_description_back),
+                    // • BACK TO LOGIN BUTTON
+                    CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) { // allows smaller touch-targets
+                        IconButton(
+                            onClick = {
+                                navigateToLogin()
+                            },
                             modifier = Modifier
-                                .size(DP.large)
-                                .align(alignment = Alignment.CenterVertically)
-                        )
-                    }
+                                .size(DP.XXLarge)
+                                .clip(shape = TaskyShapes.MediumButtonRoundedCorners)
+                                .background(color = MaterialTheme.colors.onSurface)
+                                .align(alignment = Alignment.BottomStart)
+                        ) {
+                                Icon(
+                                    tint = MaterialTheme.colors.surface,
+                                    imageVector = Icons.Filled.ChevronLeft,
+                                    contentDescription = stringResource(R.string.register_description_back),
+                                    modifier = Modifier
+                                        .align(alignment = Alignment.Center)
+                                        .size(DP.XXLarge)
+                                        .padding(start = 9.dp, end = 9.dp) // fine tunes the icon size (weird)
+                                )
+                            }
+                        }
                 }
             }
         }
@@ -324,7 +333,7 @@ fun RegisterScreenContent(
 }
 
 
-//    // • BACK TO SIGN IN BUTTON (alternate design)
+//    // • BACK TO LOG IN BUTTON (alternate design)
 //    Text(
 //        text = stringResource(R.string.register_already_a_member_sign_in),
 //        style = MaterialTheme.typography.body2,
