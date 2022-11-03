@@ -15,7 +15,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -275,16 +274,6 @@ fun AgendaScreenContent(
                     onAction(AgendaEvent.ToggleLogoutDropdown)
                     onAction(AgendaEvent.Logout)
                 },
-                isHighlighted = true
-            )
-            MenuItem(
-                title = "Test",
-                icon = Icons.Filled.Terrain,
-                onClick = {
-                    onAction(AgendaEvent.ToggleLogoutDropdown)
-                    onAction(AgendaEvent.Logout)
-                },
-                isHighlighted = false
             )
         }
     }

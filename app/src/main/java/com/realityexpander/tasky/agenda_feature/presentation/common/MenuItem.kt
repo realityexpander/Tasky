@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.presentation.common
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -11,10 +12,12 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Textsms
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,24 +33,30 @@ fun MenuItem(
     isSelected: Boolean = false,
     isHighlighted: Boolean = false,
     enabled: Boolean = true,
+    highLightColor: Color = MaterialTheme.colors.secondary,
 ) {
+    val highlightColorNative = remember(isHighlighted) {
+        Color(highLightColor.copy(alpha = .9f).toArgb())
+    }
+
     DropdownMenuItem(
         enabled = enabled,
         onClick = {
             onClick()
         },
         modifier = Modifier
+            .background(MaterialTheme.colors.onSurface)
             .drawBehind {
-                if (isHighlighted) drawRect(Color.LightGray)
+                if (isHighlighted) drawRect(highlightColorNative)
             }
     ) {
         Text(
             text = title,
             style = MaterialTheme.typography.body1,
             color = if(enabled)
-                    MaterialTheme.colors.onSurface
+                    MaterialTheme.colors.surface
                 else
-                    MaterialTheme.colors.onSurface.copy(alpha = 0.2f),
+                    MaterialTheme.colors.surface.copy(alpha = 0.2f),
             textAlign = TextAlign.Start,
             modifier = Modifier.weight(1f)
         )
@@ -56,9 +65,9 @@ fun MenuItem(
                 imageVector = icon,
                 contentDescription = iconContentDescription,
                 tint = if(enabled)
-                        MaterialTheme.colors.onSurface
+                        MaterialTheme.colors.surface
                     else
-                        MaterialTheme.colors.onSurface.copy(alpha = 0.2f),
+                        MaterialTheme.colors.surface.copy(alpha = 0.2f),
                 modifier = Modifier
                     .padding(DP.tiny)
                     .align(Alignment.CenterVertically)
@@ -69,9 +78,9 @@ fun MenuItem(
                 imageVector = Icons.Filled.Check,
                 contentDescription = "is Selected",
                 tint = if(enabled)
-                        MaterialTheme.colors.onSurface
+                        MaterialTheme.colors.surface
                     else
-                        MaterialTheme.colors.onSurface.copy(alpha = 0.2f),
+                        MaterialTheme.colors.surface.copy(alpha = 0.2f),
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(DP.tiny)
