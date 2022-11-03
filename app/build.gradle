@@ -150,7 +150,6 @@ dependencies {
     implementation "androidx.room:room-ktx:2.4.3"
 
     // Proto DataStore
-    //implementation "androidx.datastore:datastore:1.0.0"
     implementation "androidx.datastore:datastore-preferences:1.0.0"
     implementation "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
 
