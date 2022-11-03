@@ -17,8 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -80,8 +78,6 @@ fun AgendaScreenContent(
 
     var logoutButtonSize by remember { mutableStateOf(Size.Zero)}
     var logoutButtonOffset by remember { mutableStateOf(Offset.Zero)}
-
-    val acronymColor = Color(MaterialTheme.colors.surface.toArgb())
 
     fun navigateToLogin() {
         navigator.navigate(
