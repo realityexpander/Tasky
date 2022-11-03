@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.Logout
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -38,13 +37,12 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.MainActivity
-import com.realityexpander.tasky.agenda_feature.presentation.common.util.getUserAcronym
+import com.realityexpander.tasky.agenda_feature.presentation.common.UserAcronymCircle
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.common.modifiers.extraSmallHeight
 import com.realityexpander.tasky.core.presentation.common.modifiers.mediumHeight
 import com.realityexpander.tasky.core.presentation.common.modifiers.taskyScreenTopCorners
-import com.realityexpander.tasky.core.presentation.theme.TaskyLightBlue
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 
@@ -165,23 +163,13 @@ fun AgendaScreenContent(
                         .align(Alignment.CenterVertically)
                 )
             }
-            Text(
-                text = getUserAcronym(state.authInfo?.username ?: "??"),
-                style = MaterialTheme.typography.h5,
-                textAlign = TextAlign.End,
-                fontWeight = FontWeight.Bold,
-                color = TaskyLightBlue, //MaterialTheme.colors.onSurface,
+            UserAcronymCircle(
+                username = state.authInfo?.username,
                 modifier = Modifier
                     .alignByBaseline()
                     .align(Alignment.CenterVertically)
                     .weight(1f)
                     .wrapContentWidth(Alignment.End)
-                    .padding(DP.tiny)
-                    .drawBehind {
-                        drawCircle(
-                            color = acronymColor, //Color.Black,
-                            radius = this.size.maxDimension * .7f
-                    )}
                     .clickable {
                         onAction(AgendaEvent.ToggleLogoutDropdown)
                     }
