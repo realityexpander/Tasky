@@ -26,7 +26,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlin.system.exitProcess
 
-val Context.dataStore by dataStore("app-settings.json", AppSettingsSerializer)
+val Context.dataStore by
+    dataStore(
+        "app-settings.data",
+        AppSettingsSerializer(encrypted = true)
+    )
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
