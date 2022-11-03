@@ -72,9 +72,7 @@ object AppModule {
 
                 // Check for a valid AuthToken in the IAuthApi.
                 //   If not valid, attempt to get it from the AuthDao.
-                //   If it's valid, set it in the IAuthApi.
-                // This is to speed up the process of getting a valid AuthToken as
-                //   accessing the AuthDao can be slow.
+                //   If valid, set it in the IAuthApi, for faster access.
                 if(IAuthApi.authToken == null) {
                     val authToken = authDao.getAuthToken() // could take a while.
                     if(authToken != null) {
