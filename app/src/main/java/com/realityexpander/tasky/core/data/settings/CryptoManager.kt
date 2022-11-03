@@ -89,6 +89,7 @@ class CryptoManager {
             val iv = ByteArray(ivSize)
             it.read(iv)
 
+            // Get the size of the encrypted data as an Int
             val encryptedBytesSizeHighOrderByte = it.read()
             val encryptedBytesSizeLowOrderByte = it.read()
             val encryptedBytesSize =
