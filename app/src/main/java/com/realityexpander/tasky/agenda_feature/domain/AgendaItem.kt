@@ -2,7 +2,8 @@ package com.realityexpander.tasky.agenda_feature.domain
 
 import java.time.LocalDateTime
 
-// NOTE: Skeleton data structures for the Agenda feature, temporary for UI development
+// NOTE: Skeleton data structures for the Agenda feature
+// **temporary** for UI development
 
 abstract class AgendaItem(
     val id: String,

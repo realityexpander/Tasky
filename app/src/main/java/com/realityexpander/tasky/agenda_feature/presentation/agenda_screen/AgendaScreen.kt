@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -43,6 +44,7 @@ import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.UserAcronymCircle
+import com.realityexpander.tasky.agenda_feature.presentation.components.AgendaCard
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.DaySelected
@@ -50,7 +52,6 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Composable
 @Destination
@@ -138,6 +139,7 @@ fun AgendaScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colors.onSurface)
+            .padding(0.dp)
     ) col1@ {
         Spacer(modifier = Modifier.mediumHeight())
         Row(
@@ -194,14 +196,14 @@ fun AgendaScreenContent(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
-                .weight(1f)
-        ) col2@ {
+//                .weight(1f)
+                .padding(0.dp)
+        ) col2@{
             Spacer(modifier = Modifier.tinyHeight())
 
             var selectedDay by remember { mutableStateOf(0) }
 
-            Row(
-            ) {
+            Row {
                 // show days of the week
                 val daysOfWeek = listOf("S", "M", "T", "W", "T", "F", "S")
                 daysOfWeek.forEachIndexed { i, day ->
@@ -210,7 +212,7 @@ fun AgendaScreenContent(
                             .weight(1f)
                             .wrapContentWidth(Alignment.CenterHorizontally)
                             .drawBehind {
-                                if(selectedDay == i) {
+                                if (selectedDay == i) {
                                     val paint = Paint().apply {
                                         color = DaySelected.toArgb()
                                         strokeWidth = 1f
@@ -220,7 +222,10 @@ fun AgendaScreenContent(
                                         color = DaySelected,
                                         topLeft = Offset(0f, -25f),
                                         size = Size(size.width, size.height + 50f),
-                                        cornerRadius = CornerRadius(DP.large.toPx(), DP.large.toPx())
+                                        cornerRadius = CornerRadius(
+                                            DP.large.toPx(),
+                                            DP.large.toPx()
+                                        )
                                     )
                                 }
                             }
@@ -229,6 +234,7 @@ fun AgendaScreenContent(
                                 selectedDay = i
                             }
                     ) {
+                        // Day of week (S, M, T, W, T, F, S)
                         Text(
                             text = day,
                             style = MaterialTheme.typography.subtitle2,
@@ -237,7 +243,7 @@ fun AgendaScreenContent(
                                 else
                                     FontWeight.SemiBold,
                             color = if (selectedDay == i)
-                                    MaterialTheme.colors.onSurface
+                                    Color.Black
                                 else
                                     MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
                             modifier = Modifier
@@ -246,11 +252,16 @@ fun AgendaScreenContent(
                                 .padding(horizontal = DP.small)
                         )
                         Spacer(modifier = Modifier.tinyHeight())
+
+                        // Day Number of Month (1-31)
                         Text(
-                            text = (i+1).toString(),
+                            text = (i + 1).toString(),
                             style = MaterialTheme.typography.h3,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colors.onSurface,
+                            color = if (selectedDay == i)
+                                    Color.Black
+                                else
+                                    MaterialTheme.colors.onSurface,
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .wrapContentWidth(Alignment.CenterHorizontally)
@@ -260,7 +271,15 @@ fun AgendaScreenContent(
                     }
                 }
             }
+        }
 
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .background(color = MaterialTheme.colors.surface)
+                .weight(1f)
+                .padding(0.dp)
+        ) {
             Spacer(modifier = Modifier.smallHeight())
 
             // show today
@@ -281,12 +300,11 @@ fun AgendaScreenContent(
                 modifier = Modifier
                     .padding(start = DP.small, end = DP.small)
             )
-            Spacer(modifier = Modifier.tinyHeight())
+            Spacer(modifier = Modifier.smallHeight())
 
             // SHOW AGENDA ITEMS
 
-            // Show Meeting Card
-            EventCard(
+            AgendaCard(
                 meeting = AgendaItem.Event(
                     id = "1",
                     title = "Meeting with John",
@@ -295,12 +313,48 @@ fun AgendaScreenContent(
                     remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 9, 0),
                     description = "Discuss the new project"
                 ),
+                onMenuClick = {
+                    onAction(AgendaEvent.ToggleTaskDropdown)
+                },
                 modifier = Modifier
                     .padding(start = DP.small, end = DP.small)
+                    .onGloballyPositioned { coordinates ->
+                        taskButtonSize = (coordinates.size/2).toSize()
+                        taskButtonOffset = coordinates.localToRoot(
+                                Offset(0f,  -40f)
+                        )}
                     .clickable {
-                        // onAction(AgendaEvent.NavigateToMeetingDetails(1))
+                        //onAction(AgendaEvent.NavigateToTaskDetails(it))
                     }
             )
+
+            Spacer(modifier = Modifier.smallHeight())
+
+            AgendaCard(
+                meeting = AgendaItem.Event(
+                    id = "1",
+                    title = "Meeting with Jim",
+                    from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 13, 0),
+                    to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 0),
+                    remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 12, 30),
+                    description = "Discuss the old project"
+                ),
+                onMenuClick = {
+                    onAction(AgendaEvent.ToggleTaskDropdown)
+                },
+                completed = true,
+                modifier = Modifier
+                    .padding(start = DP.small, end = DP.small)
+                    .onGloballyPositioned { coordinates ->
+                        taskButtonSize = (coordinates.size/2).toSize()
+                        taskButtonOffset = coordinates.localToRoot(
+                            Offset(0f,  -40f)
+                        )}
+                    .clickable {
+                        //onAction(AgendaEvent.NavigateToTaskDetails(it))
+                    }
+            )
+        }
 
             ////// STATUS ///////
 //
@@ -352,7 +406,7 @@ fun AgendaScreenContent(
 //                    }
 //                }
 //            }
-        }
+
     }
 
     Box(
@@ -389,12 +443,12 @@ fun AgendaScreenContent(
             expanded = state.isTaskDropdownShowing,
             onDismissRequest = { onAction(AgendaEvent.ToggleTaskDropdown) },
             offset = DpOffset(
-                x = taskButtonOffset.x.dp - taskButtonSize.width.dp * 3f,
-                y = 0.dp
+                x = taskButtonOffset.x.dp - taskButtonSize.width.dp,
+                y = 60.dp //taskButtonOffset.y.dp // todo: hard coded value for now, will fix later
             ),
             modifier = Modifier
                 .width(with(LocalDensity.current) {
-                    (taskButtonSize.width * 8f).toDp()
+                    (taskButtonSize.width).toDp()
                 })
                 .background(color = MaterialTheme.colors.onSurface)
         ) {
