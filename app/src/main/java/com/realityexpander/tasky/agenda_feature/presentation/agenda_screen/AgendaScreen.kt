@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 
 import android.content.res.Configuration
+import android.graphics.Paint
 import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -8,14 +9,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -26,7 +30,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -38,15 +41,17 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.MainActivity
-import com.realityexpander.tasky.agenda_feature.presentation.common.util.getUserAcronym
+import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
+import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
+import com.realityexpander.tasky.agenda_feature.presentation.common.UserAcronymCircle
+import com.realityexpander.tasky.agenda_feature.presentation.components.AgendaCard
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
-import com.realityexpander.tasky.core.presentation.common.modifiers.DP
-import com.realityexpander.tasky.core.presentation.common.modifiers.extraSmallHeight
-import com.realityexpander.tasky.core.presentation.common.modifiers.mediumHeight
-import com.realityexpander.tasky.core.presentation.common.modifiers.taskyScreenTopCorners
-import com.realityexpander.tasky.core.presentation.theme.TaskyLightBlue
+import com.realityexpander.tasky.core.presentation.common.modifiers.*
+import com.realityexpander.tasky.core.presentation.theme.DaySelected
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.LoginScreenDestination
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Composable
 @Destination
@@ -83,7 +88,8 @@ fun AgendaScreenContent(
     var logoutButtonSize by remember { mutableStateOf(Size.Zero)}
     var logoutButtonOffset by remember { mutableStateOf(Offset.Zero)}
 
-    val acronymColor = Color(MaterialTheme.colors.surface.toArgb())
+    var taskButtonSize by remember { mutableStateOf(Size.Zero)}
+    var taskButtonOffset by remember { mutableStateOf(Offset.Zero)}
 
     fun navigateToLogin() {
         navigator.navigate(
@@ -133,6 +139,7 @@ fun AgendaScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colors.onSurface)
+            .padding(0.dp)
     ) col1@ {
         Spacer(modifier = Modifier.mediumHeight())
         Row(
@@ -165,23 +172,13 @@ fun AgendaScreenContent(
                         .align(Alignment.CenterVertically)
                 )
             }
-            Text(
-                text = getUserAcronym(state.authInfo?.username ?: "??"),
-                style = MaterialTheme.typography.h5,
-                textAlign = TextAlign.End,
-                fontWeight = FontWeight.Bold,
-                color = TaskyLightBlue, //MaterialTheme.colors.onSurface,
+            UserAcronymCircle(
+                username = state.authInfo?.username,
                 modifier = Modifier
                     .alignByBaseline()
                     .align(Alignment.CenterVertically)
                     .weight(1f)
                     .wrapContentWidth(Alignment.End)
-                    .padding(DP.tiny)
-                    .drawBehind {
-                        drawCircle(
-                            color = acronymColor, //Color.Black,
-                            radius = this.size.maxDimension * .7f
-                    )}
                     .clickable {
                         onAction(AgendaEvent.ToggleLogoutDropdown)
                     }
@@ -193,20 +190,171 @@ fun AgendaScreenContent(
             )
 
         }
-        Spacer(modifier = Modifier.extraSmallHeight())
+        Spacer(modifier = Modifier.smallHeight())
 
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
+//                .weight(1f)
+                .padding(0.dp)
+        ) col2@{
+            Spacer(modifier = Modifier.tinyHeight())
+
+            var selectedDay by remember { mutableStateOf(0) }
+
+            Row {
+                // show days of the week
+                val daysOfWeek = listOf("S", "M", "T", "W", "T", "F", "S")
+                daysOfWeek.forEachIndexed { i, day ->
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                            .drawBehind {
+                                if (selectedDay == i) {
+                                    val paint = Paint().apply {
+                                        color = DaySelected.toArgb()
+                                        strokeWidth = 1f
+                                        style = Paint.Style.STROKE
+                                    }
+                                    drawRoundRect(
+                                        color = DaySelected,
+                                        topLeft = Offset(0f, -25f),
+                                        size = Size(size.width, size.height + 50f),
+                                        cornerRadius = CornerRadius(
+                                            DP.large.toPx(),
+                                            DP.large.toPx()
+                                        )
+                                    )
+                                }
+                            }
+                            .clickable {
+                                //onAction(AgendaEvent.SetSelectedDay(i))
+                                selectedDay = i
+                            }
+                    ) {
+                        // Day of week (S, M, T, W, T, F, S)
+                        Text(
+                            text = day,
+                            style = MaterialTheme.typography.subtitle2,
+                            fontWeight = if (selectedDay == i)
+                                    FontWeight.Bold
+                                else
+                                    FontWeight.SemiBold,
+                            color = if (selectedDay == i)
+                                    Color.Black
+                                else
+                                    MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .wrapContentWidth(Alignment.CenterHorizontally)
+                                .padding(horizontal = DP.small)
+                        )
+                        Spacer(modifier = Modifier.tinyHeight())
+
+                        // Day Number of Month (1-31)
+                        Text(
+                            text = (i + 1).toString(),
+                            style = MaterialTheme.typography.h3,
+                            fontWeight = FontWeight.Bold,
+                            color = if (selectedDay == i)
+                                    Color.Black
+                                else
+                                    MaterialTheme.colors.onSurface,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .wrapContentWidth(Alignment.CenterHorizontally)
+                                .padding(horizontal = DP.small)
+                        )
+
+                    }
+                }
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .background(color = MaterialTheme.colors.surface)
                 .weight(1f)
-        ) col2@ {
-            Spacer(modifier = Modifier.mediumHeight())
+                .padding(0.dp)
+        ) {
+            Spacer(modifier = Modifier.smallHeight())
+
+            // show today
+            val today = LocalDate.now()
+            val todayDayOfWeek = today.dayOfWeek.value
+            val todayDayOfMonth = today.dayOfMonth
+            val todayMonth = today.month
+            val todayYear = today.year
+            val todayDate = LocalDate.of(todayYear, todayMonth, todayDayOfMonth)
+            //val todayTasks = state.tasks.filter { it.date == todayDate }
+            //val todayTasksCount = todayTasks.size
 
             Text(
-                "Hello, " + (state.authInfo?.username ?: "No username"),
-                color = MaterialTheme.colors.onSurface
+                text = "Today",
+                style = MaterialTheme.typography.h3,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.onSurface,
+                modifier = Modifier
+                    .padding(start = DP.small, end = DP.small)
             )
+            Spacer(modifier = Modifier.smallHeight())
+
+            // SHOW AGENDA ITEMS
+
+            AgendaCard(
+                meeting = AgendaItem.Event(
+                    id = "1",
+                    title = "Meeting with John",
+                    from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 10, 0),
+                    to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 11, 0),
+                    remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 9, 0),
+                    description = "Discuss the new project"
+                ),
+                onMenuClick = {
+                    onAction(AgendaEvent.ToggleTaskDropdown)
+                },
+                modifier = Modifier
+                    .padding(start = DP.small, end = DP.small)
+                    .onGloballyPositioned { coordinates ->
+                        taskButtonSize = (coordinates.size/2).toSize()
+                        taskButtonOffset = coordinates.localToRoot(
+                                Offset(0f,  -40f)
+                        )}
+                    .clickable {
+                        //onAction(AgendaEvent.NavigateToTaskDetails(it))
+                    }
+            )
+
+            Spacer(modifier = Modifier.smallHeight())
+
+            AgendaCard(
+                meeting = AgendaItem.Event(
+                    id = "1",
+                    title = "Meeting with Jim",
+                    from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 13, 0),
+                    to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 0),
+                    remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 12, 30),
+                    description = "Discuss the old project"
+                ),
+                onMenuClick = {
+                    onAction(AgendaEvent.ToggleTaskDropdown)
+                },
+                completed = true,
+                modifier = Modifier
+                    .padding(start = DP.small, end = DP.small)
+                    .onGloballyPositioned { coordinates ->
+                        taskButtonSize = (coordinates.size/2).toSize()
+                        taskButtonOffset = coordinates.localToRoot(
+                            Offset(0f,  -40f)
+                        )}
+                    .clickable {
+                        //onAction(AgendaEvent.NavigateToTaskDetails(it))
+                    }
+            )
+        }
 
             ////// STATUS ///////
 //
@@ -258,7 +406,7 @@ fun AgendaScreenContent(
 //                    }
 //                }
 //            }
-        }
+
     }
 
     Box(
@@ -266,7 +414,7 @@ fun AgendaScreenContent(
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
-        // • User logout dropdown
+        // • Logout user dropdown
         DropdownMenu(
             expanded = state.isLogoutDropdownShowing,
             onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
@@ -280,27 +428,54 @@ fun AgendaScreenContent(
                 })
                 .background(color = MaterialTheme.colors.onSurface)
         ) {
-            DropdownMenuItem(
+            MenuItem(
+                title = "Logout",
+                icon = Icons.Filled.Logout,
                 onClick = {
                     onAction(AgendaEvent.ToggleLogoutDropdown)
                     onAction(AgendaEvent.Logout)
-                }) {
-                Text(
-                    text = "Logout",
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.surface,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.weight(1f)
-                )
-                Icon(
-                    imageVector = Icons.Filled.Logout,
-                    contentDescription = "Logout",
-                    tint = MaterialTheme.colors.surface,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(DP.tiny)
-                )
-            }
+                },
+            )
+        }
+
+        // • Task open/edit/delete dropdown
+        DropdownMenu(
+            expanded = state.isTaskDropdownShowing,
+            onDismissRequest = { onAction(AgendaEvent.ToggleTaskDropdown) },
+            offset = DpOffset(
+                x = taskButtonOffset.x.dp - taskButtonSize.width.dp,
+                y = 60.dp //taskButtonOffset.y.dp // todo: hard coded value for now, will fix later
+            ),
+            modifier = Modifier
+                .width(with(LocalDensity.current) {
+                    (taskButtonSize.width).toDp()
+                })
+                .background(color = MaterialTheme.colors.onSurface)
+        ) {
+            MenuItem(
+                title = "Open",
+                icon = Icons.Filled.OpenInNew,
+                onClick = {
+                    onAction(AgendaEvent.ToggleTaskDropdown)
+                    //onAction(AgendaEvent.OpenTask)
+                },
+            )
+            MenuItem(
+                title = "Edit",
+                icon = Icons.Filled.Edit,
+                onClick = {
+                    onAction(AgendaEvent.ToggleTaskDropdown)
+                    //onAction(AgendaEvent.EditTask)
+                },
+            )
+            MenuItem(
+                title = "Delete",
+                icon = Icons.Filled.Delete,
+                onClick = {
+                    onAction(AgendaEvent.ToggleTaskDropdown)
+                    //onAction(AgendaEvent.DeleteTask)
+                },
+            )
         }
     }
 }
@@ -324,6 +499,7 @@ fun AgendaScreenPreview() {
                     username = "Chris Athanas",
                 ),
                 isLoaded = true,
+                //isLogoutDropdownShowing = true,
             ),
             onAction = {},
             navigator = EmptyDestinationsNavigator,

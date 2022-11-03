@@ -36,7 +36,7 @@ class AgendaViewModel @Inject constructor(
 
     private val _agendaState = MutableStateFlow(AgendaState())
     val agendaState = _agendaState.onEach { state ->
-//         save state for process death
+        // save state for process death
         savedStateHandle[SAVED_STATE_username] = state.username
         savedStateHandle[SAVED_STATE_isLoaded] = state.isLoaded
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
@@ -122,6 +122,14 @@ class AgendaViewModel @Inject constructor(
 //                    )
 //                }
 //            }
+            is AgendaEvent.ToggleTaskDropdown -> {
+                _agendaState.update {
+                    it.copy(
+                        isTaskDropdownShowing = !agendaState.value.isTaskDropdownShowing
+                    )
+                }
+            }
+
             is AgendaEvent.ToggleLogoutDropdown -> {
                 _agendaState.update {
                     it.copy(

@@ -9,3 +9,5 @@ val Teal200 = Color(0xFF03DAC5)
 
 val TaskyPurple = Color(0xFF8E97FD)
 val TaskyLightBlue = Color(0xFFB7C6DE)
+
+val DaySelected = Color(0xFFFDEFA8)
