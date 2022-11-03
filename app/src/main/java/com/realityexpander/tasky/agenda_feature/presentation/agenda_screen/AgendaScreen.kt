@@ -8,10 +8,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,7 +27,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -35,6 +38,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.MainActivity
+import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.UserAcronymCircle
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
@@ -188,7 +192,7 @@ fun AgendaScreenContent(
             Spacer(modifier = Modifier.mediumHeight())
 
             Text(
-                "Hello, " + (state.authInfo?.username ?: "No username"),
+                "Hello, " + (state.authInfo?.username ?: ""),
                 color = MaterialTheme.colors.onSurface
             )
 
@@ -250,7 +254,7 @@ fun AgendaScreenContent(
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
-        // • User logout dropdown
+        // • Logout user dropdown
         DropdownMenu(
             expanded = state.isLogoutDropdownShowing,
             onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
@@ -264,27 +268,24 @@ fun AgendaScreenContent(
                 })
                 .background(color = MaterialTheme.colors.onSurface)
         ) {
-            DropdownMenuItem(
+            MenuItem(
+                title = "Logout",
+                icon = Icons.Filled.Logout,
                 onClick = {
                     onAction(AgendaEvent.ToggleLogoutDropdown)
                     onAction(AgendaEvent.Logout)
-                }) {
-                Text(
-                    text = "Logout",
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.surface,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.weight(1f)
-                )
-                Icon(
-                    imageVector = Icons.Filled.Logout,
-                    contentDescription = "Logout",
-                    tint = MaterialTheme.colors.surface,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(DP.tiny)
-                )
-            }
+                },
+                isHighlighted = true
+            )
+            MenuItem(
+                title = "Test",
+                icon = Icons.Filled.Terrain,
+                onClick = {
+                    onAction(AgendaEvent.ToggleLogoutDropdown)
+                    onAction(AgendaEvent.Logout)
+                },
+                isHighlighted = false
+            )
         }
     }
 }
