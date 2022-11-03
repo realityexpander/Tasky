@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
                             context.dataStore.saveSettingsInitialized(true)
                         }
 
-                        // Set user is logged-in status
+                        // Set user logged-in status
                         viewModel.onSetAuthInfo(appSettings.authInfo)
                     }
 
