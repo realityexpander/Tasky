@@ -70,7 +70,7 @@ object AppModule {
                 val requestBuilder = chain.request().newBuilder()
                     .addHeader("x-api-key", API_KEY)
 
-                // Check for a valid AuthToken in the IAuthApi.
+                // Check for a valid AuthToken in the IAuthApi Companion object.
                 //   If not valid, attempt to get it from the AuthDao.
                 //   If valid, set it in the IAuthApi, for faster access.
                 if(IAuthApi.authToken == null) {
