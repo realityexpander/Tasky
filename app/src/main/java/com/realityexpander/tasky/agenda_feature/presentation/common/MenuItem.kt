@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.presentation.common
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
+import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 
 @Composable
 fun MenuItem(
@@ -43,9 +45,9 @@ fun MenuItem(
             text = title,
             style = MaterialTheme.typography.body1,
             color = if(enabled)
-                    MaterialTheme.colors.surface
+                    MaterialTheme.colors.onSurface
                 else
-                    MaterialTheme.colors.surface.copy(alpha = 0.3f),
+                    MaterialTheme.colors.onSurface.copy(alpha = 0.2f),
             textAlign = TextAlign.Start,
             modifier = Modifier.weight(1f)
         )
@@ -54,9 +56,9 @@ fun MenuItem(
                 imageVector = icon,
                 contentDescription = iconContentDescription,
                 tint = if(enabled)
-                        MaterialTheme.colors.surface
+                        MaterialTheme.colors.onSurface
                     else
-                        MaterialTheme.colors.surface.copy(alpha = 0.3f),
+                        MaterialTheme.colors.onSurface.copy(alpha = 0.2f),
                 modifier = Modifier
                     .padding(DP.tiny)
                     .align(Alignment.CenterVertically)
@@ -67,9 +69,9 @@ fun MenuItem(
                 imageVector = Icons.Filled.Check,
                 contentDescription = "is Selected",
                 tint = if(enabled)
-                        MaterialTheme.colors.surface
+                        MaterialTheme.colors.onSurface
                     else
-                        MaterialTheme.colors.surface.copy(alpha = 0.3f),
+                        MaterialTheme.colors.onSurface.copy(alpha = 0.2f),
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(DP.tiny)
@@ -80,83 +82,140 @@ fun MenuItem(
 
 @Preview(
     showBackground = true,
-    backgroundColor = 0x00000000,
+    backgroundColor = 0xFFFFFFFF,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    group = "Light mode"
 )
 @Composable
 fun MenuItemPreviewPlain() {
-    MenuItem(
-        title = "Menu Item Plain",
-        onClick = {},
-        isSelected = false,
-        isHighlighted = false,
-        enabled = true,
-    )
+    TaskyTheme {
+        MenuItem(
+            title = "Menu Item Plain",
+            onClick = {},
+            isSelected = false,
+            isHighlighted = false,
+            enabled = true,
+        )
+    }
 }
-
 @Preview(
     showBackground = true,
-    backgroundColor = 0x00000000,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    group = "Dark Mode"
 )
 @Composable
-fun MenuItemPreview() {
-    MenuItem(
-        title = "Menu Item w/ icon",
-        icon = Icons.Filled.Mail,
-        iconContentDescription = "Menu Item Icon",
-        onClick = {},
-        isSelected = false,
-        isHighlighted = false,
-        enabled = true,
-    )
+fun MenuItemPreviewPlainDark() {
+    MenuItemPreviewPlain()
 }
 
 @Preview(
     showBackground = true,
-    backgroundColor = 0x00000000,
+    group = "Light mode"
+)
+@Composable
+fun MenuItemPreviewWIcon() {
+    TaskyTheme {
+        MenuItem(
+            title = "Menu Item w/ icon",
+            icon = Icons.Filled.Mail,
+            iconContentDescription = "Menu Item Icon",
+            onClick = {},
+            isSelected = false,
+            isHighlighted = false,
+            enabled = true,
+        )
+    }
+}
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    group = "Dark Mode"
+)
+@Composable
+fun MenuItemPreviewWIconDark() {
+    MenuItemPreviewWIcon()
+}
+
+@Preview(
+    showBackground = true,
+    group = "Light mode"
 )
 @Composable
 fun MenuItemPreviewDisabled() {
-    MenuItem(
-        title = "Disabled Item",
-        icon = Icons.Filled.Textsms,
-        iconContentDescription = "Menu Item Icon",
-        onClick = {},
-        isSelected = false,
-        isHighlighted = false,
-        enabled = false,
-    )
+    TaskyTheme {
+        MenuItem(
+            title = "Disabled Item",
+            icon = Icons.Filled.Textsms,
+            iconContentDescription = "Menu Item Icon",
+            onClick = {},
+            isSelected = false,
+            isHighlighted = false,
+            enabled = false,
+        )
+    }
+}
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    group = "Dark Mode"
+)
+@Composable
+fun MenuItemPreviewDisabledDark() {
+    MenuItemPreviewDisabled()
 }
 
 @Preview(
     showBackground = true,
-    backgroundColor = 0x00000000,
+    group = "Light mode"
 )
 @Composable
 fun MenuItemPreviewHighlighted() {
-    MenuItem(
-        title = "Highlighted Item",
-        icon = Icons.Filled.Textsms,
-        iconContentDescription = "Menu Item Icon",
-        onClick = {},
-        isSelected = false,
-        isHighlighted = true,
-        enabled = true,
-    )
+    TaskyTheme {
+        MenuItem(
+            title = "Highlighted Item",
+            icon = Icons.Filled.Textsms,
+            iconContentDescription = "Menu Item Icon",
+            onClick = {},
+            isSelected = false,
+            isHighlighted = true,
+            enabled = true,
+        )
+    }
+}
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    group = "Dark Mode"
+)
+@Composable
+fun MenuItemPreviewHighlightedDark() {
+    MenuItemPreviewHighlighted()
 }
 
 @Preview(
     showBackground = true,
-    backgroundColor = 0x00000000,
+    group = "Light mode"
 )
 @Composable
 fun MenuItemPreviewSelected() {
-    MenuItem(
-        title = "Selected Item",
-        icon = Icons.Filled.Textsms,
-        iconContentDescription = "Menu Item Icon",
-        onClick = {},
-        isSelected = true,
-        isHighlighted = false,
-        enabled = true,
-    )
+    TaskyTheme {
+        MenuItem(
+            title = "Selected Item",
+            icon = Icons.Filled.Textsms,
+            iconContentDescription = "Menu Item Icon",
+            onClick = {},
+            isSelected = true,
+            isHighlighted = false,
+            enabled = true,
+        )
+    }
+}
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    group = "Dark Mode"
+)
+@Composable
+fun MenuItemPreviewSelectedDark() {
+    MenuItemPreviewSelected()
 }
