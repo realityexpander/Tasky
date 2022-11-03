@@ -49,12 +49,12 @@ val Typography = Typography(
     subtitle1 = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
+        fontSize = 14.sp
     ),
     subtitle2 = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp
+        fontSize = 12.sp
     ),
     button = TextStyle(
         fontFamily = fonts,

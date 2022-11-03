@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 
 import android.content.res.Configuration
+import android.graphics.Paint
 import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -18,8 +19,11 @@ import androidx.compose.material.icons.filled.Logout
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -40,12 +44,11 @@ import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.UserAcronymCircle
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
-import com.realityexpander.tasky.core.presentation.common.modifiers.DP
-import com.realityexpander.tasky.core.presentation.common.modifiers.extraSmallHeight
-import com.realityexpander.tasky.core.presentation.common.modifiers.mediumHeight
-import com.realityexpander.tasky.core.presentation.common.modifiers.taskyScreenTopCorners
+import com.realityexpander.tasky.core.presentation.common.modifiers.*
+import com.realityexpander.tasky.core.presentation.theme.DaySelected
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.LoginScreenDestination
+import java.time.LocalDate
 
 @Composable
 @Destination
@@ -180,7 +183,7 @@ fun AgendaScreenContent(
             )
 
         }
-        Spacer(modifier = Modifier.extraSmallHeight())
+        Spacer(modifier = Modifier.smallHeight())
 
         Column(
             modifier = Modifier
@@ -188,11 +191,90 @@ fun AgendaScreenContent(
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
                 .weight(1f)
         ) col2@ {
-            Spacer(modifier = Modifier.mediumHeight())
+            Spacer(modifier = Modifier.tinyHeight())
+
+            var selectedDay by remember { mutableStateOf(0) }
+
+            Row(
+            ) {
+                // show days of the week
+                val daysOfWeek = listOf("S", "M", "T", "W", "T", "F", "S")
+                daysOfWeek.forEachIndexed { i, day ->
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                            .drawBehind {
+                                if(selectedDay == i) {
+                                    val paint = Paint().apply {
+                                        color = DaySelected.toArgb()
+                                        strokeWidth = 1f
+                                        style = Paint.Style.STROKE
+                                    }
+                                    drawRoundRect(
+                                        color = DaySelected,
+                                        topLeft = Offset(0f, -25f),
+                                        size = Size(size.width, size.height + 50f),
+                                        cornerRadius = CornerRadius(32.dp.toPx(), 32.dp.toPx())
+                                    )
+                                }
+                            }
+                            .clickable {
+                                //onAction(AgendaEvent.SetSelectedDay(i))
+                                selectedDay = i
+                            }
+                    ) {
+                        Text(
+                            text = day,
+                            style = MaterialTheme.typography.subtitle2,
+                            fontWeight = if (selectedDay == i)
+                                    FontWeight.Bold
+                                else
+                                    FontWeight.SemiBold,
+                            color = if (selectedDay == i)
+                                    MaterialTheme.colors.onSurface
+                                else
+                                    MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .wrapContentWidth(Alignment.CenterHorizontally)
+                                .padding(horizontal = DP.small)
+                        )
+                        Spacer(modifier = Modifier.tinyHeight())
+                        Text(
+                            text = (i+1).toString(),
+                            style = MaterialTheme.typography.h3,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colors.onSurface,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .wrapContentWidth(Alignment.CenterHorizontally)
+                                .padding(horizontal = DP.small)
+                        )
+
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.smallHeight())
+
+            // show today
+            val today = LocalDate.now()
+            val todayDayOfWeek = today.dayOfWeek.value
+            val todayDayOfMonth = today.dayOfMonth
+            val todayMonth = today.month
+            val todayYear = today.year
+            val todayDate = LocalDate.of(todayYear, todayMonth, todayDayOfMonth)
+            //val todayTasks = state.tasks.filter { it.date == todayDate }
+            //val todayTasksCount = todayTasks.size
 
             Text(
-                "Hello, " + (state.authInfo?.username ?: ""),
-                color = MaterialTheme.colors.onSurface
+                text = "Today",
+                style = MaterialTheme.typography.h3,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.onSurface,
+                modifier = Modifier
+                    .padding(start = DP.small, end = DP.small)
             )
 
             ////// STATUS ///////
