@@ -13,6 +13,8 @@ data class AgendaState(
 
     val errorMessage: UiText = UiText.None,
 
+    // Dropdown Menus
     val isLogoutDropdownShowing: Boolean = false,
+    val isTaskDropdownShowing: Boolean = false,
 
 )

@@ -14,8 +14,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +40,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.MainActivity
+import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.UserAcronymCircle
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
@@ -49,6 +49,8 @@ import com.realityexpander.tasky.core.presentation.theme.DaySelected
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Composable
 @Destination
@@ -84,6 +86,9 @@ fun AgendaScreenContent(
 
     var logoutButtonSize by remember { mutableStateOf(Size.Zero)}
     var logoutButtonOffset by remember { mutableStateOf(Offset.Zero)}
+
+    var taskButtonSize by remember { mutableStateOf(Size.Zero)}
+    var taskButtonOffset by remember { mutableStateOf(Offset.Zero)}
 
     fun navigateToLogin() {
         navigator.navigate(
@@ -215,7 +220,7 @@ fun AgendaScreenContent(
                                         color = DaySelected,
                                         topLeft = Offset(0f, -25f),
                                         size = Size(size.width, size.height + 50f),
-                                        cornerRadius = CornerRadius(32.dp.toPx(), 32.dp.toPx())
+                                        cornerRadius = CornerRadius(DP.large.toPx(), DP.large.toPx())
                                     )
                                 }
                             }
@@ -275,6 +280,26 @@ fun AgendaScreenContent(
                 color = MaterialTheme.colors.onSurface,
                 modifier = Modifier
                     .padding(start = DP.small, end = DP.small)
+            )
+            Spacer(modifier = Modifier.tinyHeight())
+
+            // SHOW AGENDA ITEMS
+
+            // Show Meeting Card
+            EventCard(
+                meeting = AgendaItem.Event(
+                    id = "1",
+                    title = "Meeting with John",
+                    from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 10, 0),
+                    to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 11, 0),
+                    remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 9, 0),
+                    description = "Discuss the new project"
+                ),
+                modifier = Modifier
+                    .padding(start = DP.small, end = DP.small)
+                    .clickable {
+                        // onAction(AgendaEvent.NavigateToMeetingDetails(1))
+                    }
             )
 
             ////// STATUS ///////
@@ -355,6 +380,46 @@ fun AgendaScreenContent(
                 onClick = {
                     onAction(AgendaEvent.ToggleLogoutDropdown)
                     onAction(AgendaEvent.Logout)
+                },
+            )
+        }
+
+        // • Task open/edit/delete dropdown
+        DropdownMenu(
+            expanded = state.isTaskDropdownShowing,
+            onDismissRequest = { onAction(AgendaEvent.ToggleTaskDropdown) },
+            offset = DpOffset(
+                x = taskButtonOffset.x.dp - taskButtonSize.width.dp * 3f,
+                y = 0.dp
+            ),
+            modifier = Modifier
+                .width(with(LocalDensity.current) {
+                    (taskButtonSize.width * 8f).toDp()
+                })
+                .background(color = MaterialTheme.colors.onSurface)
+        ) {
+            MenuItem(
+                title = "Open",
+                icon = Icons.Filled.OpenInNew,
+                onClick = {
+                    onAction(AgendaEvent.ToggleTaskDropdown)
+                    //onAction(AgendaEvent.OpenTask)
+                },
+            )
+            MenuItem(
+                title = "Edit",
+                icon = Icons.Filled.Edit,
+                onClick = {
+                    onAction(AgendaEvent.ToggleTaskDropdown)
+                    //onAction(AgendaEvent.EditTask)
+                },
+            )
+            MenuItem(
+                title = "Delete",
+                icon = Icons.Filled.Delete,
+                onClick = {
+                    onAction(AgendaEvent.ToggleTaskDropdown)
+                    //onAction(AgendaEvent.DeleteTask)
                 },
             )
         }

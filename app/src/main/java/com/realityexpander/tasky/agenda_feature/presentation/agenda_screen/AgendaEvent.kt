@@ -26,4 +26,6 @@ sealed interface AgendaEvent {
     object ToggleLogoutDropdown : AgendaEvent
     object Logout : AgendaEvent
 
+    object ToggleTaskDropdown : AgendaEvent
+
 }

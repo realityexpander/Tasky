@@ -122,6 +122,14 @@ class AgendaViewModel @Inject constructor(
 //                    )
 //                }
 //            }
+            is AgendaEvent.ToggleTaskDropdown -> {
+                _agendaState.update {
+                    it.copy(
+                        isTaskDropdownShowing = !agendaState.value.isTaskDropdownShowing
+                    )
+                }
+            }
+
             is AgendaEvent.ToggleLogoutDropdown -> {
                 _agendaState.update {
                     it.copy(
