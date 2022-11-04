@@ -1,7 +1,10 @@
 package com.realityexpander.tasky.core.presentation.common.modifiers
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -22,8 +25,9 @@ fun Modifier.taskySmallButton(color: Color = Color.White): Modifier =
     .background(color = color)
 
 fun Modifier.taskyScreenTopCorners(color: Color = Color.White): Modifier =
-    fillMaxSize()
-    .clip(shape = TaskyShapes.ScreenTopCorners)
+    //fillMaxSize()
+    //.
+    clip(shape = TaskyShapes.ScreenTopCorners)
     .background(color = color)
     .padding(DP.small)
 

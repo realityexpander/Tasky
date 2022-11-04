@@ -9,8 +9,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -227,7 +225,6 @@ fun AgendaScreenContent(
         // • HEADER FOR AGENDA ITEMS (S, M, T, W, T, F, & Day Picker)
         Column(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
                 .padding(0.dp)
         ) col2@{
@@ -302,29 +299,36 @@ fun AgendaScreenContent(
             }
 
             Spacer(modifier = Modifier.smallHeight())
-
-            // • SHOW TODAY'S DATE
-            Text(
-                text =
-                    when (selectedDay) {
-                        0 -> "Today"
-                        1 -> "Tomorrow"
-                        else -> {
-                            val date = LocalDate.now().plusDays(selectedDay.toLong())
-                            val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                            val dayOfMonth = date.dayOfMonth.toString()
-                            val monthName = date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                            "$dayOfWeek, $monthName $dayOfMonth"
-                        }
-                    },
-                    style = MaterialTheme.typography.h3,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colors.onSurface,
-                    modifier = Modifier
-                        .padding(start = DP.small, end = DP.small)
-            )
-            Spacer(modifier = Modifier.tinyHeight())
         }
+
+        // • SHOW TODAY'S DATE
+        Text(
+            text =
+            when (selectedDay) {
+                0 -> "Today"
+                1 -> "Tomorrow"
+                else -> {
+                    val date = LocalDate.now().plusDays(selectedDay.toLong())
+                    val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                    val dayOfMonth = date.dayOfMonth.toString()
+                    val monthName = date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                    "$dayOfWeek, $monthName $dayOfMonth"
+                }
+            },
+            style = MaterialTheme.typography.h3,
+            fontWeight = FontWeight.Bold,
+
+            color = MaterialTheme.colors.onSurface,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colors.surface)
+                .padding(start = DP.small)
+        )
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colors.surface)
+            .tinyHeight()
+        )
 
         //val todayTasks = state.tasks.filter { it.date == todayDate }
         //val todayTasksCount = todayTasks.size
@@ -334,7 +338,7 @@ fun AgendaScreenContent(
             modifier = Modifier
                 .background(color = MaterialTheme.colors.surface)
                 .fillMaxSize()
-                .padding(start = DP.small, end = DP.small)
+                .padding(start = DP.tiny, end = DP.tiny)
         ) {
             itemsIndexed(items = agendaItems) { index, agendaItem ->
                 AgendaCard(
