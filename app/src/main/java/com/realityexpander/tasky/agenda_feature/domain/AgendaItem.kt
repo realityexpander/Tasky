@@ -1,29 +1,59 @@
 package com.realityexpander.tasky.agenda_feature.domain
 
+import android.os.Parcelable
 import com.realityexpander.tasky.core.util.UuidStr
+import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import java.time.LocalDateTime
+import java.util.*
 
 // NOTE: Skeleton data structures for the Agenda feature
 // **temporary** for UI development
 
+@OptIn(ExperimentalSerializationApi::class)
+@Serializer(forClass = LocalDateTime::class)
+object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
+    override val descriptor = PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.STRING)
+
+    override fun deserialize(decoder: Decoder): LocalDateTime {
+        return LocalDateTime.parse((decoder.decodeString()))
+    }
+
+    override fun serialize(encoder: Encoder, value: LocalDateTime) {
+        encoder.encodeString(value.toString())
+    }
+}
+
 abstract class AgendaItem(
-    val id: UuidStr,
-    val title: String,
-    val description: String? = null,
-    val remindAt: LocalDateTime,
+    open val id: UuidStr,
+    open val title: String,
+    open val description: String? = null,
+    @Serializable(with = LocalDateTimeSerializer::class)
+    open val remindAt: LocalDateTime,
 ) {
     abstract fun isEmpty(): Boolean
 
+    @Parcelize
     class Event(
-        id: UuidStr,
-        title: String,
-        description: String? = null,
-        remindAt: LocalDateTime,
+        override val id: UuidStr,
+        override val title: String,
+        override val description: String? = null,
+        @Serializable(with = LocalDateTimeSerializer::class)
+        override val remindAt: LocalDateTime,
+        @Serializable(with = LocalDateTimeSerializer::class)
         val from: LocalDateTime,
+        @Serializable(with = LocalDateTimeSerializer::class)
         val to: LocalDateTime,
         val attendeeIds: List<UuidStr>? = null,
         val photos: List<UuidStr>? = null,
-    ): AgendaItem(id, title, description, remindAt) {
+    ): AgendaItem(id, title, description, remindAt), Parcelable {
 
         companion object {
             val EMPTY = Event("", "", "", LocalDateTime.MIN, LocalDateTime.MIN, LocalDateTime.MIN, emptyList())
@@ -52,14 +82,17 @@ abstract class AgendaItem(
         )
     }
 
+    @Parcelize
     class Task(
-        id: UuidStr,
-        title: String,
-        description: String? = null,
-        remindAt: LocalDateTime,
+        override val id: UuidStr,
+        override val title: String,
+        override val description: String? = null,
+        @Serializable(with = LocalDateTimeSerializer::class)
+        override val remindAt: LocalDateTime,
+        @Serializable(with = LocalDateTimeSerializer::class)
         val time: LocalDateTime,
         val isDone: Boolean = false,
-    ): AgendaItem(id, title, description, remindAt) {
+    ): AgendaItem(id, title, description, remindAt), Parcelable {
 
         companion object {
             val EMPTY = Task("", "", "", LocalDateTime.MIN, LocalDateTime.MIN)
@@ -84,13 +117,15 @@ abstract class AgendaItem(
         )
     }
 
+    @Parcelize
     class Reminder(
-        id: UuidStr,
-        title: String,
-        description: String? = null,
-        remindAt: LocalDateTime,
+        override val id: UuidStr,
+        override val title: String,
+        override val description: String? = null,
+        @Serializable(with = LocalDateTimeSerializer::class)
+        override val remindAt: LocalDateTime,
         val time: LocalDateTime,
-    ): AgendaItem(id, title, description, remindAt) {
+    ): AgendaItem(id, title, description, remindAt), Parcelable {
 
         companion object {
             val EMPTY = Reminder("", "", "", LocalDateTime.MIN, LocalDateTime.MIN)

@@ -141,6 +141,7 @@ dependencies {
     // KotlinX Serialization
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version"
     implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
 
     // Room
     implementation "androidx.room:room-runtime:$room_version"
