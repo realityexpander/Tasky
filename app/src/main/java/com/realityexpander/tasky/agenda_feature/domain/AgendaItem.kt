@@ -57,7 +57,7 @@ abstract class AgendaItem(
     ): AgendaItem(id, title, description, remindAt) {
 
         companion object {
-            val EMPTY = Reminder("", "", "", LocalDateTime.MIN)
+            val EMPTY = Reminder("", "", "", LocalDateTime.MIN, LocalDateTime.MIN)
         }
 
         override fun isEmpty() = this == EMPTY

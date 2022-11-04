@@ -25,6 +25,7 @@ import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.common.modifiers.smallHeight
 import com.realityexpander.tasky.core.presentation.common.modifiers.tinyHeight
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightBlue
+import com.realityexpander.tasky.core.presentation.theme.TaskyPurple
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -35,12 +36,13 @@ fun AgendaCard(
     backgroundColor: Color = MaterialTheme.colors.secondary,
     textColor: Color = MaterialTheme.colors.onSecondary,
     title: String = "",
-    content: String = "",
+    description: String? = "",
     fromDateTime: LocalDateTime = LocalDateTime.MIN,
     toDateTime: LocalDateTime? = null,
     onMenuClick: () -> Unit = {},
     completed: Boolean? = null,
     onSetMenuPosition : (LayoutCoordinates) -> Unit = {},
+    itemTypeName: String? = "",
 ) {
     Box(
         modifier = modifier
@@ -95,7 +97,7 @@ fun AgendaCard(
                     Spacer(modifier = Modifier.tinyHeight())
 
                     Text(
-                        text = content,
+                        text = description ?: "",
                         color = textColor
                     )
                     Spacer(modifier = Modifier.smallHeight())
@@ -123,7 +125,7 @@ fun AgendaCard(
 
             // • Date & Time
             Text(
-                text =
+                text = itemTypeName +" "+
                     (fromDateTime.format(DateTimeFormatter.ofPattern("MMM d, h:mm a"))) +
                     (toDateTime?.let { " - " + it.format(DateTimeFormatter.ofPattern("MMM d, h:mm a")) } ?: ""),
                 style = MaterialTheme.typography.subtitle1,
@@ -151,12 +153,13 @@ fun AgendaCard(
             AgendaCard(
                 modifier = modifier,
                 title = agendaItem.title,
-                content = agendaItem.description,
+                description = agendaItem.description,
                 fromDateTime = agendaItem.from,
                 toDateTime = agendaItem.to,
                 onMenuClick = onMenuClick,
                 completed = null,
                 onSetMenuPosition = onSetMenuPosition,
+                itemTypeName = agendaItem::class.java.simpleName,
             )
         is AgendaItem.Task ->
             AgendaCard(
@@ -164,11 +167,24 @@ fun AgendaCard(
                 backgroundColor = TaskyLightBlue,
                 textColor = MaterialTheme.colors.onPrimary,
                 title = agendaItem.title,
-                content = agendaItem.description,
+                description = agendaItem.description,
                 fromDateTime = agendaItem.time,
                 onMenuClick = onMenuClick,
                 completed = agendaItem.isDone,
                 onSetMenuPosition = onSetMenuPosition,
+                itemTypeName = agendaItem::class.java.simpleName,
+            )
+        is AgendaItem.Reminder ->
+            AgendaCard(
+                modifier = modifier,
+                backgroundColor = TaskyPurple,
+                textColor = MaterialTheme.colors.onPrimary,
+                title = agendaItem.title,
+                description = agendaItem.description,
+                fromDateTime = agendaItem.time,
+                onMenuClick = onMenuClick,
+                onSetMenuPosition = onSetMenuPosition,
+                itemTypeName = agendaItem::class.java.simpleName,
             )
     }
 }
