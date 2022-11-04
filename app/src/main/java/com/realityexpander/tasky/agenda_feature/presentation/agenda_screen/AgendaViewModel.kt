@@ -7,10 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
-import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_authInfo
-import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_errorMessage
-import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_isLoaded
-import com.realityexpander.tasky.core.presentation.common.UIConstants.SAVED_STATE_username
+import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_authInfo
+import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
+import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_isLoaded
+import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_username
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*

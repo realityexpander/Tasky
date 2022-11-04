@@ -28,6 +28,8 @@ fun Modifier.taskyScreenTopCorners(color: Color = Color.White): Modifier =
     .padding(DP.small)
 
 object DP {
+    val nano       = 1.dp
+    val micro      = 2.dp
     val tiny       = 4.dp
     val extraSmall = 8.dp
     val small      = 16.dp

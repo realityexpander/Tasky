@@ -21,8 +21,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
+import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.common.modifiers.smallHeight
 import com.realityexpander.tasky.core.presentation.common.modifiers.tinyHeight
+import com.realityexpander.tasky.core.presentation.theme.TaskyLightBlue
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -34,9 +36,9 @@ fun AgendaCard(
     title: String = "",
     content: String = "",
     fromDateTime: LocalDateTime = LocalDateTime.MIN,
-    toDateTime: LocalDateTime = LocalDateTime.MAX,
+    toDateTime: LocalDateTime? = null,
     onMenuClick: () -> Unit = {},
-    completed: Boolean = false,
+    completed: Boolean? = null,
     onSetMenuPosition : (LayoutCoordinates) -> Unit = {},
 ) {
     Box(
@@ -53,16 +55,16 @@ fun AgendaCard(
                     .fillMaxWidth()
             ) {
 
-                // Check/Uncheck Icon
+                // • Check/Uncheck Icon
                 Column(
                     modifier = Modifier
                         .alignByBaseline()
                 ) {
                     Icon(
-                        imageVector = if(completed)
-                                Icons.Filled.TaskAlt // CheckCircleOutline
-                            else
-                                Icons.Filled.RadioButtonUnchecked,
+                        imageVector = if (completed == null || !completed)
+                            Icons.Filled.RadioButtonUnchecked
+                        else
+                            Icons.Filled.TaskAlt, // CheckCircleOutline
                         contentDescription = "Event",
                         tint = MaterialTheme.colors.onSecondary,
                         modifier = Modifier
@@ -72,7 +74,7 @@ fun AgendaCard(
                     )
                 }
 
-                // Title / Content
+                // • Title / Content
                 Column(
                     modifier = Modifier
                         .alignByBaseline()
@@ -82,10 +84,10 @@ fun AgendaCard(
                     Text(
                         text = title,
                         style = MaterialTheme.typography.h3.copy(
-                            textDecoration = if(completed)
-                                TextDecoration.LineThrough
+                            textDecoration = if (completed == null || !completed)
+                                TextDecoration.None
                             else
-                                TextDecoration.None,
+                                TextDecoration.LineThrough,
                         ),
                         color = MaterialTheme.colors.onSecondary
                     )
@@ -98,37 +100,37 @@ fun AgendaCard(
                     Spacer(modifier = Modifier.smallHeight())
                 }
 
-                // Skewer menu
+                // • Skewer menu
                 Column(
                     modifier = Modifier
                         .alignByBaseline()
                 ) {
                     Icon(
                         imageVector = Icons.Filled.MoreHoriz,
-                        contentDescription = "Event",
+                        contentDescription = "Agenda Item Menu",
                         tint = MaterialTheme.colors.onSecondary,
                         modifier = Modifier
                             .align(Alignment.End)
-                            .offset(y = 2.dp)
-                            .padding(end = 8.dp)
+                            .offset(y = DP.micro)
+                            .padding(end = DP.tiny)
                             .clickable(onClick = onMenuClick)
+                            .size(28.dp)
                             .onGloballyPositioned { onSetMenuPosition(it) }
                     )
                 }
             }
 
+            // • Date & Time
             Text(
-                text = "${fromDateTime.format(
-                    DateTimeFormatter.ofPattern("MMM d, h:mm a")
-                )} - ${toDateTime.format(
-                    DateTimeFormatter.ofPattern("MMM d, h:mm a")
-                )}",
+                text =
+                    (fromDateTime.format(DateTimeFormatter.ofPattern("MMM d, h:mm a"))) +
+                    (toDateTime?.format(DateTimeFormatter.ofPattern("MMM d, h:mm a")) ?: ""),
                 style = MaterialTheme.typography.subtitle1,
                 textAlign = TextAlign.End,
                 color = MaterialTheme.colors.onSecondary,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = 16.dp)
+                    .padding(end = DP.extraSmall)
                     .align(Alignment.End)
             )
         }
@@ -139,19 +141,32 @@ fun AgendaCard(
 @Composable
 fun AgendaCard(
     modifier: Modifier = Modifier,
-    agendaItem: AgendaItem.Event,
+    agendaItem: AgendaItem,
     onMenuClick: () -> Unit = {},
-    completed: Boolean = false,
     onSetMenuPosition : (LayoutCoordinates) -> Unit = {},
 ) {
-    AgendaCard(
-        modifier = modifier,
-        title = agendaItem.title,
-        content = agendaItem.description,
-        fromDateTime = agendaItem.from,
-        toDateTime = agendaItem.to,
-        onMenuClick = onMenuClick,
-        completed = completed,
-        onSetMenuPosition = onSetMenuPosition,
-    )
+    when(agendaItem) {
+        is AgendaItem.Event ->
+            AgendaCard(
+                modifier = modifier,
+                title = agendaItem.title,
+                content = agendaItem.description,
+                fromDateTime = agendaItem.from,
+                toDateTime = agendaItem.to,
+                onMenuClick = onMenuClick,
+                completed = null,
+                onSetMenuPosition = onSetMenuPosition,
+            )
+        is AgendaItem.Task ->
+            AgendaCard(
+                modifier = modifier,
+                color = TaskyLightBlue,
+                title = agendaItem.title,
+                content = agendaItem.description,
+                fromDateTime = agendaItem.time,
+                onMenuClick = onMenuClick,
+                completed = agendaItem.isDone,
+                onSetMenuPosition = onSetMenuPosition,
+            )
+    }
 }

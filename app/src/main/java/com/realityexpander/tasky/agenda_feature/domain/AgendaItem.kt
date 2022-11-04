@@ -23,8 +23,25 @@ abstract class AgendaItem(
         remindAt: LocalDateTime,
         val attendeeIds: List<UuidStr>? = null,
     ): AgendaItem(id, title, description, remindAt) {
+
         companion object {
             val EMPTY = Event("", "", "", LocalDateTime.MIN, LocalDateTime.MIN, LocalDateTime.MIN, emptyList())
+        }
+
+        override fun isEmpty() = this == EMPTY
+    }
+
+    class Task(
+        id: UuidStr,
+        title: String,
+        description: String,
+        val time: LocalDateTime,
+        remindAt: LocalDateTime,
+        val isDone: Boolean = false,
+    ): AgendaItem(id, title, description, remindAt) {
+
+        companion object {
+            val EMPTY = Task("", "", "", LocalDateTime.MIN, LocalDateTime.MIN)
         }
 
         override fun isEmpty() = this == EMPTY

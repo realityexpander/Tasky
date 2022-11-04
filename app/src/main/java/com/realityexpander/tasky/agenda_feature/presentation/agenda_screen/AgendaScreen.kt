@@ -113,13 +113,12 @@ fun AgendaScreenContent(
             remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 9, 0),
             description = "Discuss the new project"
         ),
-        AgendaItem.Event(
+        AgendaItem.Task(
             id = "0002",
-            title = "Meeting with Jim",
-            from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 13, 0),
-            to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 0),
+            title = "Task with Jim",
+            time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 13, 0),
             remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 12, 30),
-            description = "Discuss the old project"
+            description = "Do the old project"
         ),
         AgendaItem.Event(
             id = "0003",
@@ -129,13 +128,13 @@ fun AgendaScreenContent(
             remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 30),
             description = "Discuss the a different project"
         ),
-        AgendaItem.Event(
+        AgendaItem.Task(
             id = "0004",
-            title = "Meeting with Joe",
-            from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 17, 0),
-            to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 18, 0),
+            title = "Task with Joe",
+            time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 18, 0),
             remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 16, 30),
-            description = "Discuss the the other project"
+            description = "Do the the other project",
+            isDone = true
         ),
         AgendaItem.Event(
             id = "0005",
@@ -145,13 +144,12 @@ fun AgendaScreenContent(
             remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 18, 30),
             description = "Discuss the yet another project"
         ),
-        AgendaItem.Event(
+        AgendaItem.Task(
             id = "0006",
-            title = "Meeting with Jill",
-            from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 21, 0),
-            to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 22, 0),
+            title = "Task with Jill",
+            time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 22, 0),
             remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 20, 30),
-            description = "Discuss the similar project"
+            description = "Do the similar project"
         ),
         AgendaItem.Event(
             id = "0007",
@@ -161,13 +159,13 @@ fun AgendaScreenContent(
             remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 9, 0),
             description = "Discuss the worse project"
         ),
-        AgendaItem.Event(
+        AgendaItem.Task(
             id = "0008",
-            title = "Meeting with Jason",
-            from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 13, 0),
-            to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 0),
+            title = "Chore with Jason",
+            time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 0),
             remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 12, 30),
-            description = "Discuss the better project"
+            description = "Kill the better project",
+            isDone = true
         ),
     )}
 
@@ -357,6 +355,8 @@ fun AgendaScreenContent(
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.tinyHeight())
         }
 
         // • AGENDA ITEMS LIST
@@ -399,7 +399,7 @@ fun AgendaScreenContent(
                             )
                     },
                     modifier = Modifier
-                        .padding(start = DP.small, end = DP.small)
+                        .padding(start = DP.tiny, end = DP.tiny)
                         .clickable {
                             performActionForAgendaItem(
                                 agendaItem,
