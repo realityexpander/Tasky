@@ -104,7 +104,7 @@ fun AgendaScreenContent(
     val daysInitialsAndDayOfWeek = remember(LocalDate.now().dayOfMonth) {   // initial of day of week, day of month
         val days = mutableListOf<Pair<String, Int>>() // initial of day of week, day of month
 
-        for (i in 0..6) {
+        for (i in 0..5) {
             val date = LocalDate.now().plusDays(i.toLong())
             val dayOfWeek =
                 date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
