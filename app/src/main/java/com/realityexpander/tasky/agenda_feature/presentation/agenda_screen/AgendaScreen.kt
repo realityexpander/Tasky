@@ -9,10 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
@@ -26,10 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -80,7 +74,6 @@ fun AgendaScreen(
 
 data class MenuItemInfo(
     var menuPosition: Offset = Offset.Zero,
-    //var menuKind: Class<out AgendaItem>? = null,
     var agendaItem: AgendaItem? = null,
 )
 
@@ -90,7 +83,6 @@ fun AgendaScreenContent(
     onAction: (AgendaEvent) -> Unit,
     navigator: DestinationsNavigator,
 ) {
-
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
@@ -100,79 +92,27 @@ fun AgendaScreenContent(
     var logoutButtonOffset by remember { mutableStateOf(Offset.Zero)}
 
     val agendaItems = state.agendaItems
-//    // Dummy data for now
-//    val today = LocalDate.now()
-//    val todayDayOfWeek = today.dayOfWeek.value
-//    val todayDayOfMonth = today.dayOfMonth
-//    val todayMonth = today.month
-//    val todayYear = today.year
-//    val todayDate = LocalDate.of(todayYear, todayMonth, todayDayOfMonth)
-//        remember { mutableStateListOf(
-//        AgendaItem.Event(
-//            id = "0001",
-//            title = "Meeting with John",
-//            from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 10, 0),
-//            to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 11, 0),
-//            remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 9, 0),
-//            description = "Discuss the new project"
-//        ),
-//        AgendaItem.Task(
-//            id = "0002",
-//            title = "Task with Jim",
-//            time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 13, 0),
-//            remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 12, 30),
-//            description = "Do the old project"
-//        ),
-//        AgendaItem.Reminder(
-//            id = "0003",
-//            title = "Reminder with Jane",
-//            time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 16, 0),
-//            remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 30),
-//            description = "Reminder to move the different project"
-//        ),
-//        AgendaItem.Task(
-//            id = "0004",
-//            title = "Task with Joe",
-//            time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 18, 0),
-//            remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 16, 30),
-//            description = "Do the the other project",
-//            isDone = true
-//        ),
-//        AgendaItem.Event(
-//            id = "0005",
-//            title = "Meeting with Jack",
-//            from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 19, 0),
-//            to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 20, 0),
-//            remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 18, 30),
-//            description = "Discuss the yet another project"
-//        ),
-//        AgendaItem.Reminder(
-//            id = "0006",
-//            title = "Reminder with Jill",
-//            time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 22, 0),
-//            remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 20, 30),
-//            description = "Make the similar project"
-//        ),
-//        AgendaItem.Event(
-//            id = "0007",
-//            title = "Meeting with Jeremy",
-//            from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 10, 0),
-//            to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 11, 0),
-//            remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 9, 0),
-//            description = "Discuss the worse project"
-//        ),
-//        AgendaItem.Task(
-//            id = "0008",
-//            title = "Chore with Jason",
-//            time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 0),
-//            remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 12, 30),
-//            description = "Kill the better project",
-//            isDone = true
-//        ),
-//    )}
 
     // Keeps track of the dropdown menu offsets
     val agendaItemMenuInfos = remember { mutableStateMapOf<UuidStr, MenuItemInfo>() }
+
+    // create days of the week for top of screen
+    val daysInitialsAndDayOfWeek = remember(LocalDate.now().dayOfMonth) {   // initial of day of week, day of month
+        val days = mutableListOf<Pair<String, Int>>() // initial of day of week, day of month
+
+        for (i in 0..6) {
+            val date = LocalDate.now().plusDays(i.toLong())
+            val dayOfWeek =
+                date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+            days += Pair(dayOfWeek.first().toString(), date.dayOfMonth)
+        }
+
+        days
+    }
+
+    val month = remember { LocalDate.now().month.getDisplayName(TextStyle.FULL, Locale.getDefault()).uppercase() }
+
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     fun navigateToLogin() {
         navigator.navigate(
@@ -218,14 +158,15 @@ fun AgendaScreenContent(
         }
     }
 
-    // • HEADER FOR SCREEN (Month & Logout)
+    // • Main Container
     Column(
         modifier = Modifier
-            .fillMaxSize()
             .background(color = MaterialTheme.colors.onSurface)
             .padding(0.dp)
     ) col1@ {
         Spacer(modifier = Modifier.mediumHeight())
+
+        // • HEADER FOR SCREEN (Month Dropdown, User Acronym, Logout)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -236,7 +177,7 @@ fun AgendaScreenContent(
                     .alignByBaseline()
             ) {
                 Text(
-                    text = "AUGUST", //stringResource(R.string.agenda_title),
+                    text = month,
                     style = MaterialTheme.typography.h4,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colors.surface,
@@ -275,9 +216,10 @@ fun AgendaScreenContent(
             )
 
         }
+
         Spacer(modifier = Modifier.smallHeight())
 
-        // • HEADER FOR ITEMS (S, M, T, W, T, F, S, & Day Picker)
+        // • HEADER FOR AGENDA ITEMS (S, M, T, W, T, F, S, & Day Picker)
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
@@ -286,17 +228,9 @@ fun AgendaScreenContent(
         ) col2@{
             Spacer(modifier = Modifier.tinyHeight())
 
+            // • DAYS OF WEEK & Day PICKER
             Row {
-                // create days of the week
-                val days = mutableListOf<Pair<String, Int>>() // initial of day of week, day of month
-                for(i in 0..6) {
-                    val date = LocalDate.now().plusDays(i.toLong())
-                    val dayOfWeek =
-                        date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                    days += Pair(dayOfWeek.first().toString(), date.dayOfMonth)
-                }
-
-                days.forEachIndexed { i, (dayInitial, dayOfMonth) ->
+                daysInitialsAndDayOfWeek.forEachIndexed { i, (dayInitial, dayOfMonth) ->
 
                     Column(
                         modifier = Modifier
@@ -348,7 +282,6 @@ fun AgendaScreenContent(
                         Text(
                             text = dayOfMonth.toString(),
                             style = MaterialTheme.typography.h3,
-//                            maxLines = 1,
                             fontWeight = FontWeight.Bold,
                             color = if (selectedDay == i)
                                     Color.Black
@@ -377,10 +310,10 @@ fun AgendaScreenContent(
         ) {
             Spacer(modifier = Modifier.smallHeight())
 
-            // • SHOW TODAY'S DATE
             //val todayTasks = state.tasks.filter { it.date == todayDate }
             //val todayTasksCount = todayTasks.size
 
+            // • SHOW TODAY'S DATE
             Text(
                 text =
                     when (selectedDay) {
@@ -390,8 +323,8 @@ fun AgendaScreenContent(
                             val date = LocalDate.now().plusDays(selectedDay.toLong())
                             val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
                             val dayOfMonth = date.dayOfMonth.toString()
-                            val month = date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                            "$dayOfWeek, $month $dayOfMonth"
+                            val monthName = date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                            "$dayOfWeek, $monthName $dayOfMonth"
                         }
                     },
                 style = MaterialTheme.typography.h3,
@@ -493,8 +426,10 @@ fun AgendaScreenContent(
 
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
+            .fillMaxSize()
+//            .wrapContentSize()
+//            .fillMaxWidth()
+//            .wrapContentHeight()
     ) {
         // • Logout user dropdown
         DropdownMenu(
@@ -522,15 +457,34 @@ fun AgendaScreenContent(
 
         // • AgendaItem open/edit/delete dropdown
         if(state.agendaItemIdForMenu != null) {
+
+//            println("agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x: ${agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x}")
+//            println("agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y: ${agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y}")
+//            val configuration = LocalConfiguration.current
+//            val screenWidth = configuration.screenWidthDp.dp
+
+//            println("screenHeight: $screenHeight")
+//            println("screenWidth: $screenWidth")
+
             DropdownMenu(
-                expanded = true,
+                expanded = true, //state.agendaItemIdForMenu != null, // true
                 onDismissRequest = { onAction(AgendaEvent.ShowAgendaItemDropdown(null)) },
                 offset = DpOffset(
-                    x = with(LocalDensity.current) {
-                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x?.toDp()
+                    x = //(350).dp,
+                        with(LocalDensity.current) {
+//                            var x1 = agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x ?: 0f
+//                            println("x1: $x1")
+//                            x1/=this.density
+//                            println("x1 / density: $x1, density: ${this.density}")
+                            (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x ?: 0f).toDp()
                         } ?: 0.dp,
-                    y = with(LocalDensity.current) {
-                           agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y?.toDp()
+                    y =
+                        with(LocalDensity.current) {
+//                            var y1 = agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y ?: 0f
+//                            println("y1.toDp(): ${y1.toDp()}, " +
+//                                    "(-screenHeight + y1.toDp()): ${(-screenHeight + y1.toDp())}")
+                            (-screenHeight + (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y ?: 0f).toDp())
+                            //(-725).dp
                         } ?: 0.dp
                 ),
                 modifier = Modifier
@@ -570,6 +524,14 @@ fun AgendaScreenContent(
                     },
                 )
             }
+        }
+
+        // your button here
+        Button(
+            modifier = Modifier.align(alignment = Alignment.BottomEnd),
+            onClick = { }
+        ) {
+            Text(text = "Button")
         }
     }
 }
