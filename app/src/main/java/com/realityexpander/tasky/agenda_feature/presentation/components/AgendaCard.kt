@@ -32,7 +32,8 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun AgendaCard(
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colors.secondary,
+    backgroundColor: Color = MaterialTheme.colors.secondary,
+    textColor: Color = MaterialTheme.colors.onSecondary,
     title: String = "",
     content: String = "",
     fromDateTime: LocalDateTime = LocalDateTime.MIN,
@@ -46,7 +47,7 @@ fun AgendaCard(
             .fillMaxWidth()
             .wrapContentHeight()
             .clip(shape = TaskyShapes.WideButtonRoundedCorners)
-            .background(color = color)
+            .background(color = backgroundColor)
             .padding(12.dp)
     ) {
         Column() {
@@ -66,7 +67,7 @@ fun AgendaCard(
                         else
                             Icons.Filled.TaskAlt, // CheckCircleOutline
                         contentDescription = "Event",
-                        tint = MaterialTheme.colors.onSecondary,
+                        tint = textColor,
                         modifier = Modifier
                             .align(Alignment.Start)
                             .offset(y = 4.dp)
@@ -89,13 +90,13 @@ fun AgendaCard(
                             else
                                 TextDecoration.LineThrough,
                         ),
-                        color = MaterialTheme.colors.onSecondary
+                        color = textColor
                     )
                     Spacer(modifier = Modifier.tinyHeight())
 
                     Text(
                         text = content,
-                        color = MaterialTheme.colors.onSecondary
+                        color = textColor
                     )
                     Spacer(modifier = Modifier.smallHeight())
                 }
@@ -108,7 +109,7 @@ fun AgendaCard(
                     Icon(
                         imageVector = Icons.Filled.MoreHoriz,
                         contentDescription = "Agenda Item Menu",
-                        tint = MaterialTheme.colors.onSecondary,
+                        tint = textColor,
                         modifier = Modifier
                             .align(Alignment.End)
                             .offset(y = DP.micro)
@@ -124,10 +125,10 @@ fun AgendaCard(
             Text(
                 text =
                     (fromDateTime.format(DateTimeFormatter.ofPattern("MMM d, h:mm a"))) +
-                    (toDateTime?.format(DateTimeFormatter.ofPattern("MMM d, h:mm a")) ?: ""),
+                    (toDateTime?.let { " - " + it.format(DateTimeFormatter.ofPattern("MMM d, h:mm a")) } ?: ""),
                 style = MaterialTheme.typography.subtitle1,
                 textAlign = TextAlign.End,
-                color = MaterialTheme.colors.onSecondary,
+                color = textColor,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(end = DP.extraSmall)
@@ -160,7 +161,8 @@ fun AgendaCard(
         is AgendaItem.Task ->
             AgendaCard(
                 modifier = modifier,
-                color = TaskyLightBlue,
+                backgroundColor = TaskyLightBlue,
+                textColor = MaterialTheme.colors.onPrimary,
                 title = agendaItem.title,
                 content = agendaItem.description,
                 fromDateTime = agendaItem.time,

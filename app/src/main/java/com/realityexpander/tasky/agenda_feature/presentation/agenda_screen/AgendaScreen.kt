@@ -551,7 +551,11 @@ fun AgendaScreenContent(
     }
 }
 
-fun performActionForAgendaItem(agendaItem: AgendaItem?, action: MenuAction, onAction: (AgendaEvent)-> Unit) {
+fun performActionForAgendaItem(
+    agendaItem: AgendaItem?,
+    action: MenuAction,
+    onAction: (AgendaEvent)-> Unit
+) {
     onAction(AgendaEvent.ShowAgendaItemDropdown(null)) // close the menu
 
     agendaItem ?: return
@@ -561,44 +565,50 @@ fun performActionForAgendaItem(agendaItem: AgendaItem?, action: MenuAction, onAc
             when (action) {
                 MenuAction.OPEN_DETAILS -> {
                     println("OPEN DETAILS FOR EVENT ${agendaItem.id}")
-                    //onAction(AgendaEvent.NavigateToOpenEvent(agendaItem))
+//                    onAction(AgendaEvent.NavigateToOpenEvent(agendaItem))
                 }
                 MenuAction.EDIT -> {
                     println("EDIT EVENT ${agendaItem.id}")
-                    //onAction(AgendaEvent.NavigateToEditEvent(agendaItem))
+//                    onAction(AgendaEvent.NavigateToEditEvent(agendaItem))
                 }
                 MenuAction.DELETE -> {
                     println("DELETE EVENT ${agendaItem.id}")
-                    //onAction(AgendaEvent.DeleteEvent(agendaItem))
+//                    onAction(AgendaEvent.DeleteEvent(agendaItem))
                 }
                 MenuAction.MARK_AS_DONE -> {
                     println("MARK AS DONE EVENT ${agendaItem.id}")
-                    //onAction(AgendaEvent.MarkEventAsDone(agendaItem))
+//                    onAction(AgendaEvent.MarkEventAsDone(agendaItem))
                 }
                 MenuAction.MARK_AS_NOT_DONE -> {
                     println("MARK AS NOT DONE EVENT ${agendaItem.id}")
-                    //onAction(AgendaEvent.MarkEventAsNotDone(agendaItem))
+//                    onAction(AgendaEvent.MarkEventAsNotDone(agendaItem))
                 }
             }
         }
-//                is AgendaItem.Task -> {
-//                    when (action) {
-//                        MenuActionKind.OPEN_DETAILS -> {
-//                            onAction(AgendaEvent.NavigateToOpenTask(agendaItem))
-//                        }
-//                        MenuActionKind.EDIT -> {
-//                            onAction(AgendaEvent.NavigateToEditTask(agendaItem))
-//                        }
-//                        MenuActionKind.DELETE -> {
-//                            onAction(AgendaEvent.DeleteTask(agendaItem))
-//                        }
-//                        MenuActionKind.MARK_AS_DONE -> {
-//                            onAction(AgendaEvent.MarkTaskAsDone(agendaItem))
-//                        }
-//                        MenuActionKind.MARK_AS_NOT_DONE -> {
-//                            onAction(AgendaEvent.MarkTaskAsNotDone(agendaItem))
-//                        }
-//                    }
+        is AgendaItem.Task -> {
+            when (action) {
+                MenuAction.OPEN_DETAILS -> {
+                    println("OPEN DETAILS FOR TASK ${agendaItem.id}")
+//                    onAction(AgendaEvent.NavigateToOpenTask(agendaItem))
+                }
+                MenuAction.EDIT -> {
+                    println("EDIT TASK ${agendaItem.id}")
+//                    onAction(AgendaEvent.NavigateToEditTask(agendaItem))
+                }
+                MenuAction.DELETE -> {
+                    println("DELETE TASK ${agendaItem.id}")
+//                    onAction(AgendaEvent.DeleteTask(agendaItem))
+                }
+                MenuAction.MARK_AS_DONE -> {
+                    println("MARK AS DONE TASK ${agendaItem.id}")
+//                    onAction(AgendaEvent.MarkTaskAsDone(agendaItem))
+                }
+                MenuAction.MARK_AS_NOT_DONE -> {
+                    println("MARK AS NOT DONE TASK ${agendaItem.id}")
+//                    onAction(AgendaEvent.MarkTaskAsNotDone(agendaItem))
+                }
+            }
+        }
     }
 }
 
