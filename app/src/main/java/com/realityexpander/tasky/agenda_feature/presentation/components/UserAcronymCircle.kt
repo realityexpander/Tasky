@@ -29,7 +29,7 @@ fun UserAcronymCircle(
     circleBackgroundColor: Color = MaterialTheme.colors.surface,
 ) {
     val acronym = remember(username) {
-        getUserAcronym(username ?: "??")
+        getUserAcronym(username ?: "")
     }
     val circleBackColorNative = remember(circleBackgroundColor) {
         Color(circleBackgroundColor.toArgb())

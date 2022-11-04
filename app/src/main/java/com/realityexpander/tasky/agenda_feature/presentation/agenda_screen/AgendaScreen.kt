@@ -432,13 +432,15 @@ fun AgendaScreenContent(
         modifier = Modifier
             .fillMaxSize()
     ) {
+        val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+
         // • Logout user dropdown
         DropdownMenu(
             expanded = state.isLogoutDropdownVisible,
             onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
             offset = DpOffset(
                 x = logoutButtonOffset.x.dp - logoutButtonSize.width.dp * 3f,
-                y = 0.dp
+                y = -screenHeight
             ),
             modifier = Modifier
                 .width(with(LocalDensity.current) {
@@ -458,7 +460,6 @@ fun AgendaScreenContent(
 
         // • AgendaItem open/edit/delete dropdown
         if(state.agendaItemIdForMenu != null) {
-            val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
             DropdownMenu(
                 expanded = true,
