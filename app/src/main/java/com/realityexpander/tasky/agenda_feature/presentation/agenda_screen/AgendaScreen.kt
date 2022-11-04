@@ -7,6 +7,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -222,7 +224,7 @@ fun AgendaScreenContent(
 
         Spacer(modifier = Modifier.smallHeight())
 
-        // • HEADER FOR AGENDA ITEMS (S, M, T, W, T, F, S, & Day Picker)
+        // • HEADER FOR AGENDA ITEMS (S, M, T, W, T, F, & Day Picker)
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
@@ -299,22 +301,7 @@ fun AgendaScreenContent(
                 }
             }
 
-            Spacer(modifier = Modifier.tinyHeight())
-        }
-
-        // • AGENDA ITEMS LIST
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .background(color = MaterialTheme.colors.surface)
-                .fillMaxSize()
-                .weight(1f)
-                .padding(0.dp)
-        ) {
             Spacer(modifier = Modifier.smallHeight())
-
-            //val todayTasks = state.tasks.filter { it.date == todayDate }
-            //val todayTasksCount = todayTasks.size
 
             // • SHOW TODAY'S DATE
             Text(
@@ -330,17 +317,26 @@ fun AgendaScreenContent(
                             "$dayOfWeek, $monthName $dayOfMonth"
                         }
                     },
-                style = MaterialTheme.typography.h3,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.onSurface,
-                modifier = Modifier
-                    .padding(start = DP.small, end = DP.small)
+                    style = MaterialTheme.typography.h3,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.onSurface,
+                    modifier = Modifier
+                        .padding(start = DP.small, end = DP.small)
             )
-            Spacer(modifier = Modifier.smallHeight())
+            Spacer(modifier = Modifier.tinyHeight())
+        }
 
-            // • SHOW AGENDA ITEMS LIST
-            agendaItems.forEachIndexed { i, agendaItem ->
+        //val todayTasks = state.tasks.filter { it.date == todayDate }
+        //val todayTasksCount = todayTasks.size
 
+        // • SHOW AGENDA ITEMS LIST
+        LazyColumn(
+            modifier = Modifier
+                .background(color = MaterialTheme.colors.surface)
+                .fillMaxSize()
+                .padding(start = DP.small, end = DP.small)
+        ) {
+            itemsIndexed(items = agendaItems) { index, agendaItem ->
                 AgendaCard(
                     agendaItem = agendaItem,
                     onMenuClick = {
@@ -348,14 +344,14 @@ fun AgendaScreenContent(
                     },
                     onToggleCompleted = {
                         if(agendaItem is AgendaItem.Task) {
-                             onAction(AgendaEvent.ToggleTaskCompleted(agendaItem.id))
+                            onAction(AgendaEvent.ToggleTaskCompleted(agendaItem.id))
                         }
                     },
                     setMenuPositionCallback = { coordinates ->
                         agendaItemMenuInfos[agendaItem.id] = MenuItemInfo(
-                                menuPosition = coordinates.positionInRoot(),
-                                agendaItem = agendaItem
-                            )
+                            menuPosition = coordinates.positionInRoot(),
+                            agendaItem = agendaItem
+                        )
                     },
                     modifier = Modifier
                         .padding(start = DP.tiny, end = DP.tiny)
@@ -368,7 +364,7 @@ fun AgendaScreenContent(
                         }
                 )
 
-                if (i < agendaItems.size - 1) {
+                if (index < agendaItems.size - 1) {
                     Spacer(modifier = Modifier.smallHeight())
                 }
             }
