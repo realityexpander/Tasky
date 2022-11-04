@@ -1,7 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.presentation.common.util
 
 fun getUserAcronym(username: String): String {
-    if(username.isBlank()) return "??"
+    if(username.isBlank()) return ".."
     if(username.length<2) return username.uppercase()
 
     val words = username.split(" ")
