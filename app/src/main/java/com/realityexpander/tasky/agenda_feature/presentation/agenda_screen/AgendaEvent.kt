@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 
 import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.util.UuidStr
 
 sealed interface AgendaEvent {
     data class SetIsLoaded(val isLoaded: Boolean) : AgendaEvent
@@ -26,6 +27,6 @@ sealed interface AgendaEvent {
     object ToggleLogoutDropdown : AgendaEvent
     object Logout : AgendaEvent
 
-    object ToggleTaskDropdown : AgendaEvent
+    data class ShowAgendaItemDropdown(val agendaItemId: UuidStr? = null) : AgendaEvent
 
 }

@@ -122,10 +122,11 @@ class AgendaViewModel @Inject constructor(
 //                    )
 //                }
 //            }
-            is AgendaEvent.ToggleTaskDropdown -> {
+            is AgendaEvent.ShowAgendaItemDropdown -> {
                 _agendaState.update {
                     it.copy(
-                        isTaskDropdownShowing = !agendaState.value.isTaskDropdownShowing
+                        agendaItemIdForMenuShowing = event.agendaItemId,
+                        isAgendaItemMenuDropdownShowing = event.agendaItemId != null
                     )
                 }
             }

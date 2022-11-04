@@ -135,16 +135,16 @@ fun AgendaCard(
 @Composable
 fun AgendaCard(
     modifier: Modifier = Modifier,
-    meeting: AgendaItem.Event,
+    event: AgendaItem.Event,
     onMenuClick: () -> Unit = {},
     completed: Boolean = false,
 ) {
     AgendaCard(
         modifier = modifier,
-        title = meeting.title,
-        content = meeting.description,
-        fromDateTime = meeting.from,
-        toDateTime = meeting.to,
+        title = event.title,
+        content = event.description,
+        fromDateTime = event.from,
+        toDateTime = event.to,
         onMenuClick = onMenuClick,
         completed = completed
     )
