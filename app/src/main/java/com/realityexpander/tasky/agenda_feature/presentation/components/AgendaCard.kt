@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -35,6 +37,7 @@ fun AgendaCard(
     toDateTime: LocalDateTime = LocalDateTime.MAX,
     onMenuClick: () -> Unit = {},
     completed: Boolean = false,
+    onSetMenuPosition : (LayoutCoordinates) -> Unit = {},
 ) {
     Box(
         modifier = modifier
@@ -109,6 +112,7 @@ fun AgendaCard(
                             .offset(y = 2.dp)
                             .padding(end = 8.dp)
                             .clickable(onClick = onMenuClick)
+                            .onGloballyPositioned { onSetMenuPosition(it) }
                     )
                 }
             }
@@ -135,17 +139,19 @@ fun AgendaCard(
 @Composable
 fun AgendaCard(
     modifier: Modifier = Modifier,
-    event: AgendaItem.Event,
+    agendaItem: AgendaItem.Event,
     onMenuClick: () -> Unit = {},
     completed: Boolean = false,
+    onSetMenuPosition : (LayoutCoordinates) -> Unit = {},
 ) {
     AgendaCard(
         modifier = modifier,
-        title = event.title,
-        content = event.description,
-        fromDateTime = event.from,
-        toDateTime = event.to,
+        title = agendaItem.title,
+        content = agendaItem.description,
+        fromDateTime = agendaItem.from,
+        toDateTime = agendaItem.to,
         onMenuClick = onMenuClick,
-        completed = completed
+        completed = completed,
+        onSetMenuPosition = onSetMenuPosition,
     )
 }

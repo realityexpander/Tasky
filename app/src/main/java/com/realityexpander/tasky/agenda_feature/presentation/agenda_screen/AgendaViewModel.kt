@@ -125,10 +125,11 @@ class AgendaViewModel @Inject constructor(
             is AgendaEvent.ShowAgendaItemDropdown -> {
                 _agendaState.update {
                     it.copy(
-                        agendaItemIdForMenuShowing = event.agendaItemId,
-                        isAgendaItemMenuDropdownShowing = event.agendaItemId != null
+//                        isAgendaItemMenuDropdownShowing = event.agendaItemId != null,
+                        agendaItemIdForMenu = event.agendaItemId,
                     )
                 }
+                yield()
             }
 
             is AgendaEvent.ToggleLogoutDropdown -> {

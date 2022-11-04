@@ -78,7 +78,7 @@ fun AgendaScreen(
 }
 
 data class MenuItemInfo(
-    var offset: Offset = Offset.Zero,
+    var menuPosition: Offset = Offset.Zero,
     //var menuKind: Class<out AgendaItem>? = null,
     var agendaItem: AgendaItem? = null,
 )
@@ -120,7 +120,55 @@ fun AgendaScreenContent(
             to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 0),
             remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 12, 30),
             description = "Discuss the old project"
-        )
+        ),
+        AgendaItem.Event(
+            id = "0003",
+            title = "Meeting with Jane",
+            from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 15, 0),
+            to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 16, 0),
+            remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 30),
+            description = "Discuss the a different project"
+        ),
+        AgendaItem.Event(
+            id = "0004",
+            title = "Meeting with Joe",
+            from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 17, 0),
+            to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 18, 0),
+            remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 16, 30),
+            description = "Discuss the the other project"
+        ),
+        AgendaItem.Event(
+            id = "0005",
+            title = "Meeting with Jack",
+            from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 19, 0),
+            to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 20, 0),
+            remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 18, 30),
+            description = "Discuss the yet another project"
+        ),
+        AgendaItem.Event(
+            id = "0006",
+            title = "Meeting with Jill",
+            from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 21, 0),
+            to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 22, 0),
+            remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 20, 30),
+            description = "Discuss the similar project"
+        ),
+        AgendaItem.Event(
+            id = "0007",
+            title = "Meeting with Jeremy",
+            from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 10, 0),
+            to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 11, 0),
+            remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 9, 0),
+            description = "Discuss the worse project"
+        ),
+        AgendaItem.Event(
+            id = "0008",
+            title = "Meeting with Jason",
+            from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 13, 0),
+            to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 0),
+            remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 12, 30),
+            description = "Discuss the better project"
+        ),
     )}
 
     // Keeps track of the dropdown menu offsets
@@ -337,48 +385,34 @@ fun AgendaScreenContent(
 
             // SHOW AGENDA ITEMS LIST
 
-            AgendaCard(
-                event = agendaItems[0],
-                onMenuClick = {
-                    onAction(AgendaEvent.ShowAgendaItemDropdown("0001"))
-                },
-                modifier = Modifier
-                    .padding(start = DP.small, end = DP.small)
-                    .onGloballyPositioned { coordinates ->
-//                        agendaItemMenuSize = (coordinates.size/2).toSize()
-//                        agendaItemMenuOffset = coordinates.localToRoot(
-//                                Offset(0f,  -40f)
-//                        )
-                        agendaItemMenuInfos["0001"]?.offset = coordinates.positionInRoot()
-                        agendaItemMenuInfos["0001"]?.agendaItem = agendaItems[0]
-                    }
-                    .clickable {
-                        //onAction(AgendaEvent.NavigateToTaskDetails(it))
-                    }
-            )
+            agendaItems.forEachIndexed { i, agendaItem ->
 
-            Spacer(modifier = Modifier.smallHeight())
+                AgendaCard(
+                    agendaItem = agendaItem,
+                    onMenuClick = {
+                        onAction(AgendaEvent.ShowAgendaItemDropdown(agendaItem.id))
+                    },
+                    onSetMenuPosition = { coordinates ->
+                        agendaItemMenuInfos[agendaItem.id] = MenuItemInfo(
+                                menuPosition = coordinates.positionInRoot(),
+                                agendaItem = agendaItem
+                            )
+                    },
+                    modifier = Modifier
+                        .padding(start = DP.small, end = DP.small)
+                        .clickable {
+                            performActionForAgendaItem(
+                                agendaItem,
+                                MenuAction.OPEN_DETAILS,
+                                onAction
+                            )
+                        }
+                )
 
-            AgendaCard(
-                event = agendaItems[1],
-                onMenuClick = {
-                    onAction(AgendaEvent.ShowAgendaItemDropdown("0002"))
-                },
-                completed = true,
-                modifier = Modifier
-                    .padding(start = DP.small, end = DP.small)
-                    .onGloballyPositioned { coordinates ->
-//                        agendaItemMenuSize = (coordinates.size/2).toSize()
-//                        agendaItemMenuOffset = coordinates.localToRoot(
-//                            Offset(0f,  -40f)
-//                        )
-                        agendaItemMenuInfos["0002"]?.offset = coordinates.positionInRoot()
-                        agendaItemMenuInfos["0002"]?.agendaItem = agendaItems[1]
-                    }
-                    .clickable {
-                        //onAction(AgendaEvent.NavigateToTaskDetails(it))
-                    }
-            )
+                if (i < agendaItems.size - 1) {
+                    Spacer(modifier = Modifier.smallHeight())
+                }
+            }
         }
 
             ////// STATUS ///////
@@ -464,63 +498,60 @@ fun AgendaScreenContent(
         }
 
         // • AgendaItem open/edit/delete dropdown
-        DropdownMenu(
-            expanded = state.isAgendaItemMenuDropdownShowing,
-            onDismissRequest = { onAction(AgendaEvent.ShowAgendaItemDropdown(null)) },
-            offset = DpOffset(
-//                x = agendaItemMenuOffset.x.dp - agendaItemMenuSize.width.dp,
-//                y = 60.dp //taskButtonOffset.y.dp // todo: hard coded value for now, will fix later
-                x = agendaItemMenuInfos[state.agendaItemIdForMenuShowing]?.let { menuItemInfo ->
-                        menuItemInfo.offset.x.dp - 50.dp
-                    } ?: 0.dp,
-                y = agendaItemMenuInfos[state.agendaItemIdForMenuShowing]?.let { menuItemInfo ->
-                        menuItemInfo.offset.y.dp - 100.dp
-                    } ?: 0.dp,
-            ),
-            modifier = Modifier
-//                .width(with(LocalDensity.current) {
-//                    (agendaItemMenuSize.width).toDp()
-//                })
-                .background(color = MaterialTheme.colors.onSurface)
-        ) {
-            MenuItem(
-                title = "Open",
-                icon = Icons.Filled.OpenInNew,
-                onClick = {
-                    performActionByAgendaItemType(
-                        agendaItemMenuInfos[state.agendaItemIdForMenuShowing]?.agendaItem,
-                        action = MenuActionKind.OPEN_DETAILS,
-                        onAction = onAction
-                    )
-                },
-            )
-            MenuItem(
-                title = "Edit",
-                icon = Icons.Filled.Edit,
-                onClick = {
-                    performActionByAgendaItemType(
-                        agendaItemMenuInfos[state.agendaItemIdForMenuShowing]?.agendaItem,
-                        action = MenuActionKind.EDIT,
-                        onAction = onAction
-                    )
-                },
-            )
-            MenuItem(
-                title = "Delete",
-                icon = Icons.Filled.Delete,
-                onClick = {
-                    performActionByAgendaItemType(
-                        agendaItemMenuInfos[state.agendaItemIdForMenuShowing]?.agendaItem,
-                        action = MenuActionKind.DELETE,
-                        onAction = onAction
-                    )
-                },
-            )
+        if(state.agendaItemIdForMenu != null) {
+            DropdownMenu(
+                expanded = true,
+                onDismissRequest = { onAction(AgendaEvent.ShowAgendaItemDropdown(null)) },
+                offset = DpOffset(
+                    x = with(LocalDensity.current) {
+                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x?.toDp()
+                        } ?: 0.dp,
+                    y = with(LocalDensity.current) {
+                           agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y?.toDp()
+                        } ?: 0.dp
+                ),
+                modifier = Modifier
+                    .background(color = MaterialTheme.colors.onSurface)
+            ) {
+                MenuItem(
+                    title = "Open",
+                    icon = Icons.Filled.OpenInNew,
+                    onClick = {
+                        performActionForAgendaItem(
+                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
+                            action = MenuAction.OPEN_DETAILS,
+                            onAction = onAction
+                        )
+                    },
+                )
+                MenuItem(
+                    title = "Edit",
+                    icon = Icons.Filled.Edit,
+                    onClick = {
+                        performActionForAgendaItem(
+                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
+                            action = MenuAction.EDIT,
+                            onAction = onAction
+                        )
+                    },
+                )
+                MenuItem(
+                    title = "Delete",
+                    icon = Icons.Filled.Delete,
+                    onClick = {
+                        performActionForAgendaItem(
+                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
+                            action = MenuAction.DELETE,
+                            onAction = onAction
+                        )
+                    },
+                )
+            }
         }
     }
 }
 
-fun performActionByAgendaItemType(agendaItem: AgendaItem?, action: MenuActionKind, onAction: (AgendaEvent)-> Unit) {
+fun performActionForAgendaItem(agendaItem: AgendaItem?, action: MenuAction, onAction: (AgendaEvent)-> Unit) {
     onAction(AgendaEvent.ShowAgendaItemDropdown(null)) // close the menu
 
     agendaItem ?: return
@@ -528,24 +559,24 @@ fun performActionByAgendaItemType(agendaItem: AgendaItem?, action: MenuActionKin
     when (agendaItem) {
         is AgendaItem.Event -> {
             when (action) {
-                MenuActionKind.OPEN_DETAILS -> {
-                    println("OPEN DETAILS FOR EVENT")
+                MenuAction.OPEN_DETAILS -> {
+                    println("OPEN DETAILS FOR EVENT ${agendaItem.id}")
                     //onAction(AgendaEvent.NavigateToOpenEvent(agendaItem))
                 }
-                MenuActionKind.EDIT -> {
-                    println("EDIT EVENT")
+                MenuAction.EDIT -> {
+                    println("EDIT EVENT ${agendaItem.id}")
                     //onAction(AgendaEvent.NavigateToEditEvent(agendaItem))
                 }
-                MenuActionKind.DELETE -> {
-                    println("DELETE EVENT")
+                MenuAction.DELETE -> {
+                    println("DELETE EVENT ${agendaItem.id}")
                     //onAction(AgendaEvent.DeleteEvent(agendaItem))
                 }
-                MenuActionKind.MARK_AS_DONE -> {
-                    println("MARK AS DONE EVENT")
+                MenuAction.MARK_AS_DONE -> {
+                    println("MARK AS DONE EVENT ${agendaItem.id}")
                     //onAction(AgendaEvent.MarkEventAsDone(agendaItem))
                 }
-                MenuActionKind.MARK_AS_NOT_DONE -> {
-                    println("MARK AS NOT DONE EVENT")
+                MenuAction.MARK_AS_NOT_DONE -> {
+                    println("MARK AS NOT DONE EVENT ${agendaItem.id}")
                     //onAction(AgendaEvent.MarkEventAsNotDone(agendaItem))
                 }
             }

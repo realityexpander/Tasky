@@ -20,6 +20,6 @@ data class AgendaState(
     val isLogoutDropdownShowing: Boolean = false,
 
     val isAgendaItemMenuDropdownShowing: Boolean = false,
-    val agendaItemIdForMenuShowing: UuidStr? = null,
+    val agendaItemIdForMenu: UuidStr? = null,
 
-)
+    )
