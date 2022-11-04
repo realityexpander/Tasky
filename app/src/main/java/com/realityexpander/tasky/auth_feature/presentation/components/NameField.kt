@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 
 @Composable
 fun NameField(
@@ -64,30 +65,36 @@ fun NameField(
 @Preview(showBackground = true)
 @Composable
 fun NameFieldPreview() {
-    NameField(
-        value = "John Doe",
-        isError = false,
-        onValueChange = {}
-    )
+    TaskyTheme {
+        NameField(
+            value = "John Doe",
+            isError = false,
+            onValueChange = {}
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun NameFieldPreviewError() {
-    NameField(
-        value = "Chris Athanas",
-        isError = true,
-        onValueChange = {}
-    )
+    TaskyTheme {
+        NameField(
+            value = "Chris Athanas",
+            isError = true,
+            onValueChange = {}
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun NameFieldPreviewNoLabel() {
-    NameField(
-        value = "",
-        label = null,
-        isError = false,
-        onValueChange = {}
-    )
+    TaskyTheme {
+        NameField(
+            value = "",
+            label = null,
+            isError = false,
+            onValueChange = {}
+        )
+    }
 }

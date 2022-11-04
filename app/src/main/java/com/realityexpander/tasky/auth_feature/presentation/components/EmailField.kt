@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 
 @Composable
 fun EmailField(
@@ -64,32 +65,38 @@ fun EmailField(
 @Preview(showBackground = true)
 @Composable
 fun EmailFieldPreview() {
-    EmailField(
-        value = "",
-        label = null,
-        isError = false,
-        onValueChange = {}
-    )
+    TaskyTheme {
+        EmailField(
+            value = "",
+            label = null,
+            isError = false,
+            onValueChange = {}
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun EmailFieldPreviewError() {
-    EmailField(
-        value = "Bad.Email",
-        isError = true,
-        onValueChange = {}
-    )
+    TaskyTheme {
+        EmailField(
+            value = "Bad.Email",
+            isError = true,
+            onValueChange = {}
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun EmailFieldPreviewValid() {
-    EmailField(
-        value = "chris@demo.com",
-        isError = false,
-        onValueChange = {}
-    )
+    TaskyTheme {
+        EmailField(
+            value = "chris@demo.com",
+            isError = false,
+            onValueChange = {}
+        )
+    }
 }
 
 

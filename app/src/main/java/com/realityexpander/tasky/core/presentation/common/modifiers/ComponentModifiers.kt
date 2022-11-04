@@ -25,8 +25,6 @@ fun Modifier.taskySmallButton(color: Color = Color.White): Modifier =
     .background(color = color)
 
 fun Modifier.taskyScreenTopCorners(color: Color = Color.White): Modifier =
-    //fillMaxSize()
-    //.
     clip(shape = TaskyShapes.ScreenTopCorners)
     .background(color = color)
     .padding(DP.small)

@@ -59,7 +59,12 @@ fun PasswordField(
         textStyle = textStyle,
         isError = isError,
         label = if(label != null) labelComponent else null,
-        placeholder = { Text(text = placeholder) },
+        placeholder = {
+            Text(
+                text = placeholder,
+                style = textStyle.copy(color = textStyle.color.copy(alpha = 0.5f))
+            )
+        },
         modifier = modifier,
         visualTransformation =
             if (isPasswordVisible)
