@@ -81,7 +81,6 @@ data class MenuItemInfo(
     var agendaItem: AgendaItem? = null,
 )
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AgendaScreenContent(
     state: AgendaState,
@@ -242,7 +241,7 @@ fun AgendaScreenContent(
                             .wrapContentWidth(Alignment.CenterHorizontally)
                             .drawBehind {
                                 if (selectedDay == i) {
-                                    val paint = Paint().apply {
+                                    Paint().apply {
                                         color = DaySelected.toArgb()
                                         strokeWidth = 1f
                                         style = Paint.Style.STROKE
@@ -467,10 +466,10 @@ fun AgendaScreenContent(
                 offset = DpOffset(
                     x = with(LocalDensity.current) {
                             (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x ?: 0f).toDp()
-                        } ?: 0.dp,
+                        },
                     y = with(LocalDensity.current) {
                             (-screenHeight + (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y ?: 0f).toDp())
-                        } ?: 0.dp
+                        }
                 ),
                 modifier = Modifier
                     .background(color = MaterialTheme.colors.onSurface)
