@@ -280,7 +280,6 @@ fun AgendaScreenContent(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
-//                .weight(1f)
                 .padding(0.dp)
         ) col2@{
             Spacer(modifier = Modifier.tinyHeight())
@@ -369,7 +368,7 @@ fun AgendaScreenContent(
         ) {
             Spacer(modifier = Modifier.smallHeight())
 
-            // show today
+            // • SHOW TODAY'S DATE
             //val todayTasks = state.tasks.filter { it.date == todayDate }
             //val todayTasksCount = todayTasks.size
 
@@ -383,8 +382,7 @@ fun AgendaScreenContent(
             )
             Spacer(modifier = Modifier.smallHeight())
 
-            // SHOW AGENDA ITEMS LIST
-
+            // • SHOW AGENDA ITEMS LIST
             agendaItems.forEachIndexed { i, agendaItem ->
 
                 AgendaCard(
@@ -403,7 +401,7 @@ fun AgendaScreenContent(
                         .clickable {
                             performActionForAgendaItem(
                                 agendaItem,
-                                MenuAction.OPEN_DETAILS,
+                                AgendaItemAction.OPEN_DETAILS,
                                 onAction
                             )
                         }
@@ -519,7 +517,7 @@ fun AgendaScreenContent(
                     onClick = {
                         performActionForAgendaItem(
                             agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-                            action = MenuAction.OPEN_DETAILS,
+                            action = AgendaItemAction.OPEN_DETAILS,
                             onAction = onAction
                         )
                     },
@@ -530,7 +528,7 @@ fun AgendaScreenContent(
                     onClick = {
                         performActionForAgendaItem(
                             agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-                            action = MenuAction.EDIT,
+                            action = AgendaItemAction.EDIT,
                             onAction = onAction
                         )
                     },
@@ -541,7 +539,7 @@ fun AgendaScreenContent(
                     onClick = {
                         performActionForAgendaItem(
                             agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-                            action = MenuAction.DELETE,
+                            action = AgendaItemAction.DELETE,
                             onAction = onAction
                         )
                     },
@@ -553,7 +551,7 @@ fun AgendaScreenContent(
 
 fun performActionForAgendaItem(
     agendaItem: AgendaItem?,
-    action: MenuAction,
+    action: AgendaItemAction,
     onAction: (AgendaEvent)-> Unit
 ) {
     onAction(AgendaEvent.ShowAgendaItemDropdown(null)) // close the menu
@@ -563,50 +561,60 @@ fun performActionForAgendaItem(
     when (agendaItem) {
         is AgendaItem.Event -> {
             when (action) {
-                MenuAction.OPEN_DETAILS -> {
+                AgendaItemAction.OPEN_DETAILS -> {
                     println("OPEN DETAILS FOR EVENT ${agendaItem.id}")
 //                    onAction(AgendaEvent.NavigateToOpenEvent(agendaItem))
                 }
-                MenuAction.EDIT -> {
+                AgendaItemAction.EDIT -> {
                     println("EDIT EVENT ${agendaItem.id}")
 //                    onAction(AgendaEvent.NavigateToEditEvent(agendaItem))
                 }
-                MenuAction.DELETE -> {
+                AgendaItemAction.DELETE -> {
                     println("DELETE EVENT ${agendaItem.id}")
 //                    onAction(AgendaEvent.DeleteEvent(agendaItem))
                 }
-                MenuAction.MARK_AS_DONE -> {
-                    println("MARK AS DONE EVENT ${agendaItem.id}")
-//                    onAction(AgendaEvent.MarkEventAsDone(agendaItem))
-                }
-                MenuAction.MARK_AS_NOT_DONE -> {
-                    println("MARK AS NOT DONE EVENT ${agendaItem.id}")
-//                    onAction(AgendaEvent.MarkEventAsNotDone(agendaItem))
-                }
+                else -> {}
             }
         }
         is AgendaItem.Task -> {
             when (action) {
-                MenuAction.OPEN_DETAILS -> {
+                AgendaItemAction.OPEN_DETAILS -> {
                     println("OPEN DETAILS FOR TASK ${agendaItem.id}")
 //                    onAction(AgendaEvent.NavigateToOpenTask(agendaItem))
                 }
-                MenuAction.EDIT -> {
+                AgendaItemAction.EDIT -> {
                     println("EDIT TASK ${agendaItem.id}")
 //                    onAction(AgendaEvent.NavigateToEditTask(agendaItem))
                 }
-                MenuAction.DELETE -> {
+                AgendaItemAction.DELETE -> {
                     println("DELETE TASK ${agendaItem.id}")
 //                    onAction(AgendaEvent.DeleteTask(agendaItem))
                 }
-                MenuAction.MARK_AS_DONE -> {
+                AgendaItemAction.MARK_AS_DONE -> {
                     println("MARK AS DONE TASK ${agendaItem.id}")
 //                    onAction(AgendaEvent.MarkTaskAsDone(agendaItem))
                 }
-                MenuAction.MARK_AS_NOT_DONE -> {
+                AgendaItemAction.MARK_AS_NOT_DONE -> {
                     println("MARK AS NOT DONE TASK ${agendaItem.id}")
 //                    onAction(AgendaEvent.MarkTaskAsNotDone(agendaItem))
                 }
+            }
+        }
+        is AgendaItem.Reminder -> {
+            when (action) {
+                AgendaItemAction.OPEN_DETAILS -> {
+                    println("OPEN DETAILS FOR REMINDER ${agendaItem.id}")
+//                    onAction(AgendaEvent.NavigateToOpenTask(agendaItem))
+                }
+                AgendaItemAction.EDIT -> {
+                    println("EDIT REMINDER ${agendaItem.id}")
+//                    onAction(AgendaEvent.NavigateToEditTask(agendaItem))
+                }
+                AgendaItemAction.DELETE -> {
+                    println("DELETE REMINDER ${agendaItem.id}")
+//                    onAction(AgendaEvent.DeleteTask(agendaItem))
+                }
+                else -> {}
             }
         }
     }

@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 
-enum class MenuAction {
+enum class AgendaItemAction {
     OPEN_DETAILS,
     EDIT,
     DELETE,
