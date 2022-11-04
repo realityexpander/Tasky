@@ -236,7 +236,6 @@ class AgendaViewModel @Inject constructor(
                 }
                 yield()
             }
-
             is AgendaEvent.ToggleLogoutDropdown -> {
                 _agendaState.update {
                     it.copy(
@@ -250,26 +249,6 @@ class AgendaViewModel @Inject constructor(
                 }
                 logout()
             }
-//            is AgendaEvent.LogoutSuccess -> {
-//                _agendaState.update {
-//                    it.copy(
-//                        errorMessage = UiText.None,
-//                        statusMessage = UiText.Res(R.string.register_success),
-//                        isPasswordVisible = false
-//                    )
-//                }
-//                sendEvent(AgendaEvent.SetIsLoading(false))
-//            }
-//            is AgendaEvent.RegisterError -> {
-//                _agendaState.update {
-//                    it.copy(
-//                        isLoggedIn = false,
-//                        errorMessage = event.message,
-//                        statusMessage = UiText.None
-//                    )
-//                }
-//                sendEvent(AgendaEvent.SetIsLoading(false))
-//            }
             is AgendaEvent.UnknownError -> {
                 _agendaState.update {
                     it.copy(
@@ -281,7 +260,11 @@ class AgendaViewModel @Inject constructor(
                 }
                 sendEvent(AgendaEvent.ShowProgressIndicator(false))
             }
-
+            is AgendaEvent.CreateEvent -> TODO()
+            is AgendaEvent.CreateEventError -> TODO()
+            is AgendaEvent.CreateEventSuccess -> TODO()
+            AgendaEvent.ShowInvalidUsernameMessage -> TODO()
+            AgendaEvent.ValidateUsername -> TODO()
         }
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -24,6 +25,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -36,6 +38,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.MainActivity
+import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.UserAcronymCircle
@@ -43,6 +46,7 @@ import com.realityexpander.tasky.agenda_feature.presentation.components.AgendaCa
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.DaySelected
+import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.util.UuidStr
 import com.realityexpander.tasky.destinations.LoginScreenDestination
@@ -77,6 +81,7 @@ data class MenuItemInfo(
     var agendaItem: AgendaItem? = null,
 )
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AgendaScreenContent(
     state: AgendaState,
@@ -110,9 +115,8 @@ fun AgendaScreenContent(
         days
     }
 
+    // Display month name
     val month = remember { LocalDate.now().month.getDisplayName(TextStyle.FULL, Locale.getDefault()).uppercase() }
-
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     fun navigateToLogin() {
         navigator.navigate(
@@ -427,9 +431,6 @@ fun AgendaScreenContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-//            .wrapContentSize()
-//            .fillMaxWidth()
-//            .wrapContentHeight()
     ) {
         // • Logout user dropdown
         DropdownMenu(
@@ -457,34 +458,17 @@ fun AgendaScreenContent(
 
         // • AgendaItem open/edit/delete dropdown
         if(state.agendaItemIdForMenu != null) {
-
-//            println("agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x: ${agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x}")
-//            println("agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y: ${agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y}")
-//            val configuration = LocalConfiguration.current
-//            val screenWidth = configuration.screenWidthDp.dp
-
-//            println("screenHeight: $screenHeight")
-//            println("screenWidth: $screenWidth")
+            val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
             DropdownMenu(
-                expanded = true, //state.agendaItemIdForMenu != null, // true
+                expanded = true,
                 onDismissRequest = { onAction(AgendaEvent.ShowAgendaItemDropdown(null)) },
                 offset = DpOffset(
-                    x = //(350).dp,
-                        with(LocalDensity.current) {
-//                            var x1 = agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x ?: 0f
-//                            println("x1: $x1")
-//                            x1/=this.density
-//                            println("x1 / density: $x1, density: ${this.density}")
+                    x = with(LocalDensity.current) {
                             (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x ?: 0f).toDp()
                         } ?: 0.dp,
-                    y =
-                        with(LocalDensity.current) {
-//                            var y1 = agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y ?: 0f
-//                            println("y1.toDp(): ${y1.toDp()}, " +
-//                                    "(-screenHeight + y1.toDp()): ${(-screenHeight + y1.toDp())}")
+                    y = with(LocalDensity.current) {
                             (-screenHeight + (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y ?: 0f).toDp())
-                            //(-725).dp
                         } ?: 0.dp
                 ),
                 modifier = Modifier
@@ -526,12 +510,27 @@ fun AgendaScreenContent(
             }
         }
 
-        // your button here
-        Button(
-            modifier = Modifier.align(alignment = Alignment.BottomEnd),
-            onClick = { }
+        // • FAB to add new agenda item
+        IconButton(
+            onClick = {
+                // onAction(AgendaEvent.ShowAddAgendaItemDialog)
+            },
+            modifier = Modifier
+                .size(DP.XXXLarge)
+                .offset(x = -DP.medium, y = -DP.medium)
+                .clip(shape = TaskyShapes.MediumButtonRoundedCorners)
+                .background(color = MaterialTheme.colors.onSurface)
+                .align(alignment = Alignment.BottomEnd)
         ) {
-            Text(text = "Button")
+            Icon(
+                tint = MaterialTheme.colors.surface,
+                imageVector = Icons.Filled.Add,
+                contentDescription = stringResource(R.string.agenda_add_agenda_item),
+                modifier = Modifier
+                    .align(alignment = Alignment.Center)
+                    .size(DP.XXXLarge)
+                    .padding(start = 6.dp, end = 6.dp) // fine tunes the icon size (weird)
+            )
         }
     }
 }

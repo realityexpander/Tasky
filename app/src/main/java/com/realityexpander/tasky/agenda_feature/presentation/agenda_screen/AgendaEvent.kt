@@ -8,7 +8,6 @@ sealed interface AgendaEvent {
     data class ShowProgressIndicator(val isShowing: Boolean) : AgendaEvent
 
     object ValidateUsername : AgendaEvent
-    data class IsPasswordsMatch(val isMatch: Boolean) : AgendaEvent
 
     object ShowInvalidUsernameMessage : AgendaEvent
 
