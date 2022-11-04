@@ -41,7 +41,8 @@ fun AgendaCard(
     toDateTime: LocalDateTime? = null,
     onMenuClick: () -> Unit = {},
     completed: Boolean? = null,
-    onSetMenuPosition : (LayoutCoordinates) -> Unit = {},
+    onToggleCompleted: () -> Unit = {},
+    setMenuPositionCallback : (LayoutCoordinates) -> Unit = {},
     itemTypeName: String? = "",
 ) {
     Box(
@@ -74,6 +75,9 @@ fun AgendaCard(
                             .align(Alignment.Start)
                             .offset(y = 4.dp)
                             .padding(end = 8.dp)
+                            .clickable {
+                                onToggleCompleted()
+                            }
                     )
                 }
 
@@ -118,7 +122,7 @@ fun AgendaCard(
                             .padding(end = DP.tiny)
                             .clickable(onClick = onMenuClick)
                             .size(28.dp)
-                            .onGloballyPositioned { onSetMenuPosition(it) }
+                            .onGloballyPositioned { setMenuPositionCallback(it) }
                     )
                 }
             }
@@ -146,7 +150,8 @@ fun AgendaCard(
     modifier: Modifier = Modifier,
     agendaItem: AgendaItem,
     onMenuClick: () -> Unit = {},
-    onSetMenuPosition : (LayoutCoordinates) -> Unit = {},
+    setMenuPositionCallback : (LayoutCoordinates) -> Unit = {},
+    onToggleCompleted: () -> Unit = {},
 ) {
     when(agendaItem) {
         is AgendaItem.Event ->
@@ -158,7 +163,7 @@ fun AgendaCard(
                 toDateTime = agendaItem.to,
                 onMenuClick = onMenuClick,
                 completed = null,
-                onSetMenuPosition = onSetMenuPosition,
+                setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
             )
         is AgendaItem.Task ->
@@ -171,8 +176,9 @@ fun AgendaCard(
                 fromDateTime = agendaItem.time,
                 onMenuClick = onMenuClick,
                 completed = agendaItem.isDone,
-                onSetMenuPosition = onSetMenuPosition,
+                setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
+                onToggleCompleted = onToggleCompleted,
             )
         is AgendaItem.Reminder ->
             AgendaCard(
@@ -183,7 +189,7 @@ fun AgendaCard(
                 description = agendaItem.description,
                 fromDateTime = agendaItem.time,
                 onMenuClick = onMenuClick,
-                onSetMenuPosition = onSetMenuPosition,
+                setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
             )
     }

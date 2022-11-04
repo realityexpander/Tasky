@@ -29,4 +29,6 @@ sealed interface AgendaEvent {
 
     data class ShowAgendaItemDropdown(val agendaItemId: UuidStr? = null) : AgendaEvent
 
+    data class ToggleTaskCompleted(val agendaItemId: UuidStr) : AgendaEvent
+
 }

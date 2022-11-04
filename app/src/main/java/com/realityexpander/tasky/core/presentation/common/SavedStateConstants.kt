@@ -21,4 +21,9 @@ object SavedStateConstants {
     const val SAVED_STATE_authInfo = "authInfo"
     const val SAVED_STATE_isLoaded = "isLoaded"
 
+    // Agenda screen
+    const val SAVED_STATE_agendaItemIdForMenu = "agendaItemIdForMenu"
+    const val SAVED_STATE_isLogoutDropdownVisible = "isLogoutDropdownVisible"
+    const val SAVED_STATE_agendaItems = "agendaItems"
+
 }

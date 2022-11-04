@@ -30,6 +30,26 @@ abstract class AgendaItem(
         }
 
         override fun isEmpty() = this == EMPTY
+
+        fun copy(
+            id: UuidStr = this.id,
+            title: String = this.title,
+            description: String? = this.description,
+            remindAt: LocalDateTime = this.remindAt,
+            from: LocalDateTime = this.from,
+            to: LocalDateTime = this.to,
+            attendeeIds: List<UuidStr>? = this.attendeeIds,
+            photos: List<UuidStr>? = this.photos,
+        ) = Event(
+            id = id,
+            title = title,
+            description = description,
+            remindAt = remindAt,
+            from = from,
+            to = to,
+            attendeeIds = attendeeIds,
+            photos = photos,
+        )
     }
 
     class Task(
@@ -46,6 +66,22 @@ abstract class AgendaItem(
         }
 
         override fun isEmpty() = this == EMPTY
+
+        fun copy(
+            id: UuidStr = this.id,
+            title: String = this.title,
+            description: String? = this.description,
+            remindAt: LocalDateTime = this.remindAt,
+            time: LocalDateTime = this.time,
+            isDone: Boolean = this.isDone,
+        ) = Task(
+            id = id,
+            title = title,
+            description = description,
+            remindAt = remindAt,
+            time = time,
+            isDone = isDone,
+        )
     }
 
     class Reminder(
@@ -61,6 +97,20 @@ abstract class AgendaItem(
         }
 
         override fun isEmpty() = this == EMPTY
+
+        fun copy(
+            id: UuidStr = this.id,
+            title: String = this.title,
+            description: String? = this.description,
+            remindAt: LocalDateTime = this.remindAt,
+            time: LocalDateTime = this.time,
+        ) = Reminder(
+            id = id,
+            title = title,
+            description = description,
+            remindAt = remindAt,
+            time = time,
+        )
     }
 
 }
