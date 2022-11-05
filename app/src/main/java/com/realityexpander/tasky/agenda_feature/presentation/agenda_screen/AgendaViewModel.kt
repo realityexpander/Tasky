@@ -294,7 +294,7 @@ class AgendaViewModel @Inject constructor(
             }
             is AgendaEvent.OneTimeEvent -> {
                 when (event) {
-                    is AgendaEvent.OneTimeEvent.ResetOneTimeEvent -> {
+                    is AgendaEvent.OneTimeEvent.Reset -> {
                         // Reset the one time event
                         _agendaState.update {
                             it.copy(oneTimeEvent = null)

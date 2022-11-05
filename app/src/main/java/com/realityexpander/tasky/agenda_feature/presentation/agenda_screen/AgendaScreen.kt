@@ -164,7 +164,7 @@ fun AgendaScreenContent(
                     if (item >= 0) {
                         scope.launch {
                             scrollState.animateScrollToItem(item)
-                            onAction(AgendaEvent.OneTimeEvent.ResetOneTimeEvent)
+                            onAction(AgendaEvent.OneTimeEvent.Reset)
                         }
                     }
                 }
