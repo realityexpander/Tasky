@@ -438,13 +438,10 @@ fun AgendaScreenContent(
             expanded = state.isLogoutDropdownVisible,
             onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
             offset = DpOffset(
-                x = logoutButtonOffset.x.dp - logoutButtonSize.width.dp * 3f,
+                x = logoutButtonOffset.x.dp,
                 y = -screenHeight
             ),
             modifier = Modifier
-                .width(with(LocalDensity.current) {
-                    (logoutButtonSize.width * 6f).toDp()
-                })
                 .background(color = MaterialTheme.colors.onSurface)
         ) {
             MenuItem(
