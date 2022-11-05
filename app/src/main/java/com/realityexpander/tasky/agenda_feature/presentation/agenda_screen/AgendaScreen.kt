@@ -98,15 +98,16 @@ fun AgendaScreenContent(
     val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
 
-    var selectedDay by remember { mutableStateOf(0) }
+    val agendaItems = state.agendaItems
 
+    // For positioning menus
     var logoutButtonOffset by remember { mutableStateOf(Offset.Zero)}
     var fabButtonOffset by remember { mutableStateOf(Offset.Zero)}
 
-    val agendaItems = state.agendaItems
-
     // Keeps track of the dropdown menu offsets
     val agendaItemMenuInfos = remember { mutableStateMapOf<UuidStr, MenuItemInfo>() }
+
+    var selectedDay by remember { mutableStateOf(0) }
 
     // create days of the week for top of screen
     val daysInitialsAndDayOfWeek = remember(LocalDate.now().dayOfMonth) {   // initial of day of week, day of month
@@ -172,9 +173,9 @@ fun AgendaScreenContent(
         }
     }
 
-    // Handle "unsequenced" one-time events (like Snackbar), will use a Channel or SharedFlow
+    // Handle "un-sequenced" one-time events (like Snackbar), will use a Channel or SharedFlow
 //    LaunchedEffect(state.oneTimeEvent) {
-//        state.oneTimeEvent?.let { oneTimeEvent->
+//        oneTimeEventSharedFlow?.let { oneTimeEvent->
 //            when (oneTimeEvent) {
 //                is AgendaEvent.OneTimeEvent.ShowSnackbar -> {
 //                    SnackbarHostState().showSnackbar(
