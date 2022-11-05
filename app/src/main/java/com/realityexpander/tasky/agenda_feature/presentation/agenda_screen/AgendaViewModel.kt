@@ -58,11 +58,12 @@ class AgendaViewModel @Inject constructor(
 
         // Validate as the user types
 //        if(state.username.isNotBlank()) sendEvent(AgendaEvent.ValidateUsername)
+
+        yield()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AgendaState())
 
     init {
         viewModelScope.launch {
-            yield() // allow the agendaState to be initialized
 
             // simulate load from network or database
             // Dummy data for now
@@ -145,12 +146,10 @@ class AgendaViewModel @Inject constructor(
                 agendaItems = agendaItems,
                 oneTimeEvent = null
             )
-            yield() // allow the agendaState to be updated
 
             // Validate email & password when restored from process death or coming from another screen
 //            if (agendaState.value.username.isNotBlank()) sendEvent(AgendaEvent.ValidateUsername)
 
-            yield() // allow the agendaState to be updated
             // Show status validation messages when restored from process death or coming from another screen
 //            if(agendaState.value.isInvalidConfirmPassword) sendEvent(AgendaEvent.ShowInvalidConfirmPasswordMessage)
         }
@@ -159,7 +158,6 @@ class AgendaViewModel @Inject constructor(
     private fun logout() {
         viewModelScope.launch {
             authRepository.clearAuthInfo()
-            yield()
         }
     }
 
@@ -211,10 +209,8 @@ class AgendaViewModel @Inject constructor(
             }
 
             _agendaState.value = agendaState.value.copy(agendaItems = agendaItems)
-            yield()
 
             sendEvent(AgendaEvent.OneTimeEvent.ScrollToItem(agendaItem.id))
-            yield()
         }
     }
 
@@ -255,7 +251,6 @@ class AgendaViewModel @Inject constructor(
                         }
                     )
                 }
-                yield()
             }
             is AgendaEvent.Logout -> {
                 _agendaState.update {
@@ -270,19 +265,16 @@ class AgendaViewModel @Inject constructor(
                         _agendaState.update {
                             it.copy(oneTimeEvent = null)
                         }
-                        yield()
                     }
                     else -> {
                         // • Send the one time event
-                        yield()
                         _agendaState.update {
                             it.copy(oneTimeEvent = event)
                         }
-                        yield()
                     }
                 }
             }
-            is AgendaEvent.UnknownError -> {
+            is AgendaEvent.Error -> {
                 _agendaState.update {
                     it.copy(
                         errorMessage = if(event.message.isRes)

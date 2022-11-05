@@ -18,7 +18,7 @@ sealed interface AgendaEvent {
     data class TaskToggleCompleted(val agendaItemId: UuidStr) : AgendaEvent
 
     // • Errors
-    data class UnknownError(val message: UiText) : AgendaEvent
+    data class Error(val message: UiText) : AgendaEvent
 
     // • One-time events
     sealed interface OneTimeEvent {

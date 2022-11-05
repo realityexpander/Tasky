@@ -52,6 +52,7 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.*
 
@@ -630,9 +631,34 @@ fun AgendaScreenPreview() {
                 authInfo = AuthInfo(
                     username = "Chris Athanas",
                 ),
+                agendaItems = listOf(
+                    AgendaItem.Event(
+                        id = "1",
+                        title = "Event 1",
+                        description = "Event Description 1",
+                        from = LocalDateTime.now(),
+                        to = LocalDateTime.now().plusHours(1),
+                        remindAt = LocalDateTime.now(),
+                    ),
+                    AgendaItem.Task(
+                        id = "2",
+                        title = "Task 2",
+                        description = "Task Description 2",
+                        time = LocalDateTime.now().plusHours(3),
+                        isDone = false,
+                        remindAt = LocalDateTime.now().plusHours(2),
+                    ),
+                    AgendaItem.Reminder(
+                        id = "3",
+                        title = "Reminder 3",
+                        description = "Reminder Description 3",
+                        time = LocalDateTime.now(),
+                        remindAt = LocalDateTime.now().plusDays(1),
+                    ),
+                ),
                 isLoaded = true,
             ),
-            onAction = {},
+            onAction = { println("ACTION: $it") },
             navigator = EmptyDestinationsNavigator,
         )
     }

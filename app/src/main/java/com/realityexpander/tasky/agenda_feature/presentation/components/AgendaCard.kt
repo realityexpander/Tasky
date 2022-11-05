@@ -18,6 +18,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
@@ -28,8 +29,10 @@ import com.realityexpander.tasky.core.presentation.common.modifiers.tinyHeight
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightBlue
 import com.realityexpander.tasky.core.presentation.theme.TaskyPurple
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
+import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Composable
 fun AgendaCard(
@@ -262,6 +265,26 @@ fun AgendaItemActionDropdown(
                 onDismissRequest()
                 onDelete()
             },
+        )
+    }
+}
+
+@Preview
+@Composable
+fun AgendaCardPreview() {
+    TaskyTheme {
+        AgendaCard(
+            agendaItem = AgendaItem.Event(
+                id = UUID.randomUUID().toString(),
+                title = "Event Title",
+                description = "Event Description",
+                from = LocalDateTime.now(),
+                to = LocalDateTime.now().plusHours(1),
+                remindAt = LocalDateTime.now().minusHours(1),
+            ),
+            onEdit = {},
+            onDelete = {},
+            onViewDetails = {},
         )
     }
 }
