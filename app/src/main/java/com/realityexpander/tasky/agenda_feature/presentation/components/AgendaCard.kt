@@ -3,14 +3,13 @@ package com.realityexpander.tasky.agenda_feature.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreHoriz
-import androidx.compose.material.icons.filled.RadioButtonUnchecked
-import androidx.compose.material.icons.filled.TaskAlt
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,8 +18,10 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
+import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.common.modifiers.smallHeight
 import com.realityexpander.tasky.core.presentation.common.modifiers.tinyHeight
@@ -44,6 +45,10 @@ fun AgendaCard(
     onToggleCompleted: () -> Unit = {},
     setMenuPositionCallback : (LayoutCoordinates) -> Unit = {},
     itemTypeName: String? = "",
+//    menu: @Composable () -> Unit = {}
+    onEdit: () -> Unit = {},
+    onDelete: () -> Unit = {},
+    onViewDetails: () -> Unit = {},
 ) {
     Box(
         modifier = modifier
@@ -112,18 +117,35 @@ fun AgendaCard(
                     modifier = Modifier
                         .alignByBaseline()
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.MoreHoriz,
-                        contentDescription = "Agenda Item Menu",
-                        tint = textColor,
+                    Box(
                         modifier = Modifier
                             .align(Alignment.End)
-                            .offset(y = DP.micro)
-                            .padding(end = DP.tiny)
-                            .clickable(onClick = onMenuClick)
-                            .size(28.dp)
-                            .onGloballyPositioned { setMenuPositionCallback(it) }
-                    )
+                    ) {
+                        var isExpanded by remember { mutableStateOf(false) }
+
+                        Icon(
+                            imageVector = Icons.Filled.MoreHoriz,
+                            contentDescription = "Agenda Item Menu",
+                            tint = textColor,
+                            modifier = Modifier
+                                .offset(y = DP.micro)
+                                .padding(end = DP.tiny)
+                                .clickable(onClick = onMenuClick)
+                                .size(28.dp)
+                                .onGloballyPositioned { setMenuPositionCallback(it) }
+                                .clickable {
+                                    isExpanded = !isExpanded
+                                }
+                        )
+
+                        AgendaItemActionDropdown(
+                            isExpanded = isExpanded,
+                            onDismissRequest = { isExpanded = false },
+                            onEdit = onEdit,
+                            onDelete = onDelete,
+                            onViewDetails = onViewDetails,
+                        )
+                    }
                 }
             }
 
@@ -152,6 +174,10 @@ fun AgendaCard(
     onMenuClick: () -> Unit = {},
     setMenuPositionCallback : (LayoutCoordinates) -> Unit = {},
     onToggleCompleted: () -> Unit = {},
+//    menu: @Composable () -> Unit = {},
+    onEdit: () -> Unit = {},
+    onDelete: () -> Unit = {},
+    onViewDetails: () -> Unit = {},
 ) {
     when(agendaItem) {
         is AgendaItem.Event ->
@@ -165,6 +191,9 @@ fun AgendaCard(
                 completed = null,
                 setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
+                onEdit = onEdit,
+                onDelete = onDelete,
+                onViewDetails = onViewDetails,
             )
         is AgendaItem.Task ->
             AgendaCard(
@@ -179,6 +208,9 @@ fun AgendaCard(
                 setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
                 onToggleCompleted = onToggleCompleted,
+                onEdit = onEdit,
+                onDelete = onDelete,
+                onViewDetails = onViewDetails,
             )
         is AgendaItem.Reminder ->
             AgendaCard(
@@ -191,6 +223,85 @@ fun AgendaCard(
                 onMenuClick = onMenuClick,
                 setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
+                onEdit = onEdit,
+                onDelete = onDelete,
+                onViewDetails = onViewDetails,
             )
+    }
+}
+
+@Composable
+fun AgendaItemActionDropdown(
+    modifier: Modifier = Modifier,
+//    agendaItem: AgendaItem,
+    onEdit: () -> Unit = {},
+    onDelete: () -> Unit = {},
+    onViewDetails: () -> Unit = {},
+    onDismissRequest: () -> Unit = {},
+    isExpanded: Boolean = true,
+//    onAgendaItemMenuClick: (AgendaItemAction) -> Unit = {},
+//    onAction: (AgendaEvent) -> Unit = {},
+) {
+//    var expanded by remember(isExpanded) { mutableStateOf(isExpanded) }
+//    val scope = rememberCoroutineScope()
+
+    DropdownMenu(
+        expanded = isExpanded,
+        onDismissRequest = onDismissRequest,
+        offset = DpOffset(0.dp, (-20).dp),
+        modifier = Modifier
+            .wrapContentSize()
+            .background(color = MaterialTheme.colors.onSurface)
+    ) {
+//        DropdownMenuItem(onClick = {
+//            expanded.value = false
+//        }) {
+//            Text(text = "Edit")
+//        }
+        MenuItem(
+            title = "Open",
+            vectorIcon = Icons.Filled.OpenInNew,
+            onClick = {
+                onDismissRequest()
+//                expanded = false
+//                performActionForAgendaItem(
+////                    agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
+//                    agendaItem,
+//                    action = AgendaItemAction.OPEN_DETAILS,
+//                    onAction = onAction
+//                )
+                onViewDetails()
+            },
+        )
+        MenuItem(
+            title = "Edit",
+            vectorIcon = Icons.Filled.Edit,
+            onClick = {
+                onDismissRequest()
+//                expanded = false
+//                performActionForAgendaItem(
+////                    agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
+//                    agendaItem,
+//                    action = AgendaItemAction.EDIT,
+//                    onAction = onAction
+//                )
+                onEdit()
+            },
+        )
+        MenuItem(
+            title = "Delete",
+            vectorIcon = Icons.Filled.Delete,
+            onClick = {
+                onDismissRequest()
+//                expanded = false
+//                performActionForAgendaItem(
+////                    agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
+//                    agendaItem,
+//                    action = AgendaItemAction.DELETE,
+//                    onAction = onAction
+//                )
+                onDelete()
+            },
+        )
     }
 }

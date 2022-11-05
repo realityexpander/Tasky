@@ -24,8 +24,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.*
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -404,32 +406,119 @@ fun AgendaScreenContent(
                 .padding(start = DP.tiny, end = DP.tiny)
         ) {
             itemsIndexed(items = agendaItems) { index, agendaItem ->
-                AgendaCard(
-                    agendaItem = agendaItem,
-                    onMenuClick = {
-                        onAction(AgendaEvent.ShowAgendaItemActionDropdown(agendaItem.id))
-                    },
-                    onToggleCompleted = {
-                        if(agendaItem is AgendaItem.Task) {
-                            onAction(AgendaEvent.ToggleTaskCompleted(agendaItem.id))
-                        }
-                    },
-                    setMenuPositionCallback = { coordinates ->
-                        agendaItemMenuInfos[agendaItem.id] = MenuItemInfo(
-                            menuPosition = coordinates.positionInRoot(),
-                            agendaItem = agendaItem
-                        )
-                    },
-                    modifier = Modifier
-                        .padding(start = DP.tiny, end = DP.tiny)
-                        .clickable {
+                Box {
+                    AgendaCard(
+                        agendaItem = agendaItem,
+                        onMenuClick = {
+                            onAction(AgendaEvent.ShowAgendaItemActionDropdown(agendaItem.id))
+                        },
+                        onToggleCompleted = {
+                            if (agendaItem is AgendaItem.Task) {
+                                onAction(AgendaEvent.ToggleTaskCompleted(agendaItem.id))
+                            }
+                        },
+//                    setMenuPositionCallback = { coordinates ->
+//                        agendaItemMenuInfos[agendaItem.id] = MenuItemInfo(
+//                            menuPosition = coordinates.positionInRoot(),
+//                            agendaItem = agendaItem
+//                        )
+//                    },
+                        modifier = Modifier
+                            .padding(start = DP.tiny, end = DP.tiny)
+                            .clickable {
+                                performActionForAgendaItem(
+                                    agendaItem,
+                                    AgendaItemAction.OPEN_DETAILS,
+                                    onAction
+                                )
+                            },
+//                        menu  = {
+//                            AgendaItemActionDropdown(
+//                                agendaItem = agendaItem,
+//                                onAction = onAction,
+//                                onDismissRequest = {
+//                                    onAction(AgendaEvent.ShowAgendaItemActionDropdown(null))
+//                                },
+//                                modifier = Modifier
+//                                    .align(Alignment.TopEnd),
+//                                    .offset(x = (-DP.small).dp, y = (-DP.small).dp),
+                        onEdit = {
+                            performActionForAgendaItem(
+                                agendaItem,
+                                AgendaItemAction.EDIT,
+                                onAction
+                            )
+                        },
+                        onDelete = {
+                            performActionForAgendaItem(
+                                agendaItem,
+                                AgendaItemAction.DELETE,
+                                onAction
+                            )
+                        },
+                        onViewDetails = {
                             performActionForAgendaItem(
                                 agendaItem,
                                 AgendaItemAction.OPEN_DETAILS,
                                 onAction
                             )
                         }
-                )
+//                            )
+//                        }
+                    )
+
+//                    // • AgendaItem open/edit/delete dropdown
+//                    if(state.agendaItemIdForMenu != null) {
+//                        DropdownMenu(
+//                            expanded = state.agendaItemIdForMenu == agendaItem.id,
+//                            onDismissRequest = { onAction(AgendaEvent.ShowAgendaItemActionDropdown(null)) },
+////                            offset = DpOffset(
+////                                x = with(LocalDensity.current) {
+////                                    (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x ?: 0f).toDp()
+////                                },
+////                                y = with(LocalDensity.current) {
+////                                    (-screenHeight + (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y ?: 0f).toDp())
+////                                }
+////                            ),
+//                            modifier = Modifier
+//                                .background(color = MaterialTheme.colors.onSurface)
+//                        ) {
+//                            MenuItem(
+//                                title = "Open",
+//                                vectorIcon = Icons.Filled.OpenInNew,
+//                                onClick = {
+//                                    performActionForAgendaItem(
+//                                        agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
+//                                        action = AgendaItemAction.OPEN_DETAILS,
+//                                        onAction = onAction
+//                                    )
+//                                },
+//                            )
+//                            MenuItem(
+//                                title = "Edit",
+//                                vectorIcon = Icons.Filled.Edit,
+//                                onClick = {
+//                                    performActionForAgendaItem(
+//                                        agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
+//                                        action = AgendaItemAction.EDIT,
+//                                        onAction = onAction
+//                                    )
+//                                },
+//                            )
+//                            MenuItem(
+//                                title = "Delete",
+//                                vectorIcon = Icons.Filled.Delete,
+//                                onClick = {
+//                                    performActionForAgendaItem(
+//                                        agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
+//                                        action = AgendaItemAction.DELETE,
+//                                        onAction = onAction
+//                                    )
+//                                },
+//                            )
+//                        }
+//                    }
+                }
 
                 if (index < agendaItems.size - 1) {
                     Spacer(modifier = Modifier.smallHeight())
@@ -496,57 +585,57 @@ fun AgendaScreenContent(
     ) {
         val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-        // • AgendaItem open/edit/delete dropdown
-        if(state.agendaItemIdForMenu != null) {
-            DropdownMenu(
-                expanded = true,
-                onDismissRequest = { onAction(AgendaEvent.ShowAgendaItemActionDropdown(null)) },
-                offset = DpOffset(
-                    x = with(LocalDensity.current) {
-                            (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x ?: 0f).toDp()
-                        },
-                    y = with(LocalDensity.current) {
-                            (-screenHeight + (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y ?: 0f).toDp())
-                        }
-                ),
-                modifier = Modifier
-                    .background(color = MaterialTheme.colors.onSurface)
-            ) {
-                MenuItem(
-                    title = "Open",
-                    vectorIcon = Icons.Filled.OpenInNew,
-                    onClick = {
-                        performActionForAgendaItem(
-                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-                            action = AgendaItemAction.OPEN_DETAILS,
-                            onAction = onAction
-                        )
-                    },
-                )
-                MenuItem(
-                    title = "Edit",
-                    vectorIcon = Icons.Filled.Edit,
-                    onClick = {
-                        performActionForAgendaItem(
-                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-                            action = AgendaItemAction.EDIT,
-                            onAction = onAction
-                        )
-                    },
-                )
-                MenuItem(
-                    title = "Delete",
-                    vectorIcon = Icons.Filled.Delete,
-                    onClick = {
-                        performActionForAgendaItem(
-                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-                            action = AgendaItemAction.DELETE,
-                            onAction = onAction
-                        )
-                    },
-                )
-            }
-        }
+//        // • AgendaItem open/edit/delete dropdown
+//        if(state.agendaItemIdForMenu != null) {
+//            DropdownMenu(
+//                expanded = true,
+//                onDismissRequest = { onAction(AgendaEvent.ShowAgendaItemActionDropdown(null)) },
+//                offset = DpOffset(
+//                    x = with(LocalDensity.current) {
+//                            (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x ?: 0f).toDp()
+//                        },
+//                    y = with(LocalDensity.current) {
+//                            (-screenHeight + (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y ?: 0f).toDp())
+//                        }
+//                ),
+//                modifier = Modifier
+//                    .background(color = MaterialTheme.colors.onSurface)
+//            ) {
+//                MenuItem(
+//                    title = "Open",
+//                    vectorIcon = Icons.Filled.OpenInNew,
+//                    onClick = {
+//                        performActionForAgendaItem(
+//                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
+//                            action = AgendaItemAction.OPEN_DETAILS,
+//                            onAction = onAction
+//                        )
+//                    },
+//                )
+//                MenuItem(
+//                    title = "Edit",
+//                    vectorIcon = Icons.Filled.Edit,
+//                    onClick = {
+//                        performActionForAgendaItem(
+//                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
+//                            action = AgendaItemAction.EDIT,
+//                            onAction = onAction
+//                        )
+//                    },
+//                )
+//                MenuItem(
+//                    title = "Delete",
+//                    vectorIcon = Icons.Filled.Delete,
+//                    onClick = {
+//                        performActionForAgendaItem(
+//                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
+//                            action = AgendaItemAction.DELETE,
+//                            onAction = onAction
+//                        )
+//                    },
+//                )
+//            }
+//        }
 
 
         // • Create AgendaItem Event/Task/Reminder
