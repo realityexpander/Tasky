@@ -20,7 +20,7 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyLightBlue
 @Composable
 fun UserAcronymCircle(
     modifier: Modifier = Modifier,
-    username: String? = "??",
+    username: String? = null,
     color: Color = TaskyLightBlue,
     style: TextStyle = MaterialTheme.typography.h5,
     fontWeight: FontWeight = FontWeight.Bold,
@@ -29,27 +29,30 @@ fun UserAcronymCircle(
     circleBackgroundColor: Color = MaterialTheme.colors.surface,
 ) {
     val acronym = remember(username) {
-        getUserAcronym(username ?: "")
+        getUserAcronym(username)
     }
     val circleBackColorNative = remember(circleBackgroundColor) {
         Color(circleBackgroundColor.toArgb())
     }
 
-    Text(
-        text = acronym,
-        modifier = modifier
-            .padding(DP.tiny)
-            .drawBehind {
-                drawCircle(
-                    color = circleBackColorNative,
-                    radius = this.size.maxDimension * .7f
-                )},
-        style = style,
-        fontWeight = fontWeight,
-        textAlign = textAlign,
-        color = color,
-        maxLines = 1,
-        overflow = TextOverflow.Clip,
-        softWrap = softWrap,
-    )
+    if(acronym.isNotEmpty()) {
+        Text(
+            modifier = modifier
+                .padding(DP.tiny)
+                .drawBehind {
+                    drawCircle(
+                        color = circleBackColorNative,
+                        radius = size.width / 1.3f
+                    )
+                },
+            text = acronym,
+            style = style,
+            fontWeight = fontWeight,
+            softWrap = softWrap,
+            textAlign = textAlign,
+            color = color,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
 }
