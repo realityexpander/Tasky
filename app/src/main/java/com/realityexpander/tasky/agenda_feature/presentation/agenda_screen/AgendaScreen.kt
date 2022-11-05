@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -53,6 +54,7 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.util.UuidStr
 import com.realityexpander.tasky.destinations.LoginScreenDestination
+import kotlinx.coroutines.flow.SharedFlow
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.*
@@ -71,9 +73,11 @@ fun AgendaScreen(
 ) {
 
     val agendaState by viewModel.agendaState.collectAsState()
+    val oneTimeEvents = viewModel.oneTimeEvents
 
     AgendaScreenContent(
         state = agendaState,
+        oneTimeEvents = oneTimeEvents,
         onAction = viewModel::sendEvent,
         navigator = navigator,
     )
@@ -88,11 +92,13 @@ data class MenuItemInfo(
 @Composable
 fun AgendaScreenContent(
     state: AgendaState,
+    oneTimeEvents: SharedFlow<AgendaEvent>?,
     onAction: (AgendaEvent) -> Unit,
     navigator: DestinationsNavigator,
 ) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+    val scrollState = rememberLazyListState()
 
     var selectedDay by remember { mutableStateOf(0) }
 
@@ -148,6 +154,18 @@ fun AgendaScreenContent(
     BackHandler(true) {
         // todo: should we ask the user to quit?
         (context as MainActivity).exitApp()
+    }
+
+    LaunchedEffect(agendaItems) {
+        oneTimeEvents?.collect { agendaEvent ->
+            when (agendaEvent) {
+                is AgendaEvent.ScrollToItem -> {
+                    val item = agendaItems.indexOfFirst { it.id == agendaEvent.itemId }
+                    if(item>=0) scrollState.animateScrollToItem(item)
+                }
+                else -> {}
+            }
+        }
     }
 
     // Check keyboard open/closed (how to make this a function?)
@@ -336,6 +354,7 @@ fun AgendaScreenContent(
 
         // • SHOW AGENDA ITEMS LIST
         LazyColumn(
+            state = scrollState,
             modifier = Modifier
                 .background(color = MaterialTheme.colors.surface)
                 .fillMaxSize()
@@ -518,7 +537,6 @@ fun AgendaScreenContent(
             ),
             properties = PopupProperties(
                 usePlatformDefaultWidth = true,
-
             ),
             modifier = Modifier
                 .background(color = MaterialTheme.colors.onSurface)
@@ -576,6 +594,50 @@ fun AgendaScreenContent(
         }
     }
 }
+
+//            is AgendaEvent.ShowLogoutDialog -> {
+//                val dialogState = remember { mutableStateOf(true) }
+//
+//                if (dialogState.value) {
+//                    AlertDialog(
+//                        onDismissRequest = { dialogState.value = false },
+//                        title = {
+//                            Text(
+//                                text = stringResource(id = R.string.logout),
+//                                fontWeight = FontWeight.Bold,
+//                            )
+//                        },
+//                        text = {
+//                            Text(
+//                                text = stringResource(id = R.string.logout_confirmation),
+//                            )
+//                        },
+//                        confirmButton = {
+//                            TextButton(
+//                                onClick = {
+//                                    dialogState.value = false
+//                                    onAction(AgendaEvent.Logout)
+//                                }
+//                            ) {
+//                                Text(
+//                                    text = stringResource(id = R.string.logout),
+//                                    fontWeight = FontWeight.Bold,
+//                                )
+//                            }
+//                        },
+//                        dismissButton = {
+//                            TextButton(
+//                                onClick = { dialogState.value = false }
+//                            ) {
+//                                Text(
+//                                    text = stringResource(id = R.string.cancel),
+//                                    fontWeight = FontWeight.Bold,
+//                                )
+//                            }
+//                        },
+//                    )
+//                }
+//            }
 
 fun performActionForAgendaItem(
     agendaItem: AgendaItem?,
@@ -671,6 +733,7 @@ fun AgendaScreenPreview() {
             ),
             onAction = {},
             navigator = EmptyDestinationsNavigator,
+            oneTimeEvents = null
         )
     }
 }

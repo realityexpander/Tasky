@@ -19,6 +19,7 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.UuidStr
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -64,6 +65,9 @@ class AgendaViewModel @Inject constructor(
         // Validate as the user types
 //        if(state.username.isNotBlank()) sendEvent(AgendaEvent.ValidateUsername)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AgendaState())
+
+    private val _oneTimeEvents = MutableSharedFlow<AgendaEvent>()
+    val oneTimeEvents = _oneTimeEvents.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -173,6 +177,7 @@ class AgendaViewModel @Inject constructor(
         viewModelScope.launch {
             val agendaItems = agendaState.value.agendaItems.toMutableList()
 
+            var agendaItem: AgendaItem? = null
             val today = LocalDate.now()
             val todayDayOfWeek = today.dayOfWeek.value
             val todayDayOfMonth = today.dayOfMonth
@@ -183,7 +188,7 @@ class AgendaViewModel @Inject constructor(
             // todo Dummy data for now - replace with actual data soon
             when(agendaItemType) {
                 AgendaItemType.Event -> {
-                   val agendaItem = AgendaItem.Event(
+                   agendaItem = AgendaItem.Event(
                        id = UUID.randomUUID().toString(),
                        title = "New Event for $todayDate",
                        from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 10, 0),
@@ -194,7 +199,7 @@ class AgendaViewModel @Inject constructor(
                    agendaItems.add(agendaItem)
                }
                 AgendaItemType.Task -> {
-                     val agendaItem = AgendaItem.Task(
+                     agendaItem = AgendaItem.Task(
                           id = UUID.randomUUID().toString(),
                           title = "New Task for $todayDate",
                           time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 13, 0),
@@ -204,7 +209,7 @@ class AgendaViewModel @Inject constructor(
                      agendaItems.add(agendaItem)
                 }
                 AgendaItemType.Reminder -> {
-                     val agendaItem = AgendaItem.Reminder(
+                     agendaItem = AgendaItem.Reminder(
                           id = UUID.randomUUID().toString(),
                           title = "New Reminder for $todayDate",
                           time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 16, 0),
@@ -216,6 +221,10 @@ class AgendaViewModel @Inject constructor(
             }
 
             _agendaState.value = agendaState.value.copy(agendaItems = agendaItems)
+            yield()
+
+            delay(10)
+            _oneTimeEvents.emit(AgendaEvent.ScrollToItem(agendaItem.id))
             yield()
         }
     }
