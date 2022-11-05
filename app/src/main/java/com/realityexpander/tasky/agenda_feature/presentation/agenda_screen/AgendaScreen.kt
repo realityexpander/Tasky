@@ -154,6 +154,7 @@ fun AgendaScreenContent(
         (context as MainActivity).exitApp()
     }
 
+    // Handle one-time "sequenced" events (is this a good idea?)
     LaunchedEffect(state.oneTimeEvent) {
         state.oneTimeEvent?.let { oneTimeEvent->
             when (oneTimeEvent) {
@@ -170,6 +171,29 @@ fun AgendaScreenContent(
             }
         }
     }
+
+    // Handle "unsequenced" one-time events (like Snackbar), will use a Channel or SharedFlow
+//    LaunchedEffect(state.oneTimeEvent) {
+//        state.oneTimeEvent?.let { oneTimeEvent->
+//            when (oneTimeEvent) {
+//                is AgendaEvent.OneTimeEvent.ShowSnackbar -> {
+//                    SnackbarHostState().showSnackbar(
+//                        message = oneTimeEvent.message,
+//                        actionLabel = oneTimeEvent.actionLabel,
+//                        duration = SnackbarDuration.Short,
+//                        onDismiss = {
+//                            onAction(AgendaEvent.OneTimeEvent.ResetOneTimeEvent)
+//                        },
+//                        onActionClick = {
+//                            onAction(AgendaEvent.OneTimeEvent.ResetOneTimeEvent)
+//                            oneTimeEvent.onActionClick()
+//                        }
+//                    )
+//                }
+//                else -> {}
+//            }
+//        }
+//    }
 
     // Check keyboard open/closed (how to make this a function?)
     val view = LocalView.current
