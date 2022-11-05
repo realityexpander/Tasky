@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,7 +25,8 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 @Composable
 fun MenuItem(
     title: String,
-    icon: ImageVector? = null,
+    vectorIcon: ImageVector? = null,
+    painterIcon: Painter? = null,
     iconContentDescription: String? = "Menu item $title",
     onClick: () -> Unit,
     isSelected: Boolean = false,
@@ -50,18 +52,33 @@ fun MenuItem(
             textAlign = TextAlign.Start,
             modifier = Modifier.weight(1f)
         )
-        if(icon != null) {
-            Icon(
-                imageVector = icon,
-                contentDescription = iconContentDescription,
-                tint = if(enabled)
+        if(vectorIcon != null || painterIcon != null) {
+            vectorIcon?.let {
+                Icon(
+                    imageVector = vectorIcon,
+                    contentDescription = iconContentDescription,
+                    tint = if (enabled)
                         MaterialTheme.colors.surface
                     else
                         MaterialTheme.colors.surface.copy(alpha = 0.2f),
-                modifier = Modifier
-                    .padding(DP.tiny)
-                    .align(Alignment.CenterVertically)
-            )
+                    modifier = Modifier
+                        .padding(DP.tiny)
+                        .align(Alignment.CenterVertically)
+                )
+            }
+            painterIcon?.let {
+                Icon(
+                    painter = painterIcon,
+                    contentDescription = iconContentDescription,
+                    tint = if (enabled)
+                        MaterialTheme.colors.surface
+                    else
+                        MaterialTheme.colors.surface.copy(alpha = 0.2f),
+                    modifier = Modifier
+                        .padding(DP.tiny)
+                        .align(Alignment.CenterVertically)
+                )
+            }
         }
         if(isSelected) {
             Icon(
@@ -115,7 +132,7 @@ fun MenuItemPreviewWIcon() {
     TaskyTheme {
         MenuItem(
             title = "Menu Item w/ icon",
-            icon = Icons.Filled.Mail,
+            vectorIcon = Icons.Filled.Mail,
             iconContentDescription = "Menu Item Icon",
             onClick = {},
             isSelected = false,
@@ -143,7 +160,7 @@ fun MenuItemPreviewDisabled() {
     TaskyTheme {
         MenuItem(
             title = "Disabled Item",
-            icon = Icons.Filled.Textsms,
+            vectorIcon = Icons.Filled.Textsms,
             iconContentDescription = "Menu Item Icon",
             onClick = {},
             isSelected = false,
@@ -171,7 +188,7 @@ fun MenuItemPreviewHighlighted() {
     TaskyTheme {
         MenuItem(
             title = "Highlighted Item",
-            icon = Icons.Filled.Textsms,
+            vectorIcon = Icons.Filled.Textsms,
             iconContentDescription = "Menu Item Icon",
             onClick = {},
             isSelected = false,
@@ -199,7 +216,7 @@ fun MenuItemPreviewSelected() {
     TaskyTheme {
         MenuItem(
             title = "Selected Item",
-            icon = Icons.Filled.Textsms,
+            vectorIcon = Icons.Filled.Textsms,
             iconContentDescription = "Menu Item Icon",
             onClick = {},
             isSelected = true,
