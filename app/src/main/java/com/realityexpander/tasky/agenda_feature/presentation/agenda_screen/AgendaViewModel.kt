@@ -182,7 +182,7 @@ class AgendaViewModel @Inject constructor(
             val todayYear = today.year
             val todayDate = LocalDate.of(todayYear, todayMonth, todayDayOfMonth)
 
-            // todo Dummy data for now - replace with actual data soon
+            // todo create Dummy data for now - replace with actual data soon
             when(agendaItemType) {
                 AgendaItemType.Event -> {
                    agendaItem = AgendaItem.Event(

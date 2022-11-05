@@ -598,50 +598,6 @@ fun AgendaScreenContent(
     }
 }
 
-//            is AgendaEvent.ShowLogoutDialog -> {
-//                val dialogState = remember { mutableStateOf(true) }
-//
-//                if (dialogState.value) {
-//                    AlertDialog(
-//                        onDismissRequest = { dialogState.value = false },
-//                        title = {
-//                            Text(
-//                                text = stringResource(id = R.string.logout),
-//                                fontWeight = FontWeight.Bold,
-//                            )
-//                        },
-//                        text = {
-//                            Text(
-//                                text = stringResource(id = R.string.logout_confirmation),
-//                            )
-//                        },
-//                        confirmButton = {
-//                            TextButton(
-//                                onClick = {
-//                                    dialogState.value = false
-//                                    onAction(AgendaEvent.Logout)
-//                                }
-//                            ) {
-//                                Text(
-//                                    text = stringResource(id = R.string.logout),
-//                                    fontWeight = FontWeight.Bold,
-//                                )
-//                            }
-//                        },
-//                        dismissButton = {
-//                            TextButton(
-//                                onClick = { dialogState.value = false }
-//                            ) {
-//                                Text(
-//                                    text = stringResource(id = R.string.cancel),
-//                                    fontWeight = FontWeight.Bold,
-//                                )
-//                            }
-//                        },
-//                    )
-//                }
-//            }
-
 fun performActionForAgendaItem(
     agendaItem: AgendaItem?,
     action: AgendaItemAction,
@@ -753,7 +709,49 @@ fun AgendaScreenPreview_NightMode_NO() {
 }
 
 
-
+//            is AgendaEvent.ShowLogoutDialog -> {
+//                val dialogState = remember { mutableStateOf(true) }
+//
+//                if (dialogState.value) {
+//                    AlertDialog(
+//                        onDismissRequest = { dialogState.value = false },
+//                        title = {
+//                            Text(
+//                                text = stringResource(id = R.string.logout),
+//                                fontWeight = FontWeight.Bold,
+//                            )
+//                        },
+//                        text = {
+//                            Text(
+//                                text = stringResource(id = R.string.logout_confirmation),
+//                            )
+//                        },
+//                        confirmButton = {
+//                            TextButton(
+//                                onClick = {
+//                                    dialogState.value = false
+//                                    onAction(AgendaEvent.Logout)
+//                                }
+//                            ) {
+//                                Text(
+//                                    text = stringResource(id = R.string.logout),
+//                                    fontWeight = FontWeight.Bold,
+//                                )
+//                            }
+//                        },
+//                        dismissButton = {
+//                            TextButton(
+//                                onClick = { dialogState.value = false }
+//                            ) {
+//                                Text(
+//                                    text = stringResource(id = R.string.cancel),
+//                                    fontWeight = FontWeight.Bold,
+//                                )
+//                            }
+//                        },
+//                    )
+//                }
+//            }
 
 
 
