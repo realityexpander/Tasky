@@ -23,8 +23,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
@@ -32,7 +30,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -52,7 +49,6 @@ import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.DaySelected
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
-import com.realityexpander.tasky.core.util.UuidStr
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -101,9 +97,6 @@ fun AgendaScreenContent(
 
     // For positioning menus
     var fabButtonOffset by remember { mutableStateOf(Offset.Zero)}
-
-    // Keeps track of the dropdown menu offsets
-    val agendaItemMenuInfos = remember { mutableStateMapOf<UuidStr, MenuItemInfo>() }
 
     var selectedDay by remember { mutableStateOf(0) }
 
@@ -171,28 +164,7 @@ fun AgendaScreenContent(
         }
     }
 
-    // Handle "un-sequenced" one-time events (like Snackbar), will use a Channel or SharedFlow
-//    LaunchedEffect(state.oneTimeEvent) {
-//        oneTimeEventSharedFlow?.let { oneTimeEvent->
-//            when (oneTimeEvent) {
-//                is AgendaEvent.OneTimeEvent.ShowSnackbar -> {
-//                    SnackbarHostState().showSnackbar(
-//                        message = oneTimeEvent.message,
-//                        actionLabel = oneTimeEvent.actionLabel,
-//                        duration = SnackbarDuration.Short,
-//                        onDismiss = {
-//                            onAction(AgendaEvent.OneTimeEvent.ResetOneTimeEvent)
-//                        },
-//                        onActionClick = {
-//                            onAction(AgendaEvent.OneTimeEvent.ResetOneTimeEvent)
-//                            oneTimeEvent.onActionClick()
-//                        }
-//                    )
-//                }
-//                else -> {}
-//            }
-//        }
-//    }
+    // todo Handle "un-sequenced" one-time events (like Snackbar), will use a Channel or SharedFlow
 
     // Check keyboard open/closed (how to make this a function?)
     val view = LocalView.current
@@ -417,12 +389,6 @@ fun AgendaScreenContent(
                                 onAction(AgendaEvent.ToggleTaskCompleted(agendaItem.id))
                             }
                         },
-//                    setMenuPositionCallback = { coordinates ->
-//                        agendaItemMenuInfos[agendaItem.id] = MenuItemInfo(
-//                            menuPosition = coordinates.positionInRoot(),
-//                            agendaItem = agendaItem
-//                        )
-//                    },
                         modifier = Modifier
                             .padding(start = DP.tiny, end = DP.tiny)
                             .clickable {
@@ -432,16 +398,6 @@ fun AgendaScreenContent(
                                     onAction
                                 )
                             },
-//                        menu  = {
-//                            AgendaItemActionDropdown(
-//                                agendaItem = agendaItem,
-//                                onAction = onAction,
-//                                onDismissRequest = {
-//                                    onAction(AgendaEvent.ShowAgendaItemActionDropdown(null))
-//                                },
-//                                modifier = Modifier
-//                                    .align(Alignment.TopEnd),
-//                                    .offset(x = (-DP.small).dp, y = (-DP.small).dp),
                         onEdit = {
                             performActionForAgendaItem(
                                 agendaItem,
@@ -463,61 +419,7 @@ fun AgendaScreenContent(
                                 onAction
                             )
                         }
-//                            )
-//                        }
                     )
-
-//                    // • AgendaItem open/edit/delete dropdown
-//                    if(state.agendaItemIdForMenu != null) {
-//                        DropdownMenu(
-//                            expanded = state.agendaItemIdForMenu == agendaItem.id,
-//                            onDismissRequest = { onAction(AgendaEvent.ShowAgendaItemActionDropdown(null)) },
-////                            offset = DpOffset(
-////                                x = with(LocalDensity.current) {
-////                                    (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x ?: 0f).toDp()
-////                                },
-////                                y = with(LocalDensity.current) {
-////                                    (-screenHeight + (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y ?: 0f).toDp())
-////                                }
-////                            ),
-//                            modifier = Modifier
-//                                .background(color = MaterialTheme.colors.onSurface)
-//                        ) {
-//                            MenuItem(
-//                                title = "Open",
-//                                vectorIcon = Icons.Filled.OpenInNew,
-//                                onClick = {
-//                                    performActionForAgendaItem(
-//                                        agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-//                                        action = AgendaItemAction.OPEN_DETAILS,
-//                                        onAction = onAction
-//                                    )
-//                                },
-//                            )
-//                            MenuItem(
-//                                title = "Edit",
-//                                vectorIcon = Icons.Filled.Edit,
-//                                onClick = {
-//                                    performActionForAgendaItem(
-//                                        agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-//                                        action = AgendaItemAction.EDIT,
-//                                        onAction = onAction
-//                                    )
-//                                },
-//                            )
-//                            MenuItem(
-//                                title = "Delete",
-//                                vectorIcon = Icons.Filled.Delete,
-//                                onClick = {
-//                                    performActionForAgendaItem(
-//                                        agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-//                                        action = AgendaItemAction.DELETE,
-//                                        onAction = onAction
-//                                    )
-//                                },
-//                            )
-//                        }
-//                    }
                 }
 
                 if (index < agendaItems.size - 1) {
@@ -583,102 +485,14 @@ fun AgendaScreenContent(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+//        val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-//        // • AgendaItem open/edit/delete dropdown
-//        if(state.agendaItemIdForMenu != null) {
-//            DropdownMenu(
-//                expanded = true,
-//                onDismissRequest = { onAction(AgendaEvent.ShowAgendaItemActionDropdown(null)) },
-//                offset = DpOffset(
-//                    x = with(LocalDensity.current) {
-//                            (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x ?: 0f).toDp()
-//                        },
-//                    y = with(LocalDensity.current) {
-//                            (-screenHeight + (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y ?: 0f).toDp())
-//                        }
-//                ),
-//                modifier = Modifier
-//                    .background(color = MaterialTheme.colors.onSurface)
-//            ) {
-//                MenuItem(
-//                    title = "Open",
-//                    vectorIcon = Icons.Filled.OpenInNew,
-//                    onClick = {
-//                        performActionForAgendaItem(
-//                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-//                            action = AgendaItemAction.OPEN_DETAILS,
-//                            onAction = onAction
-//                        )
-//                    },
-//                )
-//                MenuItem(
-//                    title = "Edit",
-//                    vectorIcon = Icons.Filled.Edit,
-//                    onClick = {
-//                        performActionForAgendaItem(
-//                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-//                            action = AgendaItemAction.EDIT,
-//                            onAction = onAction
-//                        )
-//                    },
-//                )
-//                MenuItem(
-//                    title = "Delete",
-//                    vectorIcon = Icons.Filled.Delete,
-//                    onClick = {
-//                        performActionForAgendaItem(
-//                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-//                            action = AgendaItemAction.DELETE,
-//                            onAction = onAction
-//                        )
-//                    },
-//                )
-//            }
-//        }
-
-
-        // • Create AgendaItem Event/Task/Reminder
-        DropdownMenu(
-            expanded = state.isAddAgendaItemDropdownVisible,
-            onDismissRequest = { onAction(AgendaEvent.ToggleCreateAgendaItemDropdown) },
-            offset = DpOffset(
-                x = fabButtonOffset.x.dp,
-                y = -screenHeight + fabButtonOffset.y.dp
-            ),
-            modifier = Modifier
-                .background(color = MaterialTheme.colors.onSurface)
-        ) {
-            MenuItem(
-                title = "Event",
-                painterIcon = painterResource(id = R.drawable.calendar_add_on),
-                onClick = {
-                    onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
-                    onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Event))
-                },
-            )
-            MenuItem(
-                title = "Task",
-                vectorIcon = Icons.Filled.AddTask,
-                onClick = {
-                    onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
-                    onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Task))
-                },
-            )
-            MenuItem(
-                title = "Reminder",
-                vectorIcon = Icons.Filled.NotificationAdd,
-                onClick = {
-                    onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
-                    onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Reminder))
-                },
-            )
-        }
+        var isExpanded by remember { mutableStateOf(false) }
 
         // • FAB to create new agenda item
         IconButton(
             onClick = {
-                onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
+                isExpanded = true //onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
             },
             modifier = Modifier
                 .size(DP.XXXLarge)
@@ -686,10 +500,11 @@ fun AgendaScreenContent(
                 .clip(shape = TaskyShapes.MediumButtonRoundedCorners)
                 .background(color = MaterialTheme.colors.onSurface)
                 .align(alignment = Alignment.BottomEnd)
-                .onGloballyPositioned { coordinates ->
-                    fabButtonOffset = coordinates.localToRoot(Offset.Zero)
-                }
+//                .onGloballyPositioned { coordinates ->
+//                    fabButtonOffset = coordinates.localToRoot(Offset.Zero)
+//                }
         ) {
+
             Icon(
                 tint = MaterialTheme.colors.surface,
                 imageVector = Icons.Filled.Add,
@@ -699,6 +514,43 @@ fun AgendaScreenContent(
                     .size(DP.XXXLarge)
                     .padding(start = 6.dp, end = 6.dp) // fine tunes the icon size (weird)
             )
+
+            // • Create AgendaItem Event/Task/Reminder
+            DropdownMenu(
+                expanded = isExpanded, //state.isAddAgendaItemDropdownVisible,
+                onDismissRequest = { isExpanded = false }, //onAction(AgendaEvent.ToggleCreateAgendaItemDropdown) },
+//            offset = DpOffset(
+//                x = fabButtonOffset.x.dp,
+//                y = -screenHeight + fabButtonOffset.y.dp
+//            ),
+                modifier = Modifier
+                    .background(color = MaterialTheme.colors.onSurface)
+            ) {
+                MenuItem(
+                    title = "Event",
+                    painterIcon = painterResource(id = R.drawable.calendar_add_on),
+                    onClick = {
+                        isExpanded = false //onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
+                        onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Event))
+                    },
+                )
+                MenuItem(
+                    title = "Task",
+                    vectorIcon = Icons.Filled.AddTask,
+                    onClick = {
+                        isExpanded = false // onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
+                        onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Task))
+                    },
+                )
+                MenuItem(
+                    title = "Reminder",
+                    vectorIcon = Icons.Filled.NotificationAdd,
+                    onClick = {
+                        isExpanded = false // onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
+                        onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Reminder))
+                    },
+                )
+            }
         }
     }
 }

@@ -174,7 +174,6 @@ fun AgendaCard(
     onMenuClick: () -> Unit = {},
     setMenuPositionCallback : (LayoutCoordinates) -> Unit = {},
     onToggleCompleted: () -> Unit = {},
-//    menu: @Composable () -> Unit = {},
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
     onViewDetails: () -> Unit = {},
@@ -233,18 +232,12 @@ fun AgendaCard(
 @Composable
 fun AgendaItemActionDropdown(
     modifier: Modifier = Modifier,
-//    agendaItem: AgendaItem,
+    isExpanded: Boolean = true,
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
     onViewDetails: () -> Unit = {},
     onDismissRequest: () -> Unit = {},
-    isExpanded: Boolean = true,
-//    onAgendaItemMenuClick: (AgendaItemAction) -> Unit = {},
-//    onAction: (AgendaEvent) -> Unit = {},
 ) {
-//    var expanded by remember(isExpanded) { mutableStateOf(isExpanded) }
-//    val scope = rememberCoroutineScope()
-
     DropdownMenu(
         expanded = isExpanded,
         onDismissRequest = onDismissRequest,
@@ -253,23 +246,11 @@ fun AgendaItemActionDropdown(
             .wrapContentSize()
             .background(color = MaterialTheme.colors.onSurface)
     ) {
-//        DropdownMenuItem(onClick = {
-//            expanded.value = false
-//        }) {
-//            Text(text = "Edit")
-//        }
         MenuItem(
             title = "Open",
             vectorIcon = Icons.Filled.OpenInNew,
             onClick = {
                 onDismissRequest()
-//                expanded = false
-//                performActionForAgendaItem(
-////                    agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-//                    agendaItem,
-//                    action = AgendaItemAction.OPEN_DETAILS,
-//                    onAction = onAction
-//                )
                 onViewDetails()
             },
         )
@@ -278,13 +259,6 @@ fun AgendaItemActionDropdown(
             vectorIcon = Icons.Filled.Edit,
             onClick = {
                 onDismissRequest()
-//                expanded = false
-//                performActionForAgendaItem(
-////                    agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-//                    agendaItem,
-//                    action = AgendaItemAction.EDIT,
-//                    onAction = onAction
-//                )
                 onEdit()
             },
         )
@@ -293,13 +267,6 @@ fun AgendaItemActionDropdown(
             vectorIcon = Icons.Filled.Delete,
             onClick = {
                 onDismissRequest()
-//                expanded = false
-//                performActionForAgendaItem(
-////                    agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-//                    agendaItem,
-//                    action = AgendaItemAction.DELETE,
-//                    onAction = onAction
-//                )
                 onDelete()
             },
         )
