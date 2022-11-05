@@ -12,11 +12,9 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Textsms
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,19 +30,15 @@ fun MenuItem(
     isSelected: Boolean = false,
     isHighlighted: Boolean = false,
     enabled: Boolean = true,
-    highLightColor: Color = MaterialTheme.colors.secondary,
+    highlightColor: Color = MaterialTheme.colors.secondary,
 ) {
-    val highlightColorNative = remember(isHighlighted) {
-        Color(highLightColor.copy(alpha = .9f).toArgb())
-    }
-
     DropdownMenuItem(
         enabled = enabled,
         onClick = {
             onClick()
         },
         modifier = Modifier
-            .background(highlightColorNative)
+            .background(if(isHighlighted) highlightColor else MaterialTheme.colors.onSurface)
     ) {
         Text(
             text = title,
@@ -87,7 +81,6 @@ fun MenuItem(
 
 @Preview(
     showBackground = true,
-    backgroundColor = 0xFFFFFFFF,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     group = "Light mode"
 )
