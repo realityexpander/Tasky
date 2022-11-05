@@ -54,7 +54,7 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.util.UuidStr
 import com.realityexpander.tasky.destinations.LoginScreenDestination
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.*
@@ -73,11 +73,9 @@ fun AgendaScreen(
 ) {
 
     val agendaState by viewModel.agendaState.collectAsState()
-    val oneTimeEvents = viewModel.oneTimeEvents
 
     AgendaScreenContent(
         state = agendaState,
-        oneTimeEvents = oneTimeEvents,
         onAction = viewModel::sendEvent,
         navigator = navigator,
     )
@@ -92,13 +90,13 @@ data class MenuItemInfo(
 @Composable
 fun AgendaScreenContent(
     state: AgendaState,
-    oneTimeEvents: SharedFlow<AgendaEvent>?,
     onAction: (AgendaEvent) -> Unit,
     navigator: DestinationsNavigator,
 ) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val scrollState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
 
     var selectedDay by remember { mutableStateOf(0) }
 
@@ -156,12 +154,17 @@ fun AgendaScreenContent(
         (context as MainActivity).exitApp()
     }
 
-    LaunchedEffect(agendaItems) {
-        oneTimeEvents?.collect { agendaEvent ->
-            when (agendaEvent) {
-                is AgendaEvent.ScrollToItem -> {
-                    val item = agendaItems.indexOfFirst { it.id == agendaEvent.itemId }
-                    if(item>=0) scrollState.animateScrollToItem(item)
+    LaunchedEffect(state.oneTimeEvent) {
+        state.oneTimeEvent?.let { oneTimeEvent->
+            when (oneTimeEvent) {
+                is AgendaEvent.OneTimeEvent.ScrollToItem -> {
+                    val item = agendaItems.indexOfFirst { it.id == oneTimeEvent.agendaItemId }
+                    if (item >= 0) {
+                        scope.launch {
+                            scrollState.animateScrollToItem(item)
+                            onAction(AgendaEvent.OneTimeEvent.ResetOneTimeEvent)
+                        }
+                    }
                 }
                 else -> {}
             }
@@ -733,7 +736,6 @@ fun AgendaScreenPreview() {
             ),
             onAction = {},
             navigator = EmptyDestinationsNavigator,
-            oneTimeEvents = null
         )
     }
 }

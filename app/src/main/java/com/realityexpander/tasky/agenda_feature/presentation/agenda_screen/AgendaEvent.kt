@@ -27,9 +27,10 @@ sealed interface AgendaEvent {
     // • Errors
     data class UnknownError(val message: UiText) : AgendaEvent
 
-    // • Scroll to item
-    data class ScrollToItem(val itemId: UuidStr) : AgendaEvent
-
-    // • Null event
-    object Null : AgendaEvent
+    // • One-time events
+    sealed interface OneTimeEvent {
+        object ResetOneTimeEvent : OneTimeEvent, AgendaEvent
+        data class ScrollToItem( val agendaItemId: UuidStr) : OneTimeEvent, AgendaEvent
+    }
 }
+

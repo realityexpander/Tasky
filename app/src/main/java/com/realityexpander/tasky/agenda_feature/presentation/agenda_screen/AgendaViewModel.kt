@@ -19,7 +19,6 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.UuidStr
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -65,9 +64,6 @@ class AgendaViewModel @Inject constructor(
         // Validate as the user types
 //        if(state.username.isNotBlank()) sendEvent(AgendaEvent.ValidateUsername)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AgendaState())
-
-    private val _oneTimeEvents = MutableSharedFlow<AgendaEvent>()
-    val oneTimeEvents = _oneTimeEvents.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -154,6 +150,7 @@ class AgendaViewModel @Inject constructor(
                 agendaItems = agendaItems,
                 agendaItemIdForMenu = agendaItemIdForMenu,
                 isLogoutDropdownVisible = isLogoutDropdownVisible,
+                oneTimeEvent = null
             )
             yield() // allow the agendaState to be updated
 
@@ -223,8 +220,7 @@ class AgendaViewModel @Inject constructor(
             _agendaState.value = agendaState.value.copy(agendaItems = agendaItems)
             yield()
 
-            delay(10)
-            _oneTimeEvents.emit(AgendaEvent.ScrollToItem(agendaItem.id))
+            sendEvent(AgendaEvent.OneTimeEvent.ScrollToItem(agendaItem.id))
             yield()
         }
     }
@@ -237,6 +233,7 @@ class AgendaViewModel @Inject constructor(
     }
 
     private suspend fun onEvent(event: AgendaEvent) {
+
         when(event) {
             is AgendaEvent.ShowProgressIndicator -> {
                 _agendaState.update {
@@ -294,6 +291,25 @@ class AgendaViewModel @Inject constructor(
                     it.copy(authInfo = null)
                 }
                 logout()
+            }
+            is AgendaEvent.OneTimeEvent -> {
+                when (event) {
+                    is AgendaEvent.OneTimeEvent.ResetOneTimeEvent -> {
+                        // Reset the one time event
+                        _agendaState.update {
+                            it.copy(oneTimeEvent = null)
+                        }
+                        yield()
+                    }
+                    else -> {
+                        // Send the one time event
+                        yield()
+                        _agendaState.update {
+                            it.copy(oneTimeEvent = event)
+                        }
+                        yield()
+                    }
+                }
             }
             is AgendaEvent.UnknownError -> {
                 _agendaState.update {

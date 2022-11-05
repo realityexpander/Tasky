@@ -26,5 +26,8 @@ data class AgendaState(
     // Menu for adding agenda items
     val isAddAgendaItemDropdownVisible: Boolean = false,
 
+    // One-time events
+    val oneTimeEvent: AgendaEvent? = null,
+
     val agendaItems: List<AgendaItem> = emptyList(),
 )
