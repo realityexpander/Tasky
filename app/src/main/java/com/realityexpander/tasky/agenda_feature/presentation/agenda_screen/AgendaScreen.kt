@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -33,7 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.PopupProperties
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -86,7 +84,6 @@ data class MenuItemInfo(
     var agendaItem: AgendaItem? = null,
 )
 
-@OptIn(ExperimentalComposeUiApi::class) // for PopupProperties
 @Composable
 fun AgendaScreenContent(
     state: AgendaState,
@@ -101,7 +98,6 @@ fun AgendaScreenContent(
     val agendaItems = state.agendaItems
 
     // For positioning menus
-    var logoutButtonOffset by remember { mutableStateOf(Offset.Zero)}
     var fabButtonOffset by remember { mutableStateOf(Offset.Zero)}
 
     // Keeps track of the dropdown menu offsets
@@ -250,20 +246,39 @@ fun AgendaScreenContent(
                         .align(Alignment.CenterVertically)
                 )
             }
-            UserAcronymCircle(
-                username = state.authInfo?.username,
+
+            Box(
                 modifier = Modifier
                     .alignByBaseline()
                     .align(Alignment.CenterVertically)
                     .weight(1f)
                     .wrapContentWidth(Alignment.End)
-                    .clickable {
-                        onAction(AgendaEvent.ToggleLogoutDropdown)
-                    }
-                    .onGloballyPositioned { coordinates ->
-                        logoutButtonOffset = coordinates.localToRoot(Offset.Zero)
-                    }
-            )
+            ) {
+                UserAcronymCircle(
+                    username = state.authInfo?.username,
+                    modifier = Modifier
+                        .clickable {
+                            onAction(AgendaEvent.ToggleLogoutDropdown)
+                        }
+                )
+
+                // • Logout user dropdown
+                DropdownMenu(
+                    expanded = state.isLogoutDropdownVisible,
+                    onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
+                    modifier = Modifier
+                        .background(color = MaterialTheme.colors.onSurface)
+                ) {
+                    MenuItem(
+                        title = "Logout",
+                        vectorIcon = Icons.Filled.Logout,
+                        onClick = {
+                            onAction(AgendaEvent.ToggleLogoutDropdown)
+                            onAction(AgendaEvent.Logout)
+                        },
+                    )
+                }
+            }
 
         }
 
@@ -481,26 +496,26 @@ fun AgendaScreenContent(
     ) {
         val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-        // • Logout user dropdown
-        DropdownMenu(
-            expanded = state.isLogoutDropdownVisible,
-            onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
-            offset = DpOffset(
-                x = logoutButtonOffset.x.dp,
-                y = -screenHeight
-            ),
-            modifier = Modifier
-                .background(color = MaterialTheme.colors.onSurface)
-        ) {
-            MenuItem(
-                title = "Logout",
-                vectorIcon = Icons.Filled.Logout,
-                onClick = {
-                    onAction(AgendaEvent.ToggleLogoutDropdown)
-                    onAction(AgendaEvent.Logout)
-                },
-            )
-        }
+//        // • Logout user dropdown
+//        DropdownMenu(
+//            expanded = state.isLogoutDropdownVisible,
+//            onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
+//            offset = DpOffset(
+//                x = logoutButtonOffset.x.dp,
+//                y = -screenHeight
+//            ),
+//            modifier = Modifier
+//                .background(color = MaterialTheme.colors.onSurface)
+//        ) {
+//            MenuItem(
+//                title = "Logout",
+//                vectorIcon = Icons.Filled.Logout,
+//                onClick = {
+//                    onAction(AgendaEvent.ToggleLogoutDropdown)
+//                    onAction(AgendaEvent.Logout)
+//                },
+//            )
+//        }
 
         // • AgendaItem open/edit/delete dropdown
         if(state.agendaItemIdForMenu != null) {
@@ -562,9 +577,6 @@ fun AgendaScreenContent(
             offset = DpOffset(
                 x = fabButtonOffset.x.dp,
                 y = -screenHeight + fabButtonOffset.y.dp
-            ),
-            properties = PopupProperties(
-                usePlatformDefaultWidth = true,
             ),
             modifier = Modifier
                 .background(color = MaterialTheme.colors.onSurface)
