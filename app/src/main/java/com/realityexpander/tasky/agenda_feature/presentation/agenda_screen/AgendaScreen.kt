@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -25,12 +26,13 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.window.PopupProperties
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,6 +43,7 @@ import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
+import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.agenda_feature.presentation.components.AgendaCard
 import com.realityexpander.tasky.agenda_feature.presentation.components.UserAcronymCircle
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
@@ -81,6 +84,7 @@ data class MenuItemInfo(
     var agendaItem: AgendaItem? = null,
 )
 
+@OptIn(ExperimentalComposeUiApi::class) // for PopupProperties
 @Composable
 fun AgendaScreenContent(
     state: AgendaState,
@@ -92,8 +96,8 @@ fun AgendaScreenContent(
 
     var selectedDay by remember { mutableStateOf(0) }
 
-    var logoutButtonSize by remember { mutableStateOf(Size.Zero)}
     var logoutButtonOffset by remember { mutableStateOf(Offset.Zero)}
+    var fabButtonOffset by remember { mutableStateOf(Offset.Zero)}
 
     val agendaItems = state.agendaItems
 
@@ -211,10 +215,7 @@ fun AgendaScreenContent(
                         onAction(AgendaEvent.ToggleLogoutDropdown)
                     }
                     .onGloballyPositioned { coordinates ->
-                        logoutButtonSize = coordinates.size.toSize()
-                        logoutButtonOffset = coordinates.localToRoot(
-                            Offset.Zero
-                        )
+                        logoutButtonOffset = coordinates.localToRoot(Offset.Zero)
                     }
             )
 
@@ -344,7 +345,7 @@ fun AgendaScreenContent(
                 AgendaCard(
                     agendaItem = agendaItem,
                     onMenuClick = {
-                        onAction(AgendaEvent.ShowAgendaItemDropdown(agendaItem.id))
+                        onAction(AgendaEvent.ShowAgendaItemActionDropdown(agendaItem.id))
                     },
                     onToggleCompleted = {
                         if(agendaItem is AgendaItem.Task) {
@@ -446,7 +447,7 @@ fun AgendaScreenContent(
         ) {
             MenuItem(
                 title = "Logout",
-                icon = Icons.Filled.Logout,
+                vectorIcon = Icons.Filled.Logout,
                 onClick = {
                     onAction(AgendaEvent.ToggleLogoutDropdown)
                     onAction(AgendaEvent.Logout)
@@ -458,7 +459,7 @@ fun AgendaScreenContent(
         if(state.agendaItemIdForMenu != null) {
             DropdownMenu(
                 expanded = true,
-                onDismissRequest = { onAction(AgendaEvent.ShowAgendaItemDropdown(null)) },
+                onDismissRequest = { onAction(AgendaEvent.ShowAgendaItemActionDropdown(null)) },
                 offset = DpOffset(
                     x = with(LocalDensity.current) {
                             (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x ?: 0f).toDp()
@@ -472,7 +473,7 @@ fun AgendaScreenContent(
             ) {
                 MenuItem(
                     title = "Open",
-                    icon = Icons.Filled.OpenInNew,
+                    vectorIcon = Icons.Filled.OpenInNew,
                     onClick = {
                         performActionForAgendaItem(
                             agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
@@ -483,7 +484,7 @@ fun AgendaScreenContent(
                 )
                 MenuItem(
                     title = "Edit",
-                    icon = Icons.Filled.Edit,
+                    vectorIcon = Icons.Filled.Edit,
                     onClick = {
                         performActionForAgendaItem(
                             agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
@@ -494,7 +495,7 @@ fun AgendaScreenContent(
                 )
                 MenuItem(
                     title = "Delete",
-                    icon = Icons.Filled.Delete,
+                    vectorIcon = Icons.Filled.Delete,
                     onClick = {
                         performActionForAgendaItem(
                             agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
@@ -507,11 +508,51 @@ fun AgendaScreenContent(
         }
 
 
+        // • Create AgendaItem Event/Task/Reminder
+        DropdownMenu(
+            expanded = state.isAddAgendaItemDropdownVisible,
+            onDismissRequest = { onAction(AgendaEvent.ToggleCreateAgendaItemDropdown) },
+            offset = DpOffset(
+                x = fabButtonOffset.x.dp,
+                y = -screenHeight + fabButtonOffset.y.dp
+            ),
+            properties = PopupProperties(
+                usePlatformDefaultWidth = true,
 
-        // • FAB to add new agenda item
+            ),
+            modifier = Modifier
+                .background(color = MaterialTheme.colors.onSurface)
+        ) {
+            MenuItem(
+                title = "Event",
+                painterIcon = painterResource(id = R.drawable.calendar_add_on),
+                onClick = {
+                    onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
+                    onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Event))
+                },
+            )
+            MenuItem(
+                title = "Task",
+                vectorIcon = Icons.Filled.AddTask,
+                onClick = {
+                    onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
+                    onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Task))
+                },
+            )
+            MenuItem(
+                title = "Reminder",
+                vectorIcon = Icons.Filled.NotificationAdd,
+                onClick = {
+                    onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
+                    onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Reminder))
+                },
+            )
+        }
+
+        // • FAB to create new agenda item
         IconButton(
             onClick = {
-                // onAction(AgendaEvent.ShowAddAgendaItemDialog)
+                onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
             },
             modifier = Modifier
                 .size(DP.XXXLarge)
@@ -519,6 +560,9 @@ fun AgendaScreenContent(
                 .clip(shape = TaskyShapes.MediumButtonRoundedCorners)
                 .background(color = MaterialTheme.colors.onSurface)
                 .align(alignment = Alignment.BottomEnd)
+                .onGloballyPositioned { coordinates ->
+                    fabButtonOffset = coordinates.localToRoot(Offset.Zero)
+                }
         ) {
             Icon(
                 tint = MaterialTheme.colors.surface,
@@ -538,7 +582,7 @@ fun performActionForAgendaItem(
     action: AgendaItemAction,
     onAction: (AgendaEvent)-> Unit
 ) {
-    onAction(AgendaEvent.ShowAgendaItemDropdown(null)) // close the menu
+    onAction(AgendaEvent.ShowAgendaItemActionDropdown(null)) // close the menu
 
     agendaItem ?: return
 

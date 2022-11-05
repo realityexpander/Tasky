@@ -17,9 +17,14 @@ data class AgendaState(
 
     val errorMessage: UiText? = null,
 
-    // Dropdown Menus
+    // Menu for logout
     val isLogoutDropdownVisible: Boolean = false,
+
+    // Menu for editing/viewing/deleting agenda items
     val agendaItemIdForMenu: UuidStr? = null,
+
+    // Menu for adding agenda items
+    val isAddAgendaItemDropdownVisible: Boolean = false,
 
     val agendaItems: List<AgendaItem> = emptyList(),
 )

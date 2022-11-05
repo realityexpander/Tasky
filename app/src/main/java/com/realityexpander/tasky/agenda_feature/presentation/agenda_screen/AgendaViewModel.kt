@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
+import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_agendaItemIdForMenu
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -60,7 +62,7 @@ class AgendaViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_isLogoutDropdownVisible] = state.isLogoutDropdownVisible
 
         // Validate as the user types
-        if(state.username.isNotBlank()) sendEvent(AgendaEvent.ValidateUsername)
+//        if(state.username.isNotBlank()) sendEvent(AgendaEvent.ValidateUsername)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AgendaState())
 
     init {
@@ -152,7 +154,7 @@ class AgendaViewModel @Inject constructor(
             yield() // allow the agendaState to be updated
 
             // Validate email & password when restored from process death or coming from another screen
-            if (agendaState.value.username.isNotBlank()) sendEvent(AgendaEvent.ValidateUsername)
+//            if (agendaState.value.username.isNotBlank()) sendEvent(AgendaEvent.ValidateUsername)
 
             yield() // allow the agendaState to be updated
             // Show status validation messages when restored from process death or coming from another screen
@@ -163,6 +165,57 @@ class AgendaViewModel @Inject constructor(
     private fun logout() {
         viewModelScope.launch {
             authRepository.clearAuthInfo()
+            yield()
+        }
+    }
+
+    private fun createAgendaItem(agendaItemType: AgendaItemType) {
+        viewModelScope.launch {
+            val agendaItems = agendaState.value.agendaItems.toMutableList()
+
+            val today = LocalDate.now()
+            val todayDayOfWeek = today.dayOfWeek.value
+            val todayDayOfMonth = today.dayOfMonth
+            val todayMonth = today.month
+            val todayYear = today.year
+            val todayDate = LocalDate.of(todayYear, todayMonth, todayDayOfMonth)
+
+            // todo Dummy data for now - replace with actual data soon
+            when(agendaItemType) {
+                AgendaItemType.Event -> {
+                   val agendaItem = AgendaItem.Event(
+                       id = UUID.randomUUID().toString(),
+                       title = "New Event for $todayDate",
+                       from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 10, 0),
+                       to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 11, 0),
+                       remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 9, 0),
+                       description = "New Event Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
+                   )
+                   agendaItems.add(agendaItem)
+               }
+                AgendaItemType.Task -> {
+                     val agendaItem = AgendaItem.Task(
+                          id = UUID.randomUUID().toString(),
+                          title = "New Task for $todayDate",
+                          time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 13, 0),
+                          remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 12, 30),
+                          description = "New Task Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
+                     )
+                     agendaItems.add(agendaItem)
+                }
+                AgendaItemType.Reminder -> {
+                     val agendaItem = AgendaItem.Reminder(
+                          id = UUID.randomUUID().toString(),
+                          title = "New Reminder for $todayDate",
+                          time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 16, 0),
+                          remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 30),
+                          description = "New Reminder Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
+                     )
+                     agendaItems.add(agendaItem)
+                }
+            }
+
+            _agendaState.value = agendaState.value.copy(agendaItems = agendaItems)
             yield()
         }
     }
@@ -186,35 +239,17 @@ class AgendaViewModel @Inject constructor(
                     it.copy(isLoading = event.isLoaded)
                 }
             }
-//            is AgendaEvent.UpdateUsername -> {
-//                _agendaState.update {
-//                    it.copy(
-//                        username = event.username,
-//                        isInvalidUsername = false,
-//                        isShowInvalidUsernameMessage = false
-//                    )
-//                }
-//            }
-//            is AgendaEvent.SetIsPasswordVisible -> {
-//                _agendaState.update {
-//                    it.copy(isPasswordVisible = event.isVisible)
-//                }
-//            }
-//            is AgendaEvent.ValidateUsername -> {
-//                val isValid = validateUsername()
-//                _agendaState.update {
-//                    it.copy(isInvalidUsername = !isValid)
-//                }
-//                yield()
-//            }
-//            is AgendaEvent.ShowInvalidUsernameMessage -> {
-//                _agendaState.update {
-//                    it.copy(
-//                        isShowInvalidUsernameMessage = true
-//                    )
-//                }
-//            }
-            is AgendaEvent.ShowAgendaItemDropdown -> {
+            is AgendaEvent.CreateAgendaItem -> {
+                createAgendaItem(event.agendaItemType)
+            }
+            is AgendaEvent.ToggleCreateAgendaItemDropdown -> {
+                _agendaState.update {
+                    it.copy(
+                        isAddAgendaItemDropdownVisible = !agendaState.value.isAddAgendaItemDropdownVisible
+                    )
+                }
+            }
+            is AgendaEvent.ShowAgendaItemActionDropdown -> {
                 _agendaState.update {
                     it.copy(
                         agendaItemIdForMenu = event.agendaItemId,
@@ -262,11 +297,8 @@ class AgendaViewModel @Inject constructor(
                 }
                 sendEvent(AgendaEvent.ShowProgressIndicator(false))
             }
-            is AgendaEvent.CreateEvent -> TODO()
-            is AgendaEvent.CreateEventError -> TODO()
-            is AgendaEvent.CreateEventSuccess -> TODO()
-            AgendaEvent.ShowInvalidUsernameMessage -> TODO()
-            AgendaEvent.ValidateUsername -> TODO()
+            is AgendaEvent.CreateAgendaItemError -> TODO()
+            is AgendaEvent.CreateAgendaItemSuccess -> TODO()
         }
     }
 }
