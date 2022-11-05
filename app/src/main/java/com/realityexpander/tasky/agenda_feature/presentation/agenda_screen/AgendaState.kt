@@ -5,7 +5,6 @@ import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.Username
-import com.realityexpander.tasky.core.util.UuidStr
 
 data class AgendaState(
     val username: Username = "",
@@ -16,12 +15,6 @@ data class AgendaState(
     val isLoading: Boolean = false,
 
     val errorMessage: UiText? = null,
-
-    // Menu for logout
-    val isLogoutDropdownVisible: Boolean = false,
-
-    // Menu for editing/viewing/deleting agenda items
-    val agendaItemIdForMenu: UuidStr? = null,
 
     // One-time events
     val oneTimeEvent: AgendaEvent? = null,

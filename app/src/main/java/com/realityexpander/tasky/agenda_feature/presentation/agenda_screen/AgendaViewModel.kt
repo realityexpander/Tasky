@@ -14,7 +14,6 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_authInfo
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_isLoaded
-import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_isLogoutDropdownVisible
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_username
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.UuidStr
@@ -45,8 +44,6 @@ class AgendaViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_authInfo]
     private val agendaItemIdForMenu: UuidStr? =
         savedStateHandle[SAVED_STATE_agendaItemIdForMenu]
-    private val isLogoutDropdownVisible: Boolean =
-        savedStateHandle[SAVED_STATE_isLogoutDropdownVisible] ?: false
     private val agendaItems: List<AgendaItem>? =
         savedStateHandle[SAVED_STATE_agendaItems]
 
@@ -58,8 +55,6 @@ class AgendaViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
         savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
         savedStateHandle[SAVED_STATE_agendaItems] = state.agendaItems
-        savedStateHandle[SAVED_STATE_agendaItemIdForMenu] = state.agendaItemIdForMenu
-        savedStateHandle[SAVED_STATE_isLogoutDropdownVisible] = state.isLogoutDropdownVisible
 
         // Validate as the user types
 //        if(state.username.isNotBlank()) sendEvent(AgendaEvent.ValidateUsername)
@@ -148,8 +143,6 @@ class AgendaViewModel @Inject constructor(
                 errorMessage = errorMessage,
                 authInfo = authRepository.getAuthInfo(),
                 agendaItems = agendaItems,
-                agendaItemIdForMenu = agendaItemIdForMenu,
-                isLogoutDropdownVisible = isLogoutDropdownVisible,
                 oneTimeEvent = null
             )
             yield() // allow the agendaState to be updated

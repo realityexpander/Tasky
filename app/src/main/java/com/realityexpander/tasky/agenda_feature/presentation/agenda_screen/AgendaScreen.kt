@@ -631,7 +631,6 @@ fun AgendaScreenPreview() {
                     username = "Chris Athanas",
                 ),
                 isLoaded = true,
-                //isLogoutDropdownShowing = true,
             ),
             onAction = {},
             navigator = EmptyDestinationsNavigator,
