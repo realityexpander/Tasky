@@ -1,32 +1,50 @@
 package com.realityexpander.tasky.agenda_feature.domain
 
+import android.os.Parcelable
+import com.realityexpander.tasky.agenda_feature.data.common.serializers.LocalDateTimeSerializer
+import com.realityexpander.tasky.core.util.UuidStr
+import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
-// NOTE: Skeleton data structures for the Agenda feature
-// **temporary** for UI development
+abstract class AgendaItem {
 
-abstract class AgendaItem(
-    val id: String,
-    val title: String,
-    val description: String,
-    val remindAt: LocalDateTime,
-) {
-    abstract fun isEmpty(): Boolean
+    abstract val id: UuidStr
 
-    class Event(
-        id: String,
-        title: String,
-        description: String,
+    @Parcelize
+    data class Event(
+        override val id: UuidStr,
+        val title: String,
+        val description: String? = null,
+        @Serializable(with = LocalDateTimeSerializer::class)
+        val remindAt: LocalDateTime,
+        @Serializable(with = LocalDateTimeSerializer::class)
         val from: LocalDateTime,
+        @Serializable(with = LocalDateTimeSerializer::class)
         val to: LocalDateTime,
-        remindAt: LocalDateTime,
-        val attendeeIds: List<String>? = null, // todo: use UUID instead of string
-    ): AgendaItem(id, title, description, remindAt) {
-        companion object {
-            val EMPTY = Event("", "", "", LocalDateTime.MIN, LocalDateTime.MIN, LocalDateTime.MIN, emptyList())
-        }
+        val attendeeIds: List<UuidStr>? = null,
+        val photos: List<UuidStr>? = null,
+    ) : AgendaItem(), Parcelable
 
-        override fun isEmpty() = this == EMPTY
-    }
+    @Parcelize
+    data class Task(
+        override val id: UuidStr,
+        val title: String,
+        val description: String? = null,
+        @Serializable(with = LocalDateTimeSerializer::class)
+        val remindAt: LocalDateTime,
+        @Serializable(with = LocalDateTimeSerializer::class)
+        val time: LocalDateTime,
+        val isDone: Boolean = false,
+    ) : AgendaItem(), Parcelable
 
+    @Parcelize
+    data class Reminder(
+        override val id: UuidStr,
+        val title: String,
+        val description: String? = null,
+        @Serializable(with = LocalDateTimeSerializer::class)
+        val remindAt: LocalDateTime,
+        val time: LocalDateTime,
+    ) : AgendaItem(), Parcelable
 }

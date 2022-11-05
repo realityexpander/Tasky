@@ -1,13 +1,13 @@
 package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 
 import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.util.UuidStr
 
 sealed interface AgendaEvent {
     data class SetIsLoaded(val isLoaded: Boolean) : AgendaEvent
     data class ShowProgressIndicator(val isShowing: Boolean) : AgendaEvent
 
     object ValidateUsername : AgendaEvent
-    data class IsPasswordsMatch(val isMatch: Boolean) : AgendaEvent
 
     object ShowInvalidUsernameMessage : AgendaEvent
 
@@ -26,6 +26,8 @@ sealed interface AgendaEvent {
     object ToggleLogoutDropdown : AgendaEvent
     object Logout : AgendaEvent
 
-    object ToggleTaskDropdown : AgendaEvent
+    data class ShowAgendaItemDropdown(val agendaItemId: UuidStr? = null) : AgendaEvent
+
+    data class ToggleTaskCompleted(val agendaItemId: UuidStr) : AgendaEvent
 
 }

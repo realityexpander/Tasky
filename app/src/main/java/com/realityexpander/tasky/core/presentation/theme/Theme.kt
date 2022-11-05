@@ -61,7 +61,7 @@ fun TaskyTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable 
 }
 
 @Composable
-fun textEntryFieldTextStyle() = Typography.h6.copy(
+fun textEntryFieldTextStyle() = Typography.h5.copy(
     fontFamily = fonts,
     fontWeight = FontWeight.Normal,
     fontSize = 16.sp,

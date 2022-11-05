@@ -62,6 +62,11 @@
 
     <!--    Agenda screen -->
     <string name="agenda_title">Agenda Screen</string>
+    <string name="agenda_description">Agenda Screen</string>
+    <string name="agenda_error">Agenda error - %s</string>
+    <string name="agenda_error_network">Agenda network error - %s</string>
+    <string name="agenda_error_unknown">Agenda unknown error - %s</string>
+    <string name="agenda_add_agenda_item">Add Agenda Item</string>
 
     <!--    Splash screen -->
     <string name="splash_logged_in">Logged in!</string>

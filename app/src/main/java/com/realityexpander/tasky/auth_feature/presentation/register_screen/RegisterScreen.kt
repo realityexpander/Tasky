@@ -325,7 +325,7 @@ fun RegisterScreenContent(
                                         .padding(start = 9.dp, end = 9.dp) // fine tunes the icon size (weird)
                                 )
                             }
-                        }
+                    }
                 }
             }
         }
