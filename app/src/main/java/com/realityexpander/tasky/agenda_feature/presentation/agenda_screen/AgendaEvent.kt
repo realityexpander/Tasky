@@ -8,21 +8,14 @@ sealed interface AgendaEvent {
     data class SetIsLoaded(val isLoaded: Boolean) : AgendaEvent
     data class ShowProgressIndicator(val isShowing: Boolean) : AgendaEvent
 
-    // • Logout
-    object ToggleLogoutDropdown : AgendaEvent
     object Logout : AgendaEvent
 
     // • Agenda Item - Create
-    object ToggleCreateAgendaItemDropdown : AgendaEvent
     data class CreateAgendaItem(val agendaItemType: AgendaItemType) : AgendaEvent
     data class CreateAgendaItemSuccess(val message: UiText) : AgendaEvent
     data class CreateAgendaItemError(val message: UiText) : AgendaEvent
 
-    // • Agenda Item - Open/Edit/Delete
-    data class ShowAgendaItemActionDropdown(val agendaItemId: UuidStr? = null) : AgendaEvent
-
-    // • Task Item - Quick-edit
-    data class ToggleTaskCompleted(val agendaItemId: UuidStr) : AgendaEvent
+    data class TaskToggleCompleted(val agendaItemId: UuidStr) : AgendaEvent
 
     // • Errors
     data class UnknownError(val message: UiText) : AgendaEvent

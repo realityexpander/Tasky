@@ -40,12 +40,10 @@ fun AgendaCard(
     description: String? = "",
     fromDateTime: LocalDateTime = LocalDateTime.MIN,
     toDateTime: LocalDateTime? = null,
-    onMenuClick: () -> Unit = {},
     completed: Boolean? = null,
     onToggleCompleted: () -> Unit = {},
     setMenuPositionCallback : (LayoutCoordinates) -> Unit = {},
     itemTypeName: String? = "",
-//    menu: @Composable () -> Unit = {}
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
     onViewDetails: () -> Unit = {},
@@ -130,7 +128,6 @@ fun AgendaCard(
                             modifier = Modifier
                                 .offset(y = DP.micro)
                                 .padding(end = DP.tiny)
-                                .clickable(onClick = onMenuClick)
                                 .size(28.dp)
                                 .onGloballyPositioned { setMenuPositionCallback(it) }
                                 .clickable {
@@ -171,7 +168,6 @@ fun AgendaCard(
 fun AgendaCard(
     modifier: Modifier = Modifier,
     agendaItem: AgendaItem,
-    onMenuClick: () -> Unit = {},
     setMenuPositionCallback : (LayoutCoordinates) -> Unit = {},
     onToggleCompleted: () -> Unit = {},
     onEdit: () -> Unit = {},
@@ -186,7 +182,6 @@ fun AgendaCard(
                 description = agendaItem.description,
                 fromDateTime = agendaItem.from,
                 toDateTime = agendaItem.to,
-                onMenuClick = onMenuClick,
                 completed = null,
                 setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
@@ -202,7 +197,6 @@ fun AgendaCard(
                 title = agendaItem.title,
                 description = agendaItem.description,
                 fromDateTime = agendaItem.time,
-                onMenuClick = onMenuClick,
                 completed = agendaItem.isDone,
                 setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
@@ -219,7 +213,6 @@ fun AgendaCard(
                 title = agendaItem.title,
                 description = agendaItem.description,
                 fromDateTime = agendaItem.time,
-                onMenuClick = onMenuClick,
                 setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
                 onEdit = onEdit,
@@ -242,7 +235,7 @@ fun AgendaItemActionDropdown(
         expanded = isExpanded,
         onDismissRequest = onDismissRequest,
         offset = DpOffset(0.dp, (-20).dp),
-        modifier = Modifier
+        modifier = modifier
             .wrapContentSize()
             .background(color = MaterialTheme.colors.onSurface)
     ) {

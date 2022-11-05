@@ -23,9 +23,6 @@ data class AgendaState(
     // Menu for editing/viewing/deleting agenda items
     val agendaItemIdForMenu: UuidStr? = null,
 
-    // Menu for adding agenda items
-    val isAddAgendaItemDropdownVisible: Boolean = false,
-
     // One-time events
     val oneTimeEvent: AgendaEvent? = null,
 

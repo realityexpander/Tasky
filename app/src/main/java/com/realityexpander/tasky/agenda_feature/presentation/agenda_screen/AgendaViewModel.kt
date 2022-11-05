@@ -248,22 +248,7 @@ class AgendaViewModel @Inject constructor(
             is AgendaEvent.CreateAgendaItem -> {
                 createAgendaItem(event.agendaItemType)
             }
-            is AgendaEvent.ToggleCreateAgendaItemDropdown -> {
-                _agendaState.update {
-                    it.copy(
-                        isAddAgendaItemDropdownVisible = !agendaState.value.isAddAgendaItemDropdownVisible
-                    )
-                }
-            }
-            is AgendaEvent.ShowAgendaItemActionDropdown -> {
-                _agendaState.update {
-                    it.copy(
-                        agendaItemIdForMenu = event.agendaItemId,
-                    )
-                }
-                yield()
-            }
-            is AgendaEvent.ToggleTaskCompleted -> {
+            is AgendaEvent.TaskToggleCompleted -> {
                 _agendaState.update {
                     it.copy(
                         agendaItems = it.agendaItems.map { agendaItem ->
@@ -279,13 +264,6 @@ class AgendaViewModel @Inject constructor(
                 }
                 yield()
             }
-            is AgendaEvent.ToggleLogoutDropdown -> {
-                _agendaState.update {
-                    it.copy(
-                        isLogoutDropdownVisible = !agendaState.value.isLogoutDropdownVisible
-                    )
-                }
-            }
             is AgendaEvent.Logout -> {
                 _agendaState.update {
                     it.copy(authInfo = null)
@@ -295,14 +273,14 @@ class AgendaViewModel @Inject constructor(
             is AgendaEvent.OneTimeEvent -> {
                 when (event) {
                     is AgendaEvent.OneTimeEvent.Reset -> {
-                        // Reset the one time event
+                        // • Reset the one time event
                         _agendaState.update {
                             it.copy(oneTimeEvent = null)
                         }
                         yield()
                     }
                     else -> {
-                        // Send the one time event
+                        // • Send the one time event
                         yield()
                         _agendaState.update {
                             it.copy(oneTimeEvent = event)

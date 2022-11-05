@@ -94,11 +94,7 @@ fun AgendaScreenContent(
     val scope = rememberCoroutineScope()
 
     val agendaItems = state.agendaItems
-
-    // For positioning menus
-    var fabButtonOffset by remember { mutableStateOf(Offset.Zero)}
-
-    var selectedDay by remember { mutableStateOf(0) }
+    var selectedDay by remember { mutableStateOf(0) } // todo put in state
 
     // create days of the week for top of screen
     val daysInitialsAndDayOfWeek = remember(LocalDate.now().dayOfMonth) {   // initial of day of week, day of month
@@ -115,7 +111,7 @@ fun AgendaScreenContent(
     }
 
     // Display month name
-    val month = remember { LocalDate.now().month.getDisplayName(TextStyle.FULL, Locale.getDefault()).uppercase() }
+    val month = remember(LocalDate.now().month) { LocalDate.now().month.getDisplayName(TextStyle.FULL, Locale.getDefault()).uppercase() }
 
     fun navigateToLogin() {
         navigator.navigate(
@@ -146,7 +142,7 @@ fun AgendaScreenContent(
         (context as MainActivity).exitApp()
     }
 
-    // Handle one-time "sequenced" events (is this a good idea?)
+    // Handle one-time "sequenced" events
     LaunchedEffect(state.oneTimeEvent) {
         state.oneTimeEvent?.let { oneTimeEvent->
             when (oneTimeEvent) {
@@ -228,18 +224,20 @@ fun AgendaScreenContent(
                     .weight(1f)
                     .wrapContentWidth(Alignment.End)
             ) {
+                var isLogoutMenuExpanded by remember { mutableStateOf(false) }
+
                 UserAcronymCircle(
                     username = state.authInfo?.username,
                     modifier = Modifier
                         .clickable {
-                            onAction(AgendaEvent.ToggleLogoutDropdown)
+                            isLogoutMenuExpanded = true
                         }
                 )
 
                 // • Logout user dropdown
                 DropdownMenu(
-                    expanded = state.isLogoutDropdownVisible,
-                    onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
+                    expanded = isLogoutMenuExpanded,
+                    onDismissRequest = { isLogoutMenuExpanded = false },
                     modifier = Modifier
                         .background(color = MaterialTheme.colors.onSurface)
                 ) {
@@ -247,7 +245,7 @@ fun AgendaScreenContent(
                         title = "Logout",
                         vectorIcon = Icons.Filled.Logout,
                         onClick = {
-                            onAction(AgendaEvent.ToggleLogoutDropdown)
+                            isLogoutMenuExpanded = false
                             onAction(AgendaEvent.Logout)
                         },
                     )
@@ -381,12 +379,9 @@ fun AgendaScreenContent(
                 Box {
                     AgendaCard(
                         agendaItem = agendaItem,
-                        onMenuClick = {
-                            onAction(AgendaEvent.ShowAgendaItemActionDropdown(agendaItem.id))
-                        },
                         onToggleCompleted = {
                             if (agendaItem is AgendaItem.Task) {
-                                onAction(AgendaEvent.ToggleTaskCompleted(agendaItem.id))
+                                onAction(AgendaEvent.TaskToggleCompleted(agendaItem.id))
                             }
                         },
                         modifier = Modifier
@@ -485,14 +480,13 @@ fun AgendaScreenContent(
         modifier = Modifier
             .fillMaxSize()
     ) {
-//        val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-        var isExpanded by remember { mutableStateOf(false) }
+        var isFabMenuExpanded by remember { mutableStateOf(false) }
 
         // • FAB to create new agenda item
         IconButton(
             onClick = {
-                isExpanded = true //onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
+                isFabMenuExpanded = true
             },
             modifier = Modifier
                 .size(DP.XXXLarge)
@@ -500,9 +494,6 @@ fun AgendaScreenContent(
                 .clip(shape = TaskyShapes.MediumButtonRoundedCorners)
                 .background(color = MaterialTheme.colors.onSurface)
                 .align(alignment = Alignment.BottomEnd)
-//                .onGloballyPositioned { coordinates ->
-//                    fabButtonOffset = coordinates.localToRoot(Offset.Zero)
-//                }
         ) {
 
             Icon(
@@ -517,12 +508,8 @@ fun AgendaScreenContent(
 
             // • Create AgendaItem Event/Task/Reminder
             DropdownMenu(
-                expanded = isExpanded, //state.isAddAgendaItemDropdownVisible,
-                onDismissRequest = { isExpanded = false }, //onAction(AgendaEvent.ToggleCreateAgendaItemDropdown) },
-//            offset = DpOffset(
-//                x = fabButtonOffset.x.dp,
-//                y = -screenHeight + fabButtonOffset.y.dp
-//            ),
+                expanded = isFabMenuExpanded,
+                onDismissRequest = { isFabMenuExpanded = false },
                 modifier = Modifier
                     .background(color = MaterialTheme.colors.onSurface)
             ) {
@@ -530,7 +517,7 @@ fun AgendaScreenContent(
                     title = "Event",
                     painterIcon = painterResource(id = R.drawable.calendar_add_on),
                     onClick = {
-                        isExpanded = false //onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
+                        isFabMenuExpanded = false
                         onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Event))
                     },
                 )
@@ -538,7 +525,7 @@ fun AgendaScreenContent(
                     title = "Task",
                     vectorIcon = Icons.Filled.AddTask,
                     onClick = {
-                        isExpanded = false // onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
+                        isFabMenuExpanded = false
                         onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Task))
                     },
                 )
@@ -546,7 +533,7 @@ fun AgendaScreenContent(
                     title = "Reminder",
                     vectorIcon = Icons.Filled.NotificationAdd,
                     onClick = {
-                        isExpanded = false // onAction(AgendaEvent.ToggleCreateAgendaItemDropdown)
+                        isFabMenuExpanded = false
                         onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Reminder))
                     },
                 )
@@ -560,7 +547,6 @@ fun performActionForAgendaItem(
     action: AgendaItemAction,
     onAction: (AgendaEvent)-> Unit
 ) {
-    onAction(AgendaEvent.ShowAgendaItemActionDropdown(null)) // close the menu
 
     agendaItem ?: return
 
@@ -665,50 +651,6 @@ fun AgendaScreenPreview_NightMode_NO() {
     AgendaScreenPreview()
 }
 
-
-//            is AgendaEvent.ShowLogoutDialog -> {
-//                val dialogState = remember { mutableStateOf(true) }
-//
-//                if (dialogState.value) {
-//                    AlertDialog(
-//                        onDismissRequest = { dialogState.value = false },
-//                        title = {
-//                            Text(
-//                                text = stringResource(id = R.string.logout),
-//                                fontWeight = FontWeight.Bold,
-//                            )
-//                        },
-//                        text = {
-//                            Text(
-//                                text = stringResource(id = R.string.logout_confirmation),
-//                            )
-//                        },
-//                        confirmButton = {
-//                            TextButton(
-//                                onClick = {
-//                                    dialogState.value = false
-//                                    onAction(AgendaEvent.Logout)
-//                                }
-//                            ) {
-//                                Text(
-//                                    text = stringResource(id = R.string.logout),
-//                                    fontWeight = FontWeight.Bold,
-//                                )
-//                            }
-//                        },
-//                        dismissButton = {
-//                            TextButton(
-//                                onClick = { dialogState.value = false }
-//                            ) {
-//                                Text(
-//                                    text = stringResource(id = R.string.cancel),
-//                                    fontWeight = FontWeight.Bold,
-//                                )
-//                            }
-//                        },
-//                    )
-//                }
-//            }
 
 
 
