@@ -41,8 +41,8 @@ import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
-import com.realityexpander.tasky.agenda_feature.presentation.common.UserAcronymCircle
 import com.realityexpander.tasky.agenda_feature.presentation.components.AgendaCard
+import com.realityexpander.tasky.agenda_feature.presentation.components.UserAcronymCircle
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.DaySelected
@@ -220,7 +220,7 @@ fun AgendaScreenContent(
 
         }
 
-        Spacer(modifier = Modifier.smallHeight())
+        Spacer(modifier = Modifier.tinyHeight())
 
         // • HEADER FOR AGENDA ITEMS (S, M, T, W, T, F, & Day Picker)
         Column(
@@ -327,7 +327,7 @@ fun AgendaScreenContent(
         Spacer(modifier = Modifier
             .fillMaxWidth()
             .background(color = MaterialTheme.colors.surface)
-            .tinyHeight()
+            .smallHeight()
         )
 
         //val todayTasks = state.tasks.filter { it.date == todayDate }
