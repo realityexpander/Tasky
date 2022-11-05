@@ -496,27 +496,6 @@ fun AgendaScreenContent(
     ) {
         val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-//        // • Logout user dropdown
-//        DropdownMenu(
-//            expanded = state.isLogoutDropdownVisible,
-//            onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
-//            offset = DpOffset(
-//                x = logoutButtonOffset.x.dp,
-//                y = -screenHeight
-//            ),
-//            modifier = Modifier
-//                .background(color = MaterialTheme.colors.onSurface)
-//        ) {
-//            MenuItem(
-//                title = "Logout",
-//                vectorIcon = Icons.Filled.Logout,
-//                onClick = {
-//                    onAction(AgendaEvent.ToggleLogoutDropdown)
-//                    onAction(AgendaEvent.Logout)
-//                },
-//            )
-//        }
-
         // • AgendaItem open/edit/delete dropdown
         if(state.agendaItemIdForMenu != null) {
             DropdownMenu(
