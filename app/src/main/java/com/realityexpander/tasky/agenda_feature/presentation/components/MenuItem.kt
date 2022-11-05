@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -45,10 +44,7 @@ fun MenuItem(
             onClick()
         },
         modifier = Modifier
-            .background(MaterialTheme.colors.onSurface)
-            .drawBehind {
-                if (isHighlighted) drawRect(highlightColorNative)
-            }
+            .background(highlightColorNative)
     ) {
         Text(
             text = title,
