@@ -456,7 +456,6 @@ fun AgendaScreenContent(
 
         // • AgendaItem open/edit/delete dropdown
         if(state.agendaItemIdForMenu != null) {
-
             DropdownMenu(
                 expanded = true,
                 onDismissRequest = { onAction(AgendaEvent.ShowAgendaItemDropdown(null)) },
@@ -506,6 +505,8 @@ fun AgendaScreenContent(
                 )
             }
         }
+
+
 
         // • FAB to add new agenda item
         IconButton(

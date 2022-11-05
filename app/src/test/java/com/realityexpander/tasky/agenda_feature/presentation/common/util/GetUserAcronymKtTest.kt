@@ -27,7 +27,7 @@ class GetUserAcronymKtTest {
     @Test
     fun `getUserAcronym() for empty string`() {
         // ARRANGE / ACT / ASSERT
-        assertTrue(getUserAcronym("") == "??")
+        assertTrue(getUserAcronym("") == "")
     }
 
     @Test
