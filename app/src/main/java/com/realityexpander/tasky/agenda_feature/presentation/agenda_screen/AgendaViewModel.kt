@@ -75,7 +75,7 @@ class AgendaViewModel @Inject constructor(
             val todayMonth = today.month
             val todayYear = today.year
             val todayDate = LocalDate.of(todayYear, todayMonth, todayDayOfMonth)
-            val agendaItems = mutableListOf(
+            val agendaItems = mutableListOf<AgendaItem>(
                 AgendaItem.Event(
                     id = "0001",
                     title = "Meeting with John",
@@ -226,11 +226,13 @@ class AgendaViewModel @Inject constructor(
                 _agendaState.update {
                     it.copy(
                         agendaItems = it.agendaItems.map { agendaItem ->
-                            if (agendaItem.id == event.agendaItemId) {
-                                (agendaItem as AgendaItem.Task).copy(isDone = !agendaItem.isDone)
-                            } else {
-                                agendaItem
-                            }
+                            (agendaItem as? AgendaItem.Task)?.let { task ->
+                                if (task.id == event.agendaItemId) {
+                                    task.copy(isDone = !task.isDone)
+                                } else {
+                                    task
+                                }
+                            } ?: agendaItem
                         }
                     )
                 }
