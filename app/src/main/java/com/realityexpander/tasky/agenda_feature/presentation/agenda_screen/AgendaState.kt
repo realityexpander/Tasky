@@ -20,4 +20,5 @@ data class AgendaState(
     val oneTimeEvent: AgendaEvent? = null,
 
     val agendaItems: List<AgendaItem> = emptyList(),
+    val selectedDayIndex: Int = 0,
 )

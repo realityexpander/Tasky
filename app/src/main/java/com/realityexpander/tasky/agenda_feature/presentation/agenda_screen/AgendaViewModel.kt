@@ -44,8 +44,10 @@ class AgendaViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_authInfo]
     private val agendaItemIdForMenu: UuidStr? =
         savedStateHandle[SAVED_STATE_agendaItemIdForMenu]
-    private val agendaItems: List<AgendaItem>? =
-        savedStateHandle[SAVED_STATE_agendaItems]
+    private val agendaItems: List<AgendaItem> =
+        savedStateHandle[SAVED_STATE_agendaItems] ?: emptyList<AgendaItem>()
+    private val selectedDayIndex: Int =
+        savedStateHandle[SAVED_STATE_selectedDayIndex] ?: 0
 
     private val _agendaState = MutableStateFlow(AgendaState())
     val agendaState = _agendaState.onEach { state ->
@@ -55,6 +57,7 @@ class AgendaViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
         savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
         savedStateHandle[SAVED_STATE_agendaItems] = state.agendaItems
+        savedStateHandle[SAVED_STATE_selectedDayIndex] = state.selectedDayIndex
 
         // Validate as the user types
 //        if(state.username.isNotBlank()) sendEvent(AgendaEvent.ValidateUsername)
@@ -64,6 +67,22 @@ class AgendaViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            yield()
+
+            // restore state after process death
+            _agendaState.update {
+                it.copy(
+                    username = username,
+                    isLoaded = true,
+                    errorMessage = errorMessage,
+                    authInfo = authRepository.getAuthInfo(),
+                    agendaItems = agendaItems,
+                    oneTimeEvent = null,
+                    selectedDayIndex = selectedDayIndex
+                )
+            }
+
+            yield()
 
             // simulate load from network or database
             // Dummy data for now
@@ -73,7 +92,7 @@ class AgendaViewModel @Inject constructor(
             val todayMonth = today.month
             val todayYear = today.year
             val todayDate = LocalDate.of(todayYear, todayMonth, todayDayOfMonth)
-            val agendaItems = mutableListOf<AgendaItem>(
+            val agendaItemsLoadedFromDB = mutableListOf<AgendaItem>(
                 AgendaItem.Event(
                     id = "0001",
                     title = "Meeting with John",
@@ -137,15 +156,9 @@ class AgendaViewModel @Inject constructor(
                 ),
             )
 
-            // restore state after process death
-            _agendaState.value = AgendaState(
-                username = username,
-                isLoaded = true,
-                errorMessage = errorMessage,
-                authInfo = authRepository.getAuthInfo(),
-                agendaItems = agendaItems,
-                oneTimeEvent = null
-            )
+            _agendaState.update {
+                it.copy(agendaItems = agendaItemsLoadedFromDB)
+            }
 
             // Validate email & password when restored from process death or coming from another screen
 //            if (agendaState.value.username.isNotBlank()) sendEvent(AgendaEvent.ValidateUsername)
@@ -232,6 +245,11 @@ class AgendaViewModel @Inject constructor(
             is AgendaEvent.SetIsLoaded -> {
                 _agendaState.update {
                     it.copy(isLoading = event.isLoaded)
+                }
+            }
+            is AgendaEvent.SetSelectedDayIndex -> {
+                _agendaState.update {
+                    it.copy(selectedDayIndex = event.dayIndex)
                 }
             }
             is AgendaEvent.CreateAgendaItem -> {

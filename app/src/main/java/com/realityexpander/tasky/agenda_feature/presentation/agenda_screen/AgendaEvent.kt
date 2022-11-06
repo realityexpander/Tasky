@@ -10,6 +10,8 @@ sealed interface AgendaEvent {
 
     object Logout : AgendaEvent
 
+    data class SetSelectedDayIndex(val dayIndex: Int) : AgendaEvent
+
     // • Agenda Item - Create
     data class CreateAgendaItem(val agendaItemType: AgendaItemType) : AgendaEvent
     data class CreateAgendaItemSuccess(val message: UiText) : AgendaEvent

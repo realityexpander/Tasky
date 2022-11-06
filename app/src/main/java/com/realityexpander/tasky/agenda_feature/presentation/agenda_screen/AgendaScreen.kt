@@ -95,7 +95,7 @@ fun AgendaScreenContent(
     val scope = rememberCoroutineScope()
 
     val agendaItems = state.agendaItems
-    var selectedDay by remember { mutableStateOf(0) } // todo put in state
+    val selectedDayIndex = state.selectedDayIndex
 
     // create days of the week for top of screen
     val daysInitialsAndDayOfWeek = remember(LocalDate.now().dayOfMonth) {   // initial of day of week, day of month
@@ -267,14 +267,14 @@ fun AgendaScreenContent(
 
             // • DAYS OF WEEK & Day PICKER
             Row {
-                daysInitialsAndDayOfWeek.forEachIndexed { i, (dayInitial, dayOfMonth) ->
+                daysInitialsAndDayOfWeek.forEachIndexed { dayIndex, (dayInitial, dayOfMonth) ->
 
                     Column(
                         modifier = Modifier
                             .weight(1f)
                             .wrapContentWidth(Alignment.CenterHorizontally)
                             .drawBehind {
-                                if (selectedDay == i) {
+                                if (selectedDayIndex == dayIndex) {
                                     Paint().apply {
                                         color = DaySelected.toArgb()
                                         strokeWidth = 1f
@@ -292,19 +292,18 @@ fun AgendaScreenContent(
                                 }
                             }
                             .clickable {
-                                //onAction(AgendaEvent.SetSelectedDay(i))
-                                selectedDay = i
+                                onAction(AgendaEvent.SetSelectedDayIndex(dayIndex))
                             }
                     ) {
                         // Day of week (S, M, T, W, T, F, S)
                         Text(
                             text = dayInitial,
                             style = MaterialTheme.typography.subtitle2,
-                            fontWeight = if (selectedDay == i)
+                            fontWeight = if (selectedDayIndex == dayIndex)
                                     FontWeight.Bold
                                 else
                                     FontWeight.SemiBold,
-                            color = if (selectedDay == i)
+                            color = if (selectedDayIndex == dayIndex)
                                     Color.Black
                                 else
                                     MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
@@ -320,7 +319,7 @@ fun AgendaScreenContent(
                             text = dayOfMonth.toString(),
                             style = MaterialTheme.typography.h3,
                             fontWeight = FontWeight.Bold,
-                            color = if (selectedDay == i)
+                            color = if (selectedDayIndex == dayIndex)
                                     Color.Black
                                 else
                                     MaterialTheme.colors.onSurface,
@@ -339,11 +338,11 @@ fun AgendaScreenContent(
         // • SHOW TODAY'S DATE
         Text(
             text =
-            when (selectedDay) {
+            when (selectedDayIndex) {
                 0 -> "Today"
                 1 -> "Tomorrow"
                 else -> {
-                    val date = LocalDate.now().plusDays(selectedDay.toLong())
+                    val date = LocalDate.now().plusDays(selectedDayIndex.toLong())
                     val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
                     val dayOfMonth = date.dayOfMonth.toString()
                     val monthName = date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
