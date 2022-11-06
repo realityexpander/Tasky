@@ -210,7 +210,8 @@ class RegisterViewModel @Inject constructor(
                     it.copy(
                         username = event.username,
                         isInvalidUsername = false,
-                        isInvalidUsernameMessageVisible = false
+                        isInvalidUsernameMessageVisible = false,
+                        errorMessage = null,
                     )
                 }
             }
@@ -219,7 +220,8 @@ class RegisterViewModel @Inject constructor(
                     it.copy(
                         email = event.email,
                         isInvalidEmail = false,
-                        isInvalidEmailMessageVisible = false
+                        isInvalidEmailMessageVisible = false,
+                        errorMessage = null,
                     )
                 }
             }
@@ -229,7 +231,8 @@ class RegisterViewModel @Inject constructor(
                         password = event.password,
                         isInvalidPassword = false,
                         isInvalidPasswordMessageVisible = false,
-                        isPasswordsMatch = false
+                        isPasswordsMatch = false,
+                        errorMessage = null,
                     )
                 }
             }
@@ -239,7 +242,8 @@ class RegisterViewModel @Inject constructor(
                         confirmPassword = event.confirmPassword,
                         isInvalidConfirmPassword = false,
                         isInvalidConfirmPasswordMessageVisible = false,
-                        isPasswordsMatch = false
+                        isPasswordsMatch = false,
+                        errorMessage = null,
                     )
                 }
             }
