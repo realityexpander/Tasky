@@ -5,7 +5,7 @@ class ValidateEmail() {
         if(email.isBlank()) return false
 
         // use regex to validate email
-        val regex = Regex("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", RegexOption.IGNORE_CASE)
+        val regex = Regex("^[\\w!#\$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#\$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\\.)+[A-Z]{2,6}\$", RegexOption.IGNORE_CASE)
         return regex.matches(email)
     }
 }
