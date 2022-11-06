@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-//        waitForDebugger() // for testing process death
+        //waitForDebugger() // leave for testing process death
 
         super.onCreate(savedInstanceState)
 
@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
                         viewModel.onSetAuthInfo(appSettings.authInfo)
                     }
 
-                    // This uses the normal SavedStateHandle with no problems (not using Compose-destinations)
+                    // This uses the normal SavedStateHandle with no problems (*NOT* using Compose-destinations)
 //                    if(!splashState.isLoading) {
 //                        LoginScreen(navigator = EmptyDestinationsNavigator)
 //                    }
