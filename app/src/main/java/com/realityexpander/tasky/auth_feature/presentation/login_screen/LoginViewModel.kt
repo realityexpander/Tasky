@@ -160,7 +160,7 @@ class LoginViewModel @Inject constructor(
                         email = event.email,
                         isInvalidEmail = false,
                         isInvalidEmailMessageVisible = false,
-                        errorMessage = UiText.None,
+                        errorMessage = null,
                     )
                 }
             }
@@ -170,7 +170,7 @@ class LoginViewModel @Inject constructor(
                         password = event.password,
                         isInvalidPassword = false,
                         isInvalidPasswordMessageVisible = false,
-                        errorMessage = UiText.None,
+                        errorMessage = null,
                     )
                 }
             }
@@ -234,8 +234,8 @@ class LoginViewModel @Inject constructor(
                 _loginState.update {
                     it.copy(
                         authInfo = event.authInfo,
-                        errorMessage = UiText.None,
-                        statusMessage = UiText.None, //UiText.Res(R.string.login_success, event.authInfo), // keep for debugging
+                        errorMessage = null,
+                        statusMessage = null,
                         isPasswordVisible = false,
                     )
                 }
@@ -245,7 +245,7 @@ class LoginViewModel @Inject constructor(
                 _loginState.update {
                     it.copy(
                         errorMessage = event.message,
-                        statusMessage = UiText.None,
+                        statusMessage = null,
                         isLoading = false
                     )
                 }
