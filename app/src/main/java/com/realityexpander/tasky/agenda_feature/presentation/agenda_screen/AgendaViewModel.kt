@@ -79,80 +79,82 @@ class AgendaViewModel @Inject constructor(
                 )
             }
 
-            // simulate load from network or database
-            // Dummy data for now
-            val today = LocalDate.now()
-            val todayDayOfWeek = today.dayOfWeek.value
-            val todayDayOfMonth = today.dayOfMonth
-            val todayMonth = today.month
-            val todayYear = today.year
-            val todayDate = LocalDate.of(todayYear, todayMonth, todayDayOfMonth)
-            val agendaItemsLoadedFromDB = mutableListOf<AgendaItem>(
-                AgendaItem.Event(
-                    id = "0001",
-                    title = "Meeting with John",
-                    from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 10, 0),
-                    to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 11, 0),
-                    remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 9, 0),
-                    description = "Discuss the new project"
-                ),
-                AgendaItem.Task(
-                    id = "0002",
-                    title = "Task with Jim",
-                    time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 13, 0),
-                    remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 12, 30),
-                    description = "Do the old project"
-                ),
-                AgendaItem.Reminder(
-                    id = "0003",
-                    title = "Reminder with Jane",
-                    time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 16, 0),
-                    remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 30),
-                    description = "Reminder to move the different project"
-                ),
-                AgendaItem.Task(
-                    id = "0004",
-                    title = "Task with Joe",
-                    time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 18, 0),
-                    remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 16, 30),
-                    description = "Do the the other project",
-                    isDone = true
-                ),
-                AgendaItem.Event(
-                    id = "0005",
-                    title = "Meeting with Jack",
-                    from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 19, 0),
-                    to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 20, 0),
-                    remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 18, 30),
-                    description = "Discuss the yet another project"
-                ),
-                AgendaItem.Reminder(
-                    id = "0006",
-                    title = "Reminder with Jill",
-                    time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 22, 0),
-                    remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 20, 30),
-                    description = "Make the similar project"
-                ),
-                AgendaItem.Event(
-                    id = "0007",
-                    title = "Meeting with Jeremy",
-                    from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 10, 0),
-                    to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 11, 0),
-                    remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 9, 0),
-                    description = "Discuss the worse project"
-                ),
-                AgendaItem.Task(
-                    id = "0008",
-                    title = "Chore with Jason",
-                    time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 0),
-                    remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 12, 30),
-                    description = "Kill the better project",
-                    isDone = true
-                ),
-            )
+            if(_agendaState.value.agendaItems.isEmpty()) {
+                // simulate load from network or database
+                // Dummy data for now
+                val today = LocalDate.now()
+                val todayDayOfWeek = today.dayOfWeek.value
+                val todayDayOfMonth = today.dayOfMonth
+                val todayMonth = today.month
+                val todayYear = today.year
+                val todayDate = LocalDate.of(todayYear, todayMonth, todayDayOfMonth)
+                val agendaItemsLoadedFromDB = mutableListOf<AgendaItem>(
+                    AgendaItem.Event(
+                        id = "0001",
+                        title = "Meeting with John",
+                        from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 10, 0),
+                        to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 11, 0),
+                        remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 9, 0),
+                        description = "Discuss the new project"
+                    ),
+                    AgendaItem.Task(
+                        id = "0002",
+                        title = "Task with Jim",
+                        time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 13, 0),
+                        remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 12, 30),
+                        description = "Do the old project"
+                    ),
+                    AgendaItem.Reminder(
+                        id = "0003",
+                        title = "Reminder with Jane",
+                        time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 16, 0),
+                        remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 30),
+                        description = "Reminder to move the different project"
+                    ),
+                    AgendaItem.Task(
+                        id = "0004",
+                        title = "Task with Joe",
+                        time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 18, 0),
+                        remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 16, 30),
+                        description = "Do the the other project",
+                        isDone = true
+                    ),
+                    AgendaItem.Event(
+                        id = "0005",
+                        title = "Meeting with Jack",
+                        from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 19, 0),
+                        to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 20, 0),
+                        remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 18, 30),
+                        description = "Discuss the yet another project"
+                    ),
+                    AgendaItem.Reminder(
+                        id = "0006",
+                        title = "Reminder with Jill",
+                        time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 22, 0),
+                        remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 20, 30),
+                        description = "Make the similar project"
+                    ),
+                    AgendaItem.Event(
+                        id = "0007",
+                        title = "Meeting with Jeremy",
+                        from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 10, 0),
+                        to = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 11, 0),
+                        remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 9, 0),
+                        description = "Discuss the worse project"
+                    ),
+                    AgendaItem.Task(
+                        id = "0008",
+                        title = "Chore with Jason",
+                        time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 0),
+                        remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 12, 30),
+                        description = "Kill the better project",
+                        isDone = true
+                    ),
+                )
 
-            _agendaState.update {
-                it.copy(agendaItems = agendaItemsLoadedFromDB)
+                _agendaState.update {
+                    it.copy(agendaItems = agendaItemsLoadedFromDB)
+                }
             }
         }
     }
