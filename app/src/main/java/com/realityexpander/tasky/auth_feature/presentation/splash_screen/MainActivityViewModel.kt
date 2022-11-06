@@ -1,7 +1,9 @@
 package com.realityexpander.tasky.auth_feature.presentation.splash_screen
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
