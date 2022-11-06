@@ -23,6 +23,7 @@ class MainActivityViewModel @Inject constructor(
     val splashState = _splashState.asStateFlow()
 
     init {
+        // Workaround until figure out why `Compose-destinations` is not passing in the SavedStateHandle
         TaskyApplication.savedStateHandle = savedStateHandle.apply {
 
             // Temporarily set defaults for testing todo remove

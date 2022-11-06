@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.SavedStateHandle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
@@ -413,26 +412,26 @@ fun RegisterScreenPreview_Interactive() {
                     validateUsername = ValidateUsername(),
                     validateEmail = ValidateEmail(),
                     validatePassword = ValidatePassword(),
-                    savedStateHandle = SavedStateHandle().apply {
-                        // For Live Preview / interactive mode
-                        set("username", "c")
-                        set("email", "chris@demo.com")
-                        set("password", "123456Aa")
-                        set("confirmPassword", "123456Aa")
-                        set("invalidUsername", true)
-                        set("invalidEmail", true)
-//                        set("invalidPassword", true)
-//                        set("invalidConfirmPassword", true)
-//                        set("isPasswordsMatch", false)
-                        set("isShowInvalidUsernameMessage", true)
-                        set("isShowInvalidEmailMessage", true)
-//                        set("isShowInvalidPasswordMessage", true)
-//                        set("isShowInvalidConfirmPasswordMessage", true)
-//                        set("isLoading", true)
-//                        set("errorMessage", "Error Message")
-//                        set("statusMessage", "Status Message")
-//                        set("isLoggedIn", true)
-                    }
+//                    savedStateHandle = SavedStateHandle().apply {
+//                        // For Live Preview / interactive mode
+//                        set("username", "c")
+//                        set("email", "chris@demo.com")
+//                        set("password", "123456Aa")
+//                        set("confirmPassword", "123456Aa")
+//                        set("invalidUsername", true)
+//                        set("invalidEmail", true)
+////                        set("invalidPassword", true)
+////                        set("invalidConfirmPassword", true)
+////                        set("isPasswordsMatch", false)
+//                        set("isShowInvalidUsernameMessage", true)
+//                        set("isShowInvalidEmailMessage", true)
+////                        set("isShowInvalidPasswordMessage", true)
+////                        set("isShowInvalidConfirmPasswordMessage", true)
+////                        set("isLoading", true)
+////                        set("errorMessage", "Error Message")
+////                        set("statusMessage", "Status Message")
+////                        set("isLoggedIn", true)
+//                    }
                 )
             )
         }
