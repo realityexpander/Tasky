@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
@@ -14,6 +15,7 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_authInfo
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_isLoaded
+import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_username
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.UuidStr
