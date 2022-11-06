@@ -46,12 +46,12 @@ import kotlinx.coroutines.launch
 @Destination
 @RootNavGraph(start = true)
 fun LoginScreen(
-    username: String? = "Chris Athanas", //null,
+    username: String? = null, //"Chris Athanas",
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    email: String? = "chris3@demo.com", //null,
+    email: String? = null, //"chris3@demo.com",
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    password: String? = "Password1", //null,
-    confirmPassword: String? = "Password1", //null,
+    password: String? = null, //"Password1",
+    confirmPassword: String? = null, //"Password1",
     navigator: DestinationsNavigator,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
@@ -64,7 +64,6 @@ fun LoginScreen(
         onAction = viewModel::sendEvent,
         navigator = navigator,
     )
-
 }
 
 @Composable
