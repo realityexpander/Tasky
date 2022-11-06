@@ -62,9 +62,6 @@ class AgendaViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
         savedStateHandle[SAVED_STATE_agendaItems] = state.agendaItems
         savedStateHandle[SAVED_STATE_selectedDayIndex] = state.selectedDayIndex
-
-        // Validate as the user types
-//        if(state.username.isNotBlank()) sendEvent(AgendaEvent.ValidateUsername)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AgendaState())
 
     init {
@@ -157,12 +154,6 @@ class AgendaViewModel @Inject constructor(
             _agendaState.update {
                 it.copy(agendaItems = agendaItemsLoadedFromDB)
             }
-
-            // Validate email & password when restored from process death or coming from another screen
-//            if (agendaState.value.username.isNotBlank()) sendEvent(AgendaEvent.ValidateUsername)
-
-            // Show status validation messages when restored from process death or coming from another screen
-//            if(agendaState.value.isInvalidConfirmPassword) sendEvent(AgendaEvent.ShowInvalidConfirmPasswordMessage)
         }
     }
 
