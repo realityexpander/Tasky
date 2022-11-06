@@ -34,6 +34,7 @@ class AgendaViewModel @Inject constructor(
     //private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
+    // todo fix this when figure out Compose-destinations savedStateHandle issue
     private val savedStateHandle: SavedStateHandle = TaskyApplication.savedStateHandle
 
     // Get params from savedStateHandle (from another screen or after process death)
@@ -64,14 +65,10 @@ class AgendaViewModel @Inject constructor(
 
         // Validate as the user types
 //        if(state.username.isNotBlank()) sendEvent(AgendaEvent.ValidateUsername)
-
-        yield()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AgendaState())
 
     init {
         viewModelScope.launch {
-            yield()
-
             // restore state after process death
             _agendaState.update {
                 it.copy(
@@ -84,8 +81,6 @@ class AgendaViewModel @Inject constructor(
                     selectedDayIndex = selectedDayIndex
                 )
             }
-
-            yield()
 
             // simulate load from network or database
             // Dummy data for now
