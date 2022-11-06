@@ -110,8 +110,9 @@ dependencies {
     // Icons
     implementation "androidx.compose.material:material-icons-extended:$compose_ui_version"
 
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"  // for viewModelScope
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"  // for viewModelScope
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"  // for SavedStateHandle
 
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
