@@ -70,6 +70,11 @@ class MainActivity : ComponentActivity() {
                         viewModel.onSetAuthInfo(appSettings.authInfo)
                     }
 
+                    // This uses the normal SavedStateHandle with no problems (not using Compose-destinations)
+//                    if(!splashState.isLoading) {
+//                        LoginScreen(navigator = EmptyDestinationsNavigator)
+//                    }
+
                     if (!splashState.isLoading) {
                         DestinationsNavHost(
                             navGraph = NavGraphs.root,
@@ -91,3 +96,21 @@ class MainActivity : ComponentActivity() {
         exitProcess(0)
     }
 }
+
+// Code to test SavedStateHandle with Compose-destinations library
+//@Composable
+//@Destination
+//@RootNavGraph(start = true)
+//fun SplashStart(
+//    navigator: DestinationsNavigator,
+//) {
+//    val context = LocalContext.current
+//
+//    LaunchedEffect(true) {
+//        if (context.dataStore.data.first().authInfo != null) {
+//            navigator.navigate(AgendaScreenDestination())
+//        } else {
+//            navigator.navigate(LoginScreenDestination())
+//        }
+//    }
+//}

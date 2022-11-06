@@ -29,9 +29,10 @@ import javax.inject.Inject
 @HiltViewModel
 class AgendaViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
-    private val savedStateHandle: SavedStateHandle,
+    //private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
+    private val savedStateHandle: SavedStateHandle = TaskyApplication.savedStateHandle
 
     // Get params from savedStateHandle (from another screen or after process death)
     private val username: String =

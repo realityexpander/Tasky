@@ -14,11 +14,22 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
-//    private val savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _splashState = MutableStateFlow(SplashState())
     val splashState = _splashState.asStateFlow()
+
+    init {
+        TaskyApplication.savedStateHandle = savedStateHandle.apply {
+
+            // Temporarily set defaults for testing todo remove
+//            get<String>("email") ?: set("email", "chris3@demo.com")
+//            get<String>("password") ?: set("password", "Password1")
+//            get<String>("confirmPassword") ?: set("confirmPassword", "Password1")
+//            get<String>("username")  ?: set("username", "Chris Athanas")
+        }
+    }
 
     fun onSetAuthInfo(authInfo: AuthInfo?) {
         viewModelScope.launch {
