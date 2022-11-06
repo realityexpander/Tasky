@@ -341,7 +341,7 @@ class RegisterViewModel @Inject constructor(
                     || _registerState.value.isInvalidEmail
                     || _registerState.value.isInvalidPassword
                     || _registerState.value.isInvalidConfirmPassword
-                    || !registerState.value.isPasswordsMatch
+                    || !_registerState.value.isPasswordsMatch
                 ) return
 
                 sendEvent(RegisterEvent.SetIsLoading(true))
