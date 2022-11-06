@@ -123,23 +123,25 @@ class RegisterViewModel @Inject constructor(
 //            yield() // allow the registerState to be initialized
 
             // restore state after process death or from another screen (e.g. login)
-            _registerState.value = RegisterState(
-                username = username,
-                email = email,
-                password = password,
-                confirmPassword = confirmPassword,
-                isInvalidEmail = isInvalidEmail,
-                isInvalidEmailMessageVisible = isInvalidEmailMessageVisible,
-                isInvalidPassword = isInvalidPassword,
-                isInvalidPasswordMessageVisible = isInvalidPasswordMessageVisible,
-                isInvalidConfirmPassword = isInvalidConfirmPassword,
-                isInvalidConfirmPasswordMessageVisible = isInvalidConfirmPasswordMessageVisible,
-                isPasswordsMatch = isPasswordsMatch,
-                authInfo = authInfo,
-                statusMessage = statusMessage,
-                errorMessage = errorMessage,
-            )
-            yield() // allow the registerState to be updated
+            _registerState.update {
+                it.copy(
+                    username = username,
+                    email = email,
+                    password = password,
+                    confirmPassword = confirmPassword,
+                    isInvalidEmail = isInvalidEmail,
+                    isInvalidEmailMessageVisible = isInvalidEmailMessageVisible,
+                    isInvalidPassword = isInvalidPassword,
+                    isInvalidPasswordMessageVisible = isInvalidPasswordMessageVisible,
+                    isInvalidConfirmPassword = isInvalidConfirmPassword,
+                    isInvalidConfirmPasswordMessageVisible = isInvalidConfirmPasswordMessageVisible,
+                    isPasswordsMatch = isPasswordsMatch,
+                    authInfo = authInfo,
+                    statusMessage = statusMessage,
+                    errorMessage = errorMessage,
+                )
+            }
+//            yield() // allow the registerState to be updated
 
             // Validate email & password when restored from process death or coming from another screen
             if (registerState.value.username.isNotBlank()) sendEvent(RegisterEvent.ValidateUsername)
@@ -247,13 +249,13 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.ValidateUsername -> {
-                val isValid = validateUsername.validate(registerState.value.username)
+                val isValid = validateUsername.validate(_registerState.value.username)
                 _registerState.update {
                     it.copy(isInvalidUsername = !isValid)
                 }
             }
             is RegisterEvent.ValidateEmail -> {
-                val isValid = validateEmail.validate(registerState.value.email)
+                val isValid = validateEmail.validate(_registerState.value.email)
                 _registerState.update {
                     it.copy(
                         isInvalidEmail = !isValid
@@ -261,7 +263,7 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.ValidatePassword -> {
-                val isValid = validatePassword.validate(registerState.value.password)
+                val isValid = validatePassword.validate(_registerState.value.password)
                 _registerState.update {
                     it.copy(
                         isInvalidPassword = !isValid
@@ -269,7 +271,7 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.ValidateConfirmPassword -> {
-                val isValid = validatePassword.validate(registerState.value.confirmPassword)
+                val isValid = validatePassword.validate(_registerState.value.confirmPassword)
                 _registerState.update {
                     it.copy(
                         isInvalidConfirmPassword = !isValid
