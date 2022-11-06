@@ -1,11 +1,11 @@
 package com.realityexpander.tasky.presentation.login_screen
 
 import android.net.Uri
-import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.realityexpander.tasky.CoroutineTestRule
 import com.realityexpander.tasky.MainCoroutineRule
+import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
@@ -58,7 +58,7 @@ class LoginViewModelTest {
 
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            savedStateHandle = SavedStateHandle(),
+//            savedStateHandle = SavedStateHandle(), // todo add after Compose-Destination fix
             validateEmail = validateEmail,
             validatePassword = validatePassword,
         )
@@ -69,12 +69,14 @@ class LoginViewModelTest {
         // ARRANGE
         val expectedEmail = "chris@demo.com"
         val expectedPassword = "Ab3456789"
+        TaskyApplication.savedStateHandle["email"] = expectedEmail       // todo remove after Compose-Destination fix
+        TaskyApplication.savedStateHandle["password"] = expectedPassword
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            savedStateHandle = SavedStateHandle().apply {
-                set("email", expectedEmail)
-                set("password", expectedPassword)
-            },
+//            savedStateHandle = SavedStateHandle().apply {  // todo add after Compose-Destination fix
+//                set("email", expectedEmail)
+//                set("password", expectedPassword)
+//            },
             validateEmail = validateEmail,
             validatePassword = validatePassword,
         )
@@ -106,7 +108,7 @@ class LoginViewModelTest {
         // ARRANGE
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            savedStateHandle = SavedStateHandle(),
+//            savedStateHandle = SavedStateHandle(),
             validateEmail = validateEmail,
             validatePassword = validatePassword,
         )
