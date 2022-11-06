@@ -92,8 +92,6 @@ class LoginViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-//            yield() // allow the loginState to be initialized
-
             // restore state after process death
             _loginState.update {
                 it.copy(
@@ -109,13 +107,11 @@ class LoginViewModel @Inject constructor(
                     errorMessage = errorMessage
                 )
             }
-//            yield() // allow loginState to be updated
 
             // Validate email & password when restored from process death or coming from another screen
             if (loginState.value.email.isNotBlank()) sendEvent(LoginEvent.ValidateEmail)
             if (loginState.value.password.isNotBlank()) sendEvent(LoginEvent.ValidatePassword)
 
-//            yield() // allow loginState to be updated
             // Show status validation messages when restored from process death or coming from another screen
             if(loginState.value.isInvalidEmail) sendEvent(LoginEvent.ShowInvalidEmailMessage)
             if(loginState.value.isInvalidPassword) sendEvent(LoginEvent.ShowInvalidPasswordMessage)
@@ -188,7 +184,6 @@ class LoginViewModel @Inject constructor(
                         isInvalidEmail = !isValid,
                     )
                 }
-//                yield()
             }
             is LoginEvent.ValidatePassword -> {
                 val isValid = validatePassword.validate(loginState.value.password)
@@ -197,7 +192,6 @@ class LoginViewModel @Inject constructor(
                         isInvalidPassword = !isValid,
                     )
                 }
-//                yield()
             }
             is LoginEvent.ShowInvalidEmailMessage -> {
                 _loginState.value = _loginState.value.copy(

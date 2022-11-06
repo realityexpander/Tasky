@@ -232,7 +232,7 @@ fun LoginScreenContent(
                 state.errorMessage?.getOrNull?.let { errorMessage ->
                     Spacer(modifier = Modifier.extraSmallHeight())
                     Text(
-                        text = "Error: $errorMessage",
+                        text = errorMessage,
                         color = Color.Red,
                         modifier = Modifier
                             .animateContentSize()
