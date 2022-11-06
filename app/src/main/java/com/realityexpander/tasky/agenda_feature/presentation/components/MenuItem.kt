@@ -52,33 +52,31 @@ fun MenuItem(
             textAlign = TextAlign.Start,
             modifier = Modifier.weight(1f)
         )
-        if(vectorIcon != null || painterIcon != null) {
-            vectorIcon?.let {
-                Icon(
-                    imageVector = vectorIcon,
-                    contentDescription = iconContentDescription,
-                    tint = if (enabled)
-                        MaterialTheme.colors.surface
-                    else
-                        MaterialTheme.colors.surface.copy(alpha = 0.2f),
-                    modifier = Modifier
-                        .padding(DP.tiny)
-                        .align(Alignment.CenterVertically)
-                )
-            }
-            painterIcon?.let {
-                Icon(
-                    painter = painterIcon,
-                    contentDescription = iconContentDescription,
-                    tint = if (enabled)
-                        MaterialTheme.colors.surface
-                    else
-                        MaterialTheme.colors.surface.copy(alpha = 0.2f),
-                    modifier = Modifier
-                        .padding(DP.tiny)
-                        .align(Alignment.CenterVertically)
-                )
-            }
+        vectorIcon?.let {
+            Icon(
+                imageVector = vectorIcon,
+                contentDescription = iconContentDescription,
+                tint = if (enabled)
+                    MaterialTheme.colors.surface
+                else
+                    MaterialTheme.colors.surface.copy(alpha = 0.2f),
+                modifier = Modifier
+                    .padding(DP.tiny)
+                    .align(Alignment.CenterVertically)
+            )
+        }
+        painterIcon?.let {
+            Icon(
+                painter = painterIcon,
+                contentDescription = iconContentDescription,
+                tint = if (enabled)
+                    MaterialTheme.colors.surface
+                else
+                    MaterialTheme.colors.surface.copy(alpha = 0.2f),
+                modifier = Modifier
+                    .padding(DP.tiny)
+                    .align(Alignment.CenterVertically)
+            )
         }
         if(isSelected) {
             Icon(
