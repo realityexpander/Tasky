@@ -5,6 +5,7 @@ import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.Username
+import com.realityexpander.tasky.core.util.UuidStr
 
 data class AgendaState(
     val username: Username = "",
@@ -17,7 +18,10 @@ data class AgendaState(
     val errorMessage: UiText? = null,
 
     // One-time events
-    val oneTimeEvent: AgendaEvent? = null,
+    val scrollToItemId: UuidStr? = null,
+    val scrollToTop: Boolean = false,
+    val scrollToBottom: Boolean = false,
+    val resetScrollTo: Boolean = false,
 
     val agendaItems: List<AgendaItem> = emptyList(),
     val selectedDayIndex: Int = 0,

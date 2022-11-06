@@ -74,8 +74,8 @@ class AgendaViewModel @Inject constructor(
                     errorMessage = errorMessage,
                     authInfo = authRepository.getAuthInfo(),
                     agendaItems = agendaItems,
-                    oneTimeEvent = null,
                     selectedDayIndex = selectedDayIndex
+                    // todo do we need to restore the scroll position? Or open drop-down menus?
                 )
             }
 
@@ -169,18 +169,17 @@ class AgendaViewModel @Inject constructor(
         viewModelScope.launch {
             val agendaItems = agendaState.value.agendaItems.toMutableList()
 
-            var agendaItem: AgendaItem? = null
             val today = LocalDate.now()
-            val todayDayOfWeek = today.dayOfWeek.value
+            val todayDayOfWeek = today.dayOfWeek.name
             val todayDayOfMonth = today.dayOfMonth
             val todayMonth = today.month
             val todayYear = today.year
             val todayDate = LocalDate.of(todayYear, todayMonth, todayDayOfMonth)
 
             // todo create Dummy data for now - replace with actual data soon
-            when(agendaItemType) {
+            val agendaItem = when(agendaItemType) {
                 AgendaItemType.Event -> {
-                   agendaItem = AgendaItem.Event(
+                   AgendaItem.Event(
                        id = UUID.randomUUID().toString(),
                        title = "New Event for $todayDate",
                        from = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 10, 0),
@@ -188,33 +187,31 @@ class AgendaViewModel @Inject constructor(
                        remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 9, 0),
                        description = "New Event Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
                    )
-                   agendaItems.add(agendaItem)
                }
                 AgendaItemType.Task -> {
-                     agendaItem = AgendaItem.Task(
+                     AgendaItem.Task(
                           id = UUID.randomUUID().toString(),
                           title = "New Task for $todayDate",
                           time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 13, 0),
                           remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 12, 30),
                           description = "New Task Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
                      )
-                     agendaItems.add(agendaItem)
                 }
                 AgendaItemType.Reminder -> {
-                     agendaItem = AgendaItem.Reminder(
+                     AgendaItem.Reminder(
                           id = UUID.randomUUID().toString(),
                           title = "New Reminder for $todayDate",
                           time = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 16, 0),
                           remindAt = LocalDateTime.of(todayYear, todayMonth, todayDayOfMonth, 14, 30),
                           description = "New Reminder Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
                      )
-                     agendaItems.add(agendaItem)
+
                 }
             }
-
+            agendaItems.add(agendaItem)
             _agendaState.value = agendaState.value.copy(agendaItems = agendaItems)
 
-            sendEvent(AgendaEvent.StatefulOneTimeEvent.ScrollToItem(agendaItem.id))
+            sendEvent(AgendaEvent.StatefulOneTimeEvent.ScrollToItemId(agendaItem.id))
         }
     }
 
@@ -269,16 +266,34 @@ class AgendaViewModel @Inject constructor(
             }
             is AgendaEvent.StatefulOneTimeEvent -> {
                 when (event) {
-                    is AgendaEvent.StatefulOneTimeEvent.Reset -> {
-                        // • Reset the one time event
+
+                    // Because you can only scroll to one location at a time, we only
+                    // need one reset event to reset all the scrolling events.
+                    is AgendaEvent.StatefulOneTimeEvent.ResetScrollTo -> {
                         _agendaState.update {
-                            it.copy(oneTimeEvent = null)
+                            it.copy(
+                                scrollToItemId = null,
+                                scrollToTop = false,
+                                scrollToBottom = false
+                            )
                         }
                     }
-                    else -> {
+                    is AgendaEvent.StatefulOneTimeEvent.ScrollToTop -> {
                         // • Send the one time event
                         _agendaState.update {
-                            it.copy(oneTimeEvent = event)
+                            it.copy(scrollToTop = true)
+                        }
+                    }
+                    is AgendaEvent.StatefulOneTimeEvent.ScrollToBottom -> {
+                        // • Send the one time event
+                        _agendaState.update {
+                            it.copy(scrollToBottom = true)
+                        }
+                    }
+                    is AgendaEvent.StatefulOneTimeEvent.ScrollToItemId -> {
+                        // • Send the one time event
+                        _agendaState.update {
+                            it.copy(scrollToItemId = event.agendaItemId)
                         }
                     }
                 }

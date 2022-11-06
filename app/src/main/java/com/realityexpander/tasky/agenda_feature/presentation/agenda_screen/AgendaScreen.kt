@@ -143,21 +143,28 @@ fun AgendaScreenContent(
         (context as MainActivity).exitApp()
     }
 
-    // Handle one-time "sequenced" events
-    LaunchedEffect(state.oneTimeEvent) {
-        state.oneTimeEvent?.let { oneTimeEvent->
-            when (oneTimeEvent) {
-                is AgendaEvent.StatefulOneTimeEvent.ScrollToItem -> {
-                    val item = agendaItems.indexOfFirst { it.id == oneTimeEvent.agendaItemId }
-                    if (item >= 0) {
-                        scope.launch {
-                            scrollState.animateScrollToItem(item)
-                            onAction(AgendaEvent.StatefulOneTimeEvent.Reset)
-                        }
-                    }
+    // Handle stateful one-time events
+    LaunchedEffect(state.agendaItems) {
+        if(state.scrollToItemId != null) {
+            val item = agendaItems.indexOfFirst { it.id == state.scrollToItemId }
+            if (item >= 0) {
+                scope.launch {
+                    scrollState.animateScrollToItem(item)
                 }
-                else -> {}
             }
+            onAction(AgendaEvent.StatefulOneTimeEvent.ResetScrollTo)
+        }
+        if(state.scrollToTop) {
+            scope.launch {
+                scrollState.animateScrollToItem(0)
+            }
+            onAction(AgendaEvent.StatefulOneTimeEvent.ResetScrollTo)
+        }
+        if(state.scrollToBottom) {
+            scope.launch {
+                scrollState.animateScrollToItem(agendaItems.size - 1)
+            }
+            onAction(AgendaEvent.StatefulOneTimeEvent.ResetScrollTo)
         }
     }
 
