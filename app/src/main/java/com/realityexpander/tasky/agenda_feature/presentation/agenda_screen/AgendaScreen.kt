@@ -147,12 +147,12 @@ fun AgendaScreenContent(
     LaunchedEffect(state.oneTimeEvent) {
         state.oneTimeEvent?.let { oneTimeEvent->
             when (oneTimeEvent) {
-                is AgendaEvent.OneTimeEvent.ScrollToItem -> {
+                is AgendaEvent.StatefulOneTimeEvent.ScrollToItem -> {
                     val item = agendaItems.indexOfFirst { it.id == oneTimeEvent.agendaItemId }
                     if (item >= 0) {
                         scope.launch {
                             scrollState.animateScrollToItem(item)
-                            onAction(AgendaEvent.OneTimeEvent.Reset)
+                            onAction(AgendaEvent.StatefulOneTimeEvent.Reset)
                         }
                     }
                 }

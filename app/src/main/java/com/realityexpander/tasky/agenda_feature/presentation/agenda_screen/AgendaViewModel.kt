@@ -226,7 +226,7 @@ class AgendaViewModel @Inject constructor(
 
             _agendaState.value = agendaState.value.copy(agendaItems = agendaItems)
 
-            sendEvent(AgendaEvent.OneTimeEvent.ScrollToItem(agendaItem.id))
+            sendEvent(AgendaEvent.StatefulOneTimeEvent.ScrollToItem(agendaItem.id))
         }
     }
 
@@ -279,9 +279,9 @@ class AgendaViewModel @Inject constructor(
                 }
                 logout()
             }
-            is AgendaEvent.OneTimeEvent -> {
+            is AgendaEvent.StatefulOneTimeEvent -> {
                 when (event) {
-                    is AgendaEvent.OneTimeEvent.Reset -> {
+                    is AgendaEvent.StatefulOneTimeEvent.Reset -> {
                         // • Reset the one time event
                         _agendaState.update {
                             it.copy(oneTimeEvent = null)

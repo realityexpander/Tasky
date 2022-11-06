@@ -23,11 +23,11 @@ sealed interface AgendaEvent {
     data class Error(val message: UiText) : AgendaEvent
 
     // • One-time events
-    sealed interface OneTimeEvent {
-        object Reset : OneTimeEvent, AgendaEvent
-        data class ScrollToItem( val agendaItemId: UuidStr) : OneTimeEvent, AgendaEvent
-        object ScrollToTop : OneTimeEvent, AgendaEvent
-        object ScrollToBottom : OneTimeEvent, AgendaEvent
+    sealed interface StatefulOneTimeEvent {
+        object Reset : StatefulOneTimeEvent, AgendaEvent
+        data class ScrollToItem( val agendaItemId: UuidStr) : StatefulOneTimeEvent, AgendaEvent
+        object ScrollToTop : StatefulOneTimeEvent, AgendaEvent
+        object ScrollToBottom : StatefulOneTimeEvent, AgendaEvent
     }
 }
 
