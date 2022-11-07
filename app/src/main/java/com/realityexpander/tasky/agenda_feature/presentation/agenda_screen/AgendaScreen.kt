@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -22,15 +23,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toSize
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,6 +41,7 @@ import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
+import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.agenda_feature.presentation.components.AgendaCard
 import com.realityexpander.tasky.agenda_feature.presentation.components.UserAcronymCircle
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
@@ -48,9 +49,10 @@ import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.DaySelected
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
-import com.realityexpander.tasky.core.util.UuidStr
 import com.realityexpander.tasky.destinations.LoginScreenDestination
+import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.*
 
@@ -58,15 +60,15 @@ import java.util.*
 @Destination
 fun AgendaScreen(
 //    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-//    username: String? = null,
+//    username: String?,//  = null,
 //    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
 //    email: String? = null,
 //    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
 //    password: String? = null,
+    selectedDayIndex: Int? = 0,
     navigator: DestinationsNavigator,
     viewModel: AgendaViewModel = hiltViewModel(),
 ) {
-
     val agendaState by viewModel.agendaState.collectAsState()
 
     AgendaScreenContent(
@@ -89,16 +91,11 @@ fun AgendaScreenContent(
 ) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
-
-    var selectedDay by remember { mutableStateOf(0) }
-
-    var logoutButtonSize by remember { mutableStateOf(Size.Zero)}
-    var logoutButtonOffset by remember { mutableStateOf(Offset.Zero)}
+    val scrollState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
 
     val agendaItems = state.agendaItems
-
-    // Keeps track of the dropdown menu offsets
-    val agendaItemMenuInfos = remember { mutableStateMapOf<UuidStr, MenuItemInfo>() }
+    val selectedDayIndex = state.selectedDayIndex
 
     // create days of the week for top of screen
     val daysInitialsAndDayOfWeek = remember(LocalDate.now().dayOfMonth) {   // initial of day of week, day of month
@@ -115,14 +112,15 @@ fun AgendaScreenContent(
     }
 
     // Display month name
-    val month = remember { LocalDate.now().month.getDisplayName(TextStyle.FULL, Locale.getDefault()).uppercase() }
+    val month = remember(LocalDate.now().month) { LocalDate.now().month.getDisplayName(TextStyle.FULL, Locale.getDefault()).uppercase() }
 
     fun navigateToLogin() {
         navigator.navigate(
             LoginScreenDestination(
-                username = state.username,
-                email = state.email,
+                username = null,
+                email = null,
                 password = null,
+                confirmPassword = null,
             )
         ) {
             popUpTo(LoginScreenDestination.route) {
@@ -145,6 +143,33 @@ fun AgendaScreenContent(
         // todo: should we ask the user to quit?
         (context as MainActivity).exitApp()
     }
+
+    // Handle stateful one-time events
+    LaunchedEffect(state.agendaItems) {
+        if(state.scrollToItemId != null) {
+            val item = agendaItems.indexOfFirst { it.id == state.scrollToItemId }
+            if (item >= 0) {
+                scope.launch {
+                    scrollState.animateScrollToItem(item)
+                }
+            }
+            onAction(AgendaEvent.StatefulOneTimeEvent.ResetScrollTo)
+        }
+        if(state.scrollToTop) {
+            scope.launch {
+                scrollState.animateScrollToItem(0)
+            }
+            onAction(AgendaEvent.StatefulOneTimeEvent.ResetScrollTo)
+        }
+        if(state.scrollToBottom) {
+            scope.launch {
+                scrollState.animateScrollToItem(agendaItems.size - 1)
+            }
+            onAction(AgendaEvent.StatefulOneTimeEvent.ResetScrollTo)
+        }
+    }
+
+    // todo Handle "un-sequenced" one-time events (like Snackbar), will use a Channel or SharedFlow
 
     // Check keyboard open/closed (how to make this a function?)
     val view = LocalView.current
@@ -200,23 +225,41 @@ fun AgendaScreenContent(
                         .align(Alignment.CenterVertically)
                 )
             }
-            UserAcronymCircle(
-                username = state.authInfo?.username,
+
+            Box(
                 modifier = Modifier
                     .alignByBaseline()
                     .align(Alignment.CenterVertically)
                     .weight(1f)
                     .wrapContentWidth(Alignment.End)
-                    .clickable {
-                        onAction(AgendaEvent.ToggleLogoutDropdown)
-                    }
-                    .onGloballyPositioned { coordinates ->
-                        logoutButtonSize = coordinates.size.toSize()
-                        logoutButtonOffset = coordinates.localToRoot(
-                            Offset.Zero
-                        )
-                    }
-            )
+            ) {
+                var isLogoutMenuExpanded by remember { mutableStateOf(false) }
+
+                UserAcronymCircle(
+                    username = state.authInfo?.username,
+                    modifier = Modifier
+                        .clickable {
+                            isLogoutMenuExpanded = true
+                        }
+                )
+
+                // • Logout user dropdown
+                DropdownMenu(
+                    expanded = isLogoutMenuExpanded,
+                    onDismissRequest = { isLogoutMenuExpanded = false },
+                    modifier = Modifier
+                        .background(color = MaterialTheme.colors.onSurface)
+                ) {
+                    MenuItem(
+                        title = "Logout",
+                        vectorIcon = Icons.Filled.Logout,
+                        onClick = {
+                            isLogoutMenuExpanded = false
+                            onAction(AgendaEvent.Logout)
+                        },
+                    )
+                }
+            }
 
         }
 
@@ -232,14 +275,14 @@ fun AgendaScreenContent(
 
             // • DAYS OF WEEK & Day PICKER
             Row {
-                daysInitialsAndDayOfWeek.forEachIndexed { i, (dayInitial, dayOfMonth) ->
+                daysInitialsAndDayOfWeek.forEachIndexed { dayIndex, (dayInitial, dayOfMonth) ->
 
                     Column(
                         modifier = Modifier
                             .weight(1f)
                             .wrapContentWidth(Alignment.CenterHorizontally)
                             .drawBehind {
-                                if (selectedDay == i) {
+                                if (selectedDayIndex == dayIndex) {
                                     Paint().apply {
                                         color = DaySelected.toArgb()
                                         strokeWidth = 1f
@@ -257,19 +300,18 @@ fun AgendaScreenContent(
                                 }
                             }
                             .clickable {
-                                //onAction(AgendaEvent.SetSelectedDay(i))
-                                selectedDay = i
+                                onAction(AgendaEvent.SetSelectedDayIndex(dayIndex))
                             }
                     ) {
                         // Day of week (S, M, T, W, T, F, S)
                         Text(
                             text = dayInitial,
                             style = MaterialTheme.typography.subtitle2,
-                            fontWeight = if (selectedDay == i)
+                            fontWeight = if (selectedDayIndex == dayIndex)
                                     FontWeight.Bold
                                 else
                                     FontWeight.SemiBold,
-                            color = if (selectedDay == i)
+                            color = if (selectedDayIndex == dayIndex)
                                     Color.Black
                                 else
                                     MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
@@ -285,7 +327,7 @@ fun AgendaScreenContent(
                             text = dayOfMonth.toString(),
                             style = MaterialTheme.typography.h3,
                             fontWeight = FontWeight.Bold,
-                            color = if (selectedDay == i)
+                            color = if (selectedDayIndex == dayIndex)
                                     Color.Black
                                 else
                                     MaterialTheme.colors.onSurface,
@@ -304,11 +346,11 @@ fun AgendaScreenContent(
         // • SHOW TODAY'S DATE
         Text(
             text =
-            when (selectedDay) {
+            when (selectedDayIndex) {
                 0 -> "Today"
                 1 -> "Tomorrow"
                 else -> {
-                    val date = LocalDate.now().plusDays(selectedDay.toLong())
+                    val date = LocalDate.now().plusDays((selectedDayIndex ?: 0).toLong())
                     val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
                     val dayOfMonth = date.dayOfMonth.toString()
                     val monthName = date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
@@ -335,38 +377,53 @@ fun AgendaScreenContent(
 
         // • SHOW AGENDA ITEMS LIST
         LazyColumn(
+            state = scrollState,
             modifier = Modifier
                 .background(color = MaterialTheme.colors.surface)
                 .fillMaxSize()
                 .padding(start = DP.tiny, end = DP.tiny)
         ) {
             itemsIndexed(items = agendaItems) { index, agendaItem ->
-                AgendaCard(
-                    agendaItem = agendaItem,
-                    onMenuClick = {
-                        onAction(AgendaEvent.ShowAgendaItemDropdown(agendaItem.id))
-                    },
-                    onToggleCompleted = {
-                        if(agendaItem is AgendaItem.Task) {
-                            onAction(AgendaEvent.ToggleTaskCompleted(agendaItem.id))
-                        }
-                    },
-                    setMenuPositionCallback = { coordinates ->
-                        agendaItemMenuInfos[agendaItem.id] = MenuItemInfo(
-                            menuPosition = coordinates.positionInRoot(),
-                            agendaItem = agendaItem
-                        )
-                    },
-                    modifier = Modifier
-                        .padding(start = DP.tiny, end = DP.tiny)
-                        .clickable {
+                Box {
+                    AgendaCard(
+                        agendaItem = agendaItem,
+                        onToggleCompleted = {
+                            if (agendaItem is AgendaItem.Task) {
+                                onAction(AgendaEvent.TaskToggleCompleted(agendaItem.id))
+                            }
+                        },
+                        modifier = Modifier
+                            .padding(start = DP.tiny, end = DP.tiny)
+                            .clickable {
+                                performActionForAgendaItem(
+                                    agendaItem,
+                                    AgendaItemAction.OPEN_DETAILS,
+                                    onAction
+                                )
+                            },
+                        onEdit = {
+                            performActionForAgendaItem(
+                                agendaItem,
+                                AgendaItemAction.EDIT,
+                                onAction
+                            )
+                        },
+                        onDelete = {
+                            performActionForAgendaItem(
+                                agendaItem,
+                                AgendaItemAction.DELETE,
+                                onAction
+                            )
+                        },
+                        onViewDetails = {
                             performActionForAgendaItem(
                                 agendaItem,
                                 AgendaItemAction.OPEN_DETAILS,
                                 onAction
                             )
                         }
-                )
+                    )
+                }
 
                 if (index < agendaItems.size - 1) {
                     Spacer(modifier = Modifier.smallHeight())
@@ -431,89 +488,13 @@ fun AgendaScreenContent(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-        // • Logout user dropdown
-        DropdownMenu(
-            expanded = state.isLogoutDropdownVisible,
-            onDismissRequest = { onAction(AgendaEvent.ToggleLogoutDropdown) },
-            offset = DpOffset(
-                x = logoutButtonOffset.x.dp - logoutButtonSize.width.dp * 3f,
-                y = -screenHeight
-            ),
-            modifier = Modifier
-                .width(with(LocalDensity.current) {
-                    (logoutButtonSize.width * 6f).toDp()
-                })
-                .background(color = MaterialTheme.colors.onSurface)
-        ) {
-            MenuItem(
-                title = "Logout",
-                icon = Icons.Filled.Logout,
-                onClick = {
-                    onAction(AgendaEvent.ToggleLogoutDropdown)
-                    onAction(AgendaEvent.Logout)
-                },
-            )
-        }
+        var isFabMenuExpanded by remember { mutableStateOf(false) }
 
-        // • AgendaItem open/edit/delete dropdown
-        if(state.agendaItemIdForMenu != null) {
-
-            DropdownMenu(
-                expanded = true,
-                onDismissRequest = { onAction(AgendaEvent.ShowAgendaItemDropdown(null)) },
-                offset = DpOffset(
-                    x = with(LocalDensity.current) {
-                            (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.x ?: 0f).toDp()
-                        },
-                    y = with(LocalDensity.current) {
-                            (-screenHeight + (agendaItemMenuInfos[state.agendaItemIdForMenu]?.menuPosition?.y ?: 0f).toDp())
-                        }
-                ),
-                modifier = Modifier
-                    .background(color = MaterialTheme.colors.onSurface)
-            ) {
-                MenuItem(
-                    title = "Open",
-                    icon = Icons.Filled.OpenInNew,
-                    onClick = {
-                        performActionForAgendaItem(
-                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-                            action = AgendaItemAction.OPEN_DETAILS,
-                            onAction = onAction
-                        )
-                    },
-                )
-                MenuItem(
-                    title = "Edit",
-                    icon = Icons.Filled.Edit,
-                    onClick = {
-                        performActionForAgendaItem(
-                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-                            action = AgendaItemAction.EDIT,
-                            onAction = onAction
-                        )
-                    },
-                )
-                MenuItem(
-                    title = "Delete",
-                    icon = Icons.Filled.Delete,
-                    onClick = {
-                        performActionForAgendaItem(
-                            agendaItemMenuInfos[state.agendaItemIdForMenu]?.agendaItem,
-                            action = AgendaItemAction.DELETE,
-                            onAction = onAction
-                        )
-                    },
-                )
-            }
-        }
-
-        // • FAB to add new agenda item
+        // • FAB to create new agenda item
         IconButton(
             onClick = {
-                // onAction(AgendaEvent.ShowAddAgendaItemDialog)
+                isFabMenuExpanded = true
             },
             modifier = Modifier
                 .size(DP.XXXLarge)
@@ -522,6 +503,7 @@ fun AgendaScreenContent(
                 .background(color = MaterialTheme.colors.onSurface)
                 .align(alignment = Alignment.BottomEnd)
         ) {
+
             Icon(
                 tint = MaterialTheme.colors.surface,
                 imageVector = Icons.Filled.Add,
@@ -531,6 +513,39 @@ fun AgendaScreenContent(
                     .size(DP.XXXLarge)
                     .padding(start = 6.dp, end = 6.dp) // fine tunes the icon size (weird)
             )
+
+            // • Create AgendaItem Event/Task/Reminder
+            DropdownMenu(
+                expanded = isFabMenuExpanded,
+                onDismissRequest = { isFabMenuExpanded = false },
+                modifier = Modifier
+                    .background(color = MaterialTheme.colors.onSurface)
+            ) {
+                MenuItem(
+                    title = "Event",
+                    painterIcon = painterResource(id = R.drawable.calendar_add_on),
+                    onClick = {
+                        isFabMenuExpanded = false
+                        onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Event))
+                    },
+                )
+                MenuItem(
+                    title = "Task",
+                    vectorIcon = Icons.Filled.AddTask,
+                    onClick = {
+                        isFabMenuExpanded = false
+                        onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Task))
+                    },
+                )
+                MenuItem(
+                    title = "Reminder",
+                    vectorIcon = Icons.Filled.NotificationAdd,
+                    onClick = {
+                        isFabMenuExpanded = false
+                        onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Reminder))
+                    },
+                )
+            }
         }
     }
 }
@@ -540,7 +555,6 @@ fun performActionForAgendaItem(
     action: AgendaItemAction,
     onAction: (AgendaEvent)-> Unit
 ) {
-    onAction(AgendaEvent.ShowAgendaItemDropdown(null)) // close the menu
 
     agendaItem ?: return
 
@@ -624,10 +638,34 @@ fun AgendaScreenPreview() {
                 authInfo = AuthInfo(
                     username = "Chris Athanas",
                 ),
+                agendaItems = listOf(
+                    AgendaItem.Event(
+                        id = "1",
+                        title = "Event 1",
+                        description = "Event Description 1",
+                        from = LocalDateTime.now(),
+                        to = LocalDateTime.now().plusHours(1),
+                        remindAt = LocalDateTime.now(),
+                    ),
+                    AgendaItem.Task(
+                        id = "2",
+                        title = "Task 2",
+                        description = "Task Description 2",
+                        time = LocalDateTime.now().plusHours(3),
+                        isDone = false,
+                        remindAt = LocalDateTime.now().plusHours(2),
+                    ),
+                    AgendaItem.Reminder(
+                        id = "3",
+                        title = "Reminder 3",
+                        description = "Reminder Description 3",
+                        time = LocalDateTime.now(),
+                        remindAt = LocalDateTime.now().plusDays(1),
+                    ),
+                ),
                 isLoaded = true,
-                //isLogoutDropdownShowing = true,
             ),
-            onAction = {},
+            onAction = { println("ACTION: $it") },
             navigator = EmptyDestinationsNavigator,
         )
     }
@@ -644,8 +682,6 @@ fun AgendaScreenPreview() {
 fun AgendaScreenPreview_NightMode_NO() {
     AgendaScreenPreview()
 }
-
-
 
 
 

@@ -112,6 +112,11 @@ class AuthApiImpl @Inject constructor (
             return when(response.code()) {
                 200 -> true // Success
                 401 -> false
+                429 -> throw Exceptions.NetworkException(
+                    "Rate Limit Exceeded - " +
+                    "${response.code()} - " +
+                    getErrorBodyMessage(response.errorBody()?.string())
+                )
                 else -> throw Exceptions.UnknownErrorException(
                     "${response.message()} - " +
                     "${response.code()} - " +

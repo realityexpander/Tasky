@@ -35,6 +35,8 @@ class LoginViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
+    //private val savedStateHandle: SavedStateHandle = TaskyApplication.savedStateHandle
+
     private val username: String =
         Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: ""
     private val email: String =
@@ -83,32 +85,31 @@ class LoginViewModel @Inject constructor(
         // Validate as the user types
         if(state.email.isNotBlank()) sendEvent(LoginEvent.ValidateEmail)
         if(state.password.isNotBlank()) sendEvent(LoginEvent.ValidatePassword)
+
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), LoginState())
 
     init {
         viewModelScope.launch {
-            yield() // allow the loginState to be initialized
-
             // restore state after process death
-            _loginState.value = LoginState(
-                username = username,
-                email = email,
-                password = password,
-                isInvalidEmail = isInvalidEmail,
-                isInvalidEmailMessageVisible = isInvalidEmailMessageVisible,
-                isInvalidPassword = isInvalidPassword,
-                isInvalidPasswordMessageVisible = isInvalidPasswordMessageVisible,
-                authInfo = authInfo,
-                statusMessage = statusMessage,
-                errorMessage = errorMessage
-            )
-            yield() // allow loginState to be updated
+            _loginState.update {
+                it.copy(
+                    username = username,
+                    email = email,
+                    password = password,
+                    isInvalidEmail = isInvalidEmail,
+                    isInvalidEmailMessageVisible = isInvalidEmailMessageVisible,
+                    isInvalidPassword = isInvalidPassword,
+                    isInvalidPasswordMessageVisible = isInvalidPasswordMessageVisible,
+                    authInfo = authInfo,
+                    statusMessage = statusMessage,
+                    errorMessage = errorMessage
+                )
+            }
 
             // Validate email & password when restored from process death or coming from another screen
             if (loginState.value.email.isNotBlank()) sendEvent(LoginEvent.ValidateEmail)
             if (loginState.value.password.isNotBlank()) sendEvent(LoginEvent.ValidatePassword)
 
-            yield() // allow loginState to be updated
             // Show status validation messages when restored from process death or coming from another screen
             if(loginState.value.isInvalidEmail) sendEvent(LoginEvent.ShowInvalidEmailMessage)
             if(loginState.value.isInvalidPassword) sendEvent(LoginEvent.ShowInvalidPasswordMessage)
@@ -153,7 +154,7 @@ class LoginViewModel @Inject constructor(
                         email = event.email,
                         isInvalidEmail = false,
                         isInvalidEmailMessageVisible = false,
-                        errorMessage = UiText.None,
+                        errorMessage = null,
                     )
                 }
             }
@@ -163,7 +164,7 @@ class LoginViewModel @Inject constructor(
                         password = event.password,
                         isInvalidPassword = false,
                         isInvalidPasswordMessageVisible = false,
-                        errorMessage = UiText.None,
+                        errorMessage = null,
                     )
                 }
             }
@@ -181,7 +182,6 @@ class LoginViewModel @Inject constructor(
                         isInvalidEmail = !isValid,
                     )
                 }
-                yield()
             }
             is LoginEvent.ValidatePassword -> {
                 val isValid = validatePassword.validate(loginState.value.password)
@@ -190,7 +190,6 @@ class LoginViewModel @Inject constructor(
                         isInvalidPassword = !isValid,
                     )
                 }
-                yield()
             }
             is LoginEvent.ShowInvalidEmailMessage -> {
                 _loginState.value = _loginState.value.copy(
@@ -227,8 +226,8 @@ class LoginViewModel @Inject constructor(
                 _loginState.update {
                     it.copy(
                         authInfo = event.authInfo,
-                        errorMessage = UiText.None,
-                        statusMessage = UiText.None, //UiText.Res(R.string.login_success, event.authInfo), // keep for debugging
+                        errorMessage = null,
+                        statusMessage = null,
                         isPasswordVisible = false,
                     )
                 }
@@ -238,7 +237,7 @@ class LoginViewModel @Inject constructor(
                 _loginState.update {
                     it.copy(
                         errorMessage = event.message,
-                        statusMessage = UiText.None,
+                        statusMessage = null,
                         isLoading = false
                     )
                 }

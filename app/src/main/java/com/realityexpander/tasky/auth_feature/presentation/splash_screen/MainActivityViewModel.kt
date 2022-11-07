@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.auth_feature.presentation.splash_screen
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
@@ -14,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
-//    private val savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _splashState = MutableStateFlow(SplashState())
@@ -26,8 +27,21 @@ class MainActivityViewModel @Inject constructor(
             // set the AuthInfo (& AuthToken) for this user
             authRepository.setAuthInfo(authInfo)
 
+            val authenticateSuccess = try {
+                authRepository.authenticate()
+                true
+            } catch (e: Exception) {
+                _splashState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e.message
+                    )
+                }
+                false
+            }
+
             if( authInfo != null
-                && authRepository.authenticate()
+                && authenticateSuccess
             ) {
                 // User is authenticated
                 _splashState.update {

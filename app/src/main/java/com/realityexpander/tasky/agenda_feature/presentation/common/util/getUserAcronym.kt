@@ -19,7 +19,7 @@ fun main() {
     println(getUserAcronym("John Doe") == "JD")
     println(getUserAcronym("John") == "JO")
     println(getUserAcronym("J") == "J")
-    println(getUserAcronym("") == "??")
+    println(getUserAcronym("") == "")
     println(getUserAcronym("John Doe Smith") == "JS")
     println(getUserAcronym("John Doe Smith Jr.") == "JJ")
     println(getUserAcronym("John Doe Smith Jr. III") == "JI")

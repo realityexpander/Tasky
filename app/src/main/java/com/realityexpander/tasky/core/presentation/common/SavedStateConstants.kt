@@ -23,7 +23,6 @@ object SavedStateConstants {
 
     // Agenda screen
     const val SAVED_STATE_agendaItemIdForMenu                    = "agendaItemIdForMenu"
-    const val SAVED_STATE_isLogoutDropdownVisible                = "isLogoutDropdownVisible"
     const val SAVED_STATE_agendaItems                            = "agendaItems"
-
+    const val SAVED_STATE_selectedDayIndex                       = "selectedDayIndex"
 }

@@ -12,14 +12,17 @@ data class AgendaState(
     val email: Email = "",
     val authInfo: AuthInfo? = null,
 
-    val isLoaded: Boolean = false,
+    val isLoaded: Boolean = false, // true only after init() is called
     val isLoading: Boolean = false,
 
     val errorMessage: UiText? = null,
 
-    // Dropdown Menus
-    val isLogoutDropdownVisible: Boolean = false,
-    val agendaItemIdForMenu: UuidStr? = null,
+    // One-time events
+    val scrollToItemId: UuidStr? = null,
+    val scrollToTop: Boolean = false,
+    val scrollToBottom: Boolean = false,
+    val resetScrollTo: Boolean = false,
 
     val agendaItems: List<AgendaItem> = emptyList(),
+    val selectedDayIndex: Int? = null,
 )
