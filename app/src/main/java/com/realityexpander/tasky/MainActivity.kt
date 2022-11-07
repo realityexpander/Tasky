@@ -81,6 +81,7 @@ class MainActivity : ComponentActivity() {
 
                     if (!splashState.isLoading) {
 
+                        // Check for errors
                         if(splashState.error != null) {
                             Toast.makeText(context, splashState.error, Toast.LENGTH_LONG).show()
                             Thread.sleep(2000)
