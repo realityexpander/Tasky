@@ -30,12 +30,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
-import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoFakeImpl
-import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
-import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
-import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
-import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.auth_feature.presentation.components.EmailField
 import com.realityexpander.tasky.auth_feature.presentation.components.NameField
 import com.realityexpander.tasky.auth_feature.presentation.components.PasswordField
@@ -389,51 +383,51 @@ fun RegisterScreenPreview_NightMode_NO() {
     RegisterScreenPreview()
 }
 
-@Composable
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    group = "ViewModel"
-)
-fun RegisterScreenPreview_Interactive() {
-    TaskyTheme {
-        Surface {
-            RegisterScreen(
-                email = "hello",
-                navigator = EmptyDestinationsNavigator,
-                viewModel = RegisterViewModel(
-                    authRepository = AuthRepositoryFakeImpl(
-                        authApi = AuthApiFakeImpl(),
-                        authDao = AuthDaoFakeImpl(),
-                        validateUsername = ValidateUsername(),
-                        validateEmail = ValidateEmail(),
-                        validatePassword = ValidatePassword(),
-                    ),
-                    validateUsername = ValidateUsername(),
-                    validateEmail = ValidateEmail(),
-                    validatePassword = ValidatePassword(),
-//                    savedStateHandle = SavedStateHandle().apply {
-//                        // For Live Preview / interactive mode
-//                        set("username", "c")
-//                        set("email", "chris@demo.com")
-//                        set("password", "123456Aa")
-//                        set("confirmPassword", "123456Aa")
-//                        set("invalidUsername", true)
-//                        set("invalidEmail", true)
-////                        set("invalidPassword", true)
-////                        set("invalidConfirmPassword", true)
-////                        set("isPasswordsMatch", false)
-//                        set("isShowInvalidUsernameMessage", true)
-//                        set("isShowInvalidEmailMessage", true)
-////                        set("isShowInvalidPasswordMessage", true)
-////                        set("isShowInvalidConfirmPasswordMessage", true)
-////                        set("isLoading", true)
-////                        set("errorMessage", "Error Message")
-////                        set("statusMessage", "Status Message")
-////                        set("isLoggedIn", true)
-//                    }
-                )
-            )
-        }
-    }
-}
+//@Composable
+//@Preview(
+//    showBackground = true,
+//    uiMode = Configuration.UI_MODE_NIGHT_YES,
+//    group = "ViewModel"
+//)
+//fun RegisterScreenPreview_Interactive() {
+//    TaskyTheme {
+//        Surface {
+//            RegisterScreen(
+//                email = "hello",
+//                navigator = EmptyDestinationsNavigator,
+//                viewModel = RegisterViewModel(
+//                    authRepository = AuthRepositoryFakeImpl(
+//                        authApi = AuthApiFakeImpl(),
+//                        authDao = AuthDaoFakeImpl(),
+//                        validateUsername = ValidateUsername(),
+//                        validateEmail = ValidateEmail(),
+//                        validatePassword = ValidatePassword(),
+//                    ),
+//                    validateUsername = ValidateUsername(),
+//                    validateEmail = ValidateEmail(),
+//                    validatePassword = ValidatePassword(),
+////                    savedStateHandle = SavedStateHandle().apply {
+////                        // For Live Preview / interactive mode
+////                        set("username", "c")
+////                        set("email", "chris@demo.com")
+////                        set("password", "123456Aa")
+////                        set("confirmPassword", "123456Aa")
+////                        set("invalidUsername", true)
+////                        set("invalidEmail", true)
+//////                        set("invalidPassword", true)
+//////                        set("invalidConfirmPassword", true)
+//////                        set("isPasswordsMatch", false)
+////                        set("isShowInvalidUsernameMessage", true)
+////                        set("isShowInvalidEmailMessage", true)
+//////                        set("isShowInvalidPasswordMessage", true)
+//////                        set("isShowInvalidConfirmPasswordMessage", true)
+//////                        set("isLoading", true)
+//////                        set("errorMessage", "Error Message")
+//////                        set("statusMessage", "Status Message")
+//////                        set("isLoggedIn", true)
+////                    }
+//                )
+//            )
+//        }
+//    }
+//}

@@ -3,7 +3,6 @@ package com.realityexpander.tasky.auth_feature.presentation.splash_screen
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,15 +22,16 @@ class MainActivityViewModel @Inject constructor(
     val splashState = _splashState.asStateFlow()
 
     init {
-        // Workaround until figure out why `Compose-destinations` is not passing in the SavedStateHandle
-        TaskyApplication.savedStateHandle = savedStateHandle.apply {
-
-            // Temporarily set defaults for testing todo remove
-            get<String>("email") ?: set("email", "chris3@demo.com")
-            get<String>("password") ?: set("password", "Password1")
-            get<String>("confirmPassword") ?: set("confirmPassword", "Password1")
-            get<String>("username")  ?: set("username", "Chris Athanas")
-        }
+//        // Workaround until figure out why `Compose-destinations` is not passing in the SavedStateHandle
+//        TaskyApplication.savedStateHandle = savedStateHandle.apply {
+//
+//            // Temporarily set defaults for testing todo remove
+//            get<String>("email") ?: set("email", "chris3@demo.com")
+//            get<String>("password") ?: set("password", "Password1")
+//            get<String>("confirmPassword") ?: set("confirmPassword", "Password1")
+//            get<String>("username")  ?: set("username", "Chris Athanas")
+//        }
+        println("MainActivityViewModel.init() savedStateHandle: $savedStateHandle")
     }
 
     fun onSetAuthInfo(authInfo: AuthInfo?) {

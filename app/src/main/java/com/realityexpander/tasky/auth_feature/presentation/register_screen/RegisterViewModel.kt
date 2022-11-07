@@ -1,10 +1,10 @@
 package com.realityexpander.tasky.auth_feature.presentation.register_screen
 
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
@@ -38,10 +38,8 @@ class RegisterViewModel @Inject constructor(
     val validateEmail: ValidateEmail,
     val validatePassword: ValidatePassword,
     val validateUsername: ValidateUsername,
-    //private val savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-
-    val savedStateHandle = TaskyApplication.savedStateHandle
 
     // Get params from savedStateHandle (from another screen or after process death)
     private val username: String =
@@ -105,23 +103,16 @@ class RegisterViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_errorMessage] =
             state.errorMessage
 
-//        yield()
-//        println(state.username)
-
         // Validate as the user types
         if(state.username.isNotBlank()) sendEvent(RegisterEvent.ValidateUsername)
         if(state.email.isNotBlank()) sendEvent(RegisterEvent.ValidateEmail)
         if(state.password.isNotBlank()) sendEvent(RegisterEvent.ValidatePassword)
         if(state.confirmPassword.isNotBlank()) sendEvent(RegisterEvent.ValidateConfirmPassword)
         sendEvent(RegisterEvent.ValidatePasswordsMatch)
-
-//        yield()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RegisterState())
 
     init {
         viewModelScope.launch {
-//            yield() // allow the registerState to be initialized
-
             // restore state after process death or from another screen (e.g. login)
             _registerState.update {
                 it.copy(
@@ -141,7 +132,6 @@ class RegisterViewModel @Inject constructor(
                     errorMessage = errorMessage,
                 )
             }
-//            yield() // allow the registerState to be updated
 
             // Validate email & password when restored from process death or coming from another screen
             if (registerState.value.username.isNotBlank()) sendEvent(RegisterEvent.ValidateUsername)
@@ -150,7 +140,6 @@ class RegisterViewModel @Inject constructor(
             if (registerState.value.confirmPassword.isNotBlank()) sendEvent(RegisterEvent.ValidateConfirmPassword)
             sendEvent(RegisterEvent.ValidatePasswordsMatch)
 
-//            yield() // allow the registerState to be updated
             // Show status validation messages when restored from process death or coming from another screen
             if(registerState.value.isInvalidUsername) sendEvent(RegisterEvent.ShowInvalidUsernameMessage)
             if(registerState.value.isInvalidEmail) sendEvent(RegisterEvent.ShowInvalidEmailMessage)

@@ -4,9 +4,10 @@ buildscript {
         compose_ui_version = '1.3.0'
         room_version = '2.4.3'
         retrofit_version = '2.9.0'
+        okhttp_version = '5.0.0-alpha.3'
         dagger_hilt_version = '2.44'
         compose_destinations_version = '1.6.13-beta' // for kotlin 1.7.10
-        serialization_version = '1.4.1'
+        kotlinx_serialization_version = '1.4.1'
         lifecycle_version = '2.5.1'
         compose_compiler_version = '1.3.0-rc01' // for compose 1.3.0
     }

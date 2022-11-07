@@ -5,7 +5,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
@@ -14,7 +13,6 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_agendaItems
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_authInfo
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
-import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_isLoaded
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_username
 import com.realityexpander.tasky.core.presentation.common.util.UiText
@@ -31,17 +29,12 @@ import javax.inject.Inject
 @HiltViewModel
 class AgendaViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
-    //private val savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-
-    // todo fix this when figure out Compose-destinations savedStateHandle issue
-    private val savedStateHandle: SavedStateHandle = TaskyApplication.savedStateHandle
 
     // Get params from savedStateHandle (from another screen or after process death)
     private val username: String =
         Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: ""
-    private val isLoaded: Boolean =
-        savedStateHandle[SAVED_STATE_isLoaded] ?: false
     private val errorMessage: UiText? =
         savedStateHandle[SAVED_STATE_errorMessage]
     private val authInfo: AuthInfo? =
@@ -50,14 +43,13 @@ class AgendaViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_agendaItemIdForMenu]
     private val agendaItems: List<AgendaItem> =
         savedStateHandle[SAVED_STATE_agendaItems] ?: emptyList<AgendaItem>()
-    private val selectedDayIndex: Int =
-        savedStateHandle[SAVED_STATE_selectedDayIndex] ?: 0
+    private val selectedDayIndex: Int? =
+        savedStateHandle[SAVED_STATE_selectedDayIndex]
 
     private val _agendaState = MutableStateFlow(AgendaState())
     val agendaState = _agendaState.onEach { state ->
         // save state for process death
-        savedStateHandle[SAVED_STATE_username] = state.username
-        savedStateHandle[SAVED_STATE_isLoaded] = state.isLoaded
+        savedStateHandle[SAVED_STATE_username] = state.authInfo?.username
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
         savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
         savedStateHandle[SAVED_STATE_agendaItems] = state.agendaItems
@@ -69,13 +61,13 @@ class AgendaViewModel @Inject constructor(
             // restore state after process death
             _agendaState.update {
                 it.copy(
-                    username = username,
-                    isLoaded = true,
+                    username = authRepository.getAuthInfo()?.username ?: "",
+                    isLoaded = true, // only after init occurs
                     errorMessage = errorMessage,
                     authInfo = authRepository.getAuthInfo(),
                     agendaItems = agendaItems,
                     selectedDayIndex = selectedDayIndex
-                    // todo do we need to restore the scroll position? Or open drop-down menus?
+                    // todo do we need to open drop-down menus?
                 )
             }
 

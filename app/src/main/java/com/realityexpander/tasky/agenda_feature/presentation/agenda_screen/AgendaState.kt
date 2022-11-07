@@ -12,7 +12,7 @@ data class AgendaState(
     val email: Email = "",
     val authInfo: AuthInfo? = null,
 
-    val isLoaded: Boolean = false,
+    val isLoaded: Boolean = false, // true only after init() is called
     val isLoading: Boolean = false,
 
     val errorMessage: UiText? = null,
@@ -24,5 +24,5 @@ data class AgendaState(
     val resetScrollTo: Boolean = false,
 
     val agendaItems: List<AgendaItem> = emptyList(),
-    val selectedDayIndex: Int = 0,
+    val selectedDayIndex: Int? = null,
 )

@@ -17,7 +17,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.dataStore
+import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.realityexpander.tasky.auth_feature.presentation.splash_screen.MainActivityViewModel
 import com.realityexpander.tasky.core.data.settings.AppSettingsSerializer
 import com.realityexpander.tasky.core.data.settings.saveSettingsInitialized
@@ -61,6 +63,9 @@ class MainActivity : ComponentActivity() {
                     val splashState by viewModel.splashState.collectAsState()
                     val context = LocalContext.current
 
+                    val navController = rememberNavController()
+                    val navHostEngine = rememberNavHostEngine()
+
                     // Load Settings (or initialize them)
                     LaunchedEffect(true) {
                         val appSettings = context.dataStore.data.first()
@@ -74,12 +79,8 @@ class MainActivity : ComponentActivity() {
                         viewModel.onSetAuthInfo(appSettings.authInfo)
                     }
 
-                    // This uses the normal SavedStateHandle with no problems (*NOT* using Compose-destinations)
-//                    if(!splashState.isLoading) {
-//                        LoginScreen(navigator = EmptyDestinationsNavigator)
-//                    }
-
                     if (!splashState.isLoading) {
+
                         if(splashState.error != null) {
                             Toast.makeText(context, splashState.error, Toast.LENGTH_LONG).show()
                             Thread.sleep(2000)
@@ -88,12 +89,19 @@ class MainActivity : ComponentActivity() {
 
                         DestinationsNavHost(
                             navGraph = NavGraphs.root,
+                            navController = navController,
+                            engine = navHostEngine,
                             startRoute =
                                 if (splashState.authInfo != null) {
                                     AgendaScreenDestination
                                 } else {
                                     LoginScreenDestination
                                 },
+//                            dependenciesContainerBuilder = {
+//                                dependency(AgendaScreenDestination) {
+//                                    hiltViewModel<AgendaViewModel>()
+//                                }
+//                            }
                         )
                     }
                 }
@@ -107,18 +115,24 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Code to test SavedStateHandle with Compose-destinations library
+//// Code to test SavedStateHandle with Compose-destinations library
 //@Composable
 //@Destination
 //@RootNavGraph(start = true)
 //fun SplashStart(
+//    username: String? = null,
+//    selectedDayIndex: Int? = null,
 //    navigator: DestinationsNavigator,
 //) {
 //    val context = LocalContext.current
 //
+//    println("SplashStart: username = $username, selectedDayIndex = $selectedDayIndex")
+//
 //    LaunchedEffect(true) {
-//        if (context.dataStore.data.first().authInfo != null) {
-//            navigator.navigate(AgendaScreenDestination())
+//        val authInfo = context.dataStore.data.first().authInfo
+//
+//        if (authInfo != null) {
+//            navigator.navigate(AgendaScreenDestination(authInfo.username + "fromMainActivity", 0))
 //        } else {
 //            navigator.navigate(LoginScreenDestination())
 //        }

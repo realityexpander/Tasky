@@ -60,15 +60,15 @@ import java.util.*
 @Destination
 fun AgendaScreen(
 //    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-//    username: String? = null,
+//    username: String?,//  = null,
 //    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
 //    email: String? = null,
 //    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
 //    password: String? = null,
+    selectedDayIndex: Int? = 0,
     navigator: DestinationsNavigator,
     viewModel: AgendaViewModel = hiltViewModel(),
 ) {
-
     val agendaState by viewModel.agendaState.collectAsState()
 
     AgendaScreenContent(
@@ -349,7 +349,7 @@ fun AgendaScreenContent(
                 0 -> "Today"
                 1 -> "Tomorrow"
                 else -> {
-                    val date = LocalDate.now().plusDays(selectedDayIndex.toLong())
+                    val date = LocalDate.now().plusDays((selectedDayIndex ?: 0).toLong())
                     val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
                     val dayOfMonth = date.dayOfMonth.toString()
                     val monthName = date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())

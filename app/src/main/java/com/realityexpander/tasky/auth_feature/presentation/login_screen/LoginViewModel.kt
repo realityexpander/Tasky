@@ -5,7 +5,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.TaskyApplication
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
@@ -33,10 +32,10 @@ class LoginViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     val validateEmail: ValidateEmail,
     val validatePassword: ValidatePassword,
-//    private val savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val savedStateHandle: SavedStateHandle = TaskyApplication.savedStateHandle
+    //private val savedStateHandle: SavedStateHandle = TaskyApplication.savedStateHandle
 
     private val username: String =
         Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: ""

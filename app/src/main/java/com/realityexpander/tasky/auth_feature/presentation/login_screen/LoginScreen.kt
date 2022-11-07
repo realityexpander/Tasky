@@ -96,6 +96,8 @@ fun LoginScreenContent(
             navigator.navigate(
                 AgendaScreenDestination(
                     // authInfo = authInfo
+                    //username = authInfo.username,
+                    //selectedDayIndex = 0
                 )
             ) {
                 launchSingleTop = true
