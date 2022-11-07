@@ -78,11 +78,6 @@ fun AgendaScreen(
     )
 }
 
-data class MenuItemInfo(
-    var menuPosition: Offset = Offset.Zero,
-    var agendaItem: AgendaItem? = null,
-)
-
 @Composable
 fun AgendaScreenContent(
     state: AgendaState,
