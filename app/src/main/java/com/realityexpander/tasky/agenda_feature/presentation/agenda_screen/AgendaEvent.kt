@@ -25,9 +25,9 @@ sealed interface AgendaEvent {
     // • One-time events
     sealed interface StatefulOneTimeEvent {
         object ResetScrollTo                                        : StatefulOneTimeEvent, AgendaEvent
-        data class ScrollToItemId(val agendaItemId: UuidStr)  : StatefulOneTimeEvent, AgendaEvent
         object ScrollToTop                                          : StatefulOneTimeEvent, AgendaEvent
         object ScrollToBottom                                       : StatefulOneTimeEvent, AgendaEvent
+        data class ScrollToItemId(val agendaItemId: UuidStr)        : StatefulOneTimeEvent, AgendaEvent
     }
 }
 
