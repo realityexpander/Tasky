@@ -1,8 +1,10 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android' version '1.6.21'
+//    id 'org.jetbrains.kotlin.android' version '1.6.21'
+    id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
-    id 'com.google.devtools.ksp' version '1.6.21-1.0.6'
+//    id 'com.google.devtools.ksp' version '1.6.21-1.0.6'
+    id 'com.google.devtools.ksp' version '1.7.10-1.0.6'
     id 'dagger.hilt.android.plugin'
     id 'com.google.dagger.hilt.android'
     id "org.jlleitschuh.gradle.ktlint" version "11.0.0"
@@ -27,12 +29,12 @@ kotlin {
 
 android {
     namespace 'com.realityexpander.tasky'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.realityexpander.tasky"
         minSdk 28
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -78,7 +80,8 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.2.0-rc02' // for Compose Destinations 1.5.23-beta
+        // kotlinCompilerExtensionVersion '1.2.0-rc02' // for Compose Destinations 1.5.23-beta
+        kotlinCompilerExtensionVersion compose_compiler_version // for Compose Destinations 1.6.13-beta
     }
     packagingOptions {
         resources {
