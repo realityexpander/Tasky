@@ -1,20 +1,16 @@
 package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 
-import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
-import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_agendaItemIdForMenu
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_agendaItems
-import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_authInfo
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
-import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_username
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.UuidStr
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,25 +29,25 @@ class AgendaViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)
-    private val username: String =
-        Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: ""
+//    private val username: String =
+//        Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: ""
     private val errorMessage: UiText? =
         savedStateHandle[SAVED_STATE_errorMessage]
-    private val authInfo: AuthInfo? =
-        savedStateHandle[SAVED_STATE_authInfo]
+//    private val authInfo: AuthInfo? =
+//        savedStateHandle[SAVED_STATE_authInfo]
     private val agendaItemIdForMenu: UuidStr? =
         savedStateHandle[SAVED_STATE_agendaItemIdForMenu]
     private val agendaItems: List<AgendaItem> =
-        savedStateHandle[SAVED_STATE_agendaItems] ?: emptyList<AgendaItem>()
+        savedStateHandle[SAVED_STATE_agendaItems] ?: emptyList()  // todo retrieve from repo
     private val selectedDayIndex: Int? =
         savedStateHandle[SAVED_STATE_selectedDayIndex]
 
     private val _agendaState = MutableStateFlow(AgendaState())
     val agendaState = _agendaState.onEach { state ->
         // save state for process death
-        savedStateHandle[SAVED_STATE_username] = state.authInfo?.username
+//        savedStateHandle[SAVED_STATE_username] = state.authInfo?.username
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
-        savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
+//        savedStateHandle[SAVED_STATE_authInfo] = state.authInfo
         savedStateHandle[SAVED_STATE_agendaItems] = state.agendaItems
         savedStateHandle[SAVED_STATE_selectedDayIndex] = state.selectedDayIndex
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AgendaState())
