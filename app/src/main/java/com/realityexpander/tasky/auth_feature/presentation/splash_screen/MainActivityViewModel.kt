@@ -27,6 +27,7 @@ class MainActivityViewModel @Inject constructor(
             // set the AuthInfo (& AuthToken) for this user
             authRepository.setAuthInfo(authInfo)
 
+            // Validate the AuthToken
             val authenticateSuccess = try {
                 authRepository.authenticate()
                 true
@@ -40,6 +41,8 @@ class MainActivityViewModel @Inject constructor(
                 false
             }
 
+            // If the AuthToken is valid, proceed to the Agenda screen
+            // Otherwise, proceed to the Login screen.
             if( authInfo != null
                 && authenticateSuccess
             ) {
