@@ -3,6 +3,7 @@ package com.realityexpander.tasky
 import android.content.Context
 import android.os.Bundle
 import android.os.Debug.waitForDebugger
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -79,6 +80,12 @@ class MainActivity : ComponentActivity() {
 //                    }
 
                     if (!splashState.isLoading) {
+                        if(splashState.error != null) {
+                            Toast.makeText(context, splashState.error, Toast.LENGTH_LONG).show()
+                            Thread.sleep(2000)
+                            viewModel.onSetAuthInfo(null)
+                        }
+
                         DestinationsNavHost(
                             navGraph = NavGraphs.root,
                             startRoute =

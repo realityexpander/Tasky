@@ -40,8 +40,21 @@ class MainActivityViewModel @Inject constructor(
             // set the AuthInfo (& AuthToken) for this user
             authRepository.setAuthInfo(authInfo)
 
+            val authenticateSuccess = try {
+                authRepository.authenticate()
+                true
+            } catch (e: Exception) {
+                _splashState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e.message
+                    )
+                }
+                false
+            }
+
             if( authInfo != null
-                && authRepository.authenticate()
+                && authenticateSuccess
             ) {
                 // User is authenticated
                 _splashState.update {
