@@ -21,19 +21,6 @@ class MainActivityViewModel @Inject constructor(
     private val _splashState = MutableStateFlow(SplashState())
     val splashState = _splashState.asStateFlow()
 
-    init {
-//        // Workaround until figure out why `Compose-destinations` is not passing in the SavedStateHandle
-//        TaskyApplication.savedStateHandle = savedStateHandle.apply {
-//
-//            // Temporarily set defaults for testing todo remove
-//            get<String>("email") ?: set("email", "chris3@demo.com")
-//            get<String>("password") ?: set("password", "Password1")
-//            get<String>("confirmPassword") ?: set("confirmPassword", "Password1")
-//            get<String>("username")  ?: set("username", "Chris Athanas")
-//        }
-        println("MainActivityViewModel.init() savedStateHandle: $savedStateHandle")
-    }
-
     fun onSetAuthInfo(authInfo: AuthInfo?) {
         viewModelScope.launch {
 

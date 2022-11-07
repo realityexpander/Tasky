@@ -117,9 +117,10 @@ fun AgendaScreenContent(
     fun navigateToLogin() {
         navigator.navigate(
             LoginScreenDestination(
-                username = state.username,
-                email = state.email,
+                username = null,
+                email = null,
                 password = null,
+                confirmPassword = null,
             )
         ) {
             popUpTo(LoginScreenDestination.route) {

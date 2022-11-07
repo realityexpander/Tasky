@@ -52,7 +52,6 @@ fun RegisterScreen(
     navigator: DestinationsNavigator,
     viewModel: RegisterViewModel = hiltViewModel(),
 ) {
-
     val registerState by viewModel.registerState.collectAsState()
 
     RegisterScreenContent(
