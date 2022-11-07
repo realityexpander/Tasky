@@ -27,10 +27,10 @@ class MainActivityViewModel @Inject constructor(
         TaskyApplication.savedStateHandle = savedStateHandle.apply {
 
             // Temporarily set defaults for testing todo remove
-//            get<String>("email") ?: set("email", "chris3@demo.com")
-//            get<String>("password") ?: set("password", "Password1")
-//            get<String>("confirmPassword") ?: set("confirmPassword", "Password1")
-//            get<String>("username")  ?: set("username", "Chris Athanas")
+            get<String>("email") ?: set("email", "chris3@demo.com")
+            get<String>("password") ?: set("password", "Password1")
+            get<String>("confirmPassword") ?: set("confirmPassword", "Password1")
+            get<String>("username")  ?: set("username", "Chris Athanas")
         }
     }
 
