@@ -97,11 +97,6 @@ class MainActivity : ComponentActivity() {
                                 } else {
                                     LoginScreenDestination
                                 },
-//                            dependenciesContainerBuilder = {
-//                                dependency(AgendaScreenDestination) {
-//                                    hiltViewModel<AgendaViewModel>()
-//                                }
-//                            }
                         )
                     }
                 }
@@ -114,27 +109,3 @@ class MainActivity : ComponentActivity() {
         exitProcess(0)
     }
 }
-
-//// Code to test SavedStateHandle with Compose-destinations library
-//@Composable
-//@Destination
-//@RootNavGraph(start = true)
-//fun SplashStart(
-//    username: String? = null,
-//    selectedDayIndex: Int? = null,
-//    navigator: DestinationsNavigator,
-//) {
-//    val context = LocalContext.current
-//
-//    println("SplashStart: username = $username, selectedDayIndex = $selectedDayIndex")
-//
-//    LaunchedEffect(true) {
-//        val authInfo = context.dataStore.data.first().authInfo
-//
-//        if (authInfo != null) {
-//            navigator.navigate(AgendaScreenDestination(authInfo.username + "fromMainActivity", 0))
-//        } else {
-//            navigator.navigate(LoginScreenDestination())
-//        }
-//    }
-//}
