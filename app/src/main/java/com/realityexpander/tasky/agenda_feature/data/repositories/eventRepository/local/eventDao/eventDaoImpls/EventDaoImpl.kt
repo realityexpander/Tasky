@@ -23,7 +23,9 @@ interface EventDaoImpl : IEventDao {
     @Query("SELECT * FROM events WHERE isDeleted = 0")
     override suspend fun getAllEventsFlow(): Flow<List<EventEntity>>
 
-    @Query("SELECT * FROM events WHERE isDeleted = 0 AND (`from` >= :zonedDateTime OR `to` <= :zonedDateTime)")
+    @Query("SELECT * FROM events WHERE isDeleted = 0 AND " +
+            "(`from` >= :zonedDateTime OR `to` <= :zonedDateTime)"
+    )
     override suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<EventEntity>
 
 
