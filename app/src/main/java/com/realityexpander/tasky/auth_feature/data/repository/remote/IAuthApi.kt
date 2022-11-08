@@ -22,6 +22,10 @@ interface IAuthApi {
     suspend fun authenticate(): Boolean // uses the AuthToken stored in this companion object
     suspend fun authenticateAuthToken(authToken: AuthToken?): Boolean
 
+    suspend fun logout(
+        // uses the AuthToken stored in this companion object
+    ): Boolean
+
     fun setAuthToken(authToken: AuthToken?) {
         IAuthApi.Companion.authToken = authToken
     }
@@ -32,7 +36,6 @@ interface IAuthApi {
 
     companion object {
         var authToken: String? = null
-//            private set
 
         var authorizationHeader: String? = null
             private set // only allow generating from Companion.authToken
