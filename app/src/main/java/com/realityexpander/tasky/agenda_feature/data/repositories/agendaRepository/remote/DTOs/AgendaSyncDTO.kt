@@ -9,4 +9,3 @@ data class AgendaSyncDTO(
     val deleteTaskIds: List<TaskId>? = null,
     val deleteReminderIds: List<ReminderId>? = null,
 )
-

@@ -6,5 +6,4 @@ data class AgendaDayDTO(
     val events: List<EventDTO>,
 //    val tasks: List<TaskDTO>,             // todo implement tasks
 //    val reminders: List<ReminderDTO>,     // todo implement reminders
-) {
-}
+)

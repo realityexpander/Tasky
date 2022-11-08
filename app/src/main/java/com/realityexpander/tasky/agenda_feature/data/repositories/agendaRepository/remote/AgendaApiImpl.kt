@@ -18,7 +18,13 @@ class AgendaApiImpl @Inject constructor(
             )
 
             if (response.isSuccessful) {
-                response.body()!!
+                val responseBody = response.body()
+
+                if (responseBody != null) {
+                    return responseBody
+                } else {
+                    throw Exception("Response body is null")
+                }
             } else {
                 throw Exception("Error getting agenda")
             }
