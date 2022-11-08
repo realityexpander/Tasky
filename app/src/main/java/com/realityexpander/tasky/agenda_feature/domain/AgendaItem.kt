@@ -28,8 +28,8 @@ abstract class AgendaItem {
         val host: UserId,
         val isUserEventCreator: Boolean = false,
         val isGoing: Boolean = false,
-
         val attendeeIds: List<UserId> = emptyList(),
+
         val photos: List<PhotoId> = emptyList(),
         val deletedPhotoKeys: List<PhotoId> = emptyList(),
     ) : AgendaItem(), Parcelable

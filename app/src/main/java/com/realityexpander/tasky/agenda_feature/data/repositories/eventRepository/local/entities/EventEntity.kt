@@ -19,8 +19,8 @@ data class EventEntity(
     val host: UuidStr,
     val isUserEventCreator: Boolean = false,
     val isGoing: Boolean = false,
-
     val attendeeIds: List<UuidStr> = emptyList(),
+
     val photos: List<UuidStr> = emptyList(),
     val deletedPhotoKeys: List<UuidStr> = emptyList(),
 

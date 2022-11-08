@@ -28,20 +28,20 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
 
     /////////////// Fake Server simulation functions //////////////////////
 
-    private val events_onServer = mutableListOf<EventDTO>()
+    private val events_onFakeServer = mutableListOf<EventDTO>()
 
     private suspend fun getEventOnFakeServer(eventId: UuidStr): EventDTO? {
         // simulate network delay
         delay(500)
 
-        return events_onServer.find { it.id == eventId }
+        return events_onFakeServer.find { it.id == eventId }
     }
 
     private suspend fun createEventOnFakeServer(event: EventDTO): Boolean {
         // simulate network delay
         delay(500)
 
-        events_onServer.add(event)
+        events_onFakeServer.add(event)
         return true
     }
 
@@ -49,9 +49,9 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
         // simulate network delay
         delay(500)
 
-        val index = events_onServer.indexOfFirst { it.id == event.id }
+        val index = events_onFakeServer.indexOfFirst { it.id == event.id }
         if (index == -1) return false
-        events_onServer[index] = event
+        events_onFakeServer[index] = event
         return true
     }
 
@@ -59,9 +59,9 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
         // simulate network delay
         delay(500)
 
-        val index = events_onServer.indexOfFirst { it.id == eventId }
+        val index = events_onFakeServer.indexOfFirst { it.id == eventId }
         if (index == -1) return false
-        events_onServer.removeAt(index)
+        events_onFakeServer.removeAt(index)
         return true
     }
 }
