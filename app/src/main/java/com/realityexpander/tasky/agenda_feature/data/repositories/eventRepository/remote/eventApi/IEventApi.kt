@@ -5,11 +5,11 @@ import com.realityexpander.tasky.agenda_feature.util.EventId
 
 interface IEventApi {
 
-    suspend fun createEvent(event: EventDTO): Boolean
+    suspend fun createEvent(event: EventDTO): EventDTO
 
-    suspend fun getEvent(eventId: EventId): EventDTO?
+    suspend fun getEvent(eventId: EventId): EventDTO
 
     suspend fun deleteEvent(eventId: EventId): Boolean
 
-    suspend fun updateEvent(event: EventDTO): Boolean
+    suspend fun updateEvent(event: EventDTO): EventDTO
 }
