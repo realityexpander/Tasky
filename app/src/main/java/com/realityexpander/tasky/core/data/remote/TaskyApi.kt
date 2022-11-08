@@ -43,6 +43,7 @@ interface TaskyApi {
         @Header("Authorization") authorizationHeader: String = createAuthorizationHeader(authToken),
     ): Response<Void>
 
+    // todo implement logout
     @GET("logout")
     suspend fun logout(
         // Uses the Authorization Header created in the the interceptor

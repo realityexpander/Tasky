@@ -169,4 +169,8 @@ class AuthApiImpl @Inject constructor (
             throw Exceptions.UnknownErrorException(e.message ?: "Unknown Error")
         }
     }
+
+    override suspend fun logout(): Boolean {
+        TODO("Not yet implemented") // todo implement logout on server
+    }
 }
