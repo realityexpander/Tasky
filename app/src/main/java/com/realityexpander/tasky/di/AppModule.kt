@@ -10,8 +10,8 @@ import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiImpl
-import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.TaskyApi
-import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.TaskyApi.Companion.API_KEY
+import com.realityexpander.tasky.core.data.remote.TaskyApi
+import com.realityexpander.tasky.core.data.remote.TaskyApi.Companion.API_KEY
 import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
