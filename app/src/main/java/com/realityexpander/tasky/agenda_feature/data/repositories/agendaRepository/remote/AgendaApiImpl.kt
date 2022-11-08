@@ -10,6 +10,7 @@ import javax.inject.Inject
 class AgendaApiImpl @Inject constructor(
     private val taskyApi: TaskyApi
 ): IAgendaApi {
+
     override suspend fun getAgenda(zonedDateTime: ZonedDateTime): AgendaDayDTO {
         return try {
             val response = taskyApi.getAgenda(
@@ -20,11 +21,7 @@ class AgendaApiImpl @Inject constructor(
             if (response.isSuccessful) {
                 val responseBody = response.body()
 
-                if (responseBody != null) {
-                    return responseBody
-                } else {
-                    throw Exception("Response body is null")
-                }
+                responseBody ?: throw Exception("Response body is null")
             } else {
                 throw Exception("Error getting agenda")
             }
