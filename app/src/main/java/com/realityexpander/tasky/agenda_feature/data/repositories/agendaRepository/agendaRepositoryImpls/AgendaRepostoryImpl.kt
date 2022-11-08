@@ -2,6 +2,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.agendaReposit
 
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls.EventRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.AgendaSync
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
@@ -10,7 +11,7 @@ import com.realityexpander.tasky.agenda_feature.util.EventId
 import java.time.ZonedDateTime
 
 class AgendaRepositoryImpl(
-    private val eventRepository: IEventRepository,
+    private val eventRepository: IEventRepository = EventRepositoryImpl(),
 //    private val taskRepository: ITaskRepository,                                  // todo implement tasks repo
 //    private val reminderRepository: IReminderRepository,                          // todo implement reminders repo
     private val agendaApi: IAgendaApi,

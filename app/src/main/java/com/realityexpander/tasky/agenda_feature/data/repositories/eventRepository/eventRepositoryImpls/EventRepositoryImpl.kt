@@ -6,6 +6,7 @@ import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityD
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.eventDaoImpls.EventDaoFakeImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.eventApiImpls.EventApiFakeImpl
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
 import com.realityexpander.tasky.agenda_feature.util.EventId
@@ -13,7 +14,7 @@ import java.time.ZonedDateTime
 
 class EventRepositoryImpl(
     private val eventDao: IEventDao = EventDaoFakeImpl(),
-    private val eventApi: IEventApi,
+    private val eventApi: IEventApi = EventApiFakeImpl(),
 ) : IEventRepository {
 
     override suspend fun createEvent(event: AgendaItem.Event): Boolean {

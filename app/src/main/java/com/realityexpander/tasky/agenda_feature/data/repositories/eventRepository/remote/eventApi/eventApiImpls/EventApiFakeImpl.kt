@@ -42,15 +42,18 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
             throw Exception("Error deleting event: ${e.message}")
         }
     }
-    /////////////// Fake Server simulation functions //////////////////////
 
-    private val events_onFakeServer = mutableListOf<EventDTO>()
+
+    ///////////////////////////////////////////////////////////////////////
+    /////////////// FAKE SERVER SIMULATION FUNCTIONS //////////////////////
+
+    private val eventsOnFakeServer = mutableListOf<EventDTO>()
 
     private suspend fun createEventOnFakeServer(event: EventDTO): EventDTO {
         // simulate network delay
         delay(500)
 
-        events_onFakeServer.add(event)
+        eventsOnFakeServer.add(event)
         return event
     }
 
@@ -58,18 +61,18 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
         // simulate network delay
         delay(500)
 
-        return events_onFakeServer.find { it.id == eventId } ?: throw Exception("Event not found")
+        return eventsOnFakeServer.find { it.id == eventId } ?: throw Exception("Event not found")
     }
 
     private suspend fun updateEventOnFakeServer(event: EventDTO): EventDTO {
         // simulate network delay
         delay(500)
 
-        val index = events_onFakeServer.indexOfFirst { it.id == event.id }
+        val index = eventsOnFakeServer.indexOfFirst { it.id == event.id }
         if (index == -1) {
             throw Exception("Event not found")
         }
-        events_onFakeServer[index] = event
+        eventsOnFakeServer[index] = event
 
         return event
     }
@@ -80,10 +83,10 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
 
         // note: could simulate throwing network error here
 
-        val index = events_onFakeServer.indexOfFirst { it.id == eventId }
+        val index = eventsOnFakeServer.indexOfFirst { it.id == eventId }
         if (index == -1) return false
 
-        events_onFakeServer.removeAt(index)
+        eventsOnFakeServer.removeAt(index)
         return true
     }
 }
