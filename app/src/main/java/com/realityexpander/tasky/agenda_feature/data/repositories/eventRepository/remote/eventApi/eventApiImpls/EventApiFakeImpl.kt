@@ -78,8 +78,11 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
         // simulate network delay
         delay(500)
 
+        // note: could simulate throwing network error here
+
         val index = events_onFakeServer.indexOfFirst { it.id == eventId }
         if (index == -1) return false
+
         events_onFakeServer.removeAt(index)
         return true
     }
