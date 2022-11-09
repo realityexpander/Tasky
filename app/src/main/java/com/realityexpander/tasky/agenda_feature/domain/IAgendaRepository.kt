@@ -1,18 +1,19 @@
 package com.realityexpander.tasky.agenda_feature.domain
 
+import com.realityexpander.tasky.agenda_feature.common.RepositoryResult
 import com.realityexpander.tasky.agenda_feature.util.EventId
 import java.time.ZonedDateTime
 
 interface IAgendaRepository {
 
     suspend fun getAgendaDay(dateTime: ZonedDateTime): List<AgendaItem>
-    suspend fun syncAgenda(): Boolean
+    suspend fun syncAgenda(): RepositoryResult
 
-    suspend fun createEvent(event: AgendaItem.Event): Boolean
+    suspend fun createEvent(event: AgendaItem.Event): RepositoryResult
     suspend fun getEvent(eventId: EventId): AgendaItem.Event?
-    suspend fun updateEvent(event: AgendaItem.Event): Boolean
-    suspend fun deleteEventId(eventId: EventId): Boolean
-    suspend fun clearAllEvents(): Boolean
+    suspend fun updateEvent(event: AgendaItem.Event): RepositoryResult
+    suspend fun deleteEventId(eventId: EventId): RepositoryResult
+    suspend fun clearAllEvents(): RepositoryResult
 
     // todo implement repository
 //    suspend fun createTask(task: AgendaItem.Task): Boolean

@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls
 
+import com.realityexpander.tasky.agenda_feature.common.RepositoryResult
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls.EventRepositoryImpl
@@ -24,7 +25,7 @@ class AgendaRepositoryImpl(
         return events // + tasks + reminders
     }
 
-    override suspend fun syncAgenda(): Boolean {
+    override suspend fun syncAgenda(): RepositoryResult {
         val deletedEventIds = eventRepository.getDeletedEventIds()
 //        val deletedTaskIds = taskRepository.getDeletedTaskIds()                   // todo implement tasks repo
 //        val deletedReminderIds = reminderRepository.getDeletedReminderIds()       // todo implement reminders repo
@@ -39,13 +40,13 @@ class AgendaRepositoryImpl(
             )
 
         if (deletedSuccessfully) {
-           return eventRepository.deleteFinallyEventIds(deletedEventIds)
+            return eventRepository.deleteFinallyEventIds(deletedEventIds)
+        } else {
+            return RepositoryResult.Error("Failed to sync agenda - deleteFinallyEventIds")
         }
-
-        return false
     }
 
-    override suspend fun createEvent(event: AgendaItem.Event): Boolean {
+    override suspend fun createEvent(event: AgendaItem.Event): RepositoryResult {
         return eventRepository.createEvent(event)
     }
 
@@ -53,15 +54,15 @@ class AgendaRepositoryImpl(
         return eventRepository.getEventId(eventId)
     }
 
-    override suspend fun updateEvent(event: AgendaItem.Event): Boolean {
+    override suspend fun updateEvent(event: AgendaItem.Event): RepositoryResult {
         return eventRepository.updateEvent(event)
     }
 
-    override suspend fun deleteEventId(eventId: EventId): Boolean {
+    override suspend fun deleteEventId(eventId: EventId): RepositoryResult {
         return eventRepository.deleteEventId(eventId)
     }
 
-    override suspend fun clearAllEvents(): Boolean {
+    override suspend fun clearAllEvents(): RepositoryResult {
         return eventRepository.clearAllEvents()
     }
 }

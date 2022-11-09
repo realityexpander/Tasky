@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls
 
+import com.realityexpander.tasky.agenda_feature.common.RepositoryResult
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEntity
@@ -17,13 +18,14 @@ class EventRepositoryImpl(
     private val eventApi: IEventApi = EventApiFakeImpl(),
 ) : IEventRepository {
 
-    override suspend fun createEvent(event: AgendaItem.Event): Boolean {
+    override suspend fun createEvent(event: AgendaItem.Event): RepositoryResult {
         return try {
             eventDao.createEvent(event.toEntity())
             eventApi.createEvent(event.toDTO())
-            true
+
+            RepositoryResult.Success
         } catch (e: Exception) {
-            false
+            RepositoryResult.Error(e.message ?: "createEvent error")
         }
     }
 
@@ -47,19 +49,23 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun updateEvent(event: AgendaItem.Event): Int {
+    override suspend fun updateEvent(event: AgendaItem.Event): RepositoryResult {
         return try {
             eventDao.updateEvent(event.toEntity())
+
+            RepositoryResult.Success
         } catch (e: Exception) {
-            0
+            RepositoryResult.Error(e.message ?: "updateEvent error")
         }
     }
 
-    override suspend fun deleteEventId(eventId: EventId): Int {
+    override suspend fun deleteEventId(eventId: EventId): RepositoryResult {
         return try {
             eventDao.deleteEventById(eventId)
+
+            RepositoryResult.Success
         } catch (e: Exception) {
-            0
+            RepositoryResult.Error(e.message ?: "deleteEventId error")
         }
     }
 
@@ -71,19 +77,23 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun deleteFinallyEventIds(eventIds: List<EventId>): Int {
+    override suspend fun deleteFinallyEventIds(eventIds: List<EventId>): RepositoryResult {
         return try {
             eventDao.deleteFinallyByEventIds(eventIds)
+
+            RepositoryResult.Success
         } catch (e: Exception) {
-            0
+            RepositoryResult.Error(e.message ?: "deleteFinallyEventIds error")
         }
     }
 
-    override suspend fun clearAllEvents(): Int {
+    override suspend fun clearAllEvents(): RepositoryResult {
         return try {
             eventDao.clearAllEvents()
+
+            RepositoryResult.Success
         } catch (e: Exception) {
-            0
+            RepositoryResult.Error(e.message ?: "clearAllEvents error")
         }
     }
 }
