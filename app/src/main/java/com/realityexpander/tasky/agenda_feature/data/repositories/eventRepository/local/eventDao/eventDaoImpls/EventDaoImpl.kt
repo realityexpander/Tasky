@@ -21,7 +21,7 @@ interface EventDaoImpl : IEventDao {
     override suspend fun getAllEvents(): List<EventEntity>
 
     @Query("SELECT * FROM events WHERE isDeleted = 0")
-    override suspend fun getAllEventsFlow(): Flow<List<EventEntity>>
+    override fun getAllEventsFlow(): Flow<List<EventEntity>>
 
     @Query("SELECT * FROM events WHERE isDeleted = 0 AND " +
             "(`from` >= :zonedDateTime OR `to` <= :zonedDateTime)"
@@ -30,21 +30,21 @@ interface EventDaoImpl : IEventDao {
 
 
     @Update
-    override suspend fun updateEvent(event: EventEntity): Boolean
+    override suspend fun updateEvent(event: EventEntity): Int
 
 
     @Query("UPDATE events SET isDeleted = 1 WHERE id = :eventId")
-    override suspend fun deleteEventById(eventId: EventId): Boolean
+    override suspend fun deleteEventById(eventId: EventId): Int
 
     @Query("SELECT id FROM events WHERE isDeleted = 1")
     override suspend fun getDeletedEventIds(): List<EventId>
 
     @Query("DELETE FROM events WHERE id IN (:eventIds)")
-    override suspend fun deleteFinallyByEventIds(eventIds: List<EventId>): Boolean
+    override suspend fun deleteFinallyByEventIds(eventIds: List<EventId>): Int
 
     @Delete
-    suspend fun deleteEvent(event: EventEntity): Boolean
+    override suspend fun deleteEvent(event: EventEntity): Int
 
     @Query("DELETE FROM events")
-    override suspend fun clearAllEvents(): Boolean
+    override suspend fun clearAllEvents(): Int
 }

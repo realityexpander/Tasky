@@ -30,7 +30,7 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         return getEventsForDayInFakeDatabase(zonedDateTime)
     }
 
-    override suspend fun getAllEventsFlow(): Flow<List<EventEntity>> {
+    override fun getAllEventsFlow(): Flow<List<EventEntity>> {
         return getAllEventsFlowInFakeDatabase()
     }
 
@@ -45,33 +45,38 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
 
     // • UPDATE
 
-    override suspend fun updateEvent(event: EventEntity): Boolean {
+    override suspend fun updateEvent(event: EventEntity): Int {
         return try {
-            updateEventInFakeDatabase(event)
-            true
+            return updateEventInFakeDatabase(event)
         } catch (e: Exception) {
-            false
+            0
         }
     }
 
     // • DELETE
 
     // Only marks the event as deleted
-    override suspend fun deleteEventById(eventId: EventId): Boolean {
+    override suspend fun deleteEventById(eventId: EventId): Int {
         return try {
-            deleteEventByIdInFakeDatabase(eventId)
-            true
+            return deleteEventByIdInFakeDatabase(eventId)
         } catch (e: Exception) {
-            false
+            0
         }
     }
 
-    override suspend fun deleteFinallyByEventIds(eventIds: List<EventId>): Boolean {
+    override suspend fun deleteFinallyByEventIds(eventIds: List<EventId>): Int {
         return try {
-            deleteFinallyByEventIdsInFakeDatabase(eventIds)
-            true
+            return deleteFinallyByEventIdsInFakeDatabase(eventIds)
         } catch (e: Exception) {
-            false
+            0
+        }
+    }
+
+    override suspend fun deleteEvent(event: EventEntity): Int {
+        return try {
+            return deleteEventInFakeDatabase(event)
+        } catch (e: Exception) {
+            0
         }
     }
 
@@ -79,12 +84,11 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         return getDeletedEventIdsInFakeDatabase()
     }
 
-    override suspend fun clearAllEvents(): Boolean {
+    override suspend fun clearAllEvents(): Int {
         return try {
-            clearAllEventsInFakeDatabase()
-            true
+            return clearAllEventsInFakeDatabase()
         } catch (e: Exception) {
-            false
+            0
         }
     }
 
@@ -119,7 +123,7 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         }
     }
 
-    private suspend fun getAllEventsFlowInFakeDatabase(): Flow<List<EventEntity>> {
+    private fun getAllEventsFlowInFakeDatabase(): Flow<List<EventEntity>> {
         return eventsFlow
             .map { events ->
                 events.filter { event ->
@@ -144,27 +148,33 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
 
     // • UPDATE
 
-    private suspend fun updateEventInFakeDatabase(event: EventEntity) {
+    private suspend fun updateEventInFakeDatabase(event: EventEntity): Int {
         val index = events.indexOfFirst { it.id == event.id }
-        if (index == -1) return
+        if (index == -1) return 0
 
         events[index] = event
+        return 1
     }
 
 
     // • DELETE
 
-    private suspend fun deleteEventByIdInFakeDatabase(eventId: EventId) {
+    private suspend fun deleteEventByIdInFakeDatabase(eventId: EventId): Int {
         val index = events.indexOfFirst { it.id == eventId }
-        if (index == -1) return
+        if (index == -1) return 0
 
         events[index] = events[index].copy(isDeleted = true)
+        return 1
     }
 
-    private suspend fun deleteFinallyByEventIdsInFakeDatabase(eventIds: List<EventId>) {
+    private suspend fun deleteFinallyByEventIdsInFakeDatabase(eventIds: List<EventId>): Int {
+        val eventIdsDeleteSize = eventIds.size
+
         events.removeAll {
             eventIds.contains(it.id)
         }
+
+        return eventIdsDeleteSize
     }
 
     private suspend fun getDeletedEventIdsInFakeDatabase(): List<EventId> {
@@ -176,8 +186,19 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         }
     }
 
-    private suspend fun clearAllEventsInFakeDatabase() {
+    private suspend fun deleteEventInFakeDatabase(event: EventEntity): Int {
+        val index = events.indexOfFirst { it.id == event.id }
+        if (index == -1) return 0
+
+        events.removeAt(index)
+        return 1
+    }
+
+    private suspend fun clearAllEventsInFakeDatabase(): Int {
+        val eventsSize = events.size
         events.clear()
+
+        return eventsSize
     }
 
 

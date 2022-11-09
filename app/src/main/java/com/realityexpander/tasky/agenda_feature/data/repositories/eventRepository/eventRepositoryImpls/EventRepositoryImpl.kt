@@ -47,19 +47,19 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun updateEvent(event: AgendaItem.Event): Boolean {
+    override suspend fun updateEvent(event: AgendaItem.Event): Int {
         return try {
             eventDao.updateEvent(event.toEntity())
         } catch (e: Exception) {
-            false
+            0
         }
     }
 
-    override suspend fun deleteEventId(eventId: EventId): Boolean {
+    override suspend fun deleteEventId(eventId: EventId): Int {
         return try {
             eventDao.deleteEventById(eventId)
         } catch (e: Exception) {
-            false
+            0
         }
     }
 
@@ -71,19 +71,19 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun deleteFinallyEventIds(eventIds: List<EventId>): Boolean {
+    override suspend fun deleteFinallyEventIds(eventIds: List<EventId>): Int {
         return try {
             eventDao.deleteFinallyByEventIds(eventIds)
         } catch (e: Exception) {
-            false
+            0
         }
     }
 
-    override suspend fun clearAllEvents(): Boolean {
+    override suspend fun clearAllEvents(): Int {
         return try {
             eventDao.clearAllEvents()
         } catch (e: Exception) {
-            false
+            0
         }
     }
 }
