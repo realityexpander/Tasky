@@ -5,83 +5,104 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.core.util.toUtcLong
 import com.realityexpander.tasky.core.util.toZonedDateTime
+import java.time.ZonedDateTime
 
 // from Domain to Entity
 fun AgendaItem.Event.toEntity(): EventEntity {
-    return this.let {
-        EventEntity(
-            id = it.id,
-            title = it.title,
-            description = it.description,
-            from = it.from,
-            to = it.to,
-            remindAt = it.remindAt,
-            host = it.host,
-            isUserEventCreator = it.isUserEventCreator,
-            isGoing = it.isGoing,
-            attendeeIds = it.attendeeIds,
-            photos = it.photos,
-            deletedPhotoKeys = it.deletedPhotoKeys,
-        )
-    }
+    return EventEntity(
+        id = id,
+        title = title,
+        description = description,
+        remindAt = remindAt,
+        from = from,
+        to = to,
+        host = host,
+        isUserEventCreator = isUserEventCreator,
+        isGoing = isGoing,
+        attendeeIds = attendeeIds,
+        photos = photos,
+        deletedPhotoKeys = deletedPhotoKeys,
+        isDeleted = isDeleted,
+    )
 }
 
 // from Entity to Domain
 fun EventEntity.toDomain(): AgendaItem.Event {
-    return this.let {
-        AgendaItem.Event(
-            id = it.id,
-            title = it.title,
-            description = it.description,
-            from = it.from,
-            to = it.to,
-            remindAt = it.remindAt,
-            host = it.host,
-            isUserEventCreator = it.isUserEventCreator,
-            isGoing = it.isGoing,
-            attendeeIds = it.attendeeIds,
-            photos = it.photos,
-            deletedPhotoKeys = it.deletedPhotoKeys,
-        )
-    }
+   return AgendaItem.Event(
+        id = id,
+        title = title,
+        description = description,
+        from = from,
+        to = to,
+        remindAt = remindAt,
+        host = host,
+        isUserEventCreator = isUserEventCreator,
+        isGoing = isGoing,
+        attendeeIds = attendeeIds,
+        photos = photos,
+        deletedPhotoKeys = deletedPhotoKeys,
+    )
 }
 
-// from DTO to Domain (converts UTC to local ZonedDateTime)
+// from DTO to Domain (also converts UTC to local ZonedDateTime)
 fun EventDTO.toDomain(): AgendaItem.Event {
-    return this.let {
-        AgendaItem.Event(
-            id = it.id,
-            title = it.title,
-            description = it.description,
-            from = it.from.toZonedDateTime(),
-            to = it.to.toZonedDateTime(),
-            remindAt = it.remindAt.toZonedDateTime(),
-            host = it.host,
-            isUserEventCreator = it.isUserEventCreator,
-            isGoing = it.isGoing,
-            attendeeIds = it.attendeeIds,
-            photos = it.photos,
-            deletedPhotoKeys = it.deletedPhotoKeys,
-        )
-    }
+   return AgendaItem.Event(
+        id = id,
+        title = title,
+        description = description,
+        from = from.toZonedDateTime(),
+        to = to.toZonedDateTime(),
+        remindAt = remindAt.toZonedDateTime(),
+        host = host,
+        isUserEventCreator = isUserEventCreator,
+        isGoing = isGoing,
+        attendeeIds = attendeeIds,
+        photos = photos,
+        deletedPhotoKeys = deletedPhotoKeys,
+    )
 }
 
-// from Domain to DTO (converts local ZonedDateTime to UTC)
+// from Domain to DTO (also converts local ZonedDateTime to UTC)
 fun AgendaItem.Event.toDTO(): EventDTO {
-    return this.let {
-        EventDTO(
-            id = it.id,
-            title = it.title,
-            description = it.description,
-            from = it.from.toUtcLong(),
-            to = it.to.toUtcLong(),
-            remindAt = it.remindAt.toUtcLong(),
-            host = it.host,
-            isUserEventCreator = it.isUserEventCreator,
-            isGoing = it.isGoing,
-            attendeeIds = it.attendeeIds,
-            photos = it.photos,
-            deletedPhotoKeys = it.deletedPhotoKeys,
-        )
-    }
+    return EventDTO(
+        id = id,
+        title = title,
+        description = description,
+        from = from.toUtcLong(),
+        to = to.toUtcLong(),
+        remindAt = remindAt.toUtcLong(),
+        host = host,
+        isUserEventCreator = isUserEventCreator,
+        isGoing = isGoing,
+        attendeeIds = attendeeIds,
+        photos = photos,
+        deletedPhotoKeys = deletedPhotoKeys,
+    )
+}
+
+fun main() {
+    val event = AgendaItem.Event(
+        id = "id",
+        title = "title",
+        description = "description",
+        from = ZonedDateTime.now(),
+        to = ZonedDateTime.now(),
+        remindAt = ZonedDateTime.now(),
+        host = "host",
+        isUserEventCreator = true,
+        isGoing = true,
+        attendeeIds = listOf("attendeeId1", "attendeeId2"),
+        photos = listOf("photoId1", "photoId2"),
+        deletedPhotoKeys = listOf("deletedPhotoId1", "deletedPhotoId2"),
+    )
+    val eventDTO = event.toDTO()
+    val eventEntity = event.toEntity()
+    val eventDomain = eventEntity.toDomain()
+    val eventDomain2 = eventDTO.toDomain()
+
+    println(event)
+    println(eventDTO == event.toDTO())
+    println(eventEntity == event.toEntity())
+    println(eventDomain == eventEntity.toDomain())
+    println(eventDomain2 == eventDTO.toDomain())
 }
