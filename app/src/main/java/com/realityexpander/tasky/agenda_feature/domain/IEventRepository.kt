@@ -13,7 +13,7 @@ interface IEventRepository {
     suspend fun updateEvent(event: AgendaItem.Event): RepositoryResult
 
     suspend fun deleteEventId(eventId: EventId): RepositoryResult  // only marks the event as deleted
-    suspend fun getDeletedEventIds(): List<EventId>       // gets only the "marked as deleted" events
+    suspend fun getDeletedEventIds(): List<EventId>                // gets only the "marked as deleted" events
     suspend fun deleteFinallyEventIds(eventIds: List<EventId>): RepositoryResult
 
     suspend fun clearAllEvents(): RepositoryResult
