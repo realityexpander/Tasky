@@ -30,7 +30,7 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyLightBlue
 import com.realityexpander.tasky.core.presentation.theme.TaskyPurple
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -41,8 +41,8 @@ fun AgendaCard(
     textColor: Color = MaterialTheme.colors.onSecondary,
     title: String = "",
     description: String? = "",
-    fromDateTime: LocalDateTime = LocalDateTime.MIN,
-    toDateTime: LocalDateTime? = null,
+    fromDateTime: ZonedDateTime = ZonedDateTime.now(),
+    toDateTime: ZonedDateTime? = null,
     completed: Boolean? = null,
     onToggleCompleted: () -> Unit = {},
     setMenuPositionCallback : (LayoutCoordinates) -> Unit = {},
@@ -278,9 +278,9 @@ fun AgendaCardPreview() {
                 id = UUID.randomUUID().toString(),
                 title = "Event Title",
                 description = "Event Description",
-                from = LocalDateTime.now(),
-                to = LocalDateTime.now().plusHours(1),
-                remindAt = LocalDateTime.now().minusHours(1),
+                from = ZonedDateTime.now(),
+                to = ZonedDateTime.now().plusHours(1),
+                remindAt = ZonedDateTime.now().minusHours(1),
             ),
             onEdit = {},
             onDelete = {},
