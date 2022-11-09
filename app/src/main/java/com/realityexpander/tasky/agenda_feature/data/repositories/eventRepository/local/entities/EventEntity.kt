@@ -27,5 +27,4 @@ data class EventEntity(
     val deletedPhotoKeys: List<PhotoId> = emptyList(),
 
     val isDeleted: Boolean = false,
-    val isUploaded: Boolean = false,
 )

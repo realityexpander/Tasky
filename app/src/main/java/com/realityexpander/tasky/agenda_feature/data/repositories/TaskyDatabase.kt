@@ -13,7 +13,10 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 // todo: implement database fully
 
 @Database(
-    entities = [EventEntity::class],
+    entities = [
+        EventEntity::class,
+        ModifiedAgendaItemEntity::class
+    ],
     version = 1
 )
 @TypeConverters(

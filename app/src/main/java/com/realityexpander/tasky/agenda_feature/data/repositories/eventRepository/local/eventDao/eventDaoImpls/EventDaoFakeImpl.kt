@@ -240,7 +240,6 @@ fun main() {
                 photos = listOf("photo1", "photo2", "photo3"),
                 deletedPhotoKeys = listOf(),
                 isDeleted = false,
-                isUploaded = false
             )
         )
 
@@ -259,7 +258,6 @@ fun main() {
                 photos = listOf("photo1", "photo2", "photo3"),
                 deletedPhotoKeys = listOf(),
                 isDeleted = false,
-                isUploaded = false
             )
         )
 
@@ -278,7 +276,6 @@ fun main() {
                 photos = listOf("photo1", "photo2", "photo3"),
                 deletedPhotoKeys = listOf(),
                 isDeleted = false,
-                isUploaded = false
             )
         )
 
@@ -299,7 +296,6 @@ fun main() {
                 photos = listOf("photo1", "photo2", "photo3"),
                 deletedPhotoKeys = listOf(),
                 isDeleted = false,
-                isUploaded = false
             )
         )
 

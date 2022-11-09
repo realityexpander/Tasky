@@ -27,6 +27,8 @@ abstract class AgendaItem {
 
         val photos: List<PhotoId> = emptyList(),
         val deletedPhotoKeys: List<PhotoId> = emptyList(),
+
+        val isDeleted: Boolean = false,
     ) : AgendaItem(), Parcelable
 
     @Parcelize
@@ -37,6 +39,8 @@ abstract class AgendaItem {
         val remindAt: ZonedDateTime,
         val time: ZonedDateTime,
         val isDone: Boolean = false,
+
+        val isDeleted: Boolean = false,
     ) : AgendaItem(), Parcelable
 
     @Parcelize
@@ -46,5 +50,7 @@ abstract class AgendaItem {
         val description: String,
         val remindAt: ZonedDateTime,
         val time: ZonedDateTime,
+
+        val isDeleted: Boolean = false,
     ) : AgendaItem(), Parcelable
 }
