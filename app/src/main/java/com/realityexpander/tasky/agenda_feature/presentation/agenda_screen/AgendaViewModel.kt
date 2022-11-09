@@ -162,6 +162,7 @@ class AgendaViewModel @Inject constructor(
     private fun logout() {
         viewModelScope.launch {
             authRepository.clearAuthInfo()
+            // todo send call to api to logout to invalidate token
         }
     }
 
