@@ -28,7 +28,8 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         return getEventsForDayInFakeDatabase(zonedDateTime)
     }
 
-    override fun getAllEventsFlow(): Flow<List<EventEntity>> {
+    // returns flow of events that are *NOT* marked as deleted.
+    override fun getEventsFlow(): Flow<List<EventEntity>> {
         return getAllEventsFlowInFakeDatabase()
     }
 
@@ -36,6 +37,12 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         return getEventByIdInFakeDatabase(eventId)
     }
 
+    // returns only the events that are *NOT* marked as deleted.
+    override suspend fun getEvents(): List<EventEntity> {
+        return getEventsInFakeDatabase()
+    }
+
+    // returns all events, including the deleted ones.
     override suspend fun getAllEvents(): List<EventEntity> {
         return getAllEventsInFakeDatabase()
     }
@@ -55,9 +62,9 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
     // • DELETE
 
     // Only marks the event as deleted
-    override suspend fun deleteEventById(eventId: EventId): Int {
+    override suspend fun markEventDeletedById(eventId: EventId): Int {
         return try {
-            return deleteEventByIdInFakeDatabase(eventId)
+            return markEventDeletedByIdInFakeDatabase(eventId)
         } catch (e: Exception) {
             0
         }
@@ -79,8 +86,8 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         }
     }
 
-    override suspend fun getDeletedEventIds(): List<EventId> {
-        return getDeletedEventIdsInFakeDatabase()
+    override suspend fun getMarkedDeletedEventIds(): List<EventId> {
+        return getMarkedDeletedEventIdsInFakeDatabase()
     }
 
     override suspend fun clearAllEvents(): Int {
@@ -91,6 +98,7 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////// FAKE DATABASE //////////////////////////////////
 
     private val eventsDBTable = mutableListOf<EventEntity>()
@@ -108,8 +116,13 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
 
     private suspend fun getEventsForDayInFakeDatabase(zonedDateTime: ZonedDateTime): List<EventEntity> {
         return eventsDBTable.filter {
-            ( it.from.toLocalDate() >= zonedDateTime.toLocalDate()
-              || it.to.toLocalDate() <= zonedDateTime.toLocalDate()
+            (
+                ( it.from.toLocalDate() >= zonedDateTime.toLocalDate()
+                    && it.from.toLocalDate() <= zonedDateTime.toLocalDate().plusDays(1)
+                )
+             || ( it.to.toLocalDate() >= zonedDateTime.toLocalDate()
+                    && it.to.toLocalDate() <= zonedDateTime.toLocalDate().plusDays(1)
+                )
             ) && !it.isDeleted
         }
     }
@@ -129,11 +142,17 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         }
     }
 
-    private suspend fun getAllEventsInFakeDatabase(): List<EventEntity> {
+    // Gets all events except the deleted ones
+    private suspend fun getEventsInFakeDatabase(): List<EventEntity> {
         return eventsDBTable
             .filter { event ->
                 !event.isDeleted
             }
+    }
+
+    // Gets all events including the deleted ones
+    private suspend fun getAllEventsInFakeDatabase(): List<EventEntity> {
+        return eventsDBTable
     }
 
 
@@ -152,7 +171,7 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
     // • DELETE
 
     // only marks the event as deleted
-    private suspend fun deleteEventByIdInFakeDatabase(eventId: EventId): Int {
+    private suspend fun markEventDeletedByIdInFakeDatabase(eventId: EventId): Int {
         val index = eventsDBTable.indexOfFirst { it.id == eventId }
         if (index == -1) return 0
 
@@ -172,7 +191,7 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         return eventIdsDeleteSize
     }
 
-    private suspend fun getDeletedEventIdsInFakeDatabase(): List<EventId> {
+    private suspend fun getMarkedDeletedEventIdsInFakeDatabase(): List<EventId> {
         return eventsDBTable.filter {
             it.isDeleted
         }.map {
@@ -218,7 +237,7 @@ fun main() {
     runBlocking {
 
         GlobalScope.launch {
-            db.getAllEventsFlow().collect {
+            db.getEventsFlow().collect {
                 println("EntityDBTable Flow: ${it.map { it.title }}")
             }
         }
@@ -325,10 +344,10 @@ fun main() {
         println()
 
         print(".deleteEventById(eventId=4) -> ")
-        db.deleteEventById("4")
+        db.markEventDeletedById("4")
 
         val deletedEventIds =
-            db.getDeletedEventIds().also { eventIds ->
+            db.getMarkedDeletedEventIds().also { eventIds ->
                 println("EventIds Marked as Deleted: $eventIds")
             }
 
@@ -340,7 +359,7 @@ fun main() {
 
         delay(100)
 
-        db.getDeletedEventIds().also { eventIds ->
+        db.getMarkedDeletedEventIds().also { eventIds ->
             println("EventIds Marked as Deleted: $eventIds")
         }
 
