@@ -14,3 +14,16 @@ class UuidStrListConverter {
         return value?.split(",")?.map { it }
     }
 }
+
+fun main() {
+    val uuidStrListConverter = UuidStrListConverter()
+
+    val uuidStrList = listOf("1", "2", "3")
+    val uuidStrListStr = uuidStrListConverter.fromList(uuidStrList)
+    val uuidStrList2 = uuidStrListConverter.toList(uuidStrListStr)
+
+    println(uuidStrListStr)
+    println(uuidStrList2)
+
+    println(uuidStrList == uuidStrList2)
+}
