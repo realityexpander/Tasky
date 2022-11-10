@@ -118,10 +118,10 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         return eventsDBTable.filter {
             (
                 ( it.from.toLocalDate() >= zonedDateTime.toLocalDate()
-                    && it.from.toLocalDate() < zonedDateTime.toLocalDate().plusDays(1)
+                  && it.from.toLocalDate() < zonedDateTime.toLocalDate().plusDays(1)
                 )
              || ( it.to.toLocalDate() >= zonedDateTime.toLocalDate()
-                    && it.to.toLocalDate() < zonedDateTime.toLocalDate().plusDays(1)
+                  && it.to.toLocalDate() < zonedDateTime.toLocalDate().plusDays(1)
                 )
             ) && !it.isDeleted
         }

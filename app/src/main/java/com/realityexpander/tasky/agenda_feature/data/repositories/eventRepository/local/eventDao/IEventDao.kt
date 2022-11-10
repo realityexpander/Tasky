@@ -11,15 +11,16 @@ interface IEventDao {
 
     suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<EventEntity>
     suspend fun getEventById(eventId: EventId): EventEntity?
-    suspend fun getAllEvents(): List<EventEntity>
-    fun getAllEventsFlow(): Flow<List<EventEntity>>
+    suspend fun getEvents(): List<EventEntity>    // only returns the events that are *NOT* marked as deleted.
+    suspend fun getAllEvents(): List<EventEntity> // returns all events, including the deleted ones.
+    fun getEventsFlow(): Flow<List<EventEntity>>  // only returns the events that are *NOT* marked as deleted.
 
     suspend fun updateEvent(event: EventEntity): Int
 
-    suspend fun deleteEventById(eventId: EventId): Int    // only marks the event as deleted
-    suspend fun getDeletedEventIds(): List<EventId>       // gets only the "marked as deleted" events
+    suspend fun markEventDeletedById(eventId: EventId): Int    // only marks the event as deleted
+    suspend fun getMarkedDeletedEventIds(): List<EventId>      // gets only the "isDeleted==true" events
     suspend fun deleteFinallyByEventIds(eventIds: List<EventId>): Int
-    suspend fun deleteEvent(event: EventEntity): Int
+    suspend fun deleteEvent(event: EventEntity): Int      // completely deletes the event.
 
     suspend fun clearAllEvents(): Int
 }

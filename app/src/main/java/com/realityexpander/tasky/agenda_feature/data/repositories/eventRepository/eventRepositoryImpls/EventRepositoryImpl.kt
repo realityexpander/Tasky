@@ -48,7 +48,7 @@ class EventRepositoryImpl(
 
     suspend fun getAllEvents(): List<AgendaItem.Event> {
         return try {
-            eventDao.getAllEvents().map { it.toDomain() }
+            eventDao.getEvents().map { it.toDomain() }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -70,7 +70,7 @@ class EventRepositoryImpl(
 
     override suspend fun deleteEventId(eventId: EventId): RepositoryResult {
         return try {
-            eventDao.deleteEventById(eventId)
+            eventDao.markEventDeletedById(eventId)
 
             RepositoryResult.Success
         } catch (e: CancellationException) {
@@ -82,7 +82,7 @@ class EventRepositoryImpl(
 
     override suspend fun getDeletedEventIds(): List<EventId> {
         return try {
-            eventDao.getDeletedEventIds()
+            eventDao.getMarkedDeletedEventIds()
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
