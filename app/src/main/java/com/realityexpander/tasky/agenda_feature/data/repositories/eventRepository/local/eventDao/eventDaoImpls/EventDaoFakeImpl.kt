@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
@@ -26,6 +27,10 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
 
     override suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<EventEntity> {
         return getEventsForDayInFakeDatabase(zonedDateTime)
+    }
+
+    override fun getEventsForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<EventEntity>> {
+        return getEventsForDayFlowInFakeDatabase(zonedDateTime)
     }
 
     // returns flow of events that are *NOT* marked as deleted.
@@ -124,6 +129,21 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
                   && it.to.toLocalDate() < zonedDateTime.toLocalDate().plusDays(1)
                 )
             ) && !it.isDeleted
+        }
+    }
+
+    private fun getEventsForDayFlowInFakeDatabase(zonedDateTime: ZonedDateTime): Flow<List<EventEntity>> {
+        return eventsDBTableFlow.map { events ->
+            events.filter {
+                (
+                    ( it.from.toLocalDate() >= zonedDateTime.toLocalDate()
+                      && it.from.toLocalDate() < zonedDateTime.toLocalDate().plusDays(1)
+                    )
+                 || ( it.to.toLocalDate() >= zonedDateTime.toLocalDate()
+                      && it.to.toLocalDate() < zonedDateTime.toLocalDate().plusDays(1)
+                    )
+                ) && !it.isDeleted
+            }
         }
     }
 
@@ -230,144 +250,243 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
 @OptIn(DelicateCoroutinesApi::class)
 fun main() {
 
-    val db = EventDaoFakeImpl()
+    val dao = EventDaoFakeImpl()
 
-
-    // Test Database Flow
+    // Test Fake Database Flows
     runBlocking {
 
-        GlobalScope.launch {
-            db.getEventsFlow().collect {
-                println("EntityDBTable Flow: ${it.map { it.title }}")
-            }
+        val test = 0
+//        val test = 1
+
+        when(test) {
+            0 -> runGeneralDBFlowTest(dao)
+            1 -> runGetEventsForDayFlowTest(dao)
         }
+    }
+}
 
-        db.createEvent(
-            EventEntity(
-                "1",
-                "Event 1",
-                "2021-01-01T00:00:00.000Z",
-                from = ZonedDateTime.now(),
-                to = ZonedDateTime.now(),
-                remindAt = ZonedDateTime.now(),
-                host = "Host 1",
-                isUserEventCreator = true,
-                isGoing = true,
-                attendeeIds = listOf("1", "2", "3"),
-                photos = listOf("photo1", "photo2", "photo3"),
-                deletedPhotoKeys = listOf(),
-                isDeleted = false,
-            )
+@OptIn(DelicateCoroutinesApi::class)
+suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
+
+    // Should only show Event 1 & 4
+
+    val today = ZonedDateTime.of(2021, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault())
+
+    GlobalScope.launch {
+        dao.getEventsForDayFlow(today).collect {
+            println("EntityDBTable getEventsForDayFlow: ${it.map { it.title }}")
+        }
+    }
+
+    dao.createEvent(
+        EventEntity(
+            "1",
+            "Event 1",
+            "Event 1 Description",
+            from = today.plusHours(1),
+            to = today.plusHours(2),
+            remindAt = today.plusMinutes(30),
+            host = "Host 1",
+            isUserEventCreator = true,
+            isGoing = true,
+            attendeeIds = listOf("1", "2", "3"),
+            photos = listOf("photo1", "photo2", "photo3"),
+            deletedPhotoKeys = listOf(),
+            isDeleted = false,
         )
+    )
 
-        delay(400)
+    delay(100)
 
-        db.createEvent(
-            EventEntity(
-                "2",
-                "Event 2",
-                "2021-01-01T00:00:00.000Z",
-                from = ZonedDateTime.now(),
-                to = ZonedDateTime.now(),
-                remindAt = ZonedDateTime.now(),
-                host = "Host 2",
-                isUserEventCreator = true,
-                isGoing = true,
-                attendeeIds = listOf("1", "2", "3"),
-                photos = listOf("photo1", "photo2", "photo3"),
-                deletedPhotoKeys = listOf(),
-                isDeleted = false,
-            )
+    dao.createEvent(
+        EventEntity(
+            "2",
+            "Event 2",
+            "Event 2 Description",
+            from = today.plusDays(1),
+            to = today.plusDays(1).plusHours(1),
+            remindAt = today.plusDays(1),
+            host = "Host 2",
+            isUserEventCreator = true,
+            isGoing = true,
+            attendeeIds = listOf("1", "2", "3"),
+            photos = listOf("photo1", "photo2", "photo3"),
+            deletedPhotoKeys = listOf(),
+            isDeleted = false,
         )
+    )
 
-        db.createEvent(
-            EventEntity(
-                "3",
-                "Event 3",
-                "2021-01-01T00:00:00.000Z",
-                from = ZonedDateTime.now(),
-                to = ZonedDateTime.now(),
-                remindAt = ZonedDateTime.now(),
-                host = "Host 3",
-                isUserEventCreator = true,
-                isGoing = true,
-                attendeeIds = listOf("1", "2", "3"),
-                photos = listOf("photo1", "photo2", "photo3"),
-                deletedPhotoKeys = listOf(),
-                isDeleted = false,
-            )
+    dao.createEvent(
+        EventEntity(
+            "3",
+            "Event 3",
+            "Event 3 Description",
+            from = today.minusDays(1).plusHours(2),
+            to = today.minusDays(1).plusHours(3),
+            remindAt = today.minusDays(1).plusHours(1),
+            host = "Host 2",
+            isUserEventCreator = true,
+            isGoing = true,
+            attendeeIds = listOf("1", "2", "3"),
+            photos = listOf("photo1", "photo2", "photo3"),
+            deletedPhotoKeys = listOf(),
+            isDeleted = false,
         )
+    )
 
-        delay(100)
-
-        db.createEvent(
-            EventEntity(
-                "4",
-                "Event 4",
-                "2021-01-01T00:00:00.000Z",
-                from = ZonedDateTime.now(),
-                to = ZonedDateTime.now(),
-                remindAt = ZonedDateTime.now(),
-                host = "Host 4",
-                isUserEventCreator = true,
-                isGoing = true,
-                attendeeIds = listOf("1", "2", "3"),
-                photos = listOf("photo1", "photo2", "photo3"),
-                deletedPhotoKeys = listOf(),
-                isDeleted = false,
-            )
+    dao.createEvent(
+        EventEntity(
+            "4",
+            "Event 4",
+            "Event 4 Description",
+            from = today.plusHours(10),
+            to = today.plusHours(11),
+            remindAt = today.plusMinutes(30),
+            host = "Host 1",
+            isUserEventCreator = true,
+            isGoing = true,
+            attendeeIds = listOf("1", "2", "3"),
+            photos = listOf("photo1", "photo2", "photo3"),
+            deletedPhotoKeys = listOf(),
+            isDeleted = false,
         )
+    )
 
-        delay(100)
-        println()
+    delay(1000)
+}
 
-        print(".updateEvent(eventId=4) -> ")
-        db.updateEvent(
-            EventEntity(
-                "4",
-                "Event 4 - updated",
-                "Description updated",
-                from = ZonedDateTime.now(),
-                to = ZonedDateTime.now(),
-                remindAt = ZonedDateTime.now(),
-                host = "Host 4",
-                isUserEventCreator = true,
-                isGoing = true,
-                attendeeIds = listOf("1", "2", "3"),
-                photos = listOf("photo1", "photo2", "photo3"),
-                deletedPhotoKeys = listOf(),
-                isDeleted = false,
-            )
+@OptIn(DelicateCoroutinesApi::class)
+suspend fun runGeneralDBFlowTest(dao: IEventDao) {
+    GlobalScope.launch {
+        dao.getEventsFlow().collect {
+            println("EntityDBTable Flow: ${it.map { it.title }}")
+        }
+    }
+
+    dao.createEvent(
+        EventEntity(
+            "1",
+            "Event 1",
+            "2021-01-01T00:00:00.000Z",
+            from = ZonedDateTime.now(),
+            to = ZonedDateTime.now(),
+            remindAt = ZonedDateTime.now(),
+            host = "Host 1",
+            isUserEventCreator = true,
+            isGoing = true,
+            attendeeIds = listOf("1", "2", "3"),
+            photos = listOf("photo1", "photo2", "photo3"),
+            deletedPhotoKeys = listOf(),
+            isDeleted = false,
         )
+    )
 
-        delay(100)
-        println()
+    delay(400)
 
-        print(".deleteEventById(eventId=4) -> ")
-        db.markEventDeletedById("4")
+    dao.createEvent(
+        EventEntity(
+            "2",
+            "Event 2",
+            "2021-01-01T00:00:00.000Z",
+            from = ZonedDateTime.now(),
+            to = ZonedDateTime.now(),
+            remindAt = ZonedDateTime.now(),
+            host = "Host 2",
+            isUserEventCreator = true,
+            isGoing = true,
+            attendeeIds = listOf("1", "2", "3"),
+            photos = listOf("photo1", "photo2", "photo3"),
+            deletedPhotoKeys = listOf(),
+            isDeleted = false,
+        )
+    )
 
-        val deletedEventIds =
-            db.getMarkedDeletedEventIds().also { eventIds ->
-                println("EventIds Marked as Deleted: $eventIds")
-            }
+    dao.createEvent(
+        EventEntity(
+            "3",
+            "Event 3",
+            "2021-01-01T00:00:00.000Z",
+            from = ZonedDateTime.now(),
+            to = ZonedDateTime.now(),
+            remindAt = ZonedDateTime.now(),
+            host = "Host 3",
+            isUserEventCreator = true,
+            isGoing = true,
+            attendeeIds = listOf("1", "2", "3"),
+            photos = listOf("photo1", "photo2", "photo3"),
+            deletedPhotoKeys = listOf(),
+            isDeleted = false,
+        )
+    )
 
-        delay(100)
-        println()
+    delay(100)
 
-        print(".deleteFinallyByEventIds(deletedEventIds) -> ")
-        db.deleteFinallyByEventIds(deletedEventIds)
+    dao.createEvent(
+        EventEntity(
+            "4",
+            "Event 4",
+            "2021-01-01T00:00:00.000Z",
+            from = ZonedDateTime.now(),
+            to = ZonedDateTime.now(),
+            remindAt = ZonedDateTime.now(),
+            host = "Host 4",
+            isUserEventCreator = true,
+            isGoing = true,
+            attendeeIds = listOf("1", "2", "3"),
+            photos = listOf("photo1", "photo2", "photo3"),
+            deletedPhotoKeys = listOf(),
+            isDeleted = false,
+        )
+    )
 
-        delay(100)
+    delay(100)
+    println()
 
-        db.getMarkedDeletedEventIds().also { eventIds ->
+    print(".updateEvent(eventId=4) -> ")
+    dao.updateEvent(
+        EventEntity(
+            "4",
+            "Event 4 - updated",
+            "Description updated",
+            from = ZonedDateTime.now(),
+            to = ZonedDateTime.now(),
+            remindAt = ZonedDateTime.now(),
+            host = "Host 4",
+            isUserEventCreator = true,
+            isGoing = true,
+            attendeeIds = listOf("1", "2", "3"),
+            photos = listOf("photo1", "photo2", "photo3"),
+            deletedPhotoKeys = listOf(),
+            isDeleted = false,
+        )
+    )
+
+    delay(100)
+    println()
+
+    print(".deleteEventById(eventId=4) -> ")
+    dao.markEventDeletedById("4")
+
+    val deletedEventIds =
+        dao.getMarkedDeletedEventIds().also { eventIds ->
             println("EventIds Marked as Deleted: $eventIds")
         }
 
-        println()
-        print(".clearAllEvents() -> ")
-        db.clearAllEvents()
+    delay(100)
+    println()
 
-        delay(2000)
+    print(".deleteFinallyByEventIds(deletedEventIds) -> ")
+    dao.deleteFinallyByEventIds(deletedEventIds)
 
+    delay(100)
+
+    dao.getMarkedDeletedEventIds().also { eventIds ->
+        println("EventIds Marked as Deleted: $eventIds")
     }
+
+    println()
+    print(".clearAllEvents() -> ")
+    dao.clearAllEvents()
+
+    delay(2000)
 }
