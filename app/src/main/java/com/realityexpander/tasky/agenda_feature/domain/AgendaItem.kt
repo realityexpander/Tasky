@@ -20,9 +20,9 @@ abstract class AgendaItem {
         val from: ZonedDateTime,
         val to: ZonedDateTime,
 
-        val host: UserId = "",
-        val isUserEventCreator: Boolean = false,
-        val isGoing: Boolean = false,
+        val host: UserId? = null,
+        val isUserEventCreator: Boolean? = null,
+        val isGoing: Boolean? = null,
         val attendeeIds: List<UserId> = emptyList(),
 
         val photos: List<PhotoId> = emptyList(),
