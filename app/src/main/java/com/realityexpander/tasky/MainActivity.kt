@@ -18,11 +18,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.dataStore
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.rememberNavHostEngine
-import com.realityexpander.tasky.agenda_feature.data.repositories.TaskyDatabase
-import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
 import com.realityexpander.tasky.auth_feature.presentation.splash_screen.MainActivityViewModel
 import com.realityexpander.tasky.core.data.settings.AppSettingsSerializer
 import com.realityexpander.tasky.core.data.settings.saveSettingsInitialized
@@ -30,9 +27,7 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
-import java.time.ZonedDateTime
 import kotlin.system.exitProcess
 
 val Context.dataStore by
@@ -113,161 +108,5 @@ class MainActivity : ComponentActivity() {
     fun exitApp() {
         finish()
         exitProcess(0)
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////////
-// Local Testing
-
-@OptIn(DelicateCoroutinesApi::class)
-fun test_db(context: Context, scope: CoroutineScope = CoroutineScope(Dispatchers.IO)) {
-
-
-    // create a new database
-    val taskyDB = Room.inMemoryDatabaseBuilder(
-        context,
-        TaskyDatabase::class.java
-    ).build()
-    val db = taskyDB.eventDao()
-
-    // Test Database Flow
-    runBlocking {
-
-        scope.launch {
-            db.getEventsFlow().collect {
-                println("EntityDBTable Flow: ${it.map { it.title }}")
-            }
-        }
-
-        db.createEvent(
-            EventEntity(
-                "1",
-                "Event 1",
-                "2021-01-01T00:00:00.000Z",
-                from = ZonedDateTime.now(),
-                to = ZonedDateTime.now(),
-                remindAt = ZonedDateTime.now(),
-                host = "Host 1",
-                isUserEventCreator = true,
-                isGoing = true,
-                attendeeIds = listOf("1", "2", "3"),
-                photos = listOf("photo1", "photo2", "photo3"),
-                deletedPhotoKeys = listOf(),
-                isDeleted = false,
-            )
-        )
-
-        delay(400)
-
-        db.createEvent(
-            EventEntity(
-                "2",
-                "Event 2",
-                "2021-01-01T00:00:00.000Z",
-                from = ZonedDateTime.now(),
-                to = ZonedDateTime.now(),
-                remindAt = ZonedDateTime.now(),
-                host = "Host 2",
-                isUserEventCreator = true,
-                isGoing = true,
-                attendeeIds = listOf("1", "2", "3"),
-                photos = listOf("photo1", "photo2", "photo3"),
-                deletedPhotoKeys = listOf(),
-                isDeleted = false,
-            )
-        )
-
-        db.createEvent(
-            EventEntity(
-                "3",
-                "Event 3",
-                "2021-01-01T00:00:00.000Z",
-                from = ZonedDateTime.now(),
-                to = ZonedDateTime.now(),
-                remindAt = ZonedDateTime.now(),
-                host = "Host 3",
-                isUserEventCreator = true,
-                isGoing = true,
-                attendeeIds = listOf("1", "2", "3"),
-                photos = listOf("photo1", "photo2", "photo3"),
-                deletedPhotoKeys = listOf(),
-                isDeleted = false,
-            )
-        )
-
-        delay(100)
-
-        db.createEvent(
-            EventEntity(
-                "4",
-                "Event 4",
-                "2021-01-01T00:00:00.000Z",
-                from = ZonedDateTime.now(),
-                to = ZonedDateTime.now(),
-                remindAt = ZonedDateTime.now(),
-                host = "Host 4",
-                isUserEventCreator = true,
-                isGoing = true,
-                attendeeIds = listOf("1", "2", "3"),
-                photos = listOf("photo1", "photo2", "photo3"),
-                deletedPhotoKeys = listOf(),
-                isDeleted = false,
-            )
-        )
-
-        val eventsForDay = db.getEventsForDay(ZonedDateTime.now())
-        println("Events for day: ${eventsForDay.map { it.title }}")
-
-        delay(100)
-        println()
-
-        print(".updateEvent(eventId=4) -> ")
-        db.updateEvent(
-            EventEntity(
-                "4",
-                "Event 4 - updated",
-                "Description updated",
-                from = ZonedDateTime.now(),
-                to = ZonedDateTime.now(),
-                remindAt = ZonedDateTime.now(),
-                host = "Host 4",
-                isUserEventCreator = true,
-                isGoing = true,
-                attendeeIds = listOf("1", "2", "3"),
-                photos = listOf("photo1", "photo2", "photo3"),
-                deletedPhotoKeys = listOf(),
-                isDeleted = false,
-            )
-        )
-
-        delay(100)
-        println()
-
-        print(".deleteEventById(eventId=4) -> ")
-        db.markEventDeletedById("4")
-
-        val deletedEventIds =
-            db.getMarkedDeletedEventIds().also { eventIds ->
-                println("EventIds Marked as Deleted: $eventIds")
-            }
-
-        delay(100)
-        println()
-
-        print(".deleteFinallyByEventIds(deletedEventIds) -> ")
-        db.deleteFinallyByEventIds(deletedEventIds)
-
-        delay(100)
-
-        db.getMarkedDeletedEventIds().also { eventIds ->
-            println("EventIds Marked as Deleted: $eventIds")
-        }
-
-        println()
-        print(".clearAllEvents() -> ")
-        db.clearAllEvents()
-
-        delay(2000)
-
     }
 }
