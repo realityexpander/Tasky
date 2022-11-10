@@ -10,13 +10,13 @@ import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiImpl
-import com.realityexpander.tasky.core.data.remote.TaskyApi
-import com.realityexpander.tasky.core.data.remote.TaskyApi.Companion.API_KEY
 import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
+import com.realityexpander.tasky.core.data.remote.TaskyApi
+import com.realityexpander.tasky.core.data.remote.TaskyApi.Companion.API_KEY
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -91,12 +91,6 @@ object AppModule {
 
                 chain.proceed(request)
             }
-
-//            val request = chain.request().newBuilder()
-//                .addHeader("x-api-key", API_KEY)
-//                .addHeader("Authorization", IAuthApi.authorizationHeader ?: "NULL_AUTH_TOKEN")
-//                .build()
-//            chain.proceed(request)
         }
 
         val client = if(BuildConfig.DEBUG) {
