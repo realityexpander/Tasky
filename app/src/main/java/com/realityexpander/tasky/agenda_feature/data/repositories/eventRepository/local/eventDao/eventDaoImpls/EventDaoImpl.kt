@@ -20,7 +20,7 @@ interface EventDaoImpl : IEventDao {
 
     // • READ
 
-    @Query("SELECT * FROM events WHERE id = :eventId AND isDeleted = 0")
+    @Query("SELECT * FROM events WHERE id = :eventId AND isDeleted = 0")  // only returns the events that are *NOT* marked as deleted.
     override suspend fun getEventById(eventId: EventId): EventEntity?
 
     @Query("SELECT * FROM events WHERE isDeleted = 0")  // only returns the events that are *NOT* marked as deleted
