@@ -10,6 +10,7 @@ import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.A
 import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
 import com.realityexpander.tasky.core.util.AuthToken
 import com.realityexpander.tasky.core.util.UuidStr
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -59,15 +60,17 @@ interface TaskyApi {
 
     @POST("syncAgenda")
     suspend fun syncAgenda(
-        @Body syncItems: AgendaSyncDTO,
+        @Body request: AgendaSyncDTO,
     ): Response<Void>
 
 
     ////////////////// EVENT //////////////////
 
+    @Multipart
     @POST("event")
     suspend fun createEvent(
-        @Body event: EventDTO, // todo implement multi-part request
+        @Part createEventRequest: MultipartBody.Part,
+        @Part photos: List<MultipartBody.Part>
     ): Response<EventDTO>
 
     @GET("event/{eventId}")
@@ -75,13 +78,15 @@ interface TaskyApi {
         @Path("eventId") eventId: UuidStr,
     ): Response<EventDTO>
 
+    @Multipart
+    @PUT("event")
+    suspend fun updateEvent(
+        @Part updateEventRequest: MultipartBody.Part, //EventDTO,
+        @Part photos: List<MultipartBody.Part> //List<PhotoId>
+    ): Response<EventDTO>
+
     @DELETE("event/{eventId}")
     suspend fun deleteEvent(
         @Path("eventId") eventId: UuidStr,
     ): Response<Void>
-
-    @PUT("event")
-    suspend fun updateEvent(
-        @Body event: EventDTO,
-    ): Response<EventDTO>
 }
