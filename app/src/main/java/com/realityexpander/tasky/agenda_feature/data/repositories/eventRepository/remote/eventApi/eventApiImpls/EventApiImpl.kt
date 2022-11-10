@@ -4,6 +4,9 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
 import com.realityexpander.tasky.agenda_feature.util.EventId
 import com.realityexpander.tasky.core.data.remote.TaskyApi
+import kotlinx.serialization.json.Json
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 class EventApiImpl @Inject constructor(
@@ -11,7 +14,25 @@ class EventApiImpl @Inject constructor(
 ) : IEventApi {
     override suspend fun createEvent(event: EventDTO): EventDTO {
         try {
-            val response = taskyApi.createEvent(event)
+//            val response = taskyApi.createEvent(event)
+            val response = taskyApi.createEvent(
+                createEventRequest =
+                    MultipartBody.Part
+                        .createFormData(
+                            "create_event_request",
+                            Json.encodeToString(EventDTO.serializer(), event),
+                        ),
+//                photos = emptyList()
+                photos = event.photos.map {
+                    MultipartBody.Part
+                        .createFormData(
+                            "photos",
+                            "photo1",
+                            body = event.photos[0].toRequestBody()
+                        )
+                }.also {
+                }
+            )
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 return responseBody ?: throw Exception("Response body is null")
@@ -48,7 +69,24 @@ class EventApiImpl @Inject constructor(
 
     override suspend fun updateEvent(event: EventDTO): EventDTO {
         return try {
-            val response = taskyApi.updateEvent(event)
+//            val response = taskyApi.updateEvent(event)
+            val response = taskyApi.updateEvent(
+                updateEventRequest =
+                    MultipartBody.Part
+                        .createFormData(
+                            "update_event_request",
+                            Json.encodeToString(EventDTO.serializer(), event)
+                        ),
+                    photos = event.photos.map {
+                        MultipartBody.Part
+                            .createFormData(
+                                "photos",
+                                "photo1",
+                                body = event.photos[0].toRequestBody()
+                        )
+                }.also {
+                }
+            )
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 responseBody ?: throw Exception("Response body is null")
