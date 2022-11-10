@@ -38,10 +38,12 @@ android {
             useSupportLibrary true
         }
 
-        // Support exporting schema
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+        // Room annotation processor options
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas") // Support exporting schema
+                arg("room.incremental", "true")                   // Support incremental annotation processing
+                arg("room.expandProjection", "true")              // ???
             }
         }
 
