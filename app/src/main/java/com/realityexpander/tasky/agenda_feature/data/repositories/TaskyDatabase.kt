@@ -17,7 +17,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
         EventEntity::class,
         ModifiedAgendaItemEntity::class
     ],
-    version = 1
+    version = 1,
 )
 @TypeConverters(
     LocalDateTimeConverter::class,
@@ -25,5 +25,10 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
     UuidStrListConverter::class,
 )
 abstract class TaskyDatabase : RoomDatabase() {
+
     abstract fun eventDao(): EventDaoImpl
+
+    companion object {
+        const val DATABASE_NAME = "tasky_database"
+    }
 }
