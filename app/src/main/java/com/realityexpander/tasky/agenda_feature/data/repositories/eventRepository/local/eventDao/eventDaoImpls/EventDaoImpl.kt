@@ -32,14 +32,11 @@ interface EventDaoImpl : IEventDao {
     @Query("SELECT * FROM events WHERE isDeleted = 0")  // only returns the events that are *NOT* marked as deleted.
     override fun getEventsFlow(): Flow<List<EventEntity>>
 
-    @Query("""
-        SELECT * FROM events WHERE isDeleted = 0 
-            AND (
-                    (`from` >= :zonedDateTime AND (`from` < (:zonedDateTime + ${DAY_IN_SECONDS})))
-                 OR (`to`   >= :zonedDateTime AND (`to`   < (:zonedDateTime + ${DAY_IN_SECONDS})))
-            )
-        """)
+    @Query(getEventsForDayQuery)
     override suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<EventEntity>  // note: ZonedDateTime gets converted to UTC EpochSeconds for storage in the DB.
+
+    @Query(getEventsForDayQuery)
+    override fun getEventsForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<EventEntity>>  // note: ZonedDateTime gets converted to UTC EpochSeconds for storage in the DB.
 
 
     // • UPDATE
@@ -64,4 +61,17 @@ interface EventDaoImpl : IEventDao {
 
     @Query("DELETE FROM events")
     override suspend fun clearAllEvents(): Int  // completely deletes all events.
+
+
+
+    companion object {
+        const val getEventsForDayQuery =
+        """
+            SELECT * FROM events WHERE isDeleted = 0 
+                AND (
+                        (`from` >= :zonedDateTime AND (`from` < (:zonedDateTime + ${DAY_IN_SECONDS})))
+                     OR (`to`   >= :zonedDateTime AND (`to`   < (:zonedDateTime + ${DAY_IN_SECONDS})))
+                )
+        """
+    }
 }
