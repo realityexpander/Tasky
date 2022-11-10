@@ -38,7 +38,14 @@ android {
             useSupportLibrary true
         }
 
-        // get path to project
+        // Support exporting schema
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+
+        // get path to project root folder
         def projectRoot = rootProject.projectDir.toString()
 
         // load api key from `api.properties` file
