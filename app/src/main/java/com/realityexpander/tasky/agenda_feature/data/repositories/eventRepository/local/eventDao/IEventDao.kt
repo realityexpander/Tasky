@@ -10,10 +10,11 @@ interface IEventDao {
     suspend fun createEvent(event: EventEntity)
 
     suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<EventEntity>
+    fun getEventsForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<EventEntity>>
     suspend fun getEventById(eventId: EventId): EventEntity?
     suspend fun getEvents(): List<EventEntity>    // only returns the events that are *NOT* marked as deleted.
-    suspend fun getAllEvents(): List<EventEntity> // returns all events, including the deleted ones.
     fun getEventsFlow(): Flow<List<EventEntity>>  // only returns the events that are *NOT* marked as deleted.
+    suspend fun getAllEvents(): List<EventEntity> // returns all events, including the deleted ones.
 
     suspend fun updateEvent(event: EventEntity): Int
 
