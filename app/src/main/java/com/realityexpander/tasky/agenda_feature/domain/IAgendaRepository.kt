@@ -2,11 +2,13 @@ package com.realityexpander.tasky.agenda_feature.domain
 
 import com.realityexpander.tasky.agenda_feature.common.RepositoryResult
 import com.realityexpander.tasky.agenda_feature.util.EventId
+import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
 
 interface IAgendaRepository {
 
-    suspend fun getAgendaDay(dateTime: ZonedDateTime): List<AgendaItem>
+    suspend fun getAgendaForDay(dateTime: ZonedDateTime): List<AgendaItem>
+    fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>>
     suspend fun syncAgenda(): RepositoryResult
 
     suspend fun createEvent(event: AgendaItem.Event): RepositoryResult
