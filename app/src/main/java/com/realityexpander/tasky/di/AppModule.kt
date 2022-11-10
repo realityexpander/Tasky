@@ -1,8 +1,19 @@
 package com.realityexpander.tasky.di
 
 import android.content.Context
+import androidx.room.Room
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.realityexpander.tasky.BuildConfig
+import com.realityexpander.tasky.agenda_feature.data.repositories.TaskyDatabase
+import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls.AgendaRepositoryImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.AgendaApiImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls.EventRepositoryImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.eventApiImpls.EventApiImpl
+import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
+import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryImpl
 import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
@@ -95,8 +106,8 @@ object AppModule {
 
         val client = if(BuildConfig.DEBUG) {
             val logging = HttpLoggingInterceptor()
-//            logging.level = HttpLoggingInterceptor.Level.BODY
-            logging.level = HttpLoggingInterceptor.Level.HEADERS
+            logging.level = HttpLoggingInterceptor.Level.BODY
+//            logging.level = HttpLoggingInterceptor.Level.HEADERS
 
             OkHttpClient.Builder()
                 .addInterceptor(addHeadersInterceptor)
@@ -207,6 +218,69 @@ object AppModule {
             )
         }
     }
+
+
+    /////////// DATABASE ///////////
+
+    @Provides
+    @Singleton
+    fun provideTaskyDatabase(
+        @ApplicationContext context: Context
+    ): TaskyDatabase =
+        Room.databaseBuilder(
+            context,
+            TaskyDatabase::class.java,
+            TaskyDatabase.DATABASE_NAME
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+
+
+    /////////// AGENDA REPOSITORY ///////////
+
+    @Provides
+    @Singleton
+    fun provideAgendaApi(
+        taskyApi: TaskyApi
+    ) : IAgendaApi =
+        AgendaApiImpl(taskyApi)
+
+
+    @Provides
+    @Singleton
+    fun provideAgendaRepository(
+        eventRepository: IEventRepository,
+//        taskRepository: ITaskRepository,              // todo implement soon
+//        reminderRepository: IReminderRepository,      // todo implement soon
+        agendaApi: IAgendaApi,
+    ): IAgendaRepository =
+        AgendaRepositoryImpl(
+            eventRepository,
+            agendaApi
+        )
+
+    /////////// EVENTS REPOSITORY ///////////
+
+    @Provides
+    @Singleton
+    fun provideEventDaoProd(
+        taskyDatabase: TaskyDatabase
+    ): IEventDao =
+        taskyDatabase.eventDao()
+
+    @Provides
+    @Singleton
+    fun provideEventApiProd(taskyApi: TaskyApi): IEventApi =
+        EventApiImpl(taskyApi)
+
+    @Provides
+    @Singleton
+    fun provideEventRepository(
+        eventDao: IEventDao,
+        eventApi: IEventApi
+    ): IEventRepository =
+        EventRepositoryImpl(eventDao, eventApi)
+
 
     //////////////////////////////////////
     /// Unused but left here for reference
