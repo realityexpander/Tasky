@@ -3,7 +3,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.agendaReposit
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaDayDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaSyncDTO
 import com.realityexpander.tasky.core.data.remote.TaskyApi
-import com.realityexpander.tasky.core.util.toUtcLong
+import com.realityexpander.tasky.core.util.toUtcMillis
 import java.time.ZonedDateTime
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
@@ -16,7 +16,7 @@ class AgendaApiImpl @Inject constructor(
         return try {
             val response = taskyApi.getAgenda(
                 ZonedDateTime.now().zone.id,
-                zonedDateTime.toUtcLong()
+                zonedDateTime.toUtcMillis()
             )
 
             if (response.isSuccessful) {

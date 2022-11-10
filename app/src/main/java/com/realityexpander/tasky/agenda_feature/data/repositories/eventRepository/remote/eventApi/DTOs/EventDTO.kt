@@ -4,7 +4,7 @@ import androidx.annotation.Keep
 import com.realityexpander.tasky.agenda_feature.util.AttendeeId
 import com.realityexpander.tasky.agenda_feature.util.PhotoId
 import com.realityexpander.tasky.core.util.UserId
-import com.realityexpander.tasky.core.util.UtcLong
+import com.realityexpander.tasky.core.util.UtcMillis
 import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
@@ -18,9 +18,9 @@ data class EventDTO(
     val id: UuidStr,
     val title: String,
     val description: String,
-    val remindAt: UtcLong,
-    val from: UtcLong,
-    val to: UtcLong,
+    val remindAt: UtcMillis,
+    val from: UtcMillis,
+    val to: UtcMillis,
 
     val host: UserId,
     val isUserEventCreator: Boolean = false,

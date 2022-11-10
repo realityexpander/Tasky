@@ -3,7 +3,7 @@ package com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
-import com.realityexpander.tasky.core.util.toUtcLong
+import com.realityexpander.tasky.core.util.toUtcMillis
 import com.realityexpander.tasky.core.util.toZonedDateTime
 import java.time.ZonedDateTime
 
@@ -44,7 +44,7 @@ fun EventEntity.toDomain(): AgendaItem.Event {
     )
 }
 
-// from DTO to Domain (also converts UTC to local ZonedDateTime)
+// from DTO to Domain (also converts UTC time to local ZonedDateTime)
 fun EventDTO.toDomain(): AgendaItem.Event {
    return AgendaItem.Event(
         id = id,
@@ -62,15 +62,15 @@ fun EventDTO.toDomain(): AgendaItem.Event {
     )
 }
 
-// from Domain to DTO (also converts local ZonedDateTime to UTC)
+// from Domain to DTO (also converts local ZonedDateTime to UTC time)
 fun AgendaItem.Event.toDTO(): EventDTO {
     return EventDTO(
         id = id,
         title = title,
         description = description,
-        from = from.toUtcLong(),
-        to = to.toUtcLong(),
-        remindAt = remindAt.toUtcLong(),
+        from = from.toUtcMillis(),
+        to = to.toUtcMillis(),
+        remindAt = remindAt.toUtcMillis(),
         host = host,
         isUserEventCreator = isUserEventCreator,
         isGoing = isGoing,
