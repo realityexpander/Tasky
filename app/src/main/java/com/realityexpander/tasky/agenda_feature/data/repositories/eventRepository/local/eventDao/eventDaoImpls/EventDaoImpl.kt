@@ -36,10 +36,10 @@ interface EventDaoImpl : IEventDao {
         SELECT * FROM events WHERE isDeleted = 0 
             AND (
                     (`from` >= :zonedDateTime AND (`from` < (:zonedDateTime + ${DAY_IN_SECONDS})))
-                OR  (`to`   >= :zonedDateTime AND (`to`   < (:zonedDateTime + ${DAY_IN_SECONDS})))
+                 OR (`to`   >= :zonedDateTime AND (`to`   < (:zonedDateTime + ${DAY_IN_SECONDS})))
             )
         """)
-    override suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<EventEntity>
+    override suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<EventEntity>  // note: ZonedDateTime gets converted to UTC EpochSeconds for storage in the DB.
 
 
     // • UPDATE
