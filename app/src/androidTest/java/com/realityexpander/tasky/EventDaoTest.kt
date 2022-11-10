@@ -16,7 +16,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 
 @RunWith(AndroidJUnit4::class)
-open class EventsDaoTest {
+open class EventDaoTest {
 
     private lateinit var taskyDatabase: TaskyDatabase
     private lateinit var eventDao: IEventDao
