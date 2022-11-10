@@ -5,6 +5,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.agendaReposito
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import com.realityexpander.tasky.core.util.toUtcLong
 import java.time.ZonedDateTime
+import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
 class AgendaApiImpl @Inject constructor(
@@ -25,8 +26,10 @@ class AgendaApiImpl @Inject constructor(
             } else {
                 throw Exception("Error getting agenda")
             }
-        } catch (e: Exception) {
+        } catch (e: CancellationException) {
             throw e
+        } catch (e: Exception) {
+            throw e  // todo improve error handling
         }
     }
 
@@ -35,8 +38,10 @@ class AgendaApiImpl @Inject constructor(
             val response = taskyApi.syncAgenda(agendaSync)
 
             response.isSuccessful
-        } catch (e: Exception) {
+        } catch (e: CancellationException) {
             throw e
+        } catch (e: Exception) {
+            throw e  // todo improve error handling
         }
     }
 }
