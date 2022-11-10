@@ -18,9 +18,9 @@ data class EventEntity(
     val from: ZonedDateTime,
     val to: ZonedDateTime,
 
-    val host: UuidStr = "",
-    val isUserEventCreator: Boolean = false,
-    val isGoing: Boolean = false,
+    val host: UuidStr? = null,
+    val isUserEventCreator: Boolean? = null,
+    val isGoing: Boolean? = null,
     val attendeeIds: List<AttendeeId> = emptyList(),
 
     val photos: List<PhotoId> = emptyList(),
