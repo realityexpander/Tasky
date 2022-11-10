@@ -3,6 +3,7 @@ package com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImp
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.ApiCredentialsDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
+import com.realityexpander.tasky.core.data.remote.TaskyApi
 import com.realityexpander.tasky.core.data.remote.utils.getErrorBodyMessage
 import com.realityexpander.tasky.core.util.*
 import retrofit2.HttpException
@@ -167,5 +168,9 @@ class AuthApiImpl @Inject constructor (
         } catch (e: Exception) {
             throw Exceptions.UnknownErrorException(e.message ?: "Unknown Error")
         }
+    }
+
+    override suspend fun logout(): Boolean {
+        TODO("Not yet implemented") // todo implement logout on server
     }
 }

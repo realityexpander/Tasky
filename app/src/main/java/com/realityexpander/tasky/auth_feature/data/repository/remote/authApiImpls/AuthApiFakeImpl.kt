@@ -110,6 +110,10 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
         return false
     }
 
+    override suspend fun logout(): Boolean {
+        return expireToken_onServer(IAuthApi.authToken)
+    }
+
     /////////////// Server simulation functions //////////////////////
 
     private val users_onServer =
@@ -141,8 +145,18 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
         return userId("id for $email") as UserId
     }
 
-    fun expireToken_onServer(email: Email) {
+    fun expireTokenByEmail_onServer(email: Email) {
         users_onServer[email]?.authToken = null
+    }
+
+    private fun expireToken_onServer(authToken: AuthToken?): Boolean {
+        users_onServer.filter { entry ->
+            entry.value.authToken == authToken
+        }.forEach { entry ->
+            entry.value.authToken = null
+        }
+
+        return true
     }
 }
 
@@ -181,7 +195,7 @@ suspend fun main() {
     println()
 
     user = authApiFakeImpl.login("chris@demo.com", "Password1")
-    authApiFakeImpl.expireToken_onServer("chris@demo.com") // server expires the token
+    authApiFakeImpl.expireTokenByEmail_onServer("chris@demo.com") // server expires the token
     println("AuthApiFakeImpl.authenticate() Expired token (server side) when user is still logged in")
     println("   logged-in user authToken is valid & not null=" +
                 assert(user?.authToken != null))

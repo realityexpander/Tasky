@@ -4,8 +4,8 @@ typealias Username = String
 typealias Email = String
 typealias Password = String
 typealias AuthToken = String
-typealias UserId = String
 typealias UuidStr = String
+typealias UserId = UuidStr
 
 fun authToken(authToken: String?): AuthToken? {
     return authToken

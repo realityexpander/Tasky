@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.lifecycle.SavedStateHandle
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoFakeImpl
@@ -47,7 +48,7 @@ class AppTest {
 
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-//            savedStateHandle = SavedStateHandle(), // todo fix after Compose Destinations is fixed
+            savedStateHandle = SavedStateHandle(),
             validateEmail = validateEmail,
             validatePassword = validatePassword,
         )
@@ -78,16 +79,16 @@ class AppTest {
         val expectedPassword = "•••••••••"
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-//            savedStateHandle = SavedStateHandle().apply {  // todo put back after Compose-Destination fix
-//                set("email", "chris@demo.com")
-//                set("password", "1234567Aa")
-//            },
+            savedStateHandle = SavedStateHandle().apply {  // todo put back after Compose-Destination fix
+                set("email", "chris@demo.com")
+                set("password", "1234567Aa")
+            },
             validateEmail = validateEmail,
             validatePassword = validatePassword,
         )
 
-        TaskyApplication.savedStateHandle["email"] = expectedEmail       // todo remove after Compose-Destination fix
-        TaskyApplication.savedStateHandle["password"] = password
+//        TaskyApplication.savedStateHandle["email"] = expectedEmail       // todo remove after Compose-Destination fix
+//        TaskyApplication.savedStateHandle["password"] = password
         loginViewModel.sendEvent(LoginEvent.UpdateEmail(expectedEmail))
         loginViewModel.sendEvent(LoginEvent.UpdatePassword(password))
 
@@ -116,16 +117,16 @@ class AppTest {
         val expectedPassword = "1234567Aa"
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-//            savedStateHandle = SavedStateHandle().apply {  // todo put back after Compose-Destination fix
-//                set("email", "chris@demo.com")
-//                set("password", "1234567Aa")
-//            },
+            savedStateHandle = SavedStateHandle().apply {  // todo put back after Compose-Destination fix
+                set("email", "chris@demo.com")
+                set("password", "1234567Aa")
+            },
             validateEmail = validateEmail,
             validatePassword = validatePassword,
         )
 
-        TaskyApplication.savedStateHandle["email"] = expectedEmail       // todo remove after Compose-Destination fix
-        TaskyApplication.savedStateHandle["password"] = expectedPassword
+//        TaskyApplication.savedStateHandle["email"] = expectedEmail       // todo remove after Compose-Destination fix
+//        TaskyApplication.savedStateHandle["password"] = expectedPassword
         loginViewModel.sendEvent(LoginEvent.UpdateEmail(expectedEmail))
         loginViewModel.sendEvent(LoginEvent.UpdatePassword(expectedPassword))
 
