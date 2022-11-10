@@ -304,9 +304,9 @@ open class EventsDaoTest {
     fun deleteEvent_CompletelyDeletesEventData() {
 
         // ARRANGE
-        val expectedDeleteEventId = "1"
+        val expectedRemainingEventId = "2"
         val event1 = EventEntity(
-            expectedDeleteEventId,
+            "1",
             "Event 1",
             "2021-01-01T00:00:00.000Z",
             from = ZonedDateTime.now(),
@@ -321,7 +321,7 @@ open class EventsDaoTest {
             isDeleted = false,
         )
         val event2 = EventEntity(
-            "2",
+            expectedRemainingEventId,
             "Event 2",
             "2021-01-01T00:00:00.000Z",
             from = ZonedDateTime.now(),
@@ -340,17 +340,17 @@ open class EventsDaoTest {
             // ARRANGE
             eventDao.createEvent(event1)
             eventDao.createEvent(event2)
-            eventDao.deleteEvent(event1)
 
             // ACT
-            val deletedEventIds = eventDao.getMarkedDeletedEventIds()
-            eventDao.deleteFinallyByEventIds(deletedEventIds)
+            eventDao.deleteEvent(event1)
 
             // ASSERT
-            assert(deletedEventIds.size == 1)
-            assert(deletedEventIds[0] == expectedDeleteEventId)
+            val deletedEventIds = eventDao.getMarkedDeletedEventIds()
+            assert(deletedEventIds.isEmpty())
+
             val eventsAll = eventDao.getAllEvents()
             assert(eventsAll.size == 1)
+            assert(eventsAll[0].id == expectedRemainingEventId)
         }
     }
 
