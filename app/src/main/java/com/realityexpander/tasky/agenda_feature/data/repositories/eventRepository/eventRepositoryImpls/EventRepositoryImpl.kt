@@ -12,6 +12,7 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
 import com.realityexpander.tasky.agenda_feature.util.EventId
 import java.time.ZonedDateTime
+import java.util.concurrent.CancellationException
 
 class EventRepositoryImpl(
     private val eventDao: IEventDao = EventDaoFakeImpl(),
@@ -24,6 +25,8 @@ class EventRepositoryImpl(
             eventApi.createEvent(event.toDTO())
 
             RepositoryResult.Success
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             RepositoryResult.Error(e.message ?: "createEvent error")
         }
@@ -36,6 +39,8 @@ class EventRepositoryImpl(
     override suspend fun getEventId(eventId: EventId): AgendaItem.Event? {
         return try {
             eventDao.getEventById(eventId)?.toDomain()
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             null
         }
@@ -44,6 +49,8 @@ class EventRepositoryImpl(
     suspend fun getAllEvents(): List<AgendaItem.Event> {
         return try {
             eventDao.getAllEvents().map { it.toDomain() }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             emptyList()
         }
@@ -54,6 +61,8 @@ class EventRepositoryImpl(
             eventDao.updateEvent(event.toEntity())
 
             RepositoryResult.Success
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             RepositoryResult.Error(e.message ?: "updateEvent error")
         }
@@ -64,6 +73,8 @@ class EventRepositoryImpl(
             eventDao.deleteEventById(eventId)
 
             RepositoryResult.Success
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             RepositoryResult.Error(e.message ?: "deleteEventId error")
         }
@@ -72,6 +83,8 @@ class EventRepositoryImpl(
     override suspend fun getDeletedEventIds(): List<EventId> {
         return try {
             eventDao.getDeletedEventIds()
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             emptyList()
         }
@@ -82,6 +95,8 @@ class EventRepositoryImpl(
             eventDao.deleteFinallyByEventIds(eventIds)
 
             RepositoryResult.Success
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             RepositoryResult.Error(e.message ?: "deleteFinallyEventIds error")
         }
@@ -92,6 +107,8 @@ class EventRepositoryImpl(
             eventDao.clearAllEvents()
 
             RepositoryResult.Success
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             RepositoryResult.Error(e.message ?: "clearAllEvents error")
         }

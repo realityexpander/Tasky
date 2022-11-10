@@ -3,13 +3,11 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.eventReposito
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
 import com.realityexpander.tasky.agenda_feature.util.EventId
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.update
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
@@ -53,6 +51,7 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         }
     }
 
+
     // • DELETE
 
     // Only marks the event as deleted
@@ -94,29 +93,21 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
 
     ////////////////////////////////// FAKE DATABASE //////////////////////////////////
 
-    private val events = mutableListOf<EventEntity>()
-    private val eventsFlow = flow {
-        var lastEvents= emptyList<EventEntity>()
-        while(true) {
-            if(!lastEvents.containsAll(events)) {
-                lastEvents = events.toList()
-                emit(events)
-            }
-            delay(100)
-        }
-    }
+    private val eventsDBTable = mutableListOf<EventEntity>()
+    private val eventsDBTableFlow = MutableStateFlow<List<EventEntity>>(emptyList())
 
     // • CREATE
 
     private suspend fun createEventInFakeDatabase(event: EventEntity) {
-        events.add(event)
+        eventsDBTable.add(event)
+        eventsDBTableFlow.update { eventsDBTable.toList() }
     }
 
 
     // • READ
 
     private suspend fun getEventsForDayInFakeDatabase(zonedDateTime: ZonedDateTime): List<EventEntity> {
-        return events.filter {
+        return eventsDBTable.filter {
             ( it.from.toLocalDate() >= zonedDateTime.toLocalDate()
               || it.to.toLocalDate() <= zonedDateTime.toLocalDate()
             ) && !it.isDeleted
@@ -124,22 +115,22 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
     }
 
     private fun getAllEventsFlowInFakeDatabase(): Flow<List<EventEntity>> {
-        return eventsFlow
+        return eventsDBTableFlow
             .map { events ->
                 events.filter { event ->
-                    !event.isDeleted
+                    !(event.isDeleted ?: false)
                 }
             }
     }
 
     private suspend fun getEventByIdInFakeDatabase(eventId: EventId): EventEntity? {
-        return events.find {
+        return eventsDBTable.find {
             it.id == eventId && !it.isDeleted
         }
     }
 
     private suspend fun getAllEventsInFakeDatabase(): List<EventEntity> {
-        return events
+        return eventsDBTable
             .filter { event ->
                 !event.isDeleted
             }
@@ -149,36 +140,40 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
     // • UPDATE
 
     private suspend fun updateEventInFakeDatabase(event: EventEntity): Int {
-        val index = events.indexOfFirst { it.id == event.id }
+        val index = eventsDBTable.indexOfFirst { it.id == event.id }
         if (index == -1) return 0
 
-        events[index] = event
+        eventsDBTable[index] = event
+        eventsDBTableFlow.update { eventsDBTable.toMutableList().toList() }
         return 1
     }
 
 
     // • DELETE
 
+    // only marks the event as deleted
     private suspend fun deleteEventByIdInFakeDatabase(eventId: EventId): Int {
-        val index = events.indexOfFirst { it.id == eventId }
+        val index = eventsDBTable.indexOfFirst { it.id == eventId }
         if (index == -1) return 0
 
-        events[index] = events[index].copy(isDeleted = true)
+        eventsDBTable[index] = eventsDBTable[index].copy(isDeleted = true)
+        eventsDBTableFlow.update { eventsDBTable.toList() }
         return 1
     }
 
     private suspend fun deleteFinallyByEventIdsInFakeDatabase(eventIds: List<EventId>): Int {
         val eventIdsDeleteSize = eventIds.size
 
-        events.removeAll {
+        eventsDBTable.removeAll {
             eventIds.contains(it.id)
         }
+        eventsDBTableFlow.update { eventsDBTable.toList() }
 
         return eventIdsDeleteSize
     }
 
     private suspend fun getDeletedEventIdsInFakeDatabase(): List<EventId> {
-        return events.filter {
+        return eventsDBTable.filter {
             it.isDeleted
         }.map {
             it.id
@@ -187,16 +182,19 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
     }
 
     private suspend fun deleteEventInFakeDatabase(event: EventEntity): Int {
-        val index = events.indexOfFirst { it.id == event.id }
+        val index = eventsDBTable.indexOfFirst { it.id == event.id }
         if (index == -1) return 0
 
-        events.removeAt(index)
+        eventsDBTable.removeAt(index)
+        eventsDBTableFlow.update { eventsDBTable.toList() }
         return 1
     }
 
     private suspend fun clearAllEventsInFakeDatabase(): Int {
-        val eventsSize = events.size
-        events.clear()
+        val eventsSize = eventsDBTable.size
+
+        eventsDBTable.clear()
+        eventsDBTableFlow.update { eventsDBTable.toList() }
 
         return eventsSize
     }
@@ -208,20 +206,20 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
 
 
 ///////////////////////////////////////////////////////////////////////////////////
-
 // Local Testing
 
+@OptIn(DelicateCoroutinesApi::class)
 fun main() {
 
     val db = EventDaoFakeImpl()
 
 
+    // Test Database Flow
     runBlocking {
 
-        //CoroutineScope(coroutineContext).apply {
-        val job = launch {
+        GlobalScope.launch {
             db.getAllEventsFlow().collect {
-                println("Flow: ${it.map { it.title }}")
+                println("EntityDBTable Flow: ${it.map { it.title }}")
             }
         }
 
@@ -242,6 +240,8 @@ fun main() {
                 isDeleted = false,
             )
         )
+
+        delay(400)
 
         db.createEvent(
             EventEntity(
@@ -279,7 +279,7 @@ fun main() {
             )
         )
 
-        delay(500)
+        delay(100)
 
         db.createEvent(
             EventEntity(
@@ -299,8 +299,56 @@ fun main() {
             )
         )
 
-        delay(1000)
-        job.cancelAndJoin()
+        delay(100)
+        println()
+
+        print(".updateEvent(eventId=4) -> ")
+        db.updateEvent(
+            EventEntity(
+                "4",
+                "Event 4 - updated",
+                "Description updated",
+                from = ZonedDateTime.now(),
+                to = ZonedDateTime.now(),
+                remindAt = ZonedDateTime.now(),
+                host = "Host 4",
+                isUserEventCreator = true,
+                isGoing = true,
+                attendeeIds = listOf("1", "2", "3"),
+                photos = listOf("photo1", "photo2", "photo3"),
+                deletedPhotoKeys = listOf(),
+                isDeleted = false,
+            )
+        )
+
+        delay(100)
+        println()
+
+        print(".deleteEventById(eventId=4) -> ")
+        db.deleteEventById("4")
+
+        val deletedEventIds =
+            db.getDeletedEventIds().also { eventIds ->
+                println("EventIds Marked as Deleted: $eventIds")
+            }
+
+        delay(100)
+        println()
+
+        print(".deleteFinallyByEventIds(deletedEventIds) -> ")
+        db.deleteFinallyByEventIds(deletedEventIds)
+
+        delay(100)
+
+        db.getDeletedEventIds().also { eventIds ->
+            println("EventIds Marked as Deleted: $eventIds")
+        }
+
+        println()
+        print(".clearAllEvents() -> ")
+        db.clearAllEvents()
+
+        delay(2000)
 
     }
 }
