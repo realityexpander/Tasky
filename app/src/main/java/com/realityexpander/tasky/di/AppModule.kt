@@ -107,25 +107,25 @@ object AppModule {
             }
         }
 
+        val prettyPrinter = object : HttpLoggingInterceptor.Logger {
+
+            private fun print(m: String) {
+                Log.i("API", m)
+            }
+
+            override fun log(message: String) {
+                if (message.length > 500)
+                    return print("=== more than 500 characters ===")
+
+                if (message.startsWith("{") || message.startsWith("[")) try {
+                    JSONObject(message).toString(4).also(::print)
+                } catch (e: JSONException) { print(message) }
+                else print(message)
+            }
+        }
+
         val client = if(BuildConfig.DEBUG) {
-            val logging = HttpLoggingInterceptor(
-                object : HttpLoggingInterceptor.Logger {
-
-                    private fun print(m: String) {
-                        Log.i("API", m)
-                    }
-
-                    override fun log(message: String) {
-                        if (message.length > 500)
-                            return print("=== more than 500 characters ===")
-
-                        if (message.startsWith("{") || message.startsWith("[")) try {
-                            JSONObject(message).toString(4).also(::print)
-                        } catch (e: JSONException) { print(message) }
-                        else print(message)
-                    }
-                }
-            )
+            val logging = HttpLoggingInterceptor(prettyPrinter)
             logging.level = HttpLoggingInterceptor.Level.BODY
 //            logging.level = HttpLoggingInterceptor.Level.HEADERS
 
