@@ -22,10 +22,9 @@ interface IAuthApi {
     suspend fun authenticate(): Boolean // uses the AuthToken stored in this companion object
     suspend fun authenticateAuthToken(authToken: AuthToken?): Boolean
 
-    // todo implement logout
     suspend fun logout(
         // uses the AuthToken stored in this companion object
-    ): Boolean
+    )
 
     fun setAuthToken(authToken: AuthToken?) {
         IAuthApi.Companion.authToken = authToken
