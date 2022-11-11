@@ -19,7 +19,7 @@ data class AgendaState(
 
     val errorMessage: UiText? = null,
 
-    // One-time events
+    // Stateful One-time events
     val scrollToItemId: UuidStr? = null,
     val scrollToTop: Boolean = false,
     val scrollToBottom: Boolean = false,
