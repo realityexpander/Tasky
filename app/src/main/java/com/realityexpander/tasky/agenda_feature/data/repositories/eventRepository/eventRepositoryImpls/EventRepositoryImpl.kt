@@ -1,9 +1,9 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls
 
 import com.realityexpander.tasky.agenda_feature.common.RepositoryResult
-import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEntity
+import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEventDTOCreate
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
@@ -22,7 +22,7 @@ class EventRepositoryImpl(
     override suspend fun createEvent(event: AgendaItem.Event): RepositoryResult {
         return try {
             eventDao.createEvent(event.toEntity())
-            eventApi.createEvent(event.toDTO())
+            eventApi.createEvent(event.toEventDTOCreate())
 
             RepositoryResult.Success
         } catch (e: CancellationException) {
