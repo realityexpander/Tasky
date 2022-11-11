@@ -2,8 +2,6 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.eventReposito
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.realityexpander.tasky.agenda_feature.domain.Attendee
-import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.agenda_feature.util.AttendeeId
 import com.realityexpander.tasky.agenda_feature.util.PhotoId
 import com.realityexpander.tasky.core.util.UuidStr
@@ -24,10 +22,10 @@ data class EventEntity(
     val isUserEventCreator: Boolean? = null,
     val isGoing: Boolean? = null,
 
-    val attendees: List<Attendee> = emptyList(),
+    val attendees: List<AttendeeEntity> = emptyList(),
     val attendeeIds: List<AttendeeId> = emptyList(),
 
-    val photos: List<Photo> = emptyList(),
+    val photos: List<PhotoEntity> = emptyList(),
     val photoIds: List<PhotoId> = emptyList(),
     val deletedPhotoKeys: List<PhotoId> = emptyList(),
 
