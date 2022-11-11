@@ -7,7 +7,6 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
-import com.realityexpander.tasky.agenda_feature.util.attendeeId
 import com.realityexpander.tasky.agenda_feature.util.emptyId
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
@@ -63,6 +62,7 @@ class AgendaViewModel @Inject constructor(
                 )
             }
 
+            yield() // wait for database to load
             if(_agendaState.value.agendaItems.first().isEmpty()) {
                 createFakeAgendaItems(agendaRepository)
             }
@@ -96,7 +96,7 @@ class AgendaViewModel @Inject constructor(
                            from = ZonedDateTime.of(todayDate.plusDays(1), LocalTime.now(), ZoneId.systemDefault()),
                            to = ZonedDateTime.of(todayDate.plusDays(2), LocalTime.now().plusHours(1), ZoneId.systemDefault()),
                            remindAt = ZonedDateTime.of(todayDate.plusDays(1), LocalTime.now().minusMinutes(30), ZoneId.systemDefault()),
-                           attendeeIds =  listOf(attendeeId(emptyId)), //listOf(attendeeId("634e5c33628cc62b5ec50b37")), //emptyList(), // listOf("John", "Mary", "Bob"),
+                           attendeeIds =  emptyList(), //listOf(attendeeId("634e5c33628cc62b5ec50b37")), //emptyList(), // listOf("John", "Mary", "Bob"),
                            photoIds = emptyList() //listOf("photo1", "photo2", "photo3"),
                        ))
                     uuidStr(uuid)
