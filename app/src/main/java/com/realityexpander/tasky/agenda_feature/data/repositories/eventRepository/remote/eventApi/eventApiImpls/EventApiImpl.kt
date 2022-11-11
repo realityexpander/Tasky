@@ -20,7 +20,9 @@ class EventApiImpl @Inject constructor(
                             "create_event_request",
                             Json.encodeToString(EventDTO.Create.serializer(), event),
                         ),
-                photos = emptyList(),
+                photos = event.photos.map {  // todo - add photo handling
+                    MultipartBody.Part.createFormData("photos", "")
+                },
 //                photos = event.photos.mapIndexed { index, photo -> // todo - add photo handling
 //
 //                val photoFile = Uri.fromFile(  // todo possible solution
