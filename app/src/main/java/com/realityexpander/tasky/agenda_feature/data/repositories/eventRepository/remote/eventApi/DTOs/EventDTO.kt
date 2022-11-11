@@ -1,6 +1,5 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs
 
-import androidx.annotation.Keep
 import com.realityexpander.tasky.agenda_feature.util.*
 import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.UtcMillis
@@ -17,7 +16,6 @@ abstract class EventDTO {
     abstract val from: UtcMillis
     abstract val to: UtcMillis
 
-    @Keep
     @Serializable
     @OptIn(ExperimentalSerializationApi::class)  // for @JsonNames
     data class Create(
@@ -35,7 +33,6 @@ abstract class EventDTO {
         val photos: List<PhotoDTO> = emptyList(),  // todo do uploading of photos
     ) : EventDTO()
 
-    @Keep
     @Serializable
     @OptIn(ExperimentalSerializationApi::class)  // for @JsonNames
     data class Update(
@@ -59,7 +56,6 @@ abstract class EventDTO {
         val photos: List<PhotoDTO> = emptyList(), // todo do uploading of photos
     ) : EventDTO()
 
-    @Keep
     @Serializable
     @OptIn(ExperimentalSerializationApi::class)  // for @JsonNames
     data class Response(
