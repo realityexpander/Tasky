@@ -1,23 +1,23 @@
 package com.realityexpander.tasky.agenda_feature.data.common.typeConverters
 
 import androidx.room.TypeConverter
-import com.realityexpander.tasky.agenda_feature.domain.Photo
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.PhotoEntity
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class PhotoListTypeConverter {
     @TypeConverter
-    fun fromPhotoList(value: List<Photo>?): String? {
+    fun fromPhotoList(value: List<PhotoEntity>?): String? {
         return value?.let {
             Json.encodeToString(it)
         }
     }
 
     @TypeConverter
-    fun toPhotoList(value: String?): List<Photo>? {
+    fun toPhotoList(value: String?): List<PhotoEntity>? {
         return value?.let {
-            Json.decodeFromString<List<Photo>>(it)
+            Json.decodeFromString(it)
         }
     }
 }
@@ -28,15 +28,15 @@ fun main() {
     val photoListConverter = PhotoListTypeConverter()
 
     val photoList = listOf(
-        Photo(
+        PhotoEntity(
             id = "1",
             url = "1",
         ),
-        Photo(
+        PhotoEntity(
             id = "2",
             url = "2",
         ),
-        Photo(
+        PhotoEntity(
             id = "3",
             url = "3",
         ),

@@ -1,22 +1,24 @@
 package com.realityexpander.tasky.agenda_feature.data.common.typeConverters
 
 import androidx.room.TypeConverter
-import com.realityexpander.tasky.agenda_feature.domain.Attendee
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.AttendeeEntity
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 class AttendeeListTypeConverter {
 
     @TypeConverter
-    fun fromAttendeeList(value: List<Attendee>?): String? {
+    fun fromAttendeeList(value: List<AttendeeEntity>?): String? {
         return value?.let {
             Json.encodeToString(it)
         }
     }
 
     @TypeConverter
-    fun toAttendeeList(value: String?): List<Attendee>? {
+    fun toAttendeeList(value: String?): List<AttendeeEntity>? {
         return value?.let {
             Json.decodeFromString(it)
         }
@@ -29,31 +31,31 @@ fun main() {
     val attendeeListConverter = AttendeeListTypeConverter()
 
     val attendeeList = listOf(
-        Attendee(
+        AttendeeEntity(
             id = "1",
             eventId = "1",
             email = "1",
             fullName = "1",
             isGoing = true,
-            remindAt = 1,
+            remindAt = ZonedDateTime.of(2021, 1, 1, 1, 1, 1, 1, ZoneId.of("UTC")),
             photo = "1",
         ),
-        Attendee(
+        AttendeeEntity(
             id = "2",
             eventId = "2",
             email = "2",
             fullName = "2",
             isGoing = true,
-            remindAt = 2,
+            remindAt = ZonedDateTime.of(2022, 1, 1, 1, 1, 1, 1, ZoneId.of("UTC")),
             photo = "2",
         ),
-        Attendee(
+        AttendeeEntity(
             id = "3",
             eventId = "3",
             email = "3",
             fullName = "3",
             isGoing = true,
-            remindAt = 3,
+            remindAt = ZonedDateTime.of(2023, 1, 1, 1, 1, 1, 1, ZoneId.of("UTC")),
             photo = "3",
         ),
     )
