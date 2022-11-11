@@ -14,12 +14,18 @@ import kotlinx.serialization.json.JsonNames
 data class AttendeeDTO(
     @JsonNames("userId") // input from json
     val id: AttendeeId,
-    val eventId: EventId,
+        val eventId: EventId? = null,
 
     val email: Email,
     val fullName: String,
-    val isGoing: Boolean,
-    val remindAt: UtcMillis,
+    val isGoing: Boolean = false,
+    val remindAt: UtcMillis? = null,
 
-    val photo: UrlStr,
+    val photo: UrlStr? = null,
+)
+
+@Serializable
+data class AttendeeResponseDTO(  // todo add Domain & Entity, & converters
+    val doesUserExist: Boolean,
+    val attendee: AttendeeDTO? = null,
 )
