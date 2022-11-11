@@ -443,40 +443,6 @@ fun AgendaScreenContent(
 //                Spacer(modifier = Modifier.extraSmallHeight())
 //            }
 //
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .weight(1f)
-//            ) {
-//                this@col1.AnimatedVisibility(
-//                    visible = !isKeyboardOpen,
-//                    enter = fadeIn() + slideInVertically(
-//                        initialOffsetY = { it }
-//                    ),
-//                    exit = fadeOut(),
-//                    modifier = Modifier
-//                        .background(color = MaterialTheme.colors.surface)
-//                        .align(alignment = Alignment.BottomStart)
-//                ) {
-//                    // • BACK TO SIGN IN BUTTON
-//                    Button(
-//                        onClick = {
-//                            navigateToLogin()
-//                        },
-//                        modifier = Modifier
-//                            .align(alignment = Alignment.BottomStart)
-//                            .taskyMediumButton(color = MaterialTheme.colors.primary)
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Filled.ChevronLeft,
-//                            contentDescription = stringResource(R.string.register_description_back),
-//                            modifier = Modifier
-//                                .size(DP.large)
-//                                .align(alignment = Alignment.CenterVertically)
-//                        )
-//                    }
-//                }
-//            }
 
     }
 
