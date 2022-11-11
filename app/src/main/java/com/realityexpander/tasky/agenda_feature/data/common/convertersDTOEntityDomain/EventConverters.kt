@@ -45,42 +45,6 @@ fun EventEntity.toDomain(): AgendaItem.Event {
     )
 }
 
-//// from DTO to Domain (also converts UTC time to local ZonedDateTime)
-//fun EventDTO1.toDomain(): AgendaItem.Event {
-//   return AgendaItem.Event(
-//        id = id,
-//        title = title,
-//        description = description,
-//        from = from.toZonedDateTime(),
-//        to = to.toZonedDateTime(),
-//        remindAt = remindAt.toZonedDateTime(),
-//        host = host,
-//        isUserEventCreator = isUserEventCreator,
-//        isGoing = isGoing,
-//        attendeeIds = attendeeIds,
-//        photoIds = photos,
-//        deletedPhotoKeys = deletedPhotoKeys,
-//    )
-//}
-//
-//// from Domain to DTO (also converts local ZonedDateTime to UTC time)
-//fun AgendaItem.Event.toDTO(): EventDTO1 {
-//    return EventDTO1(
-//        id = id,
-//        title = title,
-//        description = description,
-//        from = from.toUtcMillis(),
-//        to = to.toUtcMillis(),
-//        remindAt = remindAt.toUtcMillis(),
-//        host = host,
-//        isUserEventCreator = isUserEventCreator,
-//        isGoing = isGoing,
-//        attendeeIds = attendeeIds,
-//        photos = photoIds,
-//        deletedPhotoKeys = deletedPhotoKeys,
-//    )
-//}
-
 // from DTO to Domain (also converts UTC time millis to local ZonedDateTime)
 fun EventDTO.toDomain(): AgendaItem.Event {
     when (this) {
