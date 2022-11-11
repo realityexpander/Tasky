@@ -151,7 +151,7 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         return eventsDBTableFlow
             .map { events ->
                 events.filter { event ->
-                    !(event.isDeleted ?: false)
+                    !(event.isDeleted)
                 }
             }
     }
