@@ -170,7 +170,22 @@ class AuthApiImpl @Inject constructor (
         }
     }
 
-    override suspend fun logout(): Boolean {
-        TODO("Not yet implemented") // todo implement logout on server
+    override suspend fun logout() {
+        try {
+            taskyApi.logout()
+        } catch (e: Exceptions.NetworkException) {
+            throw e
+        } catch (e: Exceptions.UnknownErrorException) {
+            throw e
+        } catch (e: HttpException) {
+            throw Exceptions.NetworkException("${e.message()} - ${e.code()}")
+        } catch (e: java.net.UnknownHostException) {
+            throw Exceptions.NetworkException(e.message)
+        } catch(e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            throw Exceptions.UnknownErrorException(e.message ?: "Unknown Error")
+        }
+
     }
 }
