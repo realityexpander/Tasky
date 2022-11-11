@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.domain
 
 import android.os.Parcelable
+import com.realityexpander.tasky.agenda_feature.util.AttendeeId
 import com.realityexpander.tasky.agenda_feature.util.PhotoId
 import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.UuidStr
@@ -23,9 +24,12 @@ abstract class AgendaItem {
         val host: UserId? = null,
         val isUserEventCreator: Boolean? = null,
         val isGoing: Boolean? = null,
-        val attendeeIds: List<UserId> = emptyList(),
 
-        val photos: List<PhotoId> = emptyList(),
+        val attendees: List<Attendee> = emptyList(),
+        val attendeeIds: List<AttendeeId> = emptyList(),
+
+        val photos: List<Photo> = emptyList(),
+        val photoIds: List<PhotoId> = emptyList(),
         val deletedPhotoKeys: List<PhotoId> = emptyList(),
 
         val isDeleted: Boolean = false,
