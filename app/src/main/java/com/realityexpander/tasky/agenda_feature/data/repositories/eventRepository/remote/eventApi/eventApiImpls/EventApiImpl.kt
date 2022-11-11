@@ -6,32 +6,38 @@ import com.realityexpander.tasky.agenda_feature.util.EventId
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import kotlinx.serialization.json.Json
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 class EventApiImpl @Inject constructor(
     private val taskyApi: TaskyApi
 ) : IEventApi {
-    override suspend fun createEvent(event: EventDTO): EventDTO {
+    override suspend fun createEvent(event: EventDTO.Create): EventDTO.Response {
         try {
-//            val response = taskyApi.createEvent(event)
             val response = taskyApi.createEvent(
                 createEventRequest =
                     MultipartBody.Part
                         .createFormData(
                             "create_event_request",
-                            Json.encodeToString(EventDTO.serializer(), event),
+                            Json.encodeToString(EventDTO.Create.serializer(), event),
                         ),
-//                photos = emptyList()
-                photos = event.photos.map {
-                    MultipartBody.Part
-                        .createFormData(
-                            "photos",
-                            "photo1",
-                            body = event.photos[0].toRequestBody()
-                        )
-                }.also {
-                }
+                photos = emptyList(),
+//                photos = event.photos.mapIndexed { index, photo -> // todo - add photo handling
+//
+//                val photoFile = Uri.fromFile(  // todo possible solution
+//                    File(
+//                        context.cacheDir,
+//                        context.contentResolver.getFileName(event.photos[0].uri!!)
+//                    )
+//                    ).toFile()
+//
+//                    MultipartBody.Part
+//                        .createFormData(
+//                            "photos",
+//                            "photo$index",
+//                            body = photoFile.toRequestBody() // todo convert URI to ByteArray
+//                        )
+//                }.also {
+//                }
             )
             if (response.isSuccessful) {
                 val responseBody = response.body()
@@ -44,7 +50,7 @@ class EventApiImpl @Inject constructor(
         }
     }
 
-    override suspend fun getEvent(eventId: EventId): EventDTO {
+    override suspend fun getEvent(eventId: EventId): EventDTO.Response {
         try {
             val response = taskyApi.getEvent(eventId)
             if (response.isSuccessful) {
@@ -67,25 +73,25 @@ class EventApiImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateEvent(event: EventDTO): EventDTO {
+    override suspend fun updateEvent(event: EventDTO.Update): EventDTO.Response {
         return try {
-//            val response = taskyApi.updateEvent(event)
             val response = taskyApi.updateEvent(
                 updateEventRequest =
                     MultipartBody.Part
                         .createFormData(
                             "update_event_request",
-                            Json.encodeToString(EventDTO.serializer(), event)
+                            Json.encodeToString(EventDTO.Update.serializer(), event)
                         ),
-                    photos = event.photos.map {
-                        MultipartBody.Part
-                            .createFormData(
-                                "photos",
-                                "photo1",
-                                body = event.photos[0].toRequestBody()
-                        )
-                }.also {
-                }
+                photos = emptyList(),
+//                    photos = event.photos.mapIndexed { index, photo -> // todo - add photo handling
+//                        MultipartBody.Part
+//                            .createFormData(
+//                                "photos",
+//                                "photo$index",
+//                                body = event.photos[0].toRequestBody()  // todo Convert URI to ByteArray
+//                        )
+//                }.also {
+//                }
             )
             if (response.isSuccessful) {
                 val responseBody = response.body()
