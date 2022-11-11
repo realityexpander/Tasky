@@ -9,6 +9,7 @@ import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.A
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
 import com.realityexpander.tasky.core.util.AuthToken
+import com.realityexpander.tasky.core.util.UtcMillis
 import com.realityexpander.tasky.core.util.UuidStr
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -44,7 +45,6 @@ interface TaskyApi {
         @Header("Authorization") authorizationHeader: String = createAuthorizationHeader(authToken),
     ): Response<Void>
 
-    // todo implement logout
     @GET("logout")
     suspend fun logout(
         // Uses the Authorization Header created in the the interceptor
@@ -55,7 +55,7 @@ interface TaskyApi {
     @GET("agenda")
     suspend fun getAgenda(
         timezone: TimeZoneStr,  // ex: "Europe/Berlin"
-        time: Long,             // epoch millis in UTC
+        time: UtcMillis,        // epoch millis in UTC timeZone
     ): Response<AgendaDayDTO>
 
     @POST("syncAgenda")
@@ -69,21 +69,21 @@ interface TaskyApi {
     @Multipart
     @POST("event")
     suspend fun createEvent(
-        @Part createEventRequest: MultipartBody.Part,
-        @Part photos: List<MultipartBody.Part>
-    ): Response<EventDTO>
+        @Part createEventRequest: MultipartBody.Part,   // EventDTO.Create
+        @Part photos: List<MultipartBody.Part>          // List<PhotoDTO>
+    ): Response<EventDTO.Response>
 
     @GET("event/{eventId}")
     suspend fun getEvent(
         @Path("eventId") eventId: UuidStr,
-    ): Response<EventDTO>
+    ): Response<EventDTO.Response>
 
     @Multipart
     @PUT("event")
     suspend fun updateEvent(
-        @Part updateEventRequest: MultipartBody.Part, //EventDTO,
-        @Part photos: List<MultipartBody.Part> //List<PhotoId>
-    ): Response<EventDTO>
+        @Part updateEventRequest: MultipartBody.Part,   // EventDTO.Update
+        @Part photos: List<MultipartBody.Part>          // List<PhotoDTO>
+    ): Response<EventDTO.Response>
 
     @DELETE("event/{eventId}")
     suspend fun deleteEvent(
