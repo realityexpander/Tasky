@@ -290,7 +290,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             isUserEventCreator = true,
             isGoing = true,
             attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            photoIds = listOf("photo1", "photo2", "photo3"),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -310,7 +310,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             isUserEventCreator = true,
             isGoing = true,
             attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            photoIds = listOf("photo1", "photo2", "photo3"),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -328,7 +328,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             isUserEventCreator = true,
             isGoing = true,
             attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            photoIds = listOf("photo1", "photo2", "photo3"),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -346,7 +346,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             isUserEventCreator = true,
             isGoing = true,
             attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            photoIds = listOf("photo1", "photo2", "photo3"),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -375,7 +375,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             isUserEventCreator = true,
             isGoing = true,
             attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            photoIds = listOf("photo1", "photo2", "photo3"),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -395,7 +395,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             isUserEventCreator = true,
             isGoing = true,
             attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            photoIds = listOf("photo1", "photo2", "photo3"),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -413,7 +413,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             isUserEventCreator = true,
             isGoing = true,
             attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            photoIds = listOf("photo1", "photo2", "photo3"),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -433,7 +433,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             isUserEventCreator = true,
             isGoing = true,
             attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            photoIds = listOf("photo1", "photo2", "photo3"),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -455,7 +455,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             isUserEventCreator = true,
             isGoing = true,
             attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            photoIds = listOf("photo1", "photo2", "photo3"),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
