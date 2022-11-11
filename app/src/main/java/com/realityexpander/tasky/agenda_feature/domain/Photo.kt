@@ -4,10 +4,8 @@ import android.os.Parcelable
 import com.realityexpander.tasky.agenda_feature.util.PhotoId
 import com.realityexpander.tasky.agenda_feature.util.UrlStr
 import kotlinx.parcelize.Parcelize
-import kotlinx.serialization.Serializable
 
 @Parcelize
-@Serializable  // for Room @TypeConverter
 data class Photo(
     val id: PhotoId,
     val url: UrlStr,          // url of the photo on server
