@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.di
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.realityexpander.tasky.BuildConfig
@@ -41,6 +42,8 @@ import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.json.JSONException
+import org.json.JSONObject
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.create
@@ -105,7 +108,24 @@ object AppModule {
         }
 
         val client = if(BuildConfig.DEBUG) {
-            val logging = HttpLoggingInterceptor()
+            val logging = HttpLoggingInterceptor(
+                object : HttpLoggingInterceptor.Logger {
+
+                    private fun print(m: String) {
+                        Log.i("API", m)
+                    }
+
+                    override fun log(message: String) {
+                        if (message.length > 500)
+                            return print("=== more than 500 characters ===")
+
+                        if (message.startsWith("{") || message.startsWith("[")) try {
+                            JSONObject(message).toString(4).also(::print)
+                        } catch (e: JSONException) { print(message) }
+                        else print(message)
+                    }
+                }
+            )
             logging.level = HttpLoggingInterceptor.Level.BODY
 //            logging.level = HttpLoggingInterceptor.Level.HEADERS
 
