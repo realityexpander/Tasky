@@ -43,6 +43,8 @@ class AgendaViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_selectedDayIndex] = state.selectedDayIndex
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AgendaState())
 
+    private var lastAgendaItems = emptyList<AgendaItem>()
+
     init {
         viewModelScope.launch {
             // restore state after process death
@@ -62,6 +64,16 @@ class AgendaViewModel @Inject constructor(
             yield() // wait for database to load
             if(_agendaState.value.agendaItems.first().isEmpty()) {
                 createFakeAgendaItems(agendaRepository)
+            }
+        }
+
+        // Collect the last state of agendaItems and save it for fast access.
+        // Is there a better way to do this? Better with .stateIn?
+        viewModelScope.launch {
+            agendaState.collect {
+                it.agendaItems.collect {
+                    lastAgendaItems = it
+                }
             }
         }
     }
@@ -195,19 +207,18 @@ class AgendaViewModel @Inject constructor(
                 createAgendaItem(event.agendaItemType)
             }
             is AgendaEvent.TaskToggleCompleted -> {
-//                _agendaState.update {  // todo implement update task completed state
-//                    it.copy(
-//                        agendaItems = it.agendaItems.map { agendaItem ->
-//                            (agendaItem as? AgendaItem.Task)?.let { task ->
-//                                if (task.id == event.agendaItemId) {
-//                                    task.copy(isDone = !task.isDone)
-//                                } else {
-//                                    task
-//                                }
-//                            } ?: agendaItem
+                lastAgendaItems.map { agendaItem ->
+                    (agendaItem as? AgendaItem.Task)?.let { task ->
+                        // todo implement update task completed state
+//                        if (task.id == event.agendaItemId) { // don't optimistically update
+//                            task.copy(isDone = !task.isDone)
+//                        } else {
+//                            task
 //                        }
-//                    )
-//                }
+//                        agendaRepository.updateTaskCompletedState(event.agendaItemId, !event.isCompleted)
+                    }
+                }
+
             }
             is AgendaEvent.Logout -> {
                 _agendaState.update {
