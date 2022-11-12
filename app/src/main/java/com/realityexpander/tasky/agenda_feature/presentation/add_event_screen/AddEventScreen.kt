@@ -1,20 +1,26 @@
 package com.realityexpander.tasky.agenda_feature.presentation.add_event_screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
@@ -25,6 +31,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaEvent
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
+import com.realityexpander.tasky.core.presentation.theme.TaskyGray
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 
@@ -82,7 +89,7 @@ fun AddEventScreenContent(
 //            if (item >= 0) {
 //                scope.launch {
 //                    scrollState.animateScrollToItem(item)
-//                }
+//
 //            }
 //            onAction(AgendaEvent.StatefulOneTimeEvent.ResetScrollTo)
 //        }
@@ -111,6 +118,7 @@ fun AddEventScreenContent(
                 tint = MaterialTheme.colors.surface,
                 contentDescription = "Close Add Event",
                 modifier = Modifier
+                    .size(30.dp)
                     .alignByBaseline()
                     .align(Alignment.CenterVertically)
             )
@@ -121,7 +129,6 @@ fun AddEventScreenContent(
                 color = MaterialTheme.colors.surface,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .alignByBaseline()
                     .align(Alignment.CenterVertically)
                     .weight(1f)
             )
@@ -132,15 +139,15 @@ fun AddEventScreenContent(
                 tint = MaterialTheme.colors.surface,
                 contentDescription = "Edit Event",
                 modifier = Modifier
-                    .alignByBaseline()
                     .align(Alignment.CenterVertically)
                     .wrapContentWidth(Alignment.End)
             )
 
         }
-
         Spacer(modifier = Modifier.smallHeight())
 
+
+        // • Event header / description
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -161,14 +168,13 @@ fun AddEventScreenContent(
                         .background(color = TaskyLightGreen)
                         .align(Alignment.CenterVertically)
                 )
-                Spacer(modifier = Modifier.xxSmallWidth())
+                Spacer(modifier = Modifier.extraSmallWidth())
                 Text(
                     "Event",
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                 )
             }
-
             Spacer(modifier = Modifier.smallHeight())
 
             Row(
@@ -187,13 +193,14 @@ fun AddEventScreenContent(
                 )
                 Spacer(modifier = Modifier.extraSmallWidth())
                 Text(
-                    "Event",
+                    "Event Title",
                     style = MaterialTheme.typography.h2,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                 )
             }
 
+            Spacer(modifier = Modifier.smallHeight())
             Divider(
                 modifier = Modifier.fillMaxWidth()
             )
@@ -207,7 +214,188 @@ fun AddEventScreenContent(
                     .fillMaxWidth()
                     .wrapContentHeight()
             )
+            Spacer(modifier = Modifier.smallHeight())
         }
+
+        // • Photo Picker / Add / Remove
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(TaskyGray)
+                .padding(DP.small)
+                .wrapContentHeight()
+        ) {
+            val photos = 0 // for testing only
+
+            if (photos == 0) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Center)
+                        .padding(top = DP.large, bottom = DP.large)
+                ) {
+                    // • Add Photo Icon
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
+                        contentDescription = "Meeting title marker",
+                        modifier = Modifier
+                            .size(26.dp)
+                    )
+                    Spacer(modifier = Modifier.smallWidth())
+                    Text(
+                        "Add photos",
+                        modifier = Modifier
+                            .offset(y = 2.dp),
+                        fontWeight = Bold,
+                        color = MaterialTheme.colors.onSurface.copy(alpha = .3f)
+                    )
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            "Photos",
+                            style = MaterialTheme.typography.h3,
+                            fontWeight = SemiBold,
+                            color = MaterialTheme.colors.onSurface
+                        )
+                    }
+                    Spacer(modifier = Modifier.extraSmallHeight())
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    ) {
+
+                        (1..5).forEach {
+                            // • Photo content box
+                            Box(
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .background(TaskyGray)
+                                    .border(
+                                        2.dp,  // Border width
+                                        MaterialTheme.colors.onSurface.copy(alpha = .3f),
+                                        RoundedCornerShape(10.dp)
+                                    )
+                            ) {
+                                // • Add Photo Icon
+                                Icon(
+                                    imageVector = Icons.Filled.Add,
+                                    tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
+                                    contentDescription = "Meeting title marker",
+                                    modifier = Modifier
+                                        .size(26.dp)
+                                        .align(Alignment.Center)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
+                        }
+                    }
+                }
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.surface)
+                .padding(start = DP.small, end = DP.small)
+        ) col3@{
+
+            Spacer(modifier = Modifier.smallHeight())
+            Divider(
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.smallHeight())
+
+            // • FROM time / date
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colors.surface)
+            ) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = DP.medium, end = DP.medium)
+                    ) {
+                        Text(
+                            "From",
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                        )
+                        Text(
+                            "8:00 AM",
+                            textAlign = TextAlign.End,
+                            modifier = Modifier
+                        )
+                    }
+                    Text(
+                        "Jul 21 2022",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .weight(1f)
+                    )
+            }
+            Spacer(modifier = Modifier.smallHeight())
+            Divider(
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.smallHeight())
+
+
+            // • TO time / date
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colors.surface)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = DP.medium, end = DP.medium)
+                ) {
+                    Text(
+                        "To",
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier
+                    )
+                    Text(
+                        "12:30 PM",
+                        textAlign = TextAlign.End,
+                        modifier = Modifier
+                    )
+                }
+                Text(
+                    "Aug 7 2022",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .weight(1f)
+                )
+            }
+            Spacer(modifier = Modifier.smallHeight())
+            Divider(
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.smallHeight())
+        }
+
     }
 
 }
