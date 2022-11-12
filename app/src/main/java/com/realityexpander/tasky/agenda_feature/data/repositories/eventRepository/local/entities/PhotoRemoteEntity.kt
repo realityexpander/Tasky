@@ -5,7 +5,7 @@ import com.realityexpander.tasky.agenda_feature.util.UrlStr
     import kotlinx.serialization.Serializable
 
 @Serializable
-data class PhotoEntity(
+data class PhotoRemoteEntity(
     val id: PhotoId,
-    val url: UrlStr
+    val url: UrlStr    // url of the photo on server
 )
