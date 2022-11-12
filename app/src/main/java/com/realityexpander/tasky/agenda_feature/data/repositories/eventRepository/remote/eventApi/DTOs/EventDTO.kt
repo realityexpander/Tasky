@@ -17,7 +17,6 @@ abstract class EventDTO {
     abstract val to: UtcMillis
 
     @Serializable
-    @OptIn(ExperimentalSerializationApi::class)  // for @JsonNames
     data class Create(
         override val id: UuidStr,
         override val title: String,
@@ -26,15 +25,14 @@ abstract class EventDTO {
         override val from: UtcMillis,
         override val to: UtcMillis,
 
-        @Required  // forces write empty list if empty -> [] instead of no-field-written
+        @Required  // forces write of empty list -> []   (instead of no field written)
         val attendeeIds: List<AttendeeId> = emptyList(),
 
         @Transient
-        val photos: List<PhotoDTO> = emptyList(),  // todo do uploading of photos
+        val photos: List<PhotoDTO.Local> = emptyList(),  // todo implement uploading of photos
     ) : EventDTO()
 
     @Serializable
-    @OptIn(ExperimentalSerializationApi::class)  // for @JsonNames
     data class Update(
         override val id: UuidStr,
         override val title: String,
@@ -45,7 +43,7 @@ abstract class EventDTO {
 
         val isGoing : Boolean = true,
 
-        @Required  // forces write empty list if empty -> [] instead of no-field-written
+        @Required  // forces write of empty list -> []   (instead of no field written)
         val attendeeIds: List<AttendeeId> = emptyList(),
 
         @Required
@@ -53,11 +51,10 @@ abstract class EventDTO {
         val deletedPhotoIds: List<PhotoId> = emptyList(),
 
         @Transient
-        val photos: List<PhotoDTO> = emptyList(), // todo do uploading of photos
+        val photos: List<PhotoDTO.Local> = emptyList(), // todo implement uploading of photos
     ) : EventDTO()
 
     @Serializable
-    @OptIn(ExperimentalSerializationApi::class)  // for @JsonNames
     data class Response(
         override val id: UuidStr,
         override val title: String,
@@ -74,6 +71,6 @@ abstract class EventDTO {
         val attendees: List<AttendeeDTO> = emptyList(),
 
         // Note: Returns complete Photo objects (not Ids)
-        val photos: List<PhotoDTO> = emptyList(),
+        val photos: List<PhotoDTO.Remote> = emptyList(),
     ) : EventDTO()
 }
