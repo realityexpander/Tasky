@@ -56,8 +56,6 @@ class AgendaViewModel @Inject constructor(
                         getDateForSelectedDayIndex(_agendaState.value.selectedDayIndex)
                     ),
                     selectedDayIndex = selectedDayIndex
-
-                    // todo do we need to open drop-down menus upon return from process death?
                 )
             }
 
@@ -92,37 +90,65 @@ class AgendaViewModel @Inject constructor(
                            id = uuid,
                            title = "New Event for ** $todayDate",
                            description = "New Event Description - $uuid",
-                           from = ZonedDateTime.of(todayDate.plusDays(1), LocalTime.now(), ZoneId.systemDefault()),
-                           to = ZonedDateTime.of(todayDate.plusDays(2), LocalTime.now().plusHours(1), ZoneId.systemDefault()),
-                           remindAt = ZonedDateTime.of(todayDate.plusDays(1), LocalTime.now().minusMinutes(30), ZoneId.systemDefault()),
-                           attendees =  emptyList(), //listOf(attendeeId("634e5c33628cc62b5ec50b37")), //emptyList(), // listOf("John", "Mary", "Bob"),
-                           photos = emptyList() //listOf("photo1", "photo2", "photo3"),
+                           from = ZonedDateTime.of(
+                               todayDate.plusDays(1),
+                               LocalTime.now(),
+                               ZoneId.systemDefault()
+                           ),
+                           to = ZonedDateTime.of(
+                               todayDate.plusDays(1),
+                               LocalTime.now().plusHours(1),
+                               ZoneId.systemDefault()
+                           ),
+                           remindAt = ZonedDateTime.of(
+                               todayDate.plusDays(1),
+                               LocalTime.now().minusMinutes(30),
+                               ZoneId.systemDefault()
+                           ),
+                           attendees =  emptyList(), //listOf(attendeeId("634e5c33628cc62b5ec50b37")),
+                           photos = emptyList()
                        ))
                     uuidStr(uuid)
                     // todo add error checking
                }
-                AgendaItemType.Task -> { UUID.randomUUID().toString() } // todo replace with actual type
+                AgendaItemType.Task -> { null } // todo replace with actual type
 //                     AgendaItem.Task(
 //                          id = UUID.randomUUID().toString(),
 //                          title = "New Task for $todayDate",
-//                          time = ZonedDateTime.of(todayDate, LocalTime.now().plusHours(1), ZoneId.systemDefault()),
-//                          remindAt = ZonedDateTime.of(todayDate, LocalTime.now().plusMinutes(30), ZoneId.systemDefault()),
+//                          time = ZonedDateTime.of(
+//                              todayDate,
+//                              LocalTime.now().plusHours(1),
+//                              ZoneId.systemDefault()
+//                          ),
+//                          remindAt = ZonedDateTime.of(
+//                              todayDate,
+//                              LocalTime.now().plusMinutes(30),
+//                              ZoneId.systemDefault()
+//                          ),
 //                          description = "New Task Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
 //                     )
 //                }
-                AgendaItemType.Reminder -> { UUID.randomUUID().toString() } // todo replace with actual type
+                AgendaItemType.Reminder -> { null } // todo replace with actual type
 //                     AgendaItem.Reminder(
 //                          id = UUID.randomUUID().toString(),
 //                          title = "New Reminder for $todayDate",
-//                          time = ZonedDateTime.of(todayDate, LocalTime.now().plusHours(2), ZoneId.systemDefault()),
-//                          remindAt = ZonedDateTime.of(todayDate, LocalTime.now().plusMinutes(60), ZoneId.systemDefault()),
+//                          time = ZonedDateTime.of(
+//                              todayDate,
+//                              LocalTime.now().plusHours(2),
+//                              ZoneId.systemDefault()
+//                          ),
+//                          remindAt = ZonedDateTime.of(
+//                              todayDate,
+//                              LocalTime.now().plusMinutes(60),
+//                              ZoneId.systemDefault()
+//                          ),
 //                          description = "New Reminder Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
 //                     )
 //
 //                }
             }
 
-            sendEvent(AgendaEvent.StatefulOneTimeEvent.ScrollToItemId(id!!))
+            id?.let { sendEvent(AgendaEvent.StatefulOneTimeEvent.ScrollToItemId(id)) }
         }
     }
 
