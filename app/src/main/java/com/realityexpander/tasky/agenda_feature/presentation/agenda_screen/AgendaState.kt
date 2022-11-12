@@ -6,6 +6,8 @@ import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.Username
 import com.realityexpander.tasky.core.util.UuidStr
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 data class AgendaState(
     val username: Username = "",
@@ -17,12 +19,12 @@ data class AgendaState(
 
     val errorMessage: UiText? = null,
 
-    // One-time events
+    // Stateful One-time events
     val scrollToItemId: UuidStr? = null,
     val scrollToTop: Boolean = false,
     val scrollToBottom: Boolean = false,
     val resetScrollTo: Boolean = false,
 
-    val agendaItems: List<AgendaItem> = emptyList(),
+    val agendaItems: Flow<List<AgendaItem>> = flow { emptyList<AgendaItem>() },
     val selectedDayIndex: Int? = null,
 )

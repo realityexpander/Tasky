@@ -3,7 +3,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.agendaReposit
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 
 data class AgendaDayDTO(
-    val events: List<EventDTO>,
+    val events: List<EventDTO.Response>,
 //    val tasks: List<TaskDTO>,             // todo implement tasks
 //    val reminders: List<ReminderDTO>,     // todo implement reminders
 )

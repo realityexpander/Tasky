@@ -20,13 +20,16 @@ abstract class AgendaItem {
         val from: ZonedDateTime,
         val to: ZonedDateTime,
 
-        val host: UserId = "",
-        val isUserEventCreator: Boolean = false,
-        val isGoing: Boolean = false,
-        val attendeeIds: List<UserId> = emptyList(),
+        val host: UserId? = null,
+        val isUserEventCreator: Boolean? = null,
+        val isGoing: Boolean? = null,
 
-        val photos: List<PhotoId> = emptyList(),
-        val deletedPhotoKeys: List<PhotoId> = emptyList(),
+        val attendees: List<Attendee> = emptyList(),
+
+        val photos: List<Photo.Remote> = emptyList(),
+        val deletedPhotoKeys: List<PhotoId> = emptyList(),  // only used for EventDTO.Update
+
+        val photosToUpload: List<Photo.Local> = emptyList(),
 
         val isDeleted: Boolean = false,
     ) : AgendaItem(), Parcelable

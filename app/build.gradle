@@ -38,10 +38,12 @@ android {
             useSupportLibrary true
         }
 
-        // Support exporting schema
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+        // Room annotation processor options
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas") // Support exporting schema
+                arg("room.incremental", "true")                   // Support incremental annotation processing
+                arg("room.expandProjection", "true")              // ???
             }
         }
 
@@ -150,6 +152,9 @@ dependencies {
     // KotlinX Serialization
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_json_version"
     implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
+
+    // GSON Serialization (only for testing)
+    implementation 'com.google.code.gson:gson:2.10'
 
     // Room
     implementation "androidx.room:room-runtime:$room_version"

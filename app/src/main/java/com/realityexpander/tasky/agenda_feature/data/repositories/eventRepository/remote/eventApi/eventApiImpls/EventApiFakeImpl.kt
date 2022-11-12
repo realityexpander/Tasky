@@ -1,7 +1,10 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.eventApiImpls
 
+import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
+import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEventDTOResponse
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
+import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.util.EventId
 import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.coroutines.delay
@@ -11,7 +14,7 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
 
     /////////////////// FAKE API IMPLEMENTATION ///////////////////////
 
-    override suspend fun createEvent(event: EventDTO): EventDTO {
+    override suspend fun createEvent(event: EventDTO.Create): EventDTO.Response {
         try {
             return createEventOnFakeServer(event)
         } catch (e: Exception) {
@@ -19,7 +22,7 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
         }
     }
 
-    override suspend fun getEvent(eventId: EventId): EventDTO {
+    override suspend fun getEvent(eventId: EventId): EventDTO.Response {
         try{
             return getEventOnFakeServer(eventId)
         } catch (e: Exception) {
@@ -27,7 +30,7 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
         }
     }
 
-    override suspend fun updateEvent(event: EventDTO): EventDTO {
+    override suspend fun updateEvent(event: EventDTO.Update): EventDTO.Response {
         try {
             return updateEventOnFakeServer(event)
         } catch (e: Exception) {
@@ -47,24 +50,27 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
     ///////////////////////////////////////////////////////////////////////
     /////////////// FAKE SERVER SIMULATION FUNCTIONS //////////////////////
 
-    private val eventsOnFakeServer = mutableListOf<EventDTO>()
+    private val eventsOnFakeServer = mutableListOf<AgendaItem.Event>()
 
-    private suspend fun createEventOnFakeServer(event: EventDTO): EventDTO {
+    private suspend fun createEventOnFakeServer(event: EventDTO.Create): EventDTO.Response {
         // simulate network delay
         delay(500)
 
-        eventsOnFakeServer.add(event)
-        return event
+        eventsOnFakeServer.add(event.toDomain())
+        return event.toDomain().toEventDTOResponse()
     }
 
-    private suspend fun getEventOnFakeServer(eventId: UuidStr): EventDTO {
+    private suspend fun getEventOnFakeServer(eventId: UuidStr): EventDTO.Response {
         // simulate network delay
         delay(500)
 
-        return eventsOnFakeServer.find { it.id == eventId } ?: throw Exception("Event not found")
+        return eventsOnFakeServer.find {
+                it.id == eventId
+            }?.toEventDTOResponse()
+            ?: throw Exception("Event not found")
     }
 
-    private suspend fun updateEventOnFakeServer(event: EventDTO): EventDTO {
+    private suspend fun updateEventOnFakeServer(event: EventDTO.Update): EventDTO.Response {
         // simulate network delay
         delay(500)
 
@@ -72,9 +78,9 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
         if (index == -1) {
             throw Exception("Event not found")
         }
-        eventsOnFakeServer[index] = event
+        eventsOnFakeServer[index] = event.toDomain()
 
-        return event
+        return event.toDomain().toEventDTOResponse()
     }
 
     private suspend fun deleteEventOnFakeServer(eventId: UuidStr): Boolean {

@@ -92,6 +92,11 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun logout() {
+        authDao.clearAuthInfo()
+        authApi.logout()
+    }
+
     override suspend fun getAuthInfo(): AuthInfo? {
         return authDao.getAuthInfo()
     }

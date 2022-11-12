@@ -8,7 +8,7 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-class ZonedDateTimeConverter {
+class ZonedDateTimeTypeConverter {
     @TypeConverter
     fun fromZonedDateTime(value: ZonedDateTime?): UtcSeconds? {  // saves as a Long (UTC epochSeconds) in DB Tables
         return value?.toInstant()
@@ -35,10 +35,10 @@ class ZonedDateTimeConverter {
 fun main() {
     val zonedDateTime = ZonedDateTime.now()
         .truncatedTo(ChronoUnit.MINUTES)
-    val zonedDateTimeConverter = ZonedDateTimeConverter()
-    val zonedDateTimeLong = zonedDateTimeConverter.fromZonedDateTime(zonedDateTime)
-    val zonedDateTime2 = zonedDateTimeConverter.toZonedDateTime(zonedDateTimeLong)
-    val zonedDateTime2Long = zonedDateTimeConverter.fromZonedDateTime(zonedDateTime2)
+    val zonedDateTimeTypeConverter = ZonedDateTimeTypeConverter()
+    val zonedDateTimeLong = zonedDateTimeTypeConverter.fromZonedDateTime(zonedDateTime)
+    val zonedDateTime2 = zonedDateTimeTypeConverter.toZonedDateTime(zonedDateTimeLong)
+    val zonedDateTime2Long = zonedDateTimeTypeConverter.fromZonedDateTime(zonedDateTime2)
 
     println(zonedDateTime)
     println(zonedDateTimeLong)
@@ -51,9 +51,9 @@ fun main() {
 
     val nycNow = ZonedDateTime.now(ZoneId.of("America/New_York"))
         .truncatedTo(ChronoUnit.MINUTES)
-    val nycNowLong = zonedDateTimeConverter.fromZonedDateTime(nycNow)
-    val nycNow2 = zonedDateTimeConverter.toZonedDateTime(nycNowLong)
-    val nycNowLong2 = zonedDateTimeConverter.fromZonedDateTime(nycNow2)
+    val nycNowLong = zonedDateTimeTypeConverter.fromZonedDateTime(nycNow)
+    val nycNow2 = zonedDateTimeTypeConverter.toZonedDateTime(nycNowLong)
+    val nycNowLong2 = zonedDateTimeTypeConverter.fromZonedDateTime(nycNow2)
     println(nycNow)
     println(nycNowLong)
     println(nycNow2)

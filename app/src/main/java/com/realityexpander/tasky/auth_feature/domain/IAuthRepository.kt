@@ -35,6 +35,8 @@ interface IAuthRepository {
         password: Password
     )
 
+    suspend fun logout()
+
     suspend fun setAuthInfo(authInfo: AuthInfo?)
     suspend fun getAuthInfo(): AuthInfo?
     suspend fun clearAuthInfo()

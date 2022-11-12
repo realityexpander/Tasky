@@ -7,7 +7,7 @@ import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 // Fake implementation of the API for testing purposes
-// Has a delay of 1 second to simulate network latency.
+// Has a delay of .1-.5 second to simulate network latency.
 // Uses fake tokens.
 // Simulates server responses.
 
@@ -30,7 +30,7 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
        AuthInfoDTO? {  // always returns non-null to maintain consistency with real API
 
         // simulate network call
-        delay(1000)
+        delay(500)
 
         // Simulates a server side check/error for a valid email or password
         if (email.isBlank() || password.isBlank()) {
@@ -59,7 +59,7 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
         password: Password
     ) {
         // Simulate network call
-        delay(1000)
+        delay(500)
 
         // Simulates a server-side check/error for blank email or password
         if (email.isBlank() || password.isBlank() || username.isBlank()) {
@@ -110,8 +110,11 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
         return false
     }
 
-    override suspend fun logout(): Boolean {
-        return expireToken_onServer(IAuthApi.authToken)
+    override suspend fun logout() {
+        // simulate network call
+        delay(100)
+
+        expireToken_onServer(IAuthApi.authToken)
     }
 
     /////////////// Server simulation functions //////////////////////
@@ -149,14 +152,14 @@ class AuthApiFakeImpl @Inject constructor(): IAuthApi {
         users_onServer[email]?.authToken = null
     }
 
-    private fun expireToken_onServer(authToken: AuthToken?): Boolean {
+    private fun expireToken_onServer(authToken: AuthToken?) {
         users_onServer.filter { entry ->
             entry.value.authToken == authToken
         }.forEach { entry ->
             entry.value.authToken = null
         }
 
-        return true
+        // todo should throw error if token not found?
     }
 }
 

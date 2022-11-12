@@ -4,7 +4,9 @@ import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.realityexpander.tasky.agenda_feature.data.repositories.TaskyDatabase
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.AttendeeEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.PhotoRemoteEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -51,9 +53,21 @@ open class EventDaoTest {
             host = "Host 1",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
-            deletedPhotoKeys = listOf(),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoRemoteEntity("1", "https://www.google.com")
+            ),
+            deletedPhotoKeys = emptyList(),
             isDeleted = false,
         )
 
@@ -84,8 +98,20 @@ open class EventDaoTest {
             host = "Host 1",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoRemoteEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -120,8 +146,20 @@ open class EventDaoTest {
             host = "Host 1",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoRemoteEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -154,8 +192,20 @@ open class EventDaoTest {
             host = "Host 1",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoRemoteEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -169,8 +219,20 @@ open class EventDaoTest {
             host = "Host 2",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoRemoteEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -204,8 +266,20 @@ open class EventDaoTest {
             host = "Host 1",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoRemoteEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -219,8 +293,20 @@ open class EventDaoTest {
             host = "Host 2",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoRemoteEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -260,8 +346,20 @@ open class EventDaoTest {
             host = "Host 1",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoRemoteEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -275,8 +373,20 @@ open class EventDaoTest {
             host = "Host 2",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoRemoteEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -315,8 +425,20 @@ open class EventDaoTest {
             host = "Host 1",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoRemoteEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -330,8 +452,20 @@ open class EventDaoTest {
             host = "Host 2",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoRemoteEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -377,8 +511,20 @@ open class EventDaoTest {
             host = "Host 1",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoRemoteEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -392,8 +538,20 @@ open class EventDaoTest {
             host = "Host 2",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoRemoteEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -407,8 +565,20 @@ open class EventDaoTest {
             host = "Host 2",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photos = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoRemoteEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )

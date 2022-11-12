@@ -1,8 +1,20 @@
 package com.realityexpander.tasky.di
 
 import android.content.Context
+import android.util.Log
+import androidx.room.Room
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.realityexpander.tasky.BuildConfig
+import com.realityexpander.tasky.agenda_feature.data.repositories.TaskyDatabase
+import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls.AgendaRepositoryImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.AgendaApiImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls.EventRepositoryImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.eventApiImpls.EventApiImpl
+import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
+import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryImpl
 import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
@@ -10,13 +22,13 @@ import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiImpl
-import com.realityexpander.tasky.core.data.remote.TaskyApi
-import com.realityexpander.tasky.core.data.remote.TaskyApi.Companion.API_KEY
 import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
+import com.realityexpander.tasky.core.data.remote.TaskyApi
+import com.realityexpander.tasky.core.data.remote.TaskyApi.Companion.API_KEY
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +42,8 @@ import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.json.JSONException
+import org.json.JSONObject
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.create
@@ -91,18 +105,30 @@ object AppModule {
 
                 chain.proceed(request)
             }
+        }
 
-//            val request = chain.request().newBuilder()
-//                .addHeader("x-api-key", API_KEY)
-//                .addHeader("Authorization", IAuthApi.authorizationHeader ?: "NULL_AUTH_TOKEN")
-//                .build()
-//            chain.proceed(request)
+        val jsonPrettyPrinter = object : HttpLoggingInterceptor.Logger {
+            private fun print(m: String) {
+                Log.i("API", m)
+            }
+
+            override fun log(message: String) {
+                if (message.length > 500)
+                    return print("=== more than 500 characters ===")
+
+                if (message.startsWith("{") || message.startsWith("[")) try {
+                    JSONObject(message).toString(3).also(::print)
+                } catch (e: JSONException) {
+                    print(message)
+                }
+                else print(message)
+            }
         }
 
         val client = if(BuildConfig.DEBUG) {
-            val logging = HttpLoggingInterceptor()
-//            logging.level = HttpLoggingInterceptor.Level.BODY
-            logging.level = HttpLoggingInterceptor.Level.HEADERS
+            val logging = HttpLoggingInterceptor(jsonPrettyPrinter)
+            logging.level = HttpLoggingInterceptor.Level.BODY
+//            logging.level = HttpLoggingInterceptor.Level.HEADERS
 
             OkHttpClient.Builder()
                 .addInterceptor(addHeadersInterceptor)
@@ -213,6 +239,69 @@ object AppModule {
             )
         }
     }
+
+
+    /////////// DATABASE ///////////
+
+    @Provides
+    @Singleton
+    fun provideTaskyDatabase(
+        @ApplicationContext context: Context
+    ): TaskyDatabase =
+        Room.databaseBuilder(
+            context,
+            TaskyDatabase::class.java,
+            TaskyDatabase.DATABASE_NAME
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+
+
+    /////////// AGENDA REPOSITORY ///////////
+
+    @Provides
+    @Singleton
+    fun provideAgendaApi(
+        taskyApi: TaskyApi
+    ) : IAgendaApi =
+        AgendaApiImpl(taskyApi)
+
+
+    @Provides
+    @Singleton
+    fun provideAgendaRepository(
+        eventRepository: IEventRepository,
+//        taskRepository: ITaskRepository,              // todo implement soon
+//        reminderRepository: IReminderRepository,      // todo implement soon
+        agendaApi: IAgendaApi,
+    ): IAgendaRepository =
+        AgendaRepositoryImpl(
+            eventRepository,
+            agendaApi
+        )
+
+    /////////// EVENTS REPOSITORY ///////////
+
+    @Provides
+    @Singleton
+    fun provideEventDaoProd(
+        taskyDatabase: TaskyDatabase
+    ): IEventDao =
+        taskyDatabase.eventDao()
+
+    @Provides
+    @Singleton
+    fun provideEventApiProd(taskyApi: TaskyApi): IEventApi =
+        EventApiImpl(taskyApi)
+
+    @Provides
+    @Singleton
+    fun provideEventRepository(
+        eventDao: IEventDao,
+        eventApi: IEventApi
+    ): IEventRepository =
+        EventRepositoryImpl(eventDao, eventApi)
+
 
     //////////////////////////////////////
     /// Unused but left here for reference

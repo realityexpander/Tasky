@@ -50,6 +50,7 @@ import com.realityexpander.tasky.core.presentation.theme.DaySelected
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.LoginScreenDestination
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZonedDateTime
@@ -89,7 +90,7 @@ fun AgendaScreenContent(
     val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
 
-    val agendaItems = state.agendaItems
+    val agendaItems by state.agendaItems.collectAsState(initial = emptyList())
     val selectedDayIndex = state.selectedDayIndex
 
     // create days of the week for top of screen
@@ -442,40 +443,6 @@ fun AgendaScreenContent(
 //                Spacer(modifier = Modifier.extraSmallHeight())
 //            }
 //
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .weight(1f)
-//            ) {
-//                this@col1.AnimatedVisibility(
-//                    visible = !isKeyboardOpen,
-//                    enter = fadeIn() + slideInVertically(
-//                        initialOffsetY = { it }
-//                    ),
-//                    exit = fadeOut(),
-//                    modifier = Modifier
-//                        .background(color = MaterialTheme.colors.surface)
-//                        .align(alignment = Alignment.BottomStart)
-//                ) {
-//                    // • BACK TO SIGN IN BUTTON
-//                    Button(
-//                        onClick = {
-//                            navigateToLogin()
-//                        },
-//                        modifier = Modifier
-//                            .align(alignment = Alignment.BottomStart)
-//                            .taskyMediumButton(color = MaterialTheme.colors.primary)
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Filled.ChevronLeft,
-//                            contentDescription = stringResource(R.string.register_description_back),
-//                            modifier = Modifier
-//                                .size(DP.large)
-//                                .align(alignment = Alignment.CenterVertically)
-//                        )
-//                    }
-//                }
-//            }
 
     }
 
@@ -633,32 +600,34 @@ fun AgendaScreenPreview() {
                 authInfo = AuthInfo(
                     username = "Chris Athanas",
                 ),
-                agendaItems = listOf(
-                    AgendaItem.Event(
-                        id = "1",
-                        title = "Event 1",
-                        description = "Event Description 1",
-                        from = ZonedDateTime.now(),
-                        to = ZonedDateTime.now().plusHours(1),
-                        remindAt = ZonedDateTime.now(),
-                        host = "Chris Athanas",
-                    ),
-                    AgendaItem.Task(
-                        id = "2",
-                        title = "Task 2",
-                        description = "Task Description 2",
-                        time = ZonedDateTime.now().plusHours(3),
-                        isDone = false,
-                        remindAt = ZonedDateTime.now().plusHours(2),
-                    ),
-                    AgendaItem.Reminder(
-                        id = "3",
-                        title = "Reminder 3",
-                        description = "Reminder Description 3",
-                        time = ZonedDateTime.now(),
-                        remindAt = ZonedDateTime.now().plusDays(1),
-                    ),
-                ),
+                agendaItems = flow {
+                    listOf(
+                        AgendaItem.Event(
+                            id = "1",
+                            title = "Event 1",
+                            description = "Event Description 1",
+                            from = ZonedDateTime.now(),
+                            to = ZonedDateTime.now().plusHours(1),
+                            remindAt = ZonedDateTime.now(),
+                            host = "Chris Athanas",
+                        ),
+                        AgendaItem.Task(
+                            id = "2",
+                            title = "Task 2",
+                            description = "Task Description 2",
+                            time = ZonedDateTime.now().plusHours(3),
+                            isDone = false,
+                            remindAt = ZonedDateTime.now().plusHours(2),
+                        ),
+                        AgendaItem.Reminder(
+                            id = "3",
+                            title = "Reminder 3",
+                            description = "Reminder Description 3",
+                            time = ZonedDateTime.now(),
+                            remindAt = ZonedDateTime.now().plusDays(1),
+                        ),
+                    )
+                },
                 isLoaded = true,
             ),
             onAction = { println("ACTION: $it") },
