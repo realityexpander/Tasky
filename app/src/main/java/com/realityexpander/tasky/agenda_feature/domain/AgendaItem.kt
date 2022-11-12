@@ -1,7 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.domain
 
 import android.os.Parcelable
-import com.realityexpander.tasky.agenda_feature.util.AttendeeId
 import com.realityexpander.tasky.agenda_feature.util.PhotoId
 import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.UuidStr
@@ -26,11 +25,11 @@ abstract class AgendaItem {
         val isGoing: Boolean? = null,
 
         val attendees: List<Attendee> = emptyList(),
-        val attendeeIds: List<AttendeeId> = emptyList(),
 
-        val photos: List<Photo> = emptyList(),
-        val photoIds: List<PhotoId> = emptyList(),
-        val deletedPhotoKeys: List<PhotoId> = emptyList(),
+        val photos: List<Photo.Remote> = emptyList(),
+        val deletedPhotoKeys: List<PhotoId> = emptyList(),  // only used for EventDTO.Update
+
+        val photosToUpload: List<Photo.Local> = emptyList(),
 
         val isDeleted: Boolean = false,
     ) : AgendaItem(), Parcelable
