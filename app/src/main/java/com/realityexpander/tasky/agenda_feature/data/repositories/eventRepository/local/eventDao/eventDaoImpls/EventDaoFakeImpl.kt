@@ -1,6 +1,8 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.eventDaoImpls
 
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.AttendeeEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.PhotoEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
 import com.realityexpander.tasky.agenda_feature.util.EventId
 import kotlinx.coroutines.*
@@ -289,8 +291,20 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             host = "Host 1",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photoIds = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -309,8 +323,20 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             host = "Host 2",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photoIds = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -327,8 +353,20 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             host = "Host 2",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photoIds = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -345,8 +383,20 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             host = "Host 1",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photoIds = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -374,8 +424,20 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             host = "Host 1",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photoIds = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -394,8 +456,20 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             host = "Host 2",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photoIds = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -412,8 +486,20 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             host = "Host 3",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photoIds = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -432,8 +518,20 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             host = "Host 4",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photoIds = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
@@ -454,8 +552,20 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             host = "Host 4",
             isUserEventCreator = true,
             isGoing = true,
-            attendeeIds = listOf("1", "2", "3"),
-            photoIds = listOf("photo1", "photo2", "photo3"),
+            attendees = listOf(
+                AttendeeEntity(
+                    "1",
+                    "Attendee 1",
+                    "Email1@email.com",
+                    "FullName",
+                    isGoing = true,
+                    remindAt = ZonedDateTime.now(),
+                    photo = "https://www.google.com"
+                ),
+            ),
+            photos = listOf(
+                PhotoEntity("1", "https://www.google.com")
+            ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
         )
