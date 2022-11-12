@@ -14,7 +14,7 @@ fun PhotoEntity.toDomain() =
 fun PhotoDTO.toDomain() =
     Photo.Remote(
         id = id,
-        url = url,
+        url = url ?: throw IllegalArgumentException("PhotoDTO.url is null"),
     )
 
 fun Photo.Remote.toEntity() =
