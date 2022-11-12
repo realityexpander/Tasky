@@ -3,18 +3,21 @@ package com.realityexpander.tasky.agenda_feature.presentation.add_event_screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
@@ -123,6 +126,7 @@ fun AddEventScreenContent(
                     .weight(1f)
             )
 
+            // • Edit / Save Button
             Icon(
                 imageVector = Icons.Filled.Edit,
                 tint = MaterialTheme.colors.surface,
@@ -135,9 +139,8 @@ fun AddEventScreenContent(
 
         }
 
-        Spacer(modifier = Modifier.tinyHeight())
+        Spacer(modifier = Modifier.smallHeight())
 
-        // • HEADER FOR AGENDA ITEMS (S, M, T, W, T, F, & Day Picker)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -146,23 +149,64 @@ fun AddEventScreenContent(
         ) col2@{
             Spacer(modifier = Modifier.tinyHeight())
 
+            // • Agenda Item Type (Event)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
                 Box(
                     modifier = Modifier
-                        .size(15.dp)
+                        .size(20.dp)
+                        .offset(2.dp, 0.dp)
                         .background(color = TaskyLightGreen)
                         .align(Alignment.CenterVertically)
                 )
-                Spacer(modifier = Modifier.extraSmallWidth())
+                Spacer(modifier = Modifier.xxSmallWidth())
                 Text(
                     "Event",
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                 )
             }
+
+            Spacer(modifier = Modifier.smallHeight())
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                // • Visual Circle
+                Icon(
+                    imageVector = Icons.Outlined.Circle,
+                    tint = MaterialTheme.colors.onSurface,
+                    contentDescription = "Meeting title marker",
+                    modifier = Modifier
+                        .size(26.dp)
+                        .align(Alignment.CenterVertically)
+                        .offset(0.dp, 0.dp)
+                )
+                Spacer(modifier = Modifier.extraSmallWidth())
+                Text(
+                    "Event",
+                    style = MaterialTheme.typography.h2,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                )
+            }
+
+            Divider(
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.smallHeight())
+
+            // • Description
+            Text(
+                text = LoremIpsum(15).values.joinToString { it },
+                style = MaterialTheme.typography.h5,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            )
         }
     }
 
