@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 sealed class Photo(
-    open val id: PhotoId,
+    @Transient open val id: PhotoId,  // @Transient because it confuses GSON serializer
 ) : Parcelable {
 
     data class Remote(
