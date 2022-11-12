@@ -28,7 +28,7 @@ abstract class EventDTO {
         @Required  // forces write of empty list -> []   (instead of no field written)
         val attendeeIds: List<AttendeeId> = emptyList(),
 
-        @Transient
+        @Transient  // This field is used to store Local URI's for photos to upload.
         val photos: List<PhotoDTO.Local> = emptyList(),  // todo implement uploading of photos
     ) : EventDTO()
 
