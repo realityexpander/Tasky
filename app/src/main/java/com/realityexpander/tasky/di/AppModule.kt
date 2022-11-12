@@ -117,7 +117,7 @@ object AppModule {
                     return print("=== more than 500 characters ===")
 
                 if (message.startsWith("{") || message.startsWith("[")) try {
-                    JSONObject(message).toString(3).also(::print)
+                    JSONObject(message).toString(2).also(::print)
                 } catch (e: JSONException) {
                     print(message)
                 }
