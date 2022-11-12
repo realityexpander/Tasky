@@ -7,7 +7,6 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
-import com.realityexpander.tasky.agenda_feature.util.emptyId
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
@@ -96,8 +95,8 @@ class AgendaViewModel @Inject constructor(
                            from = ZonedDateTime.of(todayDate.plusDays(1), LocalTime.now(), ZoneId.systemDefault()),
                            to = ZonedDateTime.of(todayDate.plusDays(2), LocalTime.now().plusHours(1), ZoneId.systemDefault()),
                            remindAt = ZonedDateTime.of(todayDate.plusDays(1), LocalTime.now().minusMinutes(30), ZoneId.systemDefault()),
-                           attendeeIds =  emptyList(), //listOf(attendeeId("634e5c33628cc62b5ec50b37")), //emptyList(), // listOf("John", "Mary", "Bob"),
-                           photoIds = emptyList() //listOf("photo1", "photo2", "photo3"),
+                           attendees =  emptyList(), //listOf(attendeeId("634e5c33628cc62b5ec50b37")), //emptyList(), // listOf("John", "Mary", "Bob"),
+                           photos = emptyList() //listOf("photo1", "photo2", "photo3"),
                        ))
                     uuidStr(uuid)
                     // todo add error checking
@@ -266,8 +265,8 @@ class AgendaViewModel @Inject constructor(
                     host = "John",
                     isUserEventCreator = false,
                     isGoing = true,
-                    attendeeIds = listOf(emptyId),
-                    photoIds = emptyList(),
+                    attendees = emptyList(),
+                    photos = emptyList(),
                 )
             )
 //                    AgendaItem.Task(  // todo add task
@@ -307,8 +306,8 @@ class AgendaViewModel @Inject constructor(
                     host = "Jack",
                     isUserEventCreator = true,
                     isGoing = false,
-                    attendeeIds = listOf(emptyId),
-                    photoIds = emptyList(),
+                    attendees = emptyList(),
+                    photos = emptyList(),
                 )
             )
 //                    AgendaItem.Reminder(  // todo add reminder
@@ -333,8 +332,8 @@ class AgendaViewModel @Inject constructor(
                     host = "Jeremy",
                     isUserEventCreator = true,
                     isGoing = true,
-                    attendeeIds = listOf(emptyId),
-                    photoIds = emptyList(),
+                    attendees = emptyList(),
+                    photos = emptyList(),
                 )
             )
 //                    AgendaItem.Task(  // todo add task
