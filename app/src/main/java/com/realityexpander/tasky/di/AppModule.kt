@@ -108,7 +108,6 @@ object AppModule {
         }
 
         val prettyPrinter = object : HttpLoggingInterceptor.Logger {
-
             private fun print(m: String) {
                 Log.i("API", m)
             }
@@ -119,7 +118,9 @@ object AppModule {
 
                 if (message.startsWith("{") || message.startsWith("[")) try {
                     JSONObject(message).toString(4).also(::print)
-                } catch (e: JSONException) { print(message) }
+                } catch (e: JSONException) {
+                    print(message)
+                }
                 else print(message)
             }
         }
