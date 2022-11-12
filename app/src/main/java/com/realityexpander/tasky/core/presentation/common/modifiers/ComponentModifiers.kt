@@ -33,6 +33,7 @@ object DP {
     val nano       = 1.dp
     val micro      = 2.dp
     val tiny       = 4.dp
+    val xxSmall    = 6.dp
     val extraSmall = 8.dp
     val small      = 16.dp
     val medium     = 24.dp
@@ -44,6 +45,7 @@ object DP {
 }
 
 fun Modifier.tinyHeight(): Modifier       = this.height(DP.tiny)
+fun Modifier.xxSmallHeight(): Modifier    = this.height(DP.xxSmall)
 fun Modifier.extraSmallHeight(): Modifier = this.height(DP.extraSmall)
 fun Modifier.smallHeight(): Modifier      = this.height(DP.small)
 fun Modifier.mediumHeight(): Modifier     = this.height(DP.medium)
@@ -54,6 +56,7 @@ fun Modifier.XXXLargeHeight(): Modifier   = this.height(DP.XXXLarge)
 fun Modifier.hugeHeight(): Modifier       = this.height(DP.huge)
 
 fun Modifier.tinyWidth(): Modifier       = this.width(DP.tiny)
+fun Modifier.xxSmallWidth(): Modifier    = this.width(DP.xxSmall)
 fun Modifier.extraSmallWidth(): Modifier = this.width(DP.extraSmall)
 fun Modifier.smallWidth(): Modifier      = this.width(DP.small)
 fun Modifier.mediumWidth(): Modifier     = this.width(DP.medium)
