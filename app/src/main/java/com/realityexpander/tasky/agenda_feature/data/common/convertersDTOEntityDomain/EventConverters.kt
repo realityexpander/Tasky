@@ -3,7 +3,6 @@ package com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntity
 import com.google.gson.GsonBuilder
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
-import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.PhotoDTO
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
@@ -90,12 +89,7 @@ fun AgendaItem.Event.toEventDTOCreate(): EventDTO.Create {
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
         attendeeIds = attendees.map { it.id },
-        photos = photosToUpload.map {
-                PhotoDTO.Local(
-                    it.id,
-                    uri = it.uri
-                )
-            }
+        photos = photosToUpload.map { it.toDTO() },
     )
 }
 
