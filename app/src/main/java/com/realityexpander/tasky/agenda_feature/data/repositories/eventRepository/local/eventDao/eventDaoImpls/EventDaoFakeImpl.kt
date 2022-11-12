@@ -2,7 +2,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.eventReposito
 
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.AttendeeEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
-import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.PhotoEntity
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.PhotoRemoteEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
 import com.realityexpander.tasky.agenda_feature.util.EventId
 import kotlinx.coroutines.*
@@ -303,7 +303,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
                 ),
             ),
             photos = listOf(
-                PhotoEntity("1", "https://www.google.com")
+                PhotoRemoteEntity("1", "https://www.google.com")
             ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
@@ -335,7 +335,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
                 ),
             ),
             photos = listOf(
-                PhotoEntity("1", "https://www.google.com")
+                PhotoRemoteEntity("1", "https://www.google.com")
             ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
@@ -365,7 +365,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
                 ),
             ),
             photos = listOf(
-                PhotoEntity("1", "https://www.google.com")
+                PhotoRemoteEntity("1", "https://www.google.com")
             ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
@@ -395,7 +395,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
                 ),
             ),
             photos = listOf(
-                PhotoEntity("1", "https://www.google.com")
+                PhotoRemoteEntity("1", "https://www.google.com")
             ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
@@ -436,7 +436,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
                 ),
             ),
             photos = listOf(
-                PhotoEntity("1", "https://www.google.com")
+                PhotoRemoteEntity("1", "https://www.google.com")
             ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
@@ -468,7 +468,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
                 ),
             ),
             photos = listOf(
-                PhotoEntity("1", "https://www.google.com")
+                PhotoRemoteEntity("1", "https://www.google.com")
             ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
@@ -498,7 +498,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
                 ),
             ),
             photos = listOf(
-                PhotoEntity("1", "https://www.google.com")
+                PhotoRemoteEntity("1", "https://www.google.com")
             ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
@@ -530,7 +530,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
                 ),
             ),
             photos = listOf(
-                PhotoEntity("1", "https://www.google.com")
+                PhotoRemoteEntity("1", "https://www.google.com")
             ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
@@ -564,7 +564,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
                 ),
             ),
             photos = listOf(
-                PhotoEntity("1", "https://www.google.com")
+                PhotoRemoteEntity("1", "https://www.google.com")
             ),
             deletedPhotoKeys = listOf(),
             isDeleted = false,
