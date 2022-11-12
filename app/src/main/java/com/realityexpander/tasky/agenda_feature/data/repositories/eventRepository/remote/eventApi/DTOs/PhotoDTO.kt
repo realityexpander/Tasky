@@ -5,16 +5,20 @@ import com.realityexpander.tasky.agenda_feature.util.PhotoId
 import com.realityexpander.tasky.agenda_feature.util.UrlStr
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlinx.serialization.json.JsonNames
 
-@Serializable
-@OptIn(ExperimentalSerializationApi::class)  // for @JsonNames
-data class PhotoDTO(
-    @JsonNames("key")   // input from json
-    val id: PhotoId,
-    val url: UrlStr,
+sealed interface PhotoDTO {
 
-    @Transient
-    val uri: Uri? = null,        // points to local file, if any. Not serialized.
-)
+    @Serializable
+    @OptIn(ExperimentalSerializationApi::class)  // for @JsonNames
+    data class Remote(
+        @JsonNames("key")   // input from json
+        val id: PhotoId,
+        val url: UrlStr,      // url of the photo on server
+    ) : PhotoDTO
+
+    data class Local(
+        val id: PhotoId,
+        val uri: Uri,         // path to the photo on device
+    ) : PhotoDTO
+}
