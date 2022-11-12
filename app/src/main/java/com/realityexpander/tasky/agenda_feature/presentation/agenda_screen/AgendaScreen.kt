@@ -66,7 +66,9 @@ fun AgendaScreen(
 //    email: String? = null,
 //    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
 //    password: String? = null,
+    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     selectedDayIndex: Int? = 0,
+
     navigator: DestinationsNavigator,
     viewModel: AgendaViewModel = hiltViewModel(),
 ) {
