@@ -1,11 +1,16 @@
 package com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain
 
+import com.google.gson.GsonBuilder
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.PhotoDTO
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
+import com.realityexpander.tasky.agenda_feature.domain.Attendee
+import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.core.util.toUtcMillis
 import com.realityexpander.tasky.core.util.toZonedDateTime
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 // from Domain to Entity
 fun AgendaItem.Event.toEntity(): EventEntity {
@@ -19,11 +24,10 @@ fun AgendaItem.Event.toEntity(): EventEntity {
         host = host,
         isUserEventCreator = isUserEventCreator,
         isGoing = isGoing,
-        attendeeIds = attendeeIds,
-        photoIds = photoIds,
+        attendees = attendees.map { it.toEntity() },
+        photos = photos.map { it.toEntity() },
         deletedPhotoKeys = deletedPhotoKeys,
         isDeleted = isDeleted,
-        // todo add attendees and photos & converters
     )
 }
 
@@ -39,8 +43,8 @@ fun EventEntity.toDomain(): AgendaItem.Event {
         host = host,
         isUserEventCreator = isUserEventCreator,
         isGoing = isGoing,
-        attendeeIds = attendeeIds,
-        photoIds = photoIds,
+        attendees = attendees.map { it.toDomain() },
+        photos = photos.map { it.toDomain() },
         deletedPhotoKeys = deletedPhotoKeys,
     )
 }
@@ -49,30 +53,32 @@ fun EventEntity.toDomain(): AgendaItem.Event {
 fun EventDTO.toDomain(): AgendaItem.Event {
     when (this) {
         is EventDTO.Create -> {
-            return AgendaItem.Event(
-                id = id,
-                title = title,
-                description = description,
-                from = from.toZonedDateTime(),
-                to = to.toZonedDateTime(),
-                remindAt = remindAt.toZonedDateTime(),
-
-                attendeeIds = attendeeIds,
-            )
+            throw java.lang.IllegalStateException("EventDTO.Create should not be converted to Domain")
+//            return AgendaItem.Event(
+//                id = id,
+//                title = title,
+//                description = description,
+//                from = from.toZonedDateTime(),
+//                to = to.toZonedDateTime(),
+//                remindAt = remindAt.toZonedDateTime(),
+//
+//                attendeeIds = attendeeIds,
+//            )
         }
         is EventDTO.Update -> {
-            return AgendaItem.Event(
-                id = id,
-                title = title,
-                description = description,
-                from = from.toZonedDateTime(),
-                to = to.toZonedDateTime(),
-                remindAt = remindAt.toZonedDateTime(),
-
-                isGoing = isGoing,
-                attendeeIds = attendeeIds,
-                deletedPhotoKeys = deletedPhotoIds,
-            )
+            throw java.lang.IllegalStateException("EventDTO.Update should not be converted to Domain")
+//            return AgendaItem.Event(
+//                id = id,
+//                title = title,
+//                description = description,
+//                from = from.toZonedDateTime(),
+//                to = to.toZonedDateTime(),
+//                remindAt = remindAt.toZonedDateTime(),
+//
+//                isGoing = isGoing,
+//                attendeeIds = attendees.map { it.id },
+//                deletedPhotoKeys = deletedPhotoIds,
+//            )
         }
         is EventDTO.Response -> {
             return AgendaItem.Event(
@@ -87,9 +93,9 @@ fun EventDTO.toDomain(): AgendaItem.Event {
                 isUserEventCreator = isUserEventCreator,
                 isGoing = isGoing,
                 attendees = attendees.map { it.toDomain() },
-                attendeeIds = attendees.map { it.id },      // extract the attendees Ids
+//                attendeeIds = attendees.map { it.id },      // extract the attendees Ids
                 photos = photos.map { it.toDomain() },
-                photoIds = photos.map { it.id },            // extract the photo Ids
+//                photoIds = photos.map { it.id },            // extract the photo Ids
             )
         }
         else -> {
@@ -107,7 +113,13 @@ fun AgendaItem.Event.toEventDTOCreate(): EventDTO.Create {
         from = from.toUtcMillis(),
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
-        attendeeIds = attendeeIds,
+        attendeeIds = attendees.map { it.id },
+        photos = photosToUpload.map {
+                PhotoDTO(
+                    it.id,
+                    uri = it.uri
+                )
+            }
     )
 }
 
@@ -122,13 +134,13 @@ fun AgendaItem.Event.toEventDTOUpdate(): EventDTO.Update {
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
         isGoing = isGoing ?: false,
-        attendeeIds = attendeeIds,
+        attendeeIds = attendees.map { it.id },
         deletedPhotoIds = deletedPhotoKeys,
     )
 }
 
 // from Domain to EventDTO.Response (also converts local ZonedDateTime to UTC time millis)
-// Note: this is used for fake implementations internally. It is not used in the normal app.
+//   Note: this is used for fake implementations internally. It is not used in the normal app.
 fun AgendaItem.Event.toEventDTOResponse(): EventDTO.Response {
     return EventDTO.Response(
         id = id,
@@ -138,7 +150,9 @@ fun AgendaItem.Event.toEventDTOResponse(): EventDTO.Response {
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
         isGoing = isGoing ?: false,
-        photos = photos.map { it.toDTO() },
+        photos = photos.map {
+                    it.toDTO()
+                },
         attendees = attendees.map { it.toDTO() },
         isUserEventCreator = isUserEventCreator ?: false,
         host = host ?: "",
@@ -146,28 +160,70 @@ fun AgendaItem.Event.toEventDTOResponse(): EventDTO.Response {
 }
 
 fun main() {
+
     val event = AgendaItem.Event(
         id = "id",
         title = "title",
         description = "description",
-        from = ZonedDateTime.now(),
-        to = ZonedDateTime.now(),
-        remindAt = ZonedDateTime.now(),
+        from = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES),
+        to = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES),
+        remindAt = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES),
         host = "host",
         isUserEventCreator = true,
         isGoing = true,
-        attendeeIds = listOf("attendeeId1", "attendeeId2"),
-        photoIds = listOf("photoId1", "photoId2"),
-        deletedPhotoKeys = listOf("deletedPhotoId1", "deletedPhotoId2"),
+        attendees = listOf(
+            Attendee(
+                id = "id1",
+                email = "email",
+                photo = "photoUrl",
+                fullName = "fullName",
+            ),
+            Attendee(
+                id = "id2",
+                email = "email2",
+                photo = "photoUrl2",
+                fullName = "fullName2",
+            ),
+        ),
+        photos = listOf(
+            Photo.Remote(
+                id = "id1",
+                url = "url1",
+            ),
+            Photo.Remote(
+                id = "id2",
+                url = "url2",
+            ),
+        ),
     )
-    val eventDTO = event.toEventDTOCreate()
-    val eventEntity = event.toEntity()
-    val eventDomain = eventEntity.toDomain()
-    val eventDomain2 = eventDTO.toDomain()
 
-    println(event)
-    println(eventDTO == event.toEventDTOCreate())
-    println(eventEntity == event.toEntity())
-    println(eventDomain == eventEntity.toDomain())
-    println(eventDomain2 == eventDTO.toDomain())
+    val gson = GsonBuilder()
+        .setPrettyPrinting()
+        .create()
+
+    // Simulate EventDTO.Response
+    val eventDTO = event.toEventDTOResponse()
+    val eventDTOtoDomain = eventDTO.toDomain()
+    val eventDTOtoDomainToEntity = eventDTOtoDomain.toEntity()
+    val eventDTOtoDomainToEntityToDomain = eventDTOtoDomainToEntity.toDomain()
+
+    //println(gson.toJson(event))
+    println(gson.toJson(eventDTOtoDomainToEntityToDomain) == gson.toJson(event))
+
+
+    // Simulate EventDTO.Create
+    val eventDTO2 = event.toEventDTOCreate()
+    try {
+        val eventDTO2toDomain = eventDTO2.toDomain()
+    } catch (e: Exception) {
+        println("EventDTO.Create should not be converted to Domain = true")
+    }
+
+    // Simulate EventDTO.Update
+    val eventDTO3 = event.toEventDTOUpdate()
+    try {
+        val eventDTO3toDomain = eventDTO3.toDomain()
+    } catch (e: Exception) {
+        println("EventDTO.Update should not be converted to Domain = true")
+    }
 }
