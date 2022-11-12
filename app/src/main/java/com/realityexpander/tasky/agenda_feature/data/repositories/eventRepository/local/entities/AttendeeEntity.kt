@@ -15,7 +15,9 @@ class AttendeeEntity(
     val email: Email,
     val fullName: String,
     val isGoing: Boolean,
+
     @Serializable(with = ZonedDateTimeSerializer::class) // for Room @TypeConverter
     val remindAt: ZonedDateTime? = null,
+
     val photo: UrlStr? = null,
 )
