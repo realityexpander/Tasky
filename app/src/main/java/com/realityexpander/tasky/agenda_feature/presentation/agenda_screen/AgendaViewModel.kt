@@ -185,12 +185,12 @@ class AgendaViewModel @Inject constructor(
         when(event) {
             is AgendaEvent.ShowProgressIndicator -> {
                 _agendaState.update {
-                    it.copy(isLoading = event.isShowing)
+                    it.copy(isProgressVisible = event.isShowing)
                 }
             }
             is AgendaEvent.SetIsLoaded -> {
                 _agendaState.update {
-                    it.copy(isLoading = event.isLoaded)
+                    it.copy(isProgressVisible = event.isLoaded)
                 }
             }
             is AgendaEvent.SetSelectedDayIndex -> {
