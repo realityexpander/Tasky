@@ -11,10 +11,10 @@ fun PhotoEntity.toDomain() =
         url = url,
     )
 
-fun PhotoDTO.toDomain() =
+fun PhotoDTO.Remote.toDomain() =
     Photo.Remote(
         id = id,
-        url = url ?: throw IllegalArgumentException("PhotoDTO.url is null"),
+        url = url,
     )
 
 fun Photo.Remote.toEntity() =
@@ -24,15 +24,14 @@ fun Photo.Remote.toEntity() =
     )
 
 fun Photo.Remote.toDTO() =
-    PhotoDTO(
+    PhotoDTO.Remote(
         id = id,
         url = url,
     )
 
-// Note: This is used for local photos that are about to uploaded to the server.
+// Note: This is used for local photos that are about to uploaded to the server. // todo implement photo uploading
 fun Photo.Local.toDTO() =
-    PhotoDTO(
+    PhotoDTO.Local(
         id = id,
-        url = "URL_NOT_SET_YET",
         uri = uri,
     )
