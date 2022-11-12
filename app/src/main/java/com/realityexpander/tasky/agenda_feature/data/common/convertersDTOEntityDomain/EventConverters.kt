@@ -54,31 +54,9 @@ fun EventDTO.toDomain(): AgendaItem.Event {
     when (this) {
         is EventDTO.Create -> {
             throw java.lang.IllegalStateException("EventDTO.Create should not be converted to Domain")
-//            return AgendaItem.Event(
-//                id = id,
-//                title = title,
-//                description = description,
-//                from = from.toZonedDateTime(),
-//                to = to.toZonedDateTime(),
-//                remindAt = remindAt.toZonedDateTime(),
-//
-//                attendeeIds = attendeeIds,
-//            )
         }
         is EventDTO.Update -> {
             throw java.lang.IllegalStateException("EventDTO.Update should not be converted to Domain")
-//            return AgendaItem.Event(
-//                id = id,
-//                title = title,
-//                description = description,
-//                from = from.toZonedDateTime(),
-//                to = to.toZonedDateTime(),
-//                remindAt = remindAt.toZonedDateTime(),
-//
-//                isGoing = isGoing,
-//                attendeeIds = attendees.map { it.id },
-//                deletedPhotoKeys = deletedPhotoIds,
-//            )
         }
         is EventDTO.Response -> {
             return AgendaItem.Event(
@@ -93,9 +71,7 @@ fun EventDTO.toDomain(): AgendaItem.Event {
                 isUserEventCreator = isUserEventCreator,
                 isGoing = isGoing,
                 attendees = attendees.map { it.toDomain() },
-//                attendeeIds = attendees.map { it.id },      // extract the attendees Ids
                 photos = photos.map { it.toDomain() },
-//                photoIds = photos.map { it.id },            // extract the photo Ids
             )
         }
         else -> {
@@ -115,14 +91,13 @@ fun AgendaItem.Event.toEventDTOCreate(): EventDTO.Create {
         remindAt = remindAt.toUtcMillis(),
         attendeeIds = attendees.map { it.id },
         photos = photosToUpload.map {
-                PhotoDTO(
+                PhotoDTO.Local(
                     it.id,
                     uri = it.uri
                 )
             }
     )
 }
-
 
 // from Domain to EventDTO.Update (also converts local ZonedDateTime to UTC time millis)
 fun AgendaItem.Event.toEventDTOUpdate(): EventDTO.Update {
@@ -158,6 +133,8 @@ fun AgendaItem.Event.toEventDTOResponse(): EventDTO.Response {
         host = host ?: "",
     )
 }
+
+
 
 fun main() {
 
@@ -208,7 +185,7 @@ fun main() {
     val eventDTOtoDomainToEntityToDomain = eventDTOtoDomainToEntity.toDomain()
 
     //println(gson.toJson(event))
-    println(gson.toJson(eventDTOtoDomainToEntityToDomain) == gson.toJson(event))
+    println("event == eventDTOtoDomainToEntityToDomain: ${gson.toJson(eventDTOtoDomainToEntityToDomain) == gson.toJson(event)}")
 
 
     // Simulate EventDTO.Create
