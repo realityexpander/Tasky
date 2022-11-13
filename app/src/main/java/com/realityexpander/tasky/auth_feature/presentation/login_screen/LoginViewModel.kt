@@ -58,7 +58,19 @@ class LoginViewModel @Inject constructor(
     private val errorMessage: UiText? =
         savedStateHandle[SAVED_STATE_errorMessage]
 
-    private val _loginState = MutableStateFlow(LoginState())
+    private val _loginState = MutableStateFlow(
+        LoginState(
+            username = username,
+            email = email,
+            password = password,
+            isInvalidEmail = isInvalidEmail,
+            isInvalidEmailMessageVisible = isInvalidEmailMessageVisible,
+            isInvalidPassword = isInvalidPassword,
+            isInvalidPasswordMessageVisible = isInvalidPasswordMessageVisible,
+            authInfo = authInfo,
+            statusMessage = statusMessage,
+            errorMessage = errorMessage
+    ))
     val loginState = _loginState.onEach { state ->
         // save state for process death
         savedStateHandle[SAVED_STATE_username] =
@@ -90,21 +102,7 @@ class LoginViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            // restore state after process death
-            _loginState.update {
-                it.copy(
-                    username = username,
-                    email = email,
-                    password = password,
-                    isInvalidEmail = isInvalidEmail,
-                    isInvalidEmailMessageVisible = isInvalidEmailMessageVisible,
-                    isInvalidPassword = isInvalidPassword,
-                    isInvalidPasswordMessageVisible = isInvalidPasswordMessageVisible,
-                    authInfo = authInfo,
-                    statusMessage = statusMessage,
-                    errorMessage = errorMessage
-                )
-            }
+            // restore state after process death (or coming back from another screen)
 
             // Validate email & password when restored from process death or coming from another screen
             if (loginState.value.email.isNotBlank()) sendEvent(LoginEvent.ValidateEmail)
