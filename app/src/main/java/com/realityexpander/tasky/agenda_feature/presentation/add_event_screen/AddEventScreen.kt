@@ -593,7 +593,7 @@ fun AddEventScreenContent(
 
                 // • Remind At
                 Row(
-                    horizontalArrangement = Arrangement.Start,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.surface)
@@ -610,14 +610,30 @@ fun AddEventScreenContent(
                             .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
                             .padding(4.dp)
                             .align(Alignment.CenterVertically)
+                            .weight(.1f)
                     )
                     Spacer(modifier = Modifier.smallWidth())
                     Text(
                         state.fromDateTime.toTimeDifferenceHumanReadable(state.remindAt),
                         color = MaterialTheme.colors.onSurface,
-                        textAlign = TextAlign.End,
+                        textAlign = TextAlign.Start,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
+                            .weight(.8f)
+                    )
+                    Icon(
+                        imageVector = Icons.Filled.ChevronRight,
+                        tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
+                        contentDescription = "Edit Event From DateTime",
+                        modifier = Modifier
+                            .weight(.1f)
+                            .width(28.dp)
+                            .height(20.dp)
+                            .offset(x = (-2).dp)
+                            .align(Alignment.CenterVertically)
+                            .clickable {
+                                // todo
+                            }
                     )
                 }
                 Spacer(modifier = Modifier.smallHeight())
