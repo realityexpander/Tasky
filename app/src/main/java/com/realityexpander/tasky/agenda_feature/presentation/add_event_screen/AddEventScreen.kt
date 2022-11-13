@@ -32,10 +32,10 @@ import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.components.AttendeeList
 import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.components.PillButton
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaEvent
-import com.realityexpander.tasky.agenda_feature.util.differenceTimeHumanReadable
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
 import com.realityexpander.tasky.agenda_feature.util.toShortMonthDayYear
 import com.realityexpander.tasky.agenda_feature.util.toTime12Hour
+import com.realityexpander.tasky.agenda_feature.util.toTimeDifferenceHumanReadable
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
@@ -202,7 +202,6 @@ fun AddEventScreenContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
-//                .padding(0.dp)
                 .verticalScroll(rememberScrollState())
         ) col2@{
             Column(
@@ -280,7 +279,7 @@ fun AddEventScreenContent(
             // • Photo Picker / Add / Remove
             Box(
                 modifier = Modifier
-                    .background(MaterialTheme.colors.surface.copy(alpha = .9f))
+                    .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
                     .fillMaxWidth()
                     .padding(DP.small)
                     .border(0.dp, Color.Transparent)
@@ -288,7 +287,7 @@ fun AddEventScreenContent(
             ) {
                 val photos = 1 // for testing only
 
-                if (photos == 0) {
+                if (photos == 1) {
                     // • No Photos
                     Row(
                         horizontalArrangement = Arrangement.Center,
@@ -300,7 +299,7 @@ fun AddEventScreenContent(
                         // • Add Photo Icon
                         Icon(
                             imageVector = Icons.Filled.Add,
-                            tint = MaterialTheme.colors.onSurface.copy(alpha = .8f),
+                            tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
                             contentDescription = "Meeting title marker",
                             modifier = Modifier
                                 .size(26.dp)
@@ -495,7 +494,7 @@ fun AddEventScreenContent(
                     )
                     Spacer(modifier = Modifier.smallWidth())
                     Text(
-                        state.fromDateTime.differenceTimeHumanReadable(state.remindAt),
+                        state.fromDateTime.toTimeDifferenceHumanReadable(state.remindAt),
                         color = MaterialTheme.colors.onSurface,
                         textAlign = TextAlign.End,
                         modifier = Modifier
