@@ -5,10 +5,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
@@ -35,6 +32,11 @@ import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.components.AttendeeList
 import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.components.PillButton
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaEvent
+import com.realityexpander.tasky.agenda_feature.util.differenceTimeHumanReadable
+import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
+import com.realityexpander.tasky.agenda_feature.util.toShortMonthDayYear
+import com.realityexpander.tasky.agenda_feature.util.toTime12Hour
+import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
@@ -57,11 +59,22 @@ fun AddEventScreen(
             navigator = navigator,
         )
     }
+
+    if(state.isProgressVisible) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = .5f))
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
 }
 
 enum class AttendeeListType {
     ALL,
-    INVITED,
     GOING,
     NOT_GOING,
 }
@@ -79,6 +92,7 @@ fun AddEventScreenContent(
 //    val agendaItems by state.agendaItems.collectAsState(initial = emptyList())
 
     var attendeeListType by remember { mutableStateOf(AttendeeListType.ALL) }
+    var isEditMode by remember { mutableStateOf(false) }
 
     fun popBack() {
         navigator.popBackStack()
@@ -125,6 +139,7 @@ fun AddEventScreenContent(
 
         // • HEADER FOR SCREEN (Close, Current Date, Edit/Save)
         Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = DP.small, end = DP.small)
@@ -143,7 +158,7 @@ fun AddEventScreenContent(
 
             // • TODAY'S DATE
             Text(
-                "01 MARCH 2022",
+                ZonedDateTime.now().toLongMonthDayYear(),
                 color = MaterialTheme.colors.surface,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -152,14 +167,32 @@ fun AddEventScreenContent(
             )
 
             // • Edit / Save Button
-            Icon(
-                imageVector = Icons.Filled.Edit,
-                tint = MaterialTheme.colors.surface,
-                contentDescription = "Edit Event",
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .wrapContentWidth(Alignment.End)
-            )
+            if(isEditMode) {
+                Text(
+                    text = "Save",
+                    color = MaterialTheme.colors.surface,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .alignByBaseline()
+                        .width(40.dp)
+                        .clickable {
+                            isEditMode = false
+                        }
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    tint = MaterialTheme.colors.surface,
+                    contentDescription = "Edit Event",
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .width(40.dp)
+                        .clickable {
+                            isEditMode = !isEditMode
+                        }
+                )
+            }
 
         }
         Spacer(modifier = Modifier.smallHeight())
@@ -338,6 +371,8 @@ fun AddEventScreenContent(
             }
         }
 
+
+        // • Event times (from, to, remind at)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -371,14 +406,14 @@ fun AddEventScreenContent(
                         modifier = Modifier
                     )
                     Text(
-                        "8:00 AM",
+                        state.fromDateTime.toTime12Hour(),
                         color = MaterialTheme.colors.onSurface,
                         textAlign = TextAlign.End,
                         modifier = Modifier
                     )
                 }
                 Text(
-                    "Jul 21 2022",
+                    state.fromDateTime.toShortMonthDayYear(),
                     color = MaterialTheme.colors.onSurface,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -412,14 +447,14 @@ fun AddEventScreenContent(
                         modifier = Modifier
                     )
                     Text(
-                        "12:30 PM",
+                        state.toDateTime.toTime12Hour(),
                         color = MaterialTheme.colors.onSurface,
                         textAlign = TextAlign.End,
                         modifier = Modifier
                     )
                 }
                 Text(
-                    "Aug 7 2022",
+                    state.toDateTime.toShortMonthDayYear(),
                     color = MaterialTheme.colors.onSurface,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -447,14 +482,15 @@ fun AddEventScreenContent(
                     tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
                     contentDescription = "Meeting title marker",
                     modifier = Modifier
-                        .size(28.dp)
+                        .size(34.dp)
                         .clip(shape = RoundedCornerShape(5.dp))
                         .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
+                        .padding(4.dp)
                         .align(Alignment.CenterVertically)
                 )
                 Spacer(modifier = Modifier.smallWidth())
                 Text(
-                    "30 minutes before",
+                    state.fromDateTime.differenceTimeHumanReadable(state.remindAt),
                     color = MaterialTheme.colors.onSurface,
                     textAlign = TextAlign.End,
                     modifier = Modifier
@@ -468,7 +504,7 @@ fun AddEventScreenContent(
             Spacer(modifier = Modifier.largeHeight())
 
 
-            // • Visitors Header
+            // • Attendees Header (Visitors)
             Text(
                 "Visitors",
                 color = MaterialTheme.colors.onSurface,
@@ -600,7 +636,9 @@ fun AddEventScreenContent(
             Spacer(modifier = Modifier.largeHeight())
 
             Text(
-                "DELETE EVENT",
+                if (state.isEventCreator) "DELETE EVENT"
+                    else if (state.isGoing) "LEAVE EVENT"
+                        else "JOIN EVENT",
                 style = MaterialTheme.typography.h4,
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
                 textAlign = TextAlign.Center,
@@ -627,7 +665,20 @@ fun AddEventScreenContent(
 fun preview() {
     TaskyTheme {
         AddEventScreenContent(
-            state = AddEventState(),
+            state = AddEventState(
+                authInfo = AuthInfo(
+                    userId = "0001",
+                    authToken = "1010101010101",
+                    username = "Cameron Anderson"
+                ),
+                username = "Cameron Anderson",
+                title = "Title of Event",
+                description = "Description of Event",
+                isEventCreator = false,
+                fromDateTime = ZonedDateTime.now(),
+                toDateTime = ZonedDateTime.now().plusHours(1),
+                remindAt = ZonedDateTime.now().plusMinutes(30)
+            ),
             onAction = { println("ACTION: $it") },
             navigator = EmptyDestinationsNavigator,
         )
