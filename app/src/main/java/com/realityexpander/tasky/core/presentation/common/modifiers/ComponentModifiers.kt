@@ -3,7 +3,6 @@ package com.realityexpander.tasky.core.presentation.common.modifiers
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,7 +26,7 @@ fun Modifier.taskySmallButton(color: Color = Color.White): Modifier =
 fun Modifier.taskyScreenTopCorners(color: Color = Color.White): Modifier =
     clip(shape = TaskyShapes.ScreenTopCorners)
     .background(color = color)
-    .padding(DP.small)
+//    .padding(DP.small)
 
 object DP {
     val nano       = 1.dp

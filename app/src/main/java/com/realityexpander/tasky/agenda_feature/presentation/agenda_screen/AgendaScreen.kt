@@ -269,7 +269,7 @@ fun AgendaScreenContent(
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
                 .padding(0.dp)
         ) col2@{
-            Spacer(modifier = Modifier.tinyHeight())
+            Spacer(modifier = Modifier.smallHeight())
 
             // • DAYS OF WEEK & Day PICKER
             Row {
@@ -338,7 +338,7 @@ fun AgendaScreenContent(
                 }
             }
 
-            Spacer(modifier = Modifier.smallHeight())
+            Spacer(modifier = Modifier.mediumHeight())
         }
 
         // • SHOW TODAY'S DATE

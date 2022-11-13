@@ -60,7 +60,7 @@ fun AddEventScreen(
         )
     }
 
-    if(state.isProgressVisible) {
+    if (state.isProgressVisible) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -133,7 +133,6 @@ fun AddEventScreenContent(
         modifier = Modifier
             .background(color = MaterialTheme.colors.onSurface)
             .padding(0.dp)
-            .verticalScroll(rememberScrollState())
     ) col1@{
         Spacer(modifier = Modifier.mediumHeight())
 
@@ -167,7 +166,7 @@ fun AddEventScreenContent(
             )
 
             // • Edit / Save Button
-            if(isEditMode) {
+            if (isEditMode) {
                 Text(
                     text = "Save",
                     color = MaterialTheme.colors.surface,
@@ -203,452 +202,459 @@ fun AddEventScreenContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
-                .padding(0.dp)
+//                .padding(0.dp)
+                .verticalScroll(rememberScrollState())
         ) col2@{
-            Spacer(modifier = Modifier.tinyHeight())
-
-            // • Agenda Item Type (Event)
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(start = DP.small, end = DP.small)
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .offset(2.dp, 0.dp)
-                        .background(color = TaskyLightGreen)
-                        .align(Alignment.CenterVertically)
-                )
-                Spacer(modifier = Modifier.extraSmallWidth())
-                Text(
-                    "Event",
-                    fontWeight = SemiBold,
-                    color = MaterialTheme.colors.onSurface,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                )
-            }
-            Spacer(modifier = Modifier.smallHeight())
+                Spacer(modifier = Modifier.smallHeight())
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                // • Visual Circle
-                Icon(
-                    imageVector = Icons.Outlined.Circle,
-                    tint = MaterialTheme.colors.onSurface,
-                    contentDescription = "Meeting title marker",
-                    modifier = Modifier
-                        .size(26.dp)
-                        .align(Alignment.CenterVertically)
-                        .offset(0.dp, 0.dp)
-                )
-                Spacer(modifier = Modifier.extraSmallWidth())
-                Text(
-                    "Event Title",
-                    style = MaterialTheme.typography.h2,
-                    color = MaterialTheme.colors.onSurface,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                )
-            }
-
-            Spacer(modifier = Modifier.smallHeight())
-            Divider(
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.smallHeight())
-
-            // • Description
-            Text(
-                text = LoremIpsum(15).values.joinToString { it },
-                style = MaterialTheme.typography.h5,
-                color = MaterialTheme.colors.onSurface,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            )
-            Spacer(modifier = Modifier.smallHeight())
-        }
-
-        // • Photo Picker / Add / Remove
-        Box(
-            modifier = Modifier
-                .background(MaterialTheme.colors.surface.copy(alpha = .9f))
-                .fillMaxWidth()
-                .padding(DP.small)
-                .border(0.dp, Color.Transparent)
-                .wrapContentHeight()
-        ) {
-            val photos = 1 // for testing only
-
-            if (photos == 0) {
-                // • No Photos
+                // • Agenda Item Type (Event)
                 Row(
-                    horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(Alignment.Center)
-                        .padding(top = DP.medium, bottom = DP.medium)
                 ) {
-                    // • Add Photo Icon
+                    Box(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .offset(2.dp, 0.dp)
+                            .background(color = TaskyLightGreen)
+                            .align(Alignment.CenterVertically)
+                    )
+                    Spacer(modifier = Modifier.extraSmallWidth())
+                    Text(
+                        "Event",
+                        fontWeight = SemiBold,
+                        color = MaterialTheme.colors.onSurface,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                    )
+                }
+                Spacer(modifier = Modifier.smallHeight())
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    // • Visual Circle
                     Icon(
-                        imageVector = Icons.Filled.Add,
-                        tint = MaterialTheme.colors.onSurface.copy(alpha = .8f),
+                        imageVector = Icons.Outlined.Circle,
+                        tint = MaterialTheme.colors.onSurface,
                         contentDescription = "Meeting title marker",
                         modifier = Modifier
                             .size(26.dp)
+                            .align(Alignment.CenterVertically)
+                            .offset(0.dp, 0.dp)
                     )
-                    Spacer(modifier = Modifier.smallWidth())
+                    Spacer(modifier = Modifier.extraSmallWidth())
                     Text(
-                        "Add photos",
+                        "Event Title",
+                        style = MaterialTheme.typography.h2,
+                        color = MaterialTheme.colors.onSurface,
                         modifier = Modifier
-                            .offset(y = 2.dp),
-                        fontWeight = Bold,
-                        color = MaterialTheme.colors.onSurface.copy(alpha = .3f)
+                            .align(Alignment.CenterVertically)
                     )
                 }
-            } else {
-                // • List of photo images
-                Column(
+
+                Spacer(modifier = Modifier.smallHeight())
+                Divider(
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.smallHeight())
+
+                // • Description
+                Text(
+                    text = LoremIpsum(15).values.joinToString { it },
+                    style = MaterialTheme.typography.h5,
+                    color = MaterialTheme.colors.onSurface,
                     modifier = Modifier
+                        .fillMaxWidth()
                         .wrapContentHeight()
-                ) {
-                    // • Photos Header
+                )
+                Spacer(modifier = Modifier.smallHeight())
+            }
+
+            // • Photo Picker / Add / Remove
+            Box(
+                modifier = Modifier
+                    .background(MaterialTheme.colors.surface.copy(alpha = .9f))
+                    .fillMaxWidth()
+                    .padding(DP.small)
+                    .border(0.dp, Color.Transparent)
+                    .wrapContentHeight()
+            ) {
+                val photos = 1 // for testing only
+
+                if (photos == 0) {
+                    // • No Photos
                     Row(
-                        horizontalArrangement = Arrangement.Start,
+                        horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .align(Alignment.Center)
+                            .padding(top = DP.medium, bottom = DP.medium)
                     ) {
+                        // • Add Photo Icon
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            tint = MaterialTheme.colors.onSurface.copy(alpha = .8f),
+                            contentDescription = "Meeting title marker",
+                            modifier = Modifier
+                                .size(26.dp)
+                        )
+                        Spacer(modifier = Modifier.smallWidth())
                         Text(
-                            "Photos",
-                            color = MaterialTheme.colors.onSurface,
-                            style = MaterialTheme.typography.h3,
-                            fontWeight = SemiBold,
+                            "Add photos",
+                            modifier = Modifier
+                                .offset(y = 2.dp),
+                            fontWeight = Bold,
+                            color = MaterialTheme.colors.onSurface.copy(alpha = .3f)
                         )
                     }
-                    Spacer(modifier = Modifier.extraSmallHeight())
-
-                    // • Photo Items
-                    Row(
+                } else {
+                    // • List of photo images
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
                             .wrapContentHeight()
-                            .horizontalScroll(state = rememberScrollState())
                     ) {
+                        // • Photos Header
+                        Row(
+                            horizontalArrangement = Arrangement.Start,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                "Photos",
+                                color = MaterialTheme.colors.onSurface,
+                                style = MaterialTheme.typography.h3,
+                                fontWeight = SemiBold,
+                            )
+                        }
+                        Spacer(modifier = Modifier.extraSmallHeight())
 
-                        (1..9).forEach {
-                            // • Photo content box
-                            Box(
-                                modifier = Modifier
-                                    .size(60.dp)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .background(Color.Transparent)
-                                    .border(
-                                        2.dp,  // Border width
-                                        MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                                        RoundedCornerShape(10.dp)
-                                    )
-                            ) {
-                                // • Add Photo Icon
-                                Icon(
-                                    imageVector = Icons.Filled.Add,
-                                    tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                                    contentDescription = "Meeting title marker",
+                        // • Photo Items
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .horizontalScroll(state = rememberScrollState())
+                        ) {
+
+                            (1..9).forEach {
+                                // • Photo content box
+                                Box(
                                     modifier = Modifier
-                                        .size(36.dp)
-                                        .align(Alignment.Center)
+                                        .size(60.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(Color.Transparent)
+                                        .border(
+                                            2.dp,  // Border width
+                                            MaterialTheme.colors.onSurface.copy(alpha = .3f),
+                                            RoundedCornerShape(10.dp)
+                                        )
+                                ) {
+                                    // • Add Photo Icon
+                                    Icon(
+                                        imageVector = Icons.Filled.Add,
+                                        tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
+                                        contentDescription = "Meeting title marker",
+                                        modifier = Modifier
+                                            .size(36.dp)
+                                            .align(Alignment.Center)
+                                    )
+                                }
+                                Spacer(
+                                    modifier = Modifier
+                                        .width(10.dp)
                                 )
                             }
-                            Spacer(
-                                modifier = Modifier
-                                .width(10.dp)
-                            )
                         }
                     }
                 }
             }
-        }
 
 
-        // • Event times (from, to, remind at)
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colors.surface)
-                .padding(start = DP.small, end = DP.small)
-        ) col3@{
-
-            Spacer(modifier = Modifier.smallHeight())
-            Divider(
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.smallHeight())
-
-            // • FROM time / date
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
+            // • Event times (from, to, remind at)
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colors.surface)
-            ) {
+                    .padding(start = DP.small, end = DP.small)
+            ) col3@{
+
+                Spacer(modifier = Modifier.smallHeight())
+                Divider(
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.smallHeight())
+
+                // • FROM time / date
                 Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(start = DP.medium, end = DP.medium)
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colors.surface)
                 ) {
-                    Text(
-                        "From",
-                        color = MaterialTheme.colors.onSurface,
-                        textAlign = TextAlign.Start,
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
-                    )
+                            .weight(1f)
+                            .padding(start = DP.medium, end = DP.medium)
+                    ) {
+                        Text(
+                            "From",
+                            color = MaterialTheme.colors.onSurface,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                        )
+                        Text(
+                            state.fromDateTime.toTime12Hour(),
+                            color = MaterialTheme.colors.onSurface,
+                            textAlign = TextAlign.End,
+                            modifier = Modifier
+                        )
+                    }
                     Text(
-                        state.fromDateTime.toTime12Hour(),
+                        state.fromDateTime.toShortMonthDayYear(),
+                        color = MaterialTheme.colors.onSurface,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .weight(1f)
+                    )
+                }
+                Spacer(modifier = Modifier.smallHeight())
+                Divider(
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.smallHeight())
+
+
+                // • TO time / date
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colors.surface)
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = DP.medium, end = DP.medium)
+                    ) {
+                        Text(
+                            "To",
+                            color = MaterialTheme.colors.onSurface,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                        )
+                        Text(
+                            state.toDateTime.toTime12Hour(),
+                            color = MaterialTheme.colors.onSurface,
+                            textAlign = TextAlign.End,
+                            modifier = Modifier
+                        )
+                    }
+                    Text(
+                        state.toDateTime.toShortMonthDayYear(),
+                        color = MaterialTheme.colors.onSurface,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .weight(1f)
+                    )
+                }
+                Spacer(modifier = Modifier.smallHeight())
+                Divider(
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.smallHeight())
+
+
+                // • Remind At
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colors.surface)
+                        .padding(start = DP.small)
+                ) {
+                    // • Alarm/Reminder At icon
+                    Icon(
+                        imageVector = Icons.Outlined.Notifications,
+                        tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
+                        contentDescription = "Meeting title marker",
+                        modifier = Modifier
+                            .size(34.dp)
+                            .clip(shape = RoundedCornerShape(5.dp))
+                            .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
+                            .padding(4.dp)
+                            .align(Alignment.CenterVertically)
+                    )
+                    Spacer(modifier = Modifier.smallWidth())
+                    Text(
+                        state.fromDateTime.differenceTimeHumanReadable(state.remindAt),
                         color = MaterialTheme.colors.onSurface,
                         textAlign = TextAlign.End,
                         modifier = Modifier
+                            .align(Alignment.CenterVertically)
                     )
                 }
-                Text(
-                    state.fromDateTime.toShortMonthDayYear(),
-                    color = MaterialTheme.colors.onSurface,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .weight(1f)
+                Spacer(modifier = Modifier.smallHeight())
+                Divider(
+                    modifier = Modifier.fillMaxWidth()
                 )
-            }
-            Spacer(modifier = Modifier.smallHeight())
-            Divider(
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.smallHeight())
+                Spacer(modifier = Modifier.largeHeight())
 
 
-            // • TO time / date
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colors.surface)
-            ) {
+                // • Attendees Header (Visitors)
+                Text(
+                    "Visitors",
+                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.h3,
+                    modifier = Modifier
+                )
+                Spacer(modifier = Modifier.largeHeight())
+
+
+                // • All / Going / Not going
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(start = DP.medium, end = DP.medium)
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colors.surface)
                 ) {
-                    Text(
-                        "To",
-                        color = MaterialTheme.colors.onSurface,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier
+                    PillButton(
+                        text = "All",
+                        isSelected = attendeeListType == AttendeeListType.ALL,
+                        onClick = {
+                            attendeeListType = AttendeeListType.ALL
+                        }
                     )
-                    Text(
-                        state.toDateTime.toTime12Hour(),
-                        color = MaterialTheme.colors.onSurface,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier
+                    Spacer(modifier = Modifier.smallWidth())
+
+                    PillButton(
+                        text = "Going",
+                        isSelected = attendeeListType == AttendeeListType.GOING,
+                        onClick = {
+                            attendeeListType = AttendeeListType.GOING
+                        }
+                    )
+                    Spacer(modifier = Modifier.smallWidth())
+
+                    PillButton(
+                        text = "Not going",
+                        isSelected = attendeeListType == AttendeeListType.NOT_GOING,
+                        onClick = {
+                            attendeeListType = AttendeeListType.NOT_GOING
+                        }
+                    )
+                    Spacer(modifier = Modifier.smallWidth())
+                }
+                Spacer(modifier = Modifier.mediumHeight())
+
+
+                if (attendeeListType == AttendeeListType.ALL || attendeeListType == AttendeeListType.GOING) {
+                    AttendeeList(
+                        loggedInUserId = state.authInfo?.userId
+                            ?: throw IllegalStateException("user not logged in"),
+                        isUserEventCreator = true,
+                        header = "Going",
+                        attendees = listOf(
+                            Attendee(
+                                eventId = "0001",
+                                isGoing = true,
+                                fullName = "Jeremy Johnson",
+                                remindAt = ZonedDateTime.now(),
+                                email = "jj@demo.com",
+                                id = UUID.randomUUID().toString(),
+                                photo = "https://randomuser.me/api/portraits/men/75.jpg"
+                            ),
+                            Attendee(
+                                eventId = "0001",
+                                isGoing = true,
+                                fullName = "Fred Flintstone",
+                                remindAt = ZonedDateTime.now(),
+                                email = "ff@demo.com",
+                                id = UUID.randomUUID().toString(),
+                                photo = "https://randomuser.me/api/portraits/men/71.jpg"
+                            ),
+                            Attendee(
+                                eventId = "0001",
+                                isGoing = true,
+                                fullName = "Sam Bankman",
+                                remindAt = ZonedDateTime.now(),
+                                email = "sb@demo.com",
+                                id = UUID.randomUUID().toString(),
+                                photo = "https://randomuser.me/api/portraits/men/70.jpg"
+                            ),
+                        ),
+                        onAttendeeClick = {},
+                        onAttendeeRemoveClick = {}
+                    )
+                    Spacer(modifier = Modifier.mediumHeight())
+                }
+
+                if (attendeeListType == AttendeeListType.ALL || attendeeListType == AttendeeListType.NOT_GOING) {
+                    AttendeeList(
+                        loggedInUserId = state.authInfo?.userId
+                            ?: throw IllegalStateException("user not logged in"),
+                        isUserEventCreator = true,
+                        header = "Not Going",
+                        attendees = listOf(
+                            Attendee(
+                                eventId = "0001",
+                                isGoing = true,
+                                fullName = "Billy Johnson",
+                                remindAt = ZonedDateTime.now(),
+                                email = "bj@demo.com",
+                                id = UUID.randomUUID().toString(),
+                                photo = "https://randomuser.me/api/portraits/men/73.jpg"
+                            ),
+                            Attendee(
+                                eventId = "0001",
+                                isGoing = true,
+                                fullName = "Edward Flintstone",
+                                remindAt = ZonedDateTime.now(),
+                                email = "FE@demo.com",
+                                id = UUID.randomUUID().toString(),
+                                photo = "https://randomuser.me/api/portraits/men/21.jpg"
+                            ),
+                            Attendee(
+                                eventId = "0001",
+                                isGoing = true,
+                                fullName = "Jill Bankman",
+                                remindAt = ZonedDateTime.now(),
+                                email = "jb@demo.com",
+                                id = UUID.randomUUID().toString(),
+                                photo = "https://randomuser.me/api/portraits/men/30.jpg"
+                            ),
+                        ),
+                        onAttendeeClick = {},
+                        onAttendeeRemoveClick = {}
                     )
                 }
+
+
+                Spacer(modifier = Modifier.largeHeight())
+
                 Text(
-                    state.toDateTime.toShortMonthDayYear(),
-                    color = MaterialTheme.colors.onSurface,
+                    if (state.isEventCreator) "DELETE EVENT"
+                    else if (state.isGoing) "LEAVE EVENT"
+                    else "JOIN EVENT",
+                    style = MaterialTheme.typography.h4,
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .weight(1f)
-                )
-            }
-            Spacer(modifier = Modifier.smallHeight())
-            Divider(
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.smallHeight())
-
-
-            // • Remind At
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colors.surface)
-                    .padding(start = DP.small)
-            ) {
-                // • Alarm/Reminder At icon
-                Icon(
-                    imageVector = Icons.Outlined.Notifications,
-                    tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                    contentDescription = "Meeting title marker",
-                    modifier = Modifier
-                        .size(34.dp)
-                        .clip(shape = RoundedCornerShape(5.dp))
-                        .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
-                        .padding(4.dp)
-                        .align(Alignment.CenterVertically)
-                )
-                Spacer(modifier = Modifier.smallWidth())
-                Text(
-                    state.fromDateTime.differenceTimeHumanReadable(state.remindAt),
-                    color = MaterialTheme.colors.onSurface,
-                    textAlign = TextAlign.End,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                )
-            }
-            Spacer(modifier = Modifier.smallHeight())
-            Divider(
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.largeHeight())
-
-
-            // • Attendees Header (Visitors)
-            Text(
-                "Visitors",
-                color = MaterialTheme.colors.onSurface,
-                style = MaterialTheme.typography.h3,
-                modifier = Modifier
-            )
-            Spacer(modifier = Modifier.largeHeight())
-
-
-            // • All / Going / Not going
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colors.surface)
-            ) {
-                PillButton(
-                    text = "All",
-                    isSelected = attendeeListType == AttendeeListType.ALL,
-                    onClick = {
-                        attendeeListType = AttendeeListType.ALL
-                    }
-                )
-                Spacer(modifier = Modifier.smallWidth())
-
-                PillButton(
-                    text = "Going",
-                    isSelected = attendeeListType == AttendeeListType.GOING,
-                    onClick = {
-                        attendeeListType = AttendeeListType.GOING
-                    }
-                )
-                Spacer(modifier = Modifier.smallWidth())
-
-                PillButton(
-                    text = "Not going",
-                    isSelected = attendeeListType == AttendeeListType.NOT_GOING,
-                    onClick = {
-                        attendeeListType = AttendeeListType.NOT_GOING
-                    }
-                )
-                Spacer(modifier = Modifier.smallWidth())
-            }
-            Spacer(modifier = Modifier.mediumHeight())
-
-
-            if(attendeeListType == AttendeeListType.ALL || attendeeListType == AttendeeListType.GOING) {
-                AttendeeList(
-                    loggedInUserId = state.authInfo?.userId
-                        ?: throw IllegalStateException("user not logged in"),
-                    isUserEventCreator = true,
-                    header = "Going",
-                    attendees = listOf(
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = true,
-                            fullName = "Jeremy Johnson",
-                            remindAt = ZonedDateTime.now(),
-                            email = "jj@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/75.jpg"
-                        ),
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = true,
-                            fullName = "Fred Flintstone",
-                            remindAt = ZonedDateTime.now(),
-                            email = "ff@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/71.jpg"
-                        ),
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = true,
-                            fullName = "Sam Bankman",
-                            remindAt = ZonedDateTime.now(),
-                            email = "sb@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/70.jpg"
-                        ),
-                    ),
-                    onAttendeeClick = {},
-                    onAttendeeRemoveClick = {}
+                        .fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.mediumHeight())
+
             }
-
-            if(attendeeListType == AttendeeListType.ALL || attendeeListType == AttendeeListType.NOT_GOING) {
-                AttendeeList(
-                    loggedInUserId = state.authInfo?.userId
-                        ?: throw IllegalStateException("user not logged in"),
-                    isUserEventCreator = true,
-                    header = "Not Going",
-                    attendees = listOf(
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = true,
-                            fullName = "Billy Johnson",
-                            remindAt = ZonedDateTime.now(),
-                            email = "bj@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/73.jpg"
-                        ),
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = true,
-                            fullName = "Edward Flintstone",
-                            remindAt = ZonedDateTime.now(),
-                            email = "FE@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/21.jpg"
-                        ),
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = true,
-                            fullName = "Jill Bankman",
-                            remindAt = ZonedDateTime.now(),
-                            email = "jb@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/30.jpg"
-                        ),
-                    ),
-                    onAttendeeClick = {},
-                    onAttendeeRemoveClick = {}
-                )
-            }
-
-
-            Spacer(modifier = Modifier.largeHeight())
-
-            Text(
-                if (state.isEventCreator) "DELETE EVENT"
-                    else if (state.isGoing) "LEAVE EVENT"
-                        else "JOIN EVENT",
-                style = MaterialTheme.typography.h4,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.mediumHeight())
 
         }
-
     }
 
 }
@@ -656,7 +662,7 @@ fun AddEventScreenContent(
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
-    group="Night Mode=false",
+    group = "Night Mode=false",
     apiLevel = 28,
     widthDp = 400,
     heightDp = 1200,
@@ -687,7 +693,7 @@ fun preview() {
 
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
-    group="Night Mode=true",
+    group = "Night Mode=true",
 )
 @Composable
 fun preview_night_mode() {
