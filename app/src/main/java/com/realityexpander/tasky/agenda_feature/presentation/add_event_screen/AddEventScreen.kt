@@ -485,33 +485,6 @@ fun AddEventScreenContent(
                     .fillMaxWidth()
                     .background(MaterialTheme.colors.surface)
             ) {
-//                Text(
-//                    "All",
-//                    textAlign = TextAlign.Center,
-//                    fontWeight =
-//                        if (attendeeListType == AttendeeListType.ALL)
-//                            SemiBold
-//                        else
-//                            Normal,
-//                    color =
-//                        if (attendeeListType == AttendeeListType.ALL)
-//                            MaterialTheme.colors.surface
-//                        else
-//                            MaterialTheme.colors.onSurface,
-//                    modifier = Modifier
-//                        .weight(1f)
-//                        .clip(shape = RoundedCornerShape(15.dp))
-//                        .background(
-//                            if (attendeeListType == AttendeeListType.ALL)
-//                                MaterialTheme.colors.onSurface
-//                            else
-//                                MaterialTheme.colors.onSurface.copy(alpha = .2f)
-//                        )
-//                        .padding(5.dp)
-//                        .clickable {
-//                            attendeeListType = AttendeeListType.ALL
-//                        }
-//                )
                 PillButton(
                     text = "All",
                     isSelected = attendeeListType == AttendeeListType.ALL,
@@ -538,64 +511,6 @@ fun AddEventScreenContent(
                     }
                 )
                 Spacer(modifier = Modifier.smallWidth())
-
-//                Text(
-//                    "Going",
-//                    color =
-//                        if (attendeeListType == AttendeeListType.GOING)
-//                            MaterialTheme.colors.surface
-//                        else
-//                            MaterialTheme.colors.onSurface,
-//                    textAlign = TextAlign.Center,
-//                    fontWeight =
-//                        if (attendeeListType == AttendeeListType.GOING)
-//                            SemiBold
-//                        else
-//                            Normal,
-//                    modifier = Modifier
-//                        .weight(1f)
-//                        .clip(shape = RoundedCornerShape(15.dp))
-//                        .background(
-//                            if (attendeeListType == AttendeeListType.GOING)
-//                                MaterialTheme.colors.onSurface
-//                            else
-//                                MaterialTheme.colors.onSurface.copy(alpha = .2f)
-//                        )
-//                        .padding(5.dp)
-//                        .clickable {
-//                            attendeeListType = AttendeeListType.GOING
-//                        }
-//                )
-//                Spacer(modifier = Modifier.smallWidth())
-
-//                Text(
-//                    "Not going",
-//                    color =
-//                        if (attendeeListType == AttendeeListType.NOT_GOING)
-//                            MaterialTheme.colors.surface
-//                        else
-//                            MaterialTheme.colors.onSurface,
-//                    textAlign = TextAlign.Center,
-//                    fontWeight =
-//                        if (attendeeListType == AttendeeListType.NOT_GOING)
-//                            SemiBold
-//                        else
-//                            Normal,
-//                    modifier = Modifier
-//                        .weight(1f)
-//                        .clip(shape = RoundedCornerShape(15.dp))
-//                        .background(
-//                            if (attendeeListType == AttendeeListType.NOT_GOING)
-//                                MaterialTheme.colors.onSurface
-//                            else
-//                                MaterialTheme.colors.onSurface.copy(alpha = .2f)
-//                        )
-//                        .padding(5.dp)
-//                        .clickable {
-//                            attendeeListType = AttendeeListType.NOT_GOING
-//                        }
-//                )
-//                Spacer(modifier = Modifier.smallWidth())
             }
             Spacer(modifier = Modifier.mediumHeight())
 

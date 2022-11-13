@@ -18,31 +18,6 @@ import com.realityexpander.tasky.core.presentation.common.modifiers.tinyWidth
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 
 @Composable
-fun PillButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .clip(shape = RoundedCornerShape(15.dp))
-            .background(MaterialTheme.colors.onSurface.copy(alpha = .8f))
-            .clickable(onClick = onClick)
-            .padding(top = 2.dp, bottom = 2.dp)
-    ) {
-        Text(
-            text,
-            color = MaterialTheme.colors.surface,
-            style = MaterialTheme.typography.h4,
-            fontWeight = FontWeight.Normal,
-            modifier = Modifier
-                .padding(start = 10.dp, end = 10.dp)
-                .align(Alignment.CenterVertically)
-        )
-    }
-}
-
-@Composable
 fun RowScope.PillButton(
     text : String,
     isSelected : Boolean,
@@ -76,6 +51,31 @@ fun RowScope.PillButton(
                 onClick()
             }
     )
+}
+
+@Composable
+fun PillButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .clip(shape = RoundedCornerShape(15.dp))
+            .background(MaterialTheme.colors.onSurface.copy(alpha = .8f))
+            .clickable(onClick = onClick)
+            .padding(top = 2.dp, bottom = 2.dp)
+    ) {
+        Text(
+            text,
+            color = MaterialTheme.colors.surface,
+            style = MaterialTheme.typography.h4,
+            fontWeight = FontWeight.Normal,
+            modifier = Modifier
+                .padding(start = 10.dp, end = 10.dp)
+                .align(Alignment.CenterVertically)
+        )
+    }
 }
 
 @Preview(
