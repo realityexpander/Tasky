@@ -593,7 +593,7 @@ fun AddEventScreenContent(
 
                 // • Remind At
                 Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.SpaceBetween,  // Can these be layered inside each other?
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.surface)
@@ -629,7 +629,7 @@ fun AddEventScreenContent(
                             .weight(.1f)
                             .width(28.dp)
                             .height(20.dp)
-                            .offset(x = (-2).dp)
+                            .offset(x = (-2).dp) // THIS IS HACKY! I need a better technique
                             .align(Alignment.CenterVertically)
                             .clickable {
                                 // todo
