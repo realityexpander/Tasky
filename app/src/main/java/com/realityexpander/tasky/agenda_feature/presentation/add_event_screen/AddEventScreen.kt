@@ -1,7 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.presentation.add_event_screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import android.content.res.Configuration
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,12 +14,16 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Circle
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +34,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaEvent
+import com.realityexpander.tasky.agenda_feature.presentation.components.UserAcronymCircle
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyGray
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
@@ -102,6 +107,7 @@ fun AddEventScreenContent(
         modifier = Modifier
             .background(color = MaterialTheme.colors.onSurface)
             .padding(0.dp)
+            .verticalScroll(rememberScrollState())
     ) col1@{
         Spacer(modifier = Modifier.mediumHeight())
 
@@ -171,6 +177,7 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.extraSmallWidth())
                 Text(
                     "Event",
+                    fontWeight = SemiBold,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                 )
@@ -223,9 +230,10 @@ fun AddEventScreenContent(
                 .fillMaxWidth()
                 .background(TaskyGray)
                 .padding(DP.small)
+                .border(0.dp, Color.Transparent)
                 .wrapContentHeight()
         ) {
-            val photos = 0 // for testing only
+            val photos = 1 // for testing only
 
             if (photos == 0) {
                 Row(
@@ -233,7 +241,7 @@ fun AddEventScreenContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.Center)
-                        .padding(top = DP.large, bottom = DP.large)
+                        .padding(top = DP.medium, bottom = DP.medium)
                 ) {
                     // • Add Photo Icon
                     Icon(
@@ -257,6 +265,7 @@ fun AddEventScreenContent(
                     modifier = Modifier
                         .wrapContentHeight()
                 ) {
+                    // • Photos Header
                     Row(
                         horizontalArrangement = Arrangement.Start,
                         modifier = Modifier
@@ -271,13 +280,15 @@ fun AddEventScreenContent(
                     }
                     Spacer(modifier = Modifier.extraSmallHeight())
 
+                    // • Photo Items
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight()
+                            .horizontalScroll(state = rememberScrollState())
                     ) {
 
-                        (1..5).forEach {
+                        (1..9).forEach {
                             // • Photo content box
                             Box(
                                 modifier = Modifier
@@ -327,29 +338,29 @@ fun AddEventScreenContent(
                     .fillMaxWidth()
                     .background(MaterialTheme.colors.surface)
             ) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = DP.medium, end = DP.medium)
-                    ) {
-                        Text(
-                            "From",
-                            textAlign = TextAlign.Start,
-                            modifier = Modifier
-                        )
-                        Text(
-                            "8:00 AM",
-                            textAlign = TextAlign.End,
-                            modifier = Modifier
-                        )
-                    }
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = DP.medium, end = DP.medium)
+                ) {
                     Text(
-                        "Jul 21 2022",
-                        textAlign = TextAlign.Center,
+                        "From",
+                        textAlign = TextAlign.Start,
                         modifier = Modifier
-                            .weight(1f)
                     )
+                    Text(
+                        "8:00 AM",
+                        textAlign = TextAlign.End,
+                        modifier = Modifier
+                    )
+                }
+                Text(
+                    "Jul 21 2022",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .weight(1f)
+                )
             }
             Spacer(modifier = Modifier.smallHeight())
             Divider(
@@ -394,13 +405,191 @@ fun AddEventScreenContent(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.smallHeight())
+
+
+            // • Remind At
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colors.surface)
+                    .padding(start = DP.small)
+            ) {
+                // • Alarm/Reminder At icon
+                Icon(
+                    imageVector = Icons.Outlined.Notifications,
+                    tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
+                    contentDescription = "Meeting title marker",
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(shape = RoundedCornerShape(5.dp))
+                        .background(TaskyGray)
+                        .align(Alignment.CenterVertically)
+                )
+                Spacer(modifier = Modifier.smallWidth())
+                Text(
+                    "30 minutes before",
+                    textAlign = TextAlign.End,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                )
+            }
+            Spacer(modifier = Modifier.smallHeight())
+            Divider(
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.largeHeight())
+
+
+            // • Visitors Header
+            Text(
+                "Visitors",
+                style = MaterialTheme.typography.h3,
+                modifier = Modifier
+            )
+            Spacer(modifier = Modifier.largeHeight())
+
+
+            // • All / Going / Not going
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colors.surface)
+            ) {
+                Text(
+                    "All",
+                    textAlign = TextAlign.Center,
+                    fontWeight = SemiBold,
+                    color = Color.White,
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(shape = RoundedCornerShape(15.dp))
+                        .background(TaskyGray)
+                        .background(Color.Black)
+                        .padding(5.dp)
+                )
+                Spacer(modifier = Modifier.smallWidth())
+
+                Text(
+                    "Going",
+                    textAlign = TextAlign.Center,
+                    fontWeight = Normal,
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(shape = RoundedCornerShape(15.dp))
+                        .background(TaskyGray)
+                        .padding(5.dp)
+                )
+                Spacer(modifier = Modifier.smallWidth())
+
+                Text(
+                    "Not going",
+                    textAlign = TextAlign.Center,
+                    fontWeight = Normal,
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(shape = RoundedCornerShape(15.dp))
+                        .background(TaskyGray)
+                        .padding(5.dp)
+                )
+                Spacer(modifier = Modifier.smallWidth())
+            }
+            Spacer(modifier = Modifier.mediumHeight())
+
+
+            // • Going Header
+            Text(
+                "Going",
+                style = MaterialTheme.typography.h4,
+                fontWeight = Normal,
+                modifier = Modifier
+            )
+            Spacer(modifier = Modifier.smallHeight())
+
+
+            // • Going - Attendee list
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+
+                (1..5).forEach {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(15.dp))
+                            .background(TaskyGray)
+                            .padding(top = 2.dp, bottom = 2.dp)
+                    ) {
+                        Row {
+                            Spacer(modifier = Modifier.smallWidth())
+
+                            UserAcronymCircle(
+                                username = "Chris Athanas",
+                                color = MaterialTheme.colors.surface,
+                                circleBackgroundColor = MaterialTheme.colors.onSurface.copy(
+                                    alpha = .3f
+                                ),
+                                modifier = Modifier
+                                    .alignByBaseline()
+                            )
+                            Spacer(modifier = Modifier.xxSmallWidth())
+
+                            Text(
+                                "Chris Athanas",
+                                modifier = Modifier
+                                    .alignByBaseline()
+                            )
+                        }
+
+                        // • Delete Attendee
+                        Row(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                        ) {
+                            val isCreator = true
+
+                            if(isCreator) {
+                                Text(
+                                    "creator",
+                                    color = MaterialTheme.colors.onSurface.copy(alpha = .3f)
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Outlined.Delete,
+                                    tint = MaterialTheme.colors.onSurface,
+                                    contentDescription = "Meeting title marker",
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.smallWidth())
+                        }
+
+                    }
+                    Spacer(modifier = Modifier.xxSmallHeight())
+                }
+            }
+            Spacer(modifier = Modifier.mediumHeight())
+
+            Text("hello")
+
         }
 
     }
 
 }
 
-@Preview
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    group="Night Mode=false",
+    apiLevel = 28,
+    widthDp = 400,
+    heightDp = 1200,
+)
 @Composable
 fun preview() {
     TaskyTheme {
@@ -410,4 +599,13 @@ fun preview() {
             navigator = EmptyDestinationsNavigator,
         )
     }
+}
+
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    group="Night Mode=true",
+)
+@Composable
+fun preview_night_mode() {
+    preview()
 }
