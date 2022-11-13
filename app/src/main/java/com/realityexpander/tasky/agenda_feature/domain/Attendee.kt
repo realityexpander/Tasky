@@ -1,9 +1,9 @@
 package com.realityexpander.tasky.agenda_feature.domain
 
 import android.os.Parcelable
-import com.realityexpander.tasky.agenda_feature.util.AttendeeId
-import com.realityexpander.tasky.agenda_feature.util.EventId
-import com.realityexpander.tasky.agenda_feature.util.UrlStr
+import com.realityexpander.tasky.agenda_feature.common.util.AttendeeId
+import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.common.util.UrlStr
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.parcelize.Parcelize
 import java.time.ZonedDateTime

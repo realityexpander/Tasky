@@ -3,7 +3,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.eventReposito
 import androidx.room.*
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
-import com.realityexpander.tasky.agenda_feature.util.EventId
+import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.core.util.DAY_IN_SECONDS
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow

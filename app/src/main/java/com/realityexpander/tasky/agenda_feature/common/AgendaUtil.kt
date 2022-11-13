@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.agenda_feature.util
+package com.realityexpander.tasky.agenda_feature.common.util
 
 import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.UuidStr

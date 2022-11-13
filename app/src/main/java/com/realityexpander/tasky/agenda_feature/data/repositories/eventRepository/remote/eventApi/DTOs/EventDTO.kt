@@ -1,5 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs
 
+import com.realityexpander.tasky.agenda_feature.common.util.AttendeeId
+import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
 import com.realityexpander.tasky.agenda_feature.util.*
 import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.UtcMillis

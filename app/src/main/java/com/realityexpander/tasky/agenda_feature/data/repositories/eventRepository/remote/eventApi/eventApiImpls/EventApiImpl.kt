@@ -2,7 +2,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.eventReposito
 
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
-import com.realityexpander.tasky.agenda_feature.util.EventId
+import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import kotlinx.serialization.json.Json
 import okhttp3.MultipartBody
