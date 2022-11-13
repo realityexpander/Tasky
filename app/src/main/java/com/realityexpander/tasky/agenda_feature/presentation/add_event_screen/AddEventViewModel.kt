@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.presentation.add_event_screen
 
+import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -48,9 +49,9 @@ class AddEventViewModel @Inject constructor(
                     authInfo = AuthInfo("0001", "0001", "Chris Athanas"),
                     isProgressVisible = false,
 
-                    // Dummy event details for UI work // todo use the AgendaItem.Event DS
-                    title = "Test Event",
-                    description = "This is a test event",
+                    // Dummy event details for UI work // todo use the AgendaItem.Event DS?
+                    title = "Test Event Description This is a long description of the event",
+                    description = LoremIpsum(20).values.joinToString(),
                     fromDateTime = ZonedDateTime.now(),
                     toDateTime = ZonedDateTime.now().plus(1, ChronoUnit.HOURS),
                     remindAt = ZonedDateTime.now().minus(30, ChronoUnit.MINUTES),

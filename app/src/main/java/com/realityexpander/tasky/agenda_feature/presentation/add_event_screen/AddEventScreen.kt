@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Circle
@@ -22,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
@@ -236,27 +236,49 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.smallHeight())
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    // • Visual Circle
-                    Icon(
-                        imageVector = Icons.Outlined.Circle,
-                        tint = MaterialTheme.colors.onSurface,
-                        contentDescription = "Meeting title marker",
+
+                    Row(
                         modifier = Modifier
-                            .size(26.dp)
-                            .align(Alignment.CenterVertically)
-                            .offset(0.dp, 0.dp)
-                    )
-                    Spacer(modifier = Modifier.extraSmallWidth())
-                    Text(
-                        "Event Title",
-                        style = MaterialTheme.typography.h2,
-                        color = MaterialTheme.colors.onSurface,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                    )
+                            .weight(1f)
+                    ) {
+                        // • Visual Circle
+                        Icon(
+                            imageVector = Icons.Outlined.Circle,
+                            tint = MaterialTheme.colors.onSurface,
+                            contentDescription = "Meeting title marker",
+                            modifier = Modifier
+                                .size(26.dp)
+                                .align(Alignment.CenterVertically)
+                                .offset(0.dp, 0.dp)
+                        )
+                        Spacer(modifier = Modifier.extraSmallWidth())
+                        Text(
+                            state.title,
+                            style = MaterialTheme.typography.h2,
+                            color = MaterialTheme.colors.onSurface,
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                        )
+                    }
+
+                    if (isEditMode) {
+                        Icon(
+                            imageVector = Icons.Filled.ChevronRight,
+                            tint = MaterialTheme.colors.onSurface,
+                            contentDescription = "Edit Event Title",
+                            modifier = Modifier
+                                .size(28.dp)
+                                .weight(.1f)
+                                .align(Alignment.CenterVertically)
+                                .offset(0.dp, 0.dp)
+                                .clickable {
+                                    // todo
+                                }
+                        )
+                    }
+
                 }
 
                 Spacer(modifier = Modifier.smallHeight())
@@ -266,14 +288,40 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.smallHeight())
 
                 // • Description
-                Text(
-                    text = LoremIpsum(15).values.joinToString { it },
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onSurface,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+
+                    Row(
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = state.description,
+                            style = MaterialTheme.typography.h5,
+                            color = MaterialTheme.colors.onSurface,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        )
+                    }
+
+                    if (isEditMode) {
+                        Icon(
+                            imageVector = Icons.Filled.ChevronRight,
+                            tint = MaterialTheme.colors.onSurface,
+                            contentDescription = "Edit Event Title",
+                            modifier = Modifier
+                                .size(28.dp)
+                                .weight(.1f)
+                                .align(Alignment.CenterVertically)
+                                .offset(0.dp, 0.dp)
+                                .clickable {
+                                    // todo
+                                }
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.smallHeight())
             }
 
@@ -409,21 +457,56 @@ fun AddEventScreenContent(
                             color = MaterialTheme.colors.onSurface,
                             textAlign = TextAlign.Start,
                             modifier = Modifier
+                                .weight(.5f)
                         )
                         Text(
                             state.fromDateTime.toTime12Hour(),
                             color = MaterialTheme.colors.onSurface,
                             textAlign = TextAlign.End,
                             modifier = Modifier
+                                .weight(1f)
                         )
                     }
-                    Text(
-                        state.fromDateTime.toShortMonthDayYear(),
-                        color = MaterialTheme.colors.onSurface,
-                        textAlign = TextAlign.Center,
+                    Icon(
+                        imageVector = Icons.Filled.ChevronRight,
+                        tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
+                        contentDescription = "Edit Event From DateTime",
+                        modifier = Modifier
+                            .weight(.2f)
+                            .width(28.dp)
+                            .height(20.dp)
+                            .align(Alignment.CenterVertically)
+                            .clickable {
+                                // todo
+                            }
+                    )
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
                             .weight(1f)
-                    )
+                            .padding(start = DP.medium, end = DP.tiny)
+                    ) {
+                        Text(
+                            state.fromDateTime.toShortMonthDayYear(),
+                            color = MaterialTheme.colors.onSurface,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .weight(.8f)
+                        )
+                        Icon(
+                            imageVector = Icons.Filled.ChevronRight,
+                            tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
+                            contentDescription = "Edit Event From DateTime",
+                            modifier = Modifier
+                                .weight(.2f)
+                                .width(28.dp)
+                                .height(20.dp)
+                                .align(Alignment.CenterVertically)
+                                .clickable {
+                                    // todo
+                                }
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.smallHeight())
                 Divider(
@@ -450,21 +533,56 @@ fun AddEventScreenContent(
                             color = MaterialTheme.colors.onSurface,
                             textAlign = TextAlign.Start,
                             modifier = Modifier
+                                .weight(.5f)
                         )
                         Text(
                             state.toDateTime.toTime12Hour(),
                             color = MaterialTheme.colors.onSurface,
                             textAlign = TextAlign.End,
                             modifier = Modifier
+                                .weight(1f)
                         )
                     }
-                    Text(
-                        state.toDateTime.toShortMonthDayYear(),
-                        color = MaterialTheme.colors.onSurface,
-                        textAlign = TextAlign.Center,
+                    Icon(
+                        imageVector = Icons.Filled.ChevronRight,
+                        tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
+                        contentDescription = "Edit Event From DateTime",
+                        modifier = Modifier
+                            .weight(.2f)
+                            .width(28.dp)
+                            .height(20.dp)
+                            .align(Alignment.CenterVertically)
+                            .clickable {
+                                // todo
+                            }
+                    )
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
                             .weight(1f)
-                    )
+                            .padding(start = DP.medium, end = DP.tiny)
+                    ) {
+                        Text(
+                            state.fromDateTime.toShortMonthDayYear(),
+                            color = MaterialTheme.colors.onSurface,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .weight(.8f)
+                        )
+                        Icon(
+                            imageVector = Icons.Filled.ChevronRight,
+                            tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
+                            contentDescription = "Edit Event From DateTime",
+                            modifier = Modifier
+                                .weight(.2f)
+                                .width(28.dp)
+                                .height(20.dp)
+                                .align(Alignment.CenterVertically)
+                                .clickable {
+                                    // todo
+                                }
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.smallHeight())
                 Divider(
