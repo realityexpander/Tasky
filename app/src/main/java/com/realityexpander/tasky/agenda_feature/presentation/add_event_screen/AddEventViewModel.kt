@@ -14,6 +14,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,12 +40,22 @@ class AddEventViewModel @Inject constructor(
             // restore state after process death
             _addEventState.update {
                 it.copy(
-//                    username = authRepository.getAuthInfo()?.username ?: "", // todo get this from the previous screen?
+//                    username = authRepository.getAuthInfo()?.username ?: "", // todo get this from the previous screen? // put back in
                     username = "Chris Athanas", // todo get this from the previous screen?
                     isLoaded = true, // only after init occurs
                     errorMessage = errorMessage,
-//                    authInfo = authRepository.getAuthInfo(),
-                    authInfo = AuthInfo("0001", "0001", "Chris Athanas")
+//                    authInfo = authRepository.getAuthInfo(), // todo put this back in
+                    authInfo = AuthInfo("0001", "0001", "Chris Athanas"),
+                    isProgressVisible = false,
+
+                    // Dummy event details for UI work // todo use the AgendaItem.Event DS
+                    title = "Test Event",
+                    description = "This is a test event",
+                    fromDateTime = ZonedDateTime.now(),
+                    toDateTime = ZonedDateTime.now().plus(1, ChronoUnit.HOURS),
+                    remindAt = ZonedDateTime.now().minus(30, ChronoUnit.MINUTES),
+                    isEventCreator = true,
+                    isGoing = true,
                 )
             }
 
