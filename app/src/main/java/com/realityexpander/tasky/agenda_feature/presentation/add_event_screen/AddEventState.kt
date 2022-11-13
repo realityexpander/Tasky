@@ -4,6 +4,7 @@ import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.Username
+import java.time.ZonedDateTime
 
 data class AddEventState(
     val username: Username = "",
@@ -18,4 +19,12 @@ data class AddEventState(
     // Stateful One-time events
 //    val scrollToItemId: UuidStr? = null,
 
+    // Event Details
+    val title: String = "",
+    val description: String = "",
+    val fromDateTime: ZonedDateTime = ZonedDateTime.now(),
+    val toDateTime: ZonedDateTime = ZonedDateTime.now(),
+    val remindAt: ZonedDateTime = ZonedDateTime.now(),
+    val isEventCreator: Boolean = true,
+    val isGoing: Boolean = true,
 )
