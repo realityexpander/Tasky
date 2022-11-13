@@ -30,39 +30,29 @@ class AddEventViewModel @Inject constructor(
     private val errorMessage: UiText? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage]
 
-    private val _addEventState = MutableStateFlow(AddEventState())
+    private val _addEventState = MutableStateFlow(AddEventState(
+//        username = authRepository.getAuthInfo()?.username ?: "", // todo get this from the previous screen? // put back in
+        isLoaded = true, // only after default state is initialized
+        username = "Chris Athanas", // todo get this from the previous screen?
+        errorMessage = errorMessage,
+//        authInfo = authRepository.getAuthInfo(), // todo put this back in
+        authInfo = AuthInfo("0001", "0001", "Chris Athanas"),
+        isProgressVisible = false,
+
+        // Dummy event details for UI work // todo use the AgendaItem.Event DS?
+        title = "Test Event Description This is a long description of the event",
+        description = LoremIpsum(20).values.joinToString(),
+        fromDateTime = ZonedDateTime.now(),
+        toDateTime = ZonedDateTime.now().plus(1, ChronoUnit.HOURS),
+        remindAt = ZonedDateTime.now().minus(30, ChronoUnit.MINUTES),
+        isEventCreator = true,
+        isGoing = true,
+    ))
     val addEventState = _addEventState.onEach { state ->
         // save state for process death
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage] = state.errorMessage
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AddEventState())
 
-    init {
-        viewModelScope.launch {
-            // restore state after process death
-            _addEventState.update {
-                it.copy(
-//                    username = authRepository.getAuthInfo()?.username ?: "", // todo get this from the previous screen? // put back in
-                    username = "Chris Athanas", // todo get this from the previous screen?
-                    isLoaded = true, // only after init occurs
-                    errorMessage = errorMessage,
-//                    authInfo = authRepository.getAuthInfo(), // todo put this back in
-                    authInfo = AuthInfo("0001", "0001", "Chris Athanas"),
-                    isProgressVisible = false,
-
-                    // Dummy event details for UI work // todo use the AgendaItem.Event DS?
-                    title = "Test Event Description This is a long description of the event",
-                    description = LoremIpsum(20).values.joinToString(),
-                    fromDateTime = ZonedDateTime.now(),
-                    toDateTime = ZonedDateTime.now().plus(1, ChronoUnit.HOURS),
-                    remindAt = ZonedDateTime.now().minus(30, ChronoUnit.MINUTES),
-                    isEventCreator = true,
-                    isGoing = true,
-                )
-            }
-
-        }
-
-    }
 
     fun sendEvent(event: AgendaEvent) {
         viewModelScope.launch {
