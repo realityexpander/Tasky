@@ -160,6 +160,7 @@ fun AddEventScreenContent(
                 ZonedDateTime.now().toLongMonthDayYear(),
                 color = MaterialTheme.colors.surface,
                 textAlign = TextAlign.Center,
+                fontWeight = SemiBold,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .weight(1f)
