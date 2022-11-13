@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaEvent
+import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants
 import com.realityexpander.tasky.core.presentation.common.util.UiText
@@ -37,10 +38,12 @@ class AddEventViewModel @Inject constructor(
             // restore state after process death
             _addEventState.update {
                 it.copy(
-                    username = authRepository.getAuthInfo()?.username ?: "", // todo get this from the previous screen?
+//                    username = authRepository.getAuthInfo()?.username ?: "", // todo get this from the previous screen?
+                    username = "Chris Athanas", // todo get this from the previous screen?
                     isLoaded = true, // only after init occurs
                     errorMessage = errorMessage,
-                    authInfo = authRepository.getAuthInfo(),
+//                    authInfo = authRepository.getAuthInfo(),
+                    authInfo = AuthInfo("0001", "0001", "Chris Athanas")
                 )
             }
 

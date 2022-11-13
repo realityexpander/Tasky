@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Circle
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,7 +22,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
-import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,12 +31,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import com.realityexpander.tasky.agenda_feature.domain.Attendee
+import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.components.AttendeeList
+import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.components.PillButton
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaEvent
-import com.realityexpander.tasky.agenda_feature.presentation.components.UserAcronymCircle
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
-import com.realityexpander.tasky.core.presentation.theme.TaskyGray
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import java.time.ZonedDateTime
+import java.util.*
 
 @Composable
 @Destination
@@ -49,11 +50,20 @@ fun AddEventScreen(
 
     val state by viewModel.addEventState.collectAsState()
 
-    AddEventScreenContent(
-        state = state,
-        onAction = viewModel::sendEvent,
-        navigator = navigator,
-    )
+    if (state.isLoaded) {
+        AddEventScreenContent(
+            state = state,
+            onAction = viewModel::sendEvent,
+            navigator = navigator,
+        )
+    }
+}
+
+enum class AttendeeListType {
+    ALL,
+    INVITED,
+    GOING,
+    NOT_GOING,
 }
 
 @Composable
@@ -67,6 +77,8 @@ fun AddEventScreenContent(
     val scope = rememberCoroutineScope()
 
 //    val agendaItems by state.agendaItems.collectAsState(initial = emptyList())
+
+    var attendeeListType by remember { mutableStateOf(AttendeeListType.ALL) }
 
     fun popBack() {
         navigator.popBackStack()
@@ -178,6 +190,7 @@ fun AddEventScreenContent(
                 Text(
                     "Event",
                     fontWeight = SemiBold,
+                    color = MaterialTheme.colors.onSurface,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                 )
@@ -202,6 +215,7 @@ fun AddEventScreenContent(
                 Text(
                     "Event Title",
                     style = MaterialTheme.typography.h2,
+                    color = MaterialTheme.colors.onSurface,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                 )
@@ -217,6 +231,7 @@ fun AddEventScreenContent(
             Text(
                 text = LoremIpsum(15).values.joinToString { it },
                 style = MaterialTheme.typography.h5,
+                color = MaterialTheme.colors.onSurface,
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
@@ -227,8 +242,8 @@ fun AddEventScreenContent(
         // • Photo Picker / Add / Remove
         Box(
             modifier = Modifier
+                .background(MaterialTheme.colors.surface.copy(alpha = .9f))
                 .fillMaxWidth()
-                .background(TaskyGray)
                 .padding(DP.small)
                 .border(0.dp, Color.Transparent)
                 .wrapContentHeight()
@@ -236,6 +251,7 @@ fun AddEventScreenContent(
             val photos = 1 // for testing only
 
             if (photos == 0) {
+                // • No Photos
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
@@ -246,7 +262,7 @@ fun AddEventScreenContent(
                     // • Add Photo Icon
                     Icon(
                         imageVector = Icons.Filled.Add,
-                        tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
+                        tint = MaterialTheme.colors.onSurface.copy(alpha = .8f),
                         contentDescription = "Meeting title marker",
                         modifier = Modifier
                             .size(26.dp)
@@ -261,6 +277,7 @@ fun AddEventScreenContent(
                     )
                 }
             } else {
+                // • List of photo images
                 Column(
                     modifier = Modifier
                         .wrapContentHeight()
@@ -273,9 +290,9 @@ fun AddEventScreenContent(
                     ) {
                         Text(
                             "Photos",
+                            color = MaterialTheme.colors.onSurface,
                             style = MaterialTheme.typography.h3,
                             fontWeight = SemiBold,
-                            color = MaterialTheme.colors.onSurface
                         )
                     }
                     Spacer(modifier = Modifier.extraSmallHeight())
@@ -293,8 +310,8 @@ fun AddEventScreenContent(
                             Box(
                                 modifier = Modifier
                                     .size(60.dp)
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(TaskyGray)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(Color.Transparent)
                                     .border(
                                         2.dp,  // Border width
                                         MaterialTheme.colors.onSurface.copy(alpha = .3f),
@@ -307,11 +324,14 @@ fun AddEventScreenContent(
                                     tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
                                     contentDescription = "Meeting title marker",
                                     modifier = Modifier
-                                        .size(26.dp)
+                                        .size(36.dp)
                                         .align(Alignment.Center)
                                 )
                             }
-                            Spacer(modifier = Modifier.width(10.dp))
+                            Spacer(
+                                modifier = Modifier
+                                .width(10.dp)
+                            )
                         }
                     }
                 }
@@ -346,17 +366,20 @@ fun AddEventScreenContent(
                 ) {
                     Text(
                         "From",
+                        color = MaterialTheme.colors.onSurface,
                         textAlign = TextAlign.Start,
                         modifier = Modifier
                     )
                     Text(
                         "8:00 AM",
+                        color = MaterialTheme.colors.onSurface,
                         textAlign = TextAlign.End,
                         modifier = Modifier
                     )
                 }
                 Text(
                     "Jul 21 2022",
+                    color = MaterialTheme.colors.onSurface,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .weight(1f)
@@ -384,17 +407,20 @@ fun AddEventScreenContent(
                 ) {
                     Text(
                         "To",
+                        color = MaterialTheme.colors.onSurface,
                         textAlign = TextAlign.Start,
                         modifier = Modifier
                     )
                     Text(
                         "12:30 PM",
+                        color = MaterialTheme.colors.onSurface,
                         textAlign = TextAlign.End,
                         modifier = Modifier
                     )
                 }
                 Text(
                     "Aug 7 2022",
+                    color = MaterialTheme.colors.onSurface,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .weight(1f)
@@ -423,12 +449,13 @@ fun AddEventScreenContent(
                     modifier = Modifier
                         .size(28.dp)
                         .clip(shape = RoundedCornerShape(5.dp))
-                        .background(TaskyGray)
+                        .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
                         .align(Alignment.CenterVertically)
                 )
                 Spacer(modifier = Modifier.smallWidth())
                 Text(
                     "30 minutes before",
+                    color = MaterialTheme.colors.onSurface,
                     textAlign = TextAlign.End,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
@@ -444,6 +471,7 @@ fun AddEventScreenContent(
             // • Visitors Header
             Text(
                 "Visitors",
+                color = MaterialTheme.colors.onSurface,
                 style = MaterialTheme.typography.h3,
                 modifier = Modifier
             )
@@ -457,124 +485,214 @@ fun AddEventScreenContent(
                     .fillMaxWidth()
                     .background(MaterialTheme.colors.surface)
             ) {
-                Text(
-                    "All",
-                    textAlign = TextAlign.Center,
-                    fontWeight = SemiBold,
-                    color = Color.White,
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(shape = RoundedCornerShape(15.dp))
-                        .background(TaskyGray)
-                        .background(Color.Black)
-                        .padding(5.dp)
+//                Text(
+//                    "All",
+//                    textAlign = TextAlign.Center,
+//                    fontWeight =
+//                        if (attendeeListType == AttendeeListType.ALL)
+//                            SemiBold
+//                        else
+//                            Normal,
+//                    color =
+//                        if (attendeeListType == AttendeeListType.ALL)
+//                            MaterialTheme.colors.surface
+//                        else
+//                            MaterialTheme.colors.onSurface,
+//                    modifier = Modifier
+//                        .weight(1f)
+//                        .clip(shape = RoundedCornerShape(15.dp))
+//                        .background(
+//                            if (attendeeListType == AttendeeListType.ALL)
+//                                MaterialTheme.colors.onSurface
+//                            else
+//                                MaterialTheme.colors.onSurface.copy(alpha = .2f)
+//                        )
+//                        .padding(5.dp)
+//                        .clickable {
+//                            attendeeListType = AttendeeListType.ALL
+//                        }
+//                )
+                PillButton(
+                    text = "All",
+                    isSelected = attendeeListType == AttendeeListType.ALL,
+                    onClick = {
+                        attendeeListType = AttendeeListType.ALL
+                    }
                 )
                 Spacer(modifier = Modifier.smallWidth())
 
-                Text(
-                    "Going",
-                    textAlign = TextAlign.Center,
-                    fontWeight = Normal,
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(shape = RoundedCornerShape(15.dp))
-                        .background(TaskyGray)
-                        .padding(5.dp)
+                PillButton(
+                    text = "Going",
+                    isSelected = attendeeListType == AttendeeListType.GOING,
+                    onClick = {
+                        attendeeListType = AttendeeListType.GOING
+                    }
                 )
                 Spacer(modifier = Modifier.smallWidth())
 
-                Text(
-                    "Not going",
-                    textAlign = TextAlign.Center,
-                    fontWeight = Normal,
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(shape = RoundedCornerShape(15.dp))
-                        .background(TaskyGray)
-                        .padding(5.dp)
+                PillButton(
+                    text = "Not going",
+                    isSelected = attendeeListType == AttendeeListType.NOT_GOING,
+                    onClick = {
+                        attendeeListType = AttendeeListType.NOT_GOING
+                    }
                 )
                 Spacer(modifier = Modifier.smallWidth())
+
+//                Text(
+//                    "Going",
+//                    color =
+//                        if (attendeeListType == AttendeeListType.GOING)
+//                            MaterialTheme.colors.surface
+//                        else
+//                            MaterialTheme.colors.onSurface,
+//                    textAlign = TextAlign.Center,
+//                    fontWeight =
+//                        if (attendeeListType == AttendeeListType.GOING)
+//                            SemiBold
+//                        else
+//                            Normal,
+//                    modifier = Modifier
+//                        .weight(1f)
+//                        .clip(shape = RoundedCornerShape(15.dp))
+//                        .background(
+//                            if (attendeeListType == AttendeeListType.GOING)
+//                                MaterialTheme.colors.onSurface
+//                            else
+//                                MaterialTheme.colors.onSurface.copy(alpha = .2f)
+//                        )
+//                        .padding(5.dp)
+//                        .clickable {
+//                            attendeeListType = AttendeeListType.GOING
+//                        }
+//                )
+//                Spacer(modifier = Modifier.smallWidth())
+
+//                Text(
+//                    "Not going",
+//                    color =
+//                        if (attendeeListType == AttendeeListType.NOT_GOING)
+//                            MaterialTheme.colors.surface
+//                        else
+//                            MaterialTheme.colors.onSurface,
+//                    textAlign = TextAlign.Center,
+//                    fontWeight =
+//                        if (attendeeListType == AttendeeListType.NOT_GOING)
+//                            SemiBold
+//                        else
+//                            Normal,
+//                    modifier = Modifier
+//                        .weight(1f)
+//                        .clip(shape = RoundedCornerShape(15.dp))
+//                        .background(
+//                            if (attendeeListType == AttendeeListType.NOT_GOING)
+//                                MaterialTheme.colors.onSurface
+//                            else
+//                                MaterialTheme.colors.onSurface.copy(alpha = .2f)
+//                        )
+//                        .padding(5.dp)
+//                        .clickable {
+//                            attendeeListType = AttendeeListType.NOT_GOING
+//                        }
+//                )
+//                Spacer(modifier = Modifier.smallWidth())
             }
             Spacer(modifier = Modifier.mediumHeight())
 
 
-            // • Going Header
+            if(attendeeListType == AttendeeListType.ALL || attendeeListType == AttendeeListType.GOING) {
+                AttendeeList(
+                    loggedInUserId = state.authInfo?.userId
+                        ?: throw IllegalStateException("user not logged in"),
+                    isUserEventCreator = true,
+                    header = "Going",
+                    attendees = listOf(
+                        Attendee(
+                            eventId = "0001",
+                            isGoing = true,
+                            fullName = "Jeremy Johnson",
+                            remindAt = ZonedDateTime.now(),
+                            email = "jj@demo.com",
+                            id = UUID.randomUUID().toString(),
+                            photo = "https://randomuser.me/api/portraits/men/75.jpg"
+                        ),
+                        Attendee(
+                            eventId = "0001",
+                            isGoing = true,
+                            fullName = "Fred Flintstone",
+                            remindAt = ZonedDateTime.now(),
+                            email = "ff@demo.com",
+                            id = UUID.randomUUID().toString(),
+                            photo = "https://randomuser.me/api/portraits/men/71.jpg"
+                        ),
+                        Attendee(
+                            eventId = "0001",
+                            isGoing = true,
+                            fullName = "Sam Bankman",
+                            remindAt = ZonedDateTime.now(),
+                            email = "sb@demo.com",
+                            id = UUID.randomUUID().toString(),
+                            photo = "https://randomuser.me/api/portraits/men/70.jpg"
+                        ),
+                    ),
+                    onAttendeeClick = {},
+                    onAttendeeRemoveClick = {}
+                )
+                Spacer(modifier = Modifier.mediumHeight())
+            }
+
+            if(attendeeListType == AttendeeListType.ALL || attendeeListType == AttendeeListType.NOT_GOING) {
+                AttendeeList(
+                    loggedInUserId = state.authInfo?.userId
+                        ?: throw IllegalStateException("user not logged in"),
+                    isUserEventCreator = true,
+                    header = "Not Going",
+                    attendees = listOf(
+                        Attendee(
+                            eventId = "0001",
+                            isGoing = true,
+                            fullName = "Billy Johnson",
+                            remindAt = ZonedDateTime.now(),
+                            email = "bj@demo.com",
+                            id = UUID.randomUUID().toString(),
+                            photo = "https://randomuser.me/api/portraits/men/73.jpg"
+                        ),
+                        Attendee(
+                            eventId = "0001",
+                            isGoing = true,
+                            fullName = "Edward Flintstone",
+                            remindAt = ZonedDateTime.now(),
+                            email = "FE@demo.com",
+                            id = UUID.randomUUID().toString(),
+                            photo = "https://randomuser.me/api/portraits/men/21.jpg"
+                        ),
+                        Attendee(
+                            eventId = "0001",
+                            isGoing = true,
+                            fullName = "Jill Bankman",
+                            remindAt = ZonedDateTime.now(),
+                            email = "jb@demo.com",
+                            id = UUID.randomUUID().toString(),
+                            photo = "https://randomuser.me/api/portraits/men/30.jpg"
+                        ),
+                    ),
+                    onAttendeeClick = {},
+                    onAttendeeRemoveClick = {}
+                )
+            }
+
+
+            Spacer(modifier = Modifier.largeHeight())
+
             Text(
-                "Going",
+                "DELETE EVENT",
                 style = MaterialTheme.typography.h4,
-                fontWeight = Normal,
-                modifier = Modifier
-            )
-            Spacer(modifier = Modifier.smallHeight())
-
-
-            // • Going - Attendee list
-            Column(
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-            ) {
-
-                (1..5).forEach {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(shape = RoundedCornerShape(15.dp))
-                            .background(TaskyGray)
-                            .padding(top = 2.dp, bottom = 2.dp)
-                    ) {
-                        Row {
-                            Spacer(modifier = Modifier.smallWidth())
-
-                            UserAcronymCircle(
-                                username = "Chris Athanas",
-                                color = MaterialTheme.colors.surface,
-                                circleBackgroundColor = MaterialTheme.colors.onSurface.copy(
-                                    alpha = .3f
-                                ),
-                                modifier = Modifier
-                                    .alignByBaseline()
-                            )
-                            Spacer(modifier = Modifier.xxSmallWidth())
-
-                            Text(
-                                "Chris Athanas",
-                                modifier = Modifier
-                                    .alignByBaseline()
-                            )
-                        }
-
-                        // • Delete Attendee
-                        Row(
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                        ) {
-                            val isCreator = true
-
-                            if(isCreator) {
-                                Text(
-                                    "creator",
-                                    color = MaterialTheme.colors.onSurface.copy(alpha = .3f)
-                                )
-                            } else {
-                                Icon(
-                                    imageVector = Icons.Outlined.Delete,
-                                    tint = MaterialTheme.colors.onSurface,
-                                    contentDescription = "Meeting title marker",
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                )
-                            }
-                            Spacer(modifier = Modifier.smallWidth())
-                        }
-
-                    }
-                    Spacer(modifier = Modifier.xxSmallHeight())
-                }
-            }
+            )
             Spacer(modifier = Modifier.mediumHeight())
-
-            Text("hello")
 
         }
 
