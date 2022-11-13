@@ -136,153 +136,163 @@ fun RegisterScreenContent(
 
         Column(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
+                .verticalScroll(rememberScrollState())
                 .weight(1f)
         ) col2@ {
-            Spacer(modifier = Modifier.mediumHeight())
 
-            // • USERNAME
-            NameField(
-                value = state.username,
-                label = null,
-                isError = state.isInvalidUsername,
-                onValueChange = {
-                    onAction(RegisterEvent.UpdateUsername(it))
-                }
-            )
-            AnimatedVisibility (state.isInvalidUsername && state.isInvalidUsernameMessageVisible) {
-                Text(text = stringResource(R.string.error_invalid_username), color = Color.Red)
-            }
-            Spacer(modifier = Modifier.smallHeight())
-
-            // • EMAIL
-            EmailField(
-                value = state.email,
-                label = null,
-                isError = state.isInvalidEmail,
-                onValueChange = {
-                    onAction(RegisterEvent.UpdateEmail(it))
-                }
-            )
-            AnimatedVisibility (state.isInvalidEmail && state.isInvalidEmailMessageVisible) {
-                Text(text = stringResource(R.string.error_invalid_email), color = Color.Red)
-            }
-            Spacer(modifier = Modifier.smallHeight())
-
-            // • PASSWORD
-            PasswordField(
-                value = state.password,
-                label = null,
-                isError = state.isInvalidPassword,
-                onValueChange = {
-                    onAction(RegisterEvent.UpdatePassword(it))
-                },
-                isPasswordVisible = state.isPasswordVisible,
-                clickTogglePasswordVisibility = {
-                    onAction(RegisterEvent.SetIsPasswordVisible(!state.isPasswordVisible))
-                },
-                imeAction = ImeAction.Next,
-            )
-            if (state.isInvalidPassword && state.isInvalidPasswordMessageVisible) {
-                Text(text = stringResource(R.string.error_invalid_password), color = Color.Red)
-            }
-            Spacer(modifier = Modifier.smallHeight())
-
-            // • CONFIRM PASSWORD
-            PasswordField(
-                label = null, //stringResource(R.string.register_label_confirm_password),
-                placeholder = stringResource(R.string.register_placeholder_confirm_password),
-                value = state.confirmPassword,
-                isError = state.isInvalidConfirmPassword,
-                onValueChange = {
-                    onAction(RegisterEvent.UpdateConfirmPassword(it))
-                },
-                isPasswordVisible = state.isPasswordVisible,
-                clickTogglePasswordVisibility = {
-                    onAction(RegisterEvent.SetIsPasswordVisible(!state.isPasswordVisible))
-                },
-                imeAction = ImeAction.Done,
-                doneAction = {
-                    performRegister()
-                },
-            )
-            AnimatedVisibility (state.isInvalidConfirmPassword && state.isInvalidConfirmPasswordMessageVisible) {
-                Text(
-                    text = stringResource(R.string.error_invalid_confirm_password),
-                    color = Color.Red
-                )
-                Spacer(modifier = Modifier.extraSmallHeight())
-            }
-            // • SHOW IF MATCHING PASSWORDS
-            AnimatedVisibility (!state.isPasswordsMatch) {
-                Text(
-                    text = stringResource(R.string.register_error_passwords_do_not_match),
-                    color = Color.Red
-                )
-                Spacer(modifier = Modifier.extraSmallHeight())
-            }
-            // • SHOW PASSWORD REQUIREMENTS
-            AnimatedVisibility(state.isInvalidPasswordMessageVisible || state.isInvalidConfirmPasswordMessageVisible) {
-                Text(
-                    text = stringResource(R.string.register_password_requirements),
-                    color = Color.Red
-                )
-                Spacer(modifier = Modifier.extraSmallHeight())
-            }
-            Spacer(modifier = Modifier.mediumHeight())
-
-            // • REGISTER BUTTON
-            Button(
-                onClick = {
-                    performRegister()
-                },
-                enabled = !state.isLoading,
+            Column(
                 modifier = Modifier
-                    .taskyWideButton(color = MaterialTheme.colors.primary)
-                    .align(alignment = Alignment.CenterHorizontally)
-            ) {
-                Text(
-                    text = stringResource(R.string.register_button),
-                    fontSize = MaterialTheme.typography.button.fontSize,
+                    .fillMaxWidth()
+                    .padding(start = DP.small, end = DP.small)
+            ) colInnerScroll@{
+
+                Spacer(modifier = Modifier.mediumHeight())
+
+                // • USERNAME
+                NameField(
+                    value = state.username,
+                    label = null,
+                    isError = state.isInvalidUsername,
+                    onValueChange = {
+                        onAction(RegisterEvent.UpdateUsername(it))
+                    }
                 )
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .padding(start = DP.small)
-                            .size(16.dp)
-                            .align(alignment = Alignment.CenterVertically)
-                    )
+                AnimatedVisibility(state.isInvalidUsername && state.isInvalidUsernameMessageVisible) {
+                    Text(text = stringResource(R.string.error_invalid_username), color = Color.Red)
                 }
-            }
-            Spacer(modifier = Modifier.mediumHeight())
+                Spacer(modifier = Modifier.smallHeight())
 
-            // STATUS //////////////////////////////////////////
+                // • EMAIL
+                EmailField(
+                    value = state.email,
+                    label = null,
+                    isError = state.isInvalidEmail,
+                    onValueChange = {
+                        onAction(RegisterEvent.UpdateEmail(it))
+                    }
+                )
+                AnimatedVisibility(state.isInvalidEmail && state.isInvalidEmailMessageVisible) {
+                    Text(text = stringResource(R.string.error_invalid_email), color = Color.Red)
+                }
+                Spacer(modifier = Modifier.smallHeight())
 
-            AnimatedVisibility(state.errorMessage != null) {
-                state.errorMessage?.getOrNull?.let { errorMessage ->
-                    Spacer(modifier = Modifier.extraSmallHeight())
+                // • PASSWORD
+                PasswordField(
+                    value = state.password,
+                    label = null,
+                    isError = state.isInvalidPassword,
+                    onValueChange = {
+                        onAction(RegisterEvent.UpdatePassword(it))
+                    },
+                    isPasswordVisible = state.isPasswordVisible,
+                    clickTogglePasswordVisibility = {
+                        onAction(RegisterEvent.SetIsPasswordVisible(!state.isPasswordVisible))
+                    },
+                    imeAction = ImeAction.Next,
+                )
+                if (state.isInvalidPassword && state.isInvalidPasswordMessageVisible) {
+                    Text(text = stringResource(R.string.error_invalid_password), color = Color.Red)
+                }
+                Spacer(modifier = Modifier.smallHeight())
+
+                // • CONFIRM PASSWORD
+                PasswordField(
+                    label = null, //stringResource(R.string.register_label_confirm_password),
+                    placeholder = stringResource(R.string.register_placeholder_confirm_password),
+                    value = state.confirmPassword,
+                    isError = state.isInvalidConfirmPassword,
+                    onValueChange = {
+                        onAction(RegisterEvent.UpdateConfirmPassword(it))
+                    },
+                    isPasswordVisible = state.isPasswordVisible,
+                    clickTogglePasswordVisibility = {
+                        onAction(RegisterEvent.SetIsPasswordVisible(!state.isPasswordVisible))
+                    },
+                    imeAction = ImeAction.Done,
+                    doneAction = {
+                        performRegister()
+                    },
+                )
+                AnimatedVisibility(state.isInvalidConfirmPassword && state.isInvalidConfirmPasswordMessageVisible) {
                     Text(
-                        text = errorMessage,
-                        color = Color.Red,
-                        modifier = Modifier
-                            .animateContentSize()
+                        text = stringResource(R.string.error_invalid_confirm_password),
+                        color = Color.Red
                     )
                     Spacer(modifier = Modifier.extraSmallHeight())
                 }
-            }
-            AnimatedVisibility(state.statusMessage != null) {
-                state.statusMessage?.getOrNull?.let { message ->
+                // • SHOW IF MATCHING PASSWORDS
+                AnimatedVisibility(!state.isPasswordsMatch) {
+                    Text(
+                        text = stringResource(R.string.register_error_passwords_do_not_match),
+                        color = Color.Red
+                    )
                     Spacer(modifier = Modifier.extraSmallHeight())
-                    Text(text = message)
+                }
+                // • SHOW PASSWORD REQUIREMENTS
+                AnimatedVisibility(state.isInvalidPasswordMessageVisible || state.isInvalidConfirmPasswordMessageVisible) {
+                    Text(
+                        text = stringResource(R.string.register_password_requirements),
+                        color = Color.Red
+                    )
                     Spacer(modifier = Modifier.extraSmallHeight())
+                }
+                Spacer(modifier = Modifier.mediumHeight())
+
+                // • REGISTER BUTTON
+                Button(
+                    onClick = {
+                        performRegister()
+                    },
+                    enabled = !state.isLoading,
+                    modifier = Modifier
+                        .taskyWideButton(color = MaterialTheme.colors.primary)
+                        .align(alignment = Alignment.CenterHorizontally)
+                ) {
+                    Text(
+                        text = stringResource(R.string.register_button),
+                        fontSize = MaterialTheme.typography.button.fontSize,
+                    )
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(start = DP.small)
+                                .size(16.dp)
+                                .align(alignment = Alignment.CenterVertically)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.mediumHeight())
+
+                // STATUS //////////////////////////////////////////
+
+                AnimatedVisibility(state.errorMessage != null) {
+                    state.errorMessage?.getOrNull?.let { errorMessage ->
+                        Spacer(modifier = Modifier.extraSmallHeight())
+                        Text(
+                            text = errorMessage,
+                            color = Color.Red,
+                            modifier = Modifier
+                                .animateContentSize()
+                        )
+                        Spacer(modifier = Modifier.extraSmallHeight())
+                    }
+                }
+                AnimatedVisibility(state.statusMessage != null) {
+                    state.statusMessage?.getOrNull?.let { message ->
+                        Spacer(modifier = Modifier.extraSmallHeight())
+                        Text(text = message)
+                        Spacer(modifier = Modifier.extraSmallHeight())
+                    }
                 }
             }
 
 
+            // • GO TO LOGIN BUTTON
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(start = DP.small, bottom = DP.small)
                     .weight(1f)
             ) {
                 this@col1.AnimatedVisibility(
