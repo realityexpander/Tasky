@@ -15,7 +15,7 @@ data class AgendaState(
     val authInfo: AuthInfo? = null,
 
     val isLoaded: Boolean = false, // true only after init() is called
-    val isLoading: Boolean = false,
+    val isProgressVisible: Boolean = false,
 
     val errorMessage: UiText? = null,
 

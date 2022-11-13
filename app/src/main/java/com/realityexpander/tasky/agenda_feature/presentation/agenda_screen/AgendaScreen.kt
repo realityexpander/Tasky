@@ -66,7 +66,9 @@ fun AgendaScreen(
 //    email: String? = null,
 //    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
 //    password: String? = null,
+    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     selectedDayIndex: Int? = 0,
+
     navigator: DestinationsNavigator,
     viewModel: AgendaViewModel = hiltViewModel(),
 ) {
@@ -267,7 +269,7 @@ fun AgendaScreenContent(
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
                 .padding(0.dp)
         ) col2@{
-            Spacer(modifier = Modifier.tinyHeight())
+            Spacer(modifier = Modifier.smallHeight())
 
             // • DAYS OF WEEK & Day PICKER
             Row {
@@ -336,7 +338,7 @@ fun AgendaScreenContent(
                 }
             }
 
-            Spacer(modifier = Modifier.smallHeight())
+            Spacer(modifier = Modifier.mediumHeight())
         }
 
         // • SHOW TODAY'S DATE

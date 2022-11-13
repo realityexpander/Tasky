@@ -19,7 +19,9 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.dataStore
 import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.ramcosta.composedestinations.rememberNavHostEngine
+import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.AddEventScreen
 import com.realityexpander.tasky.auth_feature.presentation.splash_screen.MainActivityViewModel
 import com.realityexpander.tasky.core.data.settings.AppSettingsSerializer
 import com.realityexpander.tasky.core.data.settings.saveSettingsInitialized
@@ -42,63 +44,83 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if(false) {
+        if (false) {
             waitForDebugger() // leave for testing process death
         }
 
         super.onCreate(savedInstanceState)
 
-        installSplashScreen().apply {
-            setKeepOnScreenCondition {
-                viewModel.splashState.value.isLoading
+        // Show AddEventScreen
+        if (true) {
+            setContent {
+                TaskyTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = colorResource(id = R.color.tasky_green)
+                    ) {
+                        AddEventScreen(EmptyDestinationsNavigator)
+                    }
+                }
             }
         }
 
-        setContent {
-            TaskyTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = colorResource(id = R.color.tasky_green)
-                ) {
-                    val splashState by viewModel.splashState.collectAsState()
-                    val context = LocalContext.current
 
-                    val navController = rememberNavController()
-                    val navHostEngine = rememberNavHostEngine()
+        // Main app
+        if (false) {
 
-                    // Load Settings (or initialize them)
-                    LaunchedEffect(true) {
-                        val appSettings = context.dataStore.data.first()
 
-                        // Confirm the settings file is created and initialized
-                        if (!appSettings.isSettingsInitialized) {
-                            context.dataStore.saveSettingsInitialized(true)
+            installSplashScreen().apply {
+                setKeepOnScreenCondition {
+                    viewModel.splashState.value.isLoading
+                }
+            }
+
+            setContent {
+                TaskyTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = colorResource(id = R.color.tasky_green)
+                    ) {
+                        val splashState by viewModel.splashState.collectAsState()
+                        val context = LocalContext.current
+
+                        val navController = rememberNavController()
+                        val navHostEngine = rememberNavHostEngine()
+
+                        // Load Settings (or initialize them)
+                        LaunchedEffect(true) {
+                            val appSettings = context.dataStore.data.first()
+
+                            // Confirm the settings file is created and initialized
+                            if (!appSettings.isSettingsInitialized) {
+                                context.dataStore.saveSettingsInitialized(true)
+                            }
+
+                            // Set user logged-in status
+                            viewModel.onSetAuthInfo(appSettings.authInfo)
                         }
 
-                        // Set user logged-in status
-                        viewModel.onSetAuthInfo(appSettings.authInfo)
-                    }
+                        if (!splashState.isLoading) {
 
-                    if (!splashState.isLoading) {
+                            // Check for errors
+                            if (splashState.error != null) {
+                                Toast.makeText(context, splashState.error, Toast.LENGTH_LONG).show()
+                                Thread.sleep(2000)
+                                viewModel.onSetAuthInfo(null)
+                            }
 
-                        // Check for errors
-                        if(splashState.error != null) {
-                            Toast.makeText(context, splashState.error, Toast.LENGTH_LONG).show()
-                            Thread.sleep(2000)
-                            viewModel.onSetAuthInfo(null)
-                        }
-
-                        DestinationsNavHost(
-                            navGraph = NavGraphs.root,
-                            navController = navController,
-                            engine = navHostEngine,
-                            startRoute =
+                            DestinationsNavHost(
+                                navGraph = NavGraphs.root,
+                                navController = navController,
+                                engine = navHostEngine,
+                                startRoute =
                                 if (splashState.authInfo != null) {
                                     AgendaScreenDestination
                                 } else {
                                     LoginScreenDestination
                                 },
-                        )
+                            )
+                        }
                     }
                 }
             }

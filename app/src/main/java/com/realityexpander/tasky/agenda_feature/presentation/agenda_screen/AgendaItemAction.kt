@@ -4,6 +4,6 @@ enum class AgendaItemAction {
     OPEN_DETAILS,
     EDIT,
     DELETE,
-    MARK_AS_DONE,
-    MARK_AS_NOT_DONE;
+    MARK_AS_DONE,       // for Tasks only
+    MARK_AS_NOT_DONE;   // for Tasks only
 }

@@ -24,8 +24,8 @@ private fun darkColorPalette(): Colors {
         onSecondary = Color.White,
         background = Color.Black,
         surface = Color.Black,
-        onBackground = Color.White,
         onSurface = Color.White,
+        onBackground = Color.White,
     )
 }
 
@@ -39,8 +39,8 @@ private fun lightColorPalette(): Colors {
         onSecondary = Color.White,
         background = Color.White,
         surface = Color.White,
-        onBackground = Color.Black,
         onSurface = Color.Black,
+        onBackground = Color.Black,
     )
 }
 
