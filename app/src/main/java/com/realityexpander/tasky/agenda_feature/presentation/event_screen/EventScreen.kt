@@ -4,7 +4,10 @@ import android.content.res.Configuration
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChevronRight
@@ -35,6 +38,7 @@ import com.realityexpander.tasky.agenda_feature.presentation.components.TimeDate
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.AttendeeList
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.PillButton
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.SmallHeightHorizontalDivider
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
 import com.realityexpander.tasky.agenda_feature.util.toTimeDifferenceHumanReadable
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
@@ -285,11 +289,7 @@ fun AddEventScreenContent(
 
                 }
 
-                Spacer(modifier = Modifier.smallHeight())
-                Divider(
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.smallHeight())
+                SmallHeightHorizontalDivider()
 
                 // • EVENT DESCRIPTION
                 Row(
@@ -442,11 +442,7 @@ fun AddEventScreenContent(
                     .padding(start = DP.small, end = DP.small)
             ) col3@{
 
-                Spacer(modifier = Modifier.smallHeight())
-                Divider(
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.smallHeight())
+                SmallHeightHorizontalDivider()
 
                 // • FROM TIME / DATE
                 TimeDateRow(
@@ -456,11 +452,7 @@ fun AddEventScreenContent(
                     onAction = onAction
                 )
 
-                Spacer(modifier = Modifier.smallHeight())
-                Divider(
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.smallHeight())
+                SmallHeightHorizontalDivider()
 
                 // • TO TIME / DATE
                 TimeDateRow(
@@ -470,11 +462,7 @@ fun AddEventScreenContent(
                     onAction = onAction
                 )
 
-                Spacer(modifier = Modifier.smallHeight())
-                Divider(
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.smallHeight())
+                SmallHeightHorizontalDivider()
 
 
                 // • Remind At
@@ -545,11 +533,8 @@ fun AddEventScreenContent(
                         )
                     }
                 }
+                SmallHeightHorizontalDivider()
                 Spacer(modifier = Modifier.smallHeight())
-                Divider(
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.largeHeight())
 
 
                 // • Attendees Header (Visitors & Add Attendee Button)
@@ -722,7 +707,7 @@ fun AddEventScreenContent(
     heightDp = 1200,
 )
 @Composable
-fun preview() {
+fun Preview() {
     TaskyTheme {
         val authInfo = AuthInfo(
             userId = "X0001",
@@ -795,6 +780,6 @@ fun preview() {
     group = "Night Mode=true",
 )
 @Composable
-fun preview_night_mode() {
-    preview()
+fun Preview_night_mode() {
+    Preview()
 }
