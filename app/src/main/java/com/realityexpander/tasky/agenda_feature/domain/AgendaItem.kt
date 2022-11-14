@@ -21,8 +21,8 @@ abstract class AgendaItem {
         val to: ZonedDateTime,
 
         val host: UserId? = null,
-        val isUserEventCreator: Boolean? = null,
-        val isGoing: Boolean? = null,
+        val isUserEventCreator: Boolean? = null,    // todo does this need to be null or false?
+        val isGoing: Boolean? = null,               // todo does this need to be null or false?
 
         val attendees: List<Attendee> = emptyList(),
 

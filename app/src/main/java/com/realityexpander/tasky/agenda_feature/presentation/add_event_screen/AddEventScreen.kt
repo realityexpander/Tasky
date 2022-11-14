@@ -3,7 +3,6 @@ package com.realityexpander.tasky.agenda_feature.presentation.add_event_screen
 import android.content.res.Configuration
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -29,10 +28,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.components.AttendeeList
 import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.components.PillButton
-import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaEvent
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
 import com.realityexpander.tasky.agenda_feature.util.toShortMonthDayYear
 import com.realityexpander.tasky.agenda_feature.util.toTime12Hour
@@ -83,17 +82,14 @@ enum class AttendeeListType {
 @Composable
 fun AddEventScreenContent(
     state: AddEventState,
-    onAction: (AgendaEvent) -> Unit,
+    onAction: (AddEventEvent) -> Unit,
     navigator: DestinationsNavigator,
 ) {
     val context = LocalContext.current
-    val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
 
-//    val agendaItems by state.agendaItems.collectAsState(initial = emptyList())
-
     var attendeeListType by remember { mutableStateOf(AttendeeListType.ALL) }
-    var isEditMode by remember { mutableStateOf(false) }
+    val isEditMode = state.isEditMode
 
     fun popBack() {
         navigator.popBackStack()
@@ -178,7 +174,7 @@ fun AddEventScreenContent(
                         .alignByBaseline()
                         .width(40.dp)
                         .clickable {
-                            isEditMode = false
+                            onAction(AddEventEvent.SetIsEditMode(false))
                         }
                 )
             } else {
@@ -190,7 +186,7 @@ fun AddEventScreenContent(
                         .align(Alignment.CenterVertically)
                         .width(40.dp)
                         .clickable {
-                            isEditMode = !isEditMode
+                            onAction(AddEventEvent.SetIsEditMode(true))
                         }
                 )
             }
@@ -256,7 +252,7 @@ fun AddEventScreenContent(
                         )
                         Spacer(modifier = Modifier.extraSmallWidth())
                         Text(
-                            state.title,
+                            state.event?.title ?: "No title set",
                             style = MaterialTheme.typography.h2,
                             color = MaterialTheme.colors.onSurface,
                             modifier = Modifier
@@ -298,7 +294,7 @@ fun AddEventScreenContent(
                             .weight(1f)
                     ) {
                         Text(
-                            text = state.description,
+                            text = state.event?.description ?: "No description set",
                             style = MaterialTheme.typography.h5,
                             color = MaterialTheme.colors.onSurface,
                             modifier = Modifier
@@ -307,7 +303,7 @@ fun AddEventScreenContent(
                         )
                     }
 
-                    if (isEditMode) {
+                    if (state.isEditMode) {
                         Icon(
                             imageVector = Icons.Filled.ChevronRight,
                             tint = MaterialTheme.colors.onSurface,
@@ -336,7 +332,7 @@ fun AddEventScreenContent(
                     .wrapContentHeight()
             ) {
 
-                if (state.photos.isEmpty()) {
+                if (state.event?.photos.isNullOrEmpty()) {
                     // • No Photos
                     Row(
                         horizontalArrangement = Arrangement.Center,
@@ -461,7 +457,7 @@ fun AddEventScreenContent(
                                 .weight(.5f)
                         )
                         Text(
-                            state.fromDateTime.toTime12Hour(),
+                            state.event?.from?.toTime12Hour() ?: "not set",
                             color = MaterialTheme.colors.onSurface,
                             textAlign = TextAlign.End,
                             modifier = Modifier
@@ -488,7 +484,7 @@ fun AddEventScreenContent(
                             .padding(start = DP.medium, end = DP.tiny)
                     ) {
                         Text(
-                            state.fromDateTime.toShortMonthDayYear(),
+                            state.event?.from?.toShortMonthDayYear() ?: "not set",
                             color = MaterialTheme.colors.onSurface,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
@@ -537,7 +533,7 @@ fun AddEventScreenContent(
                                 .weight(.5f)
                         )
                         Text(
-                            state.toDateTime.toTime12Hour(),
+                            state.event?.to?.toTime12Hour() ?: "not set",
                             color = MaterialTheme.colors.onSurface,
                             textAlign = TextAlign.End,
                             modifier = Modifier
@@ -565,7 +561,7 @@ fun AddEventScreenContent(
                             .padding(start = DP.medium, end = DP.tiny)
                     ) {
                         Text(
-                            state.fromDateTime.toShortMonthDayYear(),
+                            state.event?.to?.toShortMonthDayYear() ?: "not set",
                             color = MaterialTheme.colors.onSurface,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
@@ -628,7 +624,8 @@ fun AddEventScreenContent(
                             )
                             Spacer(modifier = Modifier.smallWidth())
                             Text(
-                                state.fromDateTime.toTimeDifferenceHumanReadable(state.remindAt),
+                                state.event?.from?.toTimeDifferenceHumanReadable(state.event.remindAt)
+                                    ?: "not set",
                                 color = MaterialTheme.colors.onSurface,
                                 textAlign = TextAlign.Start,
                                 modifier = Modifier
@@ -737,44 +734,7 @@ fun AddEventScreenContent(
                             ?: throw IllegalStateException("user not logged in"),
                         isUserEventCreator = true,
                         header = "Going",
-                        attendees = listOf(
-                            Attendee(
-                                eventId = "0001",
-                                isGoing = true,
-                                fullName = state.username,
-                                remindAt = ZonedDateTime.now(),
-                                email = state.email,
-                                id = state.authInfo.userId,
-                                photo = "https://randomuser.me/api/portraits/men/75.jpg"
-                            ),
-                            Attendee(
-                                eventId = "0001",
-                                isGoing = true,
-                                fullName = "Jeremy Johnson",
-                                remindAt = ZonedDateTime.now(),
-                                email = "jj@demo.com",
-                                id = UUID.randomUUID().toString(),
-                                photo = "https://randomuser.me/api/portraits/men/75.jpg"
-                            ),
-                            Attendee(
-                                eventId = "0001",
-                                isGoing = true,
-                                fullName = "Fred Flintstone",
-                                remindAt = ZonedDateTime.now(),
-                                email = "ff@demo.com",
-                                id = UUID.randomUUID().toString(),
-                                photo = "https://randomuser.me/api/portraits/men/71.jpg"
-                            ),
-                            Attendee(
-                                eventId = "0001",
-                                isGoing = true,
-                                fullName = "Sam Bankman",
-                                remindAt = ZonedDateTime.now(),
-                                email = "sb@demo.com",
-                                id = UUID.randomUUID().toString(),
-                                photo = "https://randomuser.me/api/portraits/men/70.jpg"
-                            ),
-                        ),
+                        attendees = state.event?.attendees?.filter { it.isGoing } ?: emptyList(),
                         onAttendeeClick = {},
                         onAttendeeRemoveClick = {}
                     )
@@ -787,35 +747,7 @@ fun AddEventScreenContent(
                             ?: throw IllegalStateException("user not logged in"),
                         isUserEventCreator = true,
                         header = "Not Going",
-                        attendees = listOf(
-                            Attendee(
-                                eventId = "0001",
-                                isGoing = true,
-                                fullName = "Billy Johnson",
-                                remindAt = ZonedDateTime.now(),
-                                email = "bj@demo.com",
-                                id = UUID.randomUUID().toString(),
-                                photo = "https://randomuser.me/api/portraits/men/73.jpg"
-                            ),
-                            Attendee(
-                                eventId = "0001",
-                                isGoing = true,
-                                fullName = "Edward Flintstone",
-                                remindAt = ZonedDateTime.now(),
-                                email = "FE@demo.com",
-                                id = UUID.randomUUID().toString(),
-                                photo = "https://randomuser.me/api/portraits/men/21.jpg"
-                            ),
-                            Attendee(
-                                eventId = "0001",
-                                isGoing = true,
-                                fullName = "Jill Bankman",
-                                remindAt = ZonedDateTime.now(),
-                                email = "jb@demo.com",
-                                id = UUID.randomUUID().toString(),
-                                photo = "https://randomuser.me/api/portraits/men/30.jpg"
-                            ),
-                        ),
+                        attendees = state.event?.attendees?.filter { !it.isGoing } ?: emptyList(),
                         onAttendeeClick = {},
                         onAttendeeRemoveClick = {}
                     )
@@ -825,8 +757,8 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.largeHeight())
 
                 Text(
-                    if (state.isEventCreator) "DELETE EVENT"
-                    else if (state.isGoing) "LEAVE EVENT"
+                    if (state.event?.isUserEventCreator == true) "DELETE EVENT"
+                    else if (state.event?.isGoing == true) "LEAVE EVENT"
                     else "JOIN EVENT",
                     style = MaterialTheme.typography.h4,
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
@@ -854,20 +786,65 @@ fun AddEventScreenContent(
 @Composable
 fun preview() {
     TaskyTheme {
+        val authInfo = AuthInfo(
+            userId = "X0001",
+            authToken = "1010101010101",
+            username = "Cameron Anderson"
+        )
+
         AddEventScreenContent(
             state = AddEventState(
-                authInfo = AuthInfo(
-                    userId = "0001",
-                    authToken = "1010101010101",
-                    username = "Cameron Anderson"
-                ),
+
+                authInfo = authInfo,
                 username = "Cameron Anderson",
-                title = "Title of Event",
-                description = "Description of Event",
-                isEventCreator = false,
-                fromDateTime = ZonedDateTime.now(),
-                toDateTime = ZonedDateTime.now().plusHours(1),
-                remindAt = ZonedDateTime.now().plusMinutes(30)
+                event = AgendaItem.Event(
+                    id = "0001",
+                    title = "Title of Event",
+                    description = "Description of Event",
+                    isUserEventCreator = false,
+                    from = ZonedDateTime.now().plusHours(1),
+                    to = ZonedDateTime.now().plusHours(2),
+                    remindAt = ZonedDateTime.now().plusMinutes(30),
+                    isGoing = true,
+                    attendees = listOf(
+                        Attendee(
+                            eventId = "0001",
+                            isGoing = true,
+                            fullName = authInfo.username!!,
+                            email = "cameron@demo.com",
+                            remindAt = ZonedDateTime.now(),
+                            id = authInfo.userId!!,
+                            photo = "https://randomuser.me/api/portraits/men/75.jpg"
+                        ),
+                        Attendee(
+                            eventId = "0001",
+                            isGoing = true,
+                            fullName = "Jeremy Johnson",
+                            remindAt = ZonedDateTime.now(),
+                            email = "jj@demo.com",
+                            id = UUID.randomUUID().toString(),
+                            photo = "https://randomuser.me/api/portraits/men/75.jpg"
+                        ),
+                        Attendee(
+                            eventId = "0001",
+                            isGoing = true,
+                            fullName = "Fred Flintstone",
+                            remindAt = ZonedDateTime.now(),
+                            email = "ff@demo.com",
+                            id = UUID.randomUUID().toString(),
+                            photo = "https://randomuser.me/api/portraits/men/71.jpg"
+                        ),
+                        Attendee(
+                            eventId = "0001",
+                            isGoing = true,
+                            fullName = "Sam Bankman",
+                            remindAt = ZonedDateTime.now(),
+                            email = "sb@demo.com",
+                            id = UUID.randomUUID().toString(),
+                            photo = "https://randomuser.me/api/portraits/men/70.jpg"
+                        ),
+                    ),
+                )
             ),
             onAction = { println("ACTION: $it") },
             navigator = EmptyDestinationsNavigator,

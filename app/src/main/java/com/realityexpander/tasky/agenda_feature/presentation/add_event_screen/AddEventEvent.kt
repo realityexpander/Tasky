@@ -6,6 +6,8 @@ sealed interface AddEventEvent {
     data class SetIsLoaded(val isLoaded: Boolean) : AddEventEvent
     data class ShowProgressIndicator(val isShowing: Boolean) : AddEventEvent
 
+    data class SetIsEditMode(val isEditMode: Boolean) : AddEventEvent
+
     // • Errors
     data class Error(val message: UiText) : AddEventEvent
 
@@ -13,4 +15,6 @@ sealed interface AddEventEvent {
     sealed interface StatefulOneTimeEvent {
 //        object ResetScrollTo                                        : StatefulOneTimeEvent, AddEventEvent
     }
+
+
 }
