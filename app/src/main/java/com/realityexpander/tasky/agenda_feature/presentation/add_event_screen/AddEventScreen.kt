@@ -473,8 +473,8 @@ fun AddEventScreenContent(
                         contentDescription = "Edit Event From DateTime",
                         modifier = Modifier
                             .weight(.2f)
-                            .width(28.dp)
-                            .height(20.dp)
+                            .width(32.dp)
+                            .height(26.dp)
                             .align(Alignment.CenterVertically)
                             .clickable {
                                 // todo
@@ -499,8 +499,8 @@ fun AddEventScreenContent(
                             contentDescription = "Edit Event From DateTime",
                             modifier = Modifier
                                 .weight(.2f)
-                                .width(28.dp)
-                                .height(20.dp)
+                                .width(32.dp)
+                                .height(26.dp)
                                 .align(Alignment.CenterVertically)
                                 .clickable {
                                     // todo
@@ -543,14 +543,15 @@ fun AddEventScreenContent(
                                 .weight(1f)
                         )
                     }
+
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
                         contentDescription = "Edit Event From DateTime",
                         modifier = Modifier
                             .weight(.2f)
-                            .width(28.dp)
-                            .height(20.dp)
+                            .width(32.dp)
+                            .height(26.dp)
                             .align(Alignment.CenterVertically)
                             .clickable {
                                 // todo
@@ -575,8 +576,8 @@ fun AddEventScreenContent(
                             contentDescription = "Edit Event From DateTime",
                             modifier = Modifier
                                 .weight(.2f)
-                                .width(28.dp)
-                                .height(20.dp)
+                                .width(32.dp)
+                                .height(26.dp)
                                 .align(Alignment.CenterVertically)
                                 .clickable {
                                     // todo
@@ -593,48 +594,62 @@ fun AddEventScreenContent(
 
                 // • Remind At
                 Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,  // Can these be layered inside each other?
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.surface)
-                        .padding(start = DP.small)
+                        //.padding(start = DP.small)
                 ) {
-                    // • Alarm/Reminder At icon
-                    Icon(
-                        imageVector = Icons.Outlined.Notifications,
-                        tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                        contentDescription = "Meeting title marker",
+
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
-                            .size(34.dp)
-                            .clip(shape = RoundedCornerShape(5.dp))
-                            .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
-                            .padding(4.dp)
-                            .align(Alignment.CenterVertically)
-                            .weight(.1f)
-                    )
-                    Spacer(modifier = Modifier.smallWidth())
-                    Text(
-                        state.fromDateTime.toTimeDifferenceHumanReadable(state.remindAt),
-                        color = MaterialTheme.colors.onSurface,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .weight(.8f)
-                    )
-                    Icon(
-                        imageVector = Icons.Filled.ChevronRight,
-                        tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
-                        contentDescription = "Edit Event From DateTime",
-                        modifier = Modifier
-                            .weight(.1f)
-                            .width(28.dp)
-                            .height(20.dp)
-                            .offset(x = (-2).dp) // THIS IS HACKY! I need a better technique
-                            .align(Alignment.CenterVertically)
-                            .clickable {
-                                // todo
-                            }
-                    )
+                            .weight(1f)
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.Start,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = DP.small, end = DP.medium)
+                        ) {
+                            // • Alarm/Reminder At icon
+                            Icon(
+                                imageVector = Icons.Outlined.Notifications,
+                                tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
+                                contentDescription = "Meeting title marker",
+                                modifier = Modifier
+                                    .size(34.dp)
+                                    .clip(shape = RoundedCornerShape(5.dp))
+                                    .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
+                                    .padding(4.dp)
+                                    .align(Alignment.CenterVertically)
+                                    .weight(.2f)
+                            )
+                            Spacer(modifier = Modifier.smallWidth())
+                            Text(
+                                state.fromDateTime.toTimeDifferenceHumanReadable(state.remindAt),
+                                color = MaterialTheme.colors.onSurface,
+                                textAlign = TextAlign.Start,
+                                modifier = Modifier
+                                    .align(Alignment.CenterVertically)
+                                    .weight(1f)
+                            )
+                        }
+
+                        Icon(
+                            imageVector = Icons.Filled.ChevronRight,
+                            tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
+                            contentDescription = "Edit Event From DateTime",
+                            modifier = Modifier
+                                .weight(.1125f)
+                                .width(32.dp)
+                                .height(26.dp)
+                                .align(Alignment.CenterVertically)
+                                .clickable {
+                                    // todo
+                                }
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.smallHeight())
                 Divider(
@@ -697,6 +712,15 @@ fun AddEventScreenContent(
                         isUserEventCreator = true,
                         header = "Going",
                         attendees = listOf(
+                            Attendee(
+                                eventId = "0001",
+                                isGoing = true,
+                                fullName = state.username,
+                                remindAt = ZonedDateTime.now(),
+                                email = "jj@demo.com",
+                                id = state.authInfo.userId,
+                                photo = "https://randomuser.me/api/portraits/men/75.jpg"
+                            ),
                             Attendee(
                                 eventId = "0001",
                                 isGoing = true,

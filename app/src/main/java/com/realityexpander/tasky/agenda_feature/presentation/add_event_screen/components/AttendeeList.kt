@@ -65,7 +65,7 @@ fun AttendeeList(
                         username = attendee.fullName,
                         color = MaterialTheme.colors.surface,
                         circleBackgroundColor = MaterialTheme.colors.onSurface.copy(
-                            alpha = .7f
+                            alpha = .25f
                         ),
                         modifier = Modifier
                             .alignByBaseline()

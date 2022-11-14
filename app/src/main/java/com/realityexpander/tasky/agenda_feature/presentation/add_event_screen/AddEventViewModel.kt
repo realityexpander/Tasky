@@ -31,13 +31,10 @@ class AddEventViewModel @Inject constructor(
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage]
 
     private val _addEventState = MutableStateFlow(AddEventState(
-//        username = authRepository.getAuthInfo()?.username ?: "", // todo get this from the previous screen? // put back in
-        isLoaded = true, // only after default state is initialized
-        username = "Chris Athanas", // todo get this from the previous screen?
         errorMessage = errorMessage,
-//        authInfo = authRepository.getAuthInfo(), // todo put this back in
-        authInfo = AuthInfo("0001", "0001", "Chris Athanas"),
-        isProgressVisible = false,
+        isProgressVisible = true,
+        username = "Chris Athanas", // todo remove - UI testing
+        authInfo = AuthInfo("0001", "0001", "Chris Athanas"), // todo remove - UI testing
 
         // Dummy event details for UI work // todo use the AgendaItem.Event DS?
         title = "Test Event Description This is a long description of the event",
@@ -53,6 +50,16 @@ class AddEventViewModel @Inject constructor(
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage] = state.errorMessage
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AddEventState())
 
+    init {
+        viewModelScope.launch {
+            _addEventState.value = _addEventState.value.copy(
+                isLoaded = true, // only after state is initialized
+                isProgressVisible = false,
+                username = authRepository.getAuthInfo()?.username ?: "", // todo get this from the previous screen? // put back in
+                authInfo = authRepository.getAuthInfo(), // todo put this back in
+            )
+        }
+    }
 
     fun sendEvent(event: AgendaEvent) {
         viewModelScope.launch {

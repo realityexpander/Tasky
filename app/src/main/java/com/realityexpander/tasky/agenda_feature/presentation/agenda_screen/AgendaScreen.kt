@@ -72,13 +72,25 @@ fun AgendaScreen(
     navigator: DestinationsNavigator,
     viewModel: AgendaViewModel = hiltViewModel(),
 ) {
-    val agendaState by viewModel.agendaState.collectAsState()
+    val state by viewModel.agendaState.collectAsState()
 
     AgendaScreenContent(
-        state = agendaState,
+        state = state,
         onAction = viewModel::sendEvent,
         navigator = navigator,
     )
+
+    if (state.isProgressVisible) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = .5f))
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
 }
 
 @Composable
