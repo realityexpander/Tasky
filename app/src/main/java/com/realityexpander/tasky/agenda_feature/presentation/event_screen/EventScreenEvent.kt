@@ -31,7 +31,7 @@ sealed interface EventScreenEvent {
         data class SaveDateTime(val dateTime: ZonedDateTime) : EventScreenEvent
 
 
-        // • Payloads that hold data to write upon "Save" event
+        // • Payloads that hold data to write for "Save" events
 
         // For all EditModes that edit text
         sealed interface EditModeText {
