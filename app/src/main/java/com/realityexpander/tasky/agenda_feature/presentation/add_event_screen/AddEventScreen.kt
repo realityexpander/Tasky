@@ -423,6 +423,7 @@ fun AddEventScreenContent(
                     }
                 }
             }
+            Spacer(modifier = Modifier.smallHeight())
 
 
             // • Event times (from, to, remind at)
