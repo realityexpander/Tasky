@@ -95,9 +95,9 @@ object AppModule {
                 }
 
                 // If AuthToken is valid, add it to the request.
-                if(IAuthApi.authToken != null) {
+                IAuthApi.authToken?.let { authToken ->
                     requestBuilder
-                        .addHeader("Authorization", createAuthorizationHeader(IAuthApi.authToken!!))
+                        .addHeader("Authorization", createAuthorizationHeader(authToken))
                 }
 
                 val request = requestBuilder
