@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.agenda_feature.presentation.add_event_screen
+package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.*
@@ -30,11 +30,11 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
-import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.AddEventEvent.*
-import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.components.AttendeeList
-import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.components.PillButton
 import com.realityexpander.tasky.agenda_feature.presentation.components.EditTextModal
 import com.realityexpander.tasky.agenda_feature.presentation.components.TimeDateRow
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.AttendeeList
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.PillButton
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
 import com.realityexpander.tasky.agenda_feature.util.toTimeDifferenceHumanReadable
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
@@ -46,12 +46,12 @@ import java.util.*
 
 @Composable
 @Destination
-fun AddEventScreen(
+fun EventScreen(
     navigator: DestinationsNavigator,
-    viewModel: AddEventViewModel = hiltViewModel(),
+    viewModel: EventViewModel = hiltViewModel(),
 ) {
 
-    val state by viewModel.addEventState.collectAsState()
+    val state by viewModel.eventScreenState.collectAsState()
 
     if (state.isLoaded) {
         AddEventScreenContent(
@@ -82,8 +82,8 @@ enum class AttendeeListType {
 
 @Composable
 fun AddEventScreenContent(
-    state: AddEventState,
-    onAction: (AddEventEvent) -> Unit,
+    state: EventScreenState,
+    onAction: (EventScreenEvent) -> Unit,
     navigator: DestinationsNavigator,
 ) {
     val context = LocalContext.current
@@ -469,189 +469,7 @@ fun AddEventScreenContent(
                     isEditable = isEditable,
                     onAction = onAction
                 )
-//                Row(
-//                    horizontalArrangement = Arrangement.SpaceEvenly,
-//                    verticalAlignment = Alignment.CenterVertically,
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .background(MaterialTheme.colors.surface)
-//                ) {
-//                    Row(
-//                        horizontalArrangement = Arrangement.SpaceBetween,
-//                        modifier = Modifier
-//                            .weight(1f)
-//                            .padding(start = DP.medium, end = DP.medium)
-//                            .align(Alignment.CenterVertically)
-//                    ) {
-//                        Text(
-//                            "From",
-//                            color = MaterialTheme.colors.onSurface,
-//                            textAlign = TextAlign.Start,
-//                            modifier = Modifier
-//                                .weight(.5f)
-//                                .align(Alignment.CenterVertically)
-//                        )
-//                        Text(
-//                            state.event?.from?.toTime12Hour() ?: "not set",
-//                            color = MaterialTheme.colors.onSurface,
-//                            textAlign = TextAlign.End,
-//                            modifier = Modifier
-//                                .weight(1f)
-//                                .align(Alignment.CenterVertically)
-//                        )
-//                    }
-//                    Icon(
-//                        imageVector = Icons.Filled.ChevronRight,
-//                        tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
-//                        contentDescription = "Edit Event From Time",
-//                        modifier = Modifier
-//                            .weight(.2f)
-//                            .width(32.dp)
-//                            .height(26.dp)
-//                            .align(Alignment.CenterVertically)
-//                            .clickable {
-//                                if(isEditable) {
-//                                    onAction(
-//                                        SetEditMode(
-//                                            EditMode.FromTime(
-//                                                state.event?.from ?: ZonedDateTime.now()
-//                                            )
-//                                        )
-//                                    )
-//                                }
-//                            }
-//                    )
-//                    Row(
-//                        horizontalArrangement = Arrangement.SpaceBetween,
-//                        modifier = Modifier
-//                            .weight(1f)
-//                            .padding(start = DP.medium, end = DP.tiny)
-//                            .align(Alignment.CenterVertically)
-//                    ) {
-//                        Text(
-//                            state.event?.from?.toShortMonthDayYear() ?: "not set",
-//                            color = MaterialTheme.colors.onSurface,
-//                            textAlign = TextAlign.Center,
-//                            modifier = Modifier
-//                                .weight(.8f)
-//                                .align(Alignment.CenterVertically)
-//                        )
-//                        Icon(
-//                            imageVector = Icons.Filled.ChevronRight,
-//                            tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
-//                            contentDescription = "Edit Event From Date",
-//                            modifier = Modifier
-//                                .weight(.2f)
-//                                .width(32.dp)
-//                                .height(26.dp)
-//                                .align(Alignment.CenterVertically)
-//                                .clickable {
-//                                    if(isEditable) {
-//                                        onAction(
-//                                            SetEditMode(
-//                                                EditMode.FromDate(
-//                                                    state.event?.from ?: ZonedDateTime.now()
-//                                                )
-//                                            )
-//                                        )
-//                                    }
-//                                }
-//                        )
-//                    }
-//                }
-//
-//
-//                // • TO TIME / DATE
-//                Row(
-//                    horizontalArrangement = Arrangement.SpaceEvenly,
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .background(MaterialTheme.colors.surface)
-//                ) {
-//                    Row(
-//                        horizontalArrangement = Arrangement.SpaceBetween,
-//                        modifier = Modifier
-//                            .weight(1f)
-//                            .padding(start = DP.medium, end = DP.medium)
-//                            .align(Alignment.CenterVertically)
-//                    ) {
-//                        Text(
-//                            "To",
-//                            color = MaterialTheme.colors.onSurface,
-//                            textAlign = TextAlign.Start,
-//                            modifier = Modifier
-//                                .weight(.5f)
-//                                .align(Alignment.CenterVertically)
-//                        )
-//                        Text(
-//                            state.event?.to?.toTime12Hour() ?: "not set",
-//                            color = MaterialTheme.colors.onSurface,
-//                            textAlign = TextAlign.End,
-//                            modifier = Modifier
-//                                .weight(1f)
-//                                .align(Alignment.CenterVertically)
-//                        )
-//                    }
-//
-//                    Icon(
-//                        imageVector = Icons.Filled.ChevronRight,
-//                        tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
-//                        contentDescription = "Edit Event To Time",
-//                        modifier = Modifier
-//                            .weight(.2f)
-//                            .width(32.dp)
-//                            .height(26.dp)
-//                            .align(Alignment.CenterVertically)
-//                            .clickable {
-//                                if (isEditable) {
-//                                    onAction(
-//                                        SetEditMode(
-//                                            EditMode.ToTime(
-//                                                state.event?.to ?: ZonedDateTime.now()
-//                                            )
-//                                        )
-//                                    )
-//                                }
-//                            }
-//                    )
-//                    Row(
-//                        horizontalArrangement = Arrangement.SpaceBetween,
-//                        modifier = Modifier
-//                            .weight(1f)
-//                            .padding(start = DP.medium, end = DP.tiny)
-//                            .align(Alignment.CenterVertically)
-//                    ) {
-//                        Text(
-//                            state.event?.to?.toShortMonthDayYear() ?: "not set",
-//                            color = MaterialTheme.colors.onSurface,
-//                            textAlign = TextAlign.Center,
-//                            modifier = Modifier
-//                                .weight(.8f)
-//                                .align(Alignment.CenterVertically)
-//                        )
-//                        Icon(
-//                            imageVector = Icons.Filled.ChevronRight,
-//                            tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
-//                            contentDescription = "Edit TO Date",
-//                            modifier = Modifier
-//                                .weight(.2f)
-//                                .width(32.dp)
-//                                .height(26.dp)
-//                                .align(Alignment.CenterVertically)
-//                                .clickable {
-//                                    if (isEditable) {
-//                                        onAction(
-//                                            SetEditMode(
-//                                                EditMode.ToDate(
-//                                                    state.event?.to ?: ZonedDateTime.now()
-//                                                )
-//                                            )
-//                                        )
-//                                    }
-//                                }
-//                        )
-//                    }
-//                }
+
                 Spacer(modifier = Modifier.smallHeight())
                 Divider(
                     modifier = Modifier.fillMaxWidth()
@@ -870,11 +688,11 @@ fun AddEventScreenContent(
                     title = editMode.title,
                     editTextStyle =
                         if(editMode is EditMode.TitleText)
-                            MaterialTheme.typography.h2
+                            MaterialTheme.typography.h2  // cant access from non-compose function, make a wrapper?
                         else
-                            MaterialTheme.typography.body1,
+                            MaterialTheme.typography.body1, // cant access from non-compose function, make a wrapper?
                     onSave = {
-                        onAction(WriteEditModeText(it))
+                        onAction(EditMode.SaveText(it))
                     },
                     onCancel = {
                         onAction(CancelEditMode)
@@ -913,7 +731,7 @@ fun preview() {
         )
 
         AddEventScreenContent(
-            state = AddEventState(
+            state = EventScreenState(
 
                 authInfo = authInfo,
                 username = "Cameron Anderson",

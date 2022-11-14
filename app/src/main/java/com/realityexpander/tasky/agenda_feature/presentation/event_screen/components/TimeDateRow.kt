@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.AddEventEvent
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent
 import com.realityexpander.tasky.agenda_feature.util.toShortMonthDayYear
 import com.realityexpander.tasky.agenda_feature.util.toTime12Hour
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
@@ -26,7 +26,7 @@ fun ColumnScope.TimeDateRow(
     title: String,  // `From` or `To`
     date: ZonedDateTime,
     isEditable: Boolean,
-    onAction: (AddEventEvent) -> Unit,
+    onAction: (EventScreenEvent) -> Unit,
 ) {
     // • FROM TIME / DATE
     Row(
@@ -72,8 +72,8 @@ fun ColumnScope.TimeDateRow(
                 .clickable {
                     if(isEditable) {
                         onAction(
-                            AddEventEvent.SetEditMode(
-                                AddEventEvent.EditMode.FromTime(
+                            EventScreenEvent.SetEditMode(
+                                EventScreenEvent.EditMode.FromTime(
                                     date
                                 )
                             )
@@ -108,8 +108,8 @@ fun ColumnScope.TimeDateRow(
                     .clickable {
                         if(isEditable) {
                             onAction(
-                                AddEventEvent.SetEditMode(
-                                    AddEventEvent.EditMode.FromDate(
+                                EventScreenEvent.SetEditMode(
+                                    EventScreenEvent.EditMode.FromDate(
                                         date
                                     )
                                 )

@@ -1,24 +1,23 @@
-package com.realityexpander.tasky.agenda_feature.presentation.add_event_screen
+package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import java.time.ZonedDateTime
 
-sealed interface AddEventEvent {
-    data class SetIsLoaded(val isLoaded: Boolean) : AddEventEvent
-    data class ShowProgressIndicator(val isShowing: Boolean) : AddEventEvent
+sealed interface EventScreenEvent {
+    data class SetIsLoaded(val isLoaded: Boolean) : EventScreenEvent
+    data class ShowProgressIndicator(val isShowing: Boolean) : EventScreenEvent
 
     // • Is Event Editable?
-    data class SetIsEditable(val isEditable: Boolean) : AddEventEvent
+    data class SetIsEditable(val isEditable: Boolean) : EventScreenEvent
 
     // • The Current EditMode of Event (Title, Description, FromDateTime, ToDateTime, RemindAt, Photos)
-    data class SetEditMode(val editMode: EditMode) : AddEventEvent
-    data class WriteEditModeText(val text:String) : AddEventEvent
-    object CancelEditMode : AddEventEvent
+    data class SetEditMode(val editMode: EditMode) : EventScreenEvent
+    object CancelEditMode : EventScreenEvent
 
     // • Errors
-    data class Error(val message: UiText) : AddEventEvent
+    data class Error(val message: UiText) : EventScreenEvent
 
     // • One-time events
     sealed interface StatefulOneTimeEvent {
@@ -27,7 +26,12 @@ sealed interface AddEventEvent {
 
     sealed interface EditMode {
 
-        abstract val title: String
+        // • "Save Data" Events
+        data class SaveText(val text:String) : EventScreenEvent
+        data class SaveDateTime(val dateTime: ZonedDateTime) : EventScreenEvent
+
+
+        // • Payloads that hold data to write upon "Save" event
 
         // For all EditModes that edit text
         sealed interface EditModeText {
@@ -49,6 +53,11 @@ sealed interface AddEventEvent {
             val dateTime: ZonedDateTime
         }
 
+
+        // • Edit Modes (setup the UI, set default text, etc)
+
+        abstract val title: String
+
         data class TitleText(
             override val text: String = "",
             override val title: String = "EDIT TITLE",
@@ -60,25 +69,25 @@ sealed interface AddEventEvent {
 
         data class FromDate(
             override val date: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "EDIT FROM DATE",
+            override val title: String = "EDIT `FROM` DATE",
         ) : EditMode, EditModeDate
         data class FromTime(
             override val time: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "EDIT FROM TIME",
+            override val title: String = "EDIT `FROM` TIME",
         ) : EditMode, EditModeTime
 
         data class ToDate(
             override val date: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "EDIT TO DATE",
+            override val title: String = "EDIT `TO` DATE",
         ) : EditMode, EditModeDate
         data class ToTime(
             override val time: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "EDIT TO TIME",
+            override val title: String = "EDIT `TO` TIME",
         ) : EditMode, EditModeTime
 
         data class RemindAtDateTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "EDIT REMIND AT DATE TIME",
+            override val title: String = "EDIT `REMIND AT` DATE TIME",
         ) : EditMode, EditModeDateTime
 
         data class Photos(

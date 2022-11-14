@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.agenda_feature.presentation.add_event_screen
+package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -7,7 +7,7 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
-import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.AddEventEvent.*
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants
 import com.realityexpander.tasky.core.presentation.common.util.UiText
@@ -20,7 +20,7 @@ import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class AddEventViewModel @Inject constructor(
+class EventViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     private val agendaRepository: IAgendaRepository,
     private val savedStateHandle: SavedStateHandle,
@@ -32,19 +32,19 @@ class AddEventViewModel @Inject constructor(
     private val isEditMode: Boolean =
         savedStateHandle[SavedStateConstants.SAVED_STATE_isEditMode] ?: false
 
-    private val _addEventState = MutableStateFlow(AddEventState(
+    private val _eventScreenState = MutableStateFlow(EventScreenState(
         errorMessage = errorMessage,
         isProgressVisible = true,
         isEditable = isEditMode
     ))
-    val addEventState = _addEventState.onEach { state ->
+    val eventScreenState = _eventScreenState.onEach { state ->
         // save state for process death
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage] = state.errorMessage
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AddEventState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventScreenState())
 
     init {
         viewModelScope.launch {
-            _addEventState.value = _addEventState.value.copy(
+            _eventScreenState.value = _eventScreenState.value.copy(
                 isLoaded = true, // only after state is initialized
                 isProgressVisible = false,
                 username = authRepository.getAuthInfo()?.username ?: "", // todo get this from the previous screen? // put back in
@@ -130,46 +130,46 @@ class AddEventViewModel @Inject constructor(
         }
     }
 
-    fun sendEvent(event: AddEventEvent) {
+    fun sendEvent(event: EventScreenEvent) {
         viewModelScope.launch {
             onEvent(event)
             yield() // allow events to percolate
         }
     }
 
-    private suspend fun onEvent(event: AddEventEvent) {
+    private suspend fun onEvent(event: EventScreenEvent) {
 
         when(event) {
             is ShowProgressIndicator -> {
-                _addEventState.update {
+                _eventScreenState.update {
                     it.copy(isProgressVisible = event.isShowing)
                 }
             }
             is SetIsLoaded -> {
-                _addEventState.update {
+                _eventScreenState.update {
                     it.copy(isProgressVisible = event.isLoaded)
                 }
             }
             is SetIsEditable -> {
-                _addEventState.update {
+                _eventScreenState.update {
                     it.copy(isEditable = event.isEditable)
                 }
             }
             is SetEditMode -> {
-                _addEventState.update {
+                _eventScreenState.update {
                     it.copy(editMode = event.editMode)
                 }
             }
             is CancelEditMode -> {
-                _addEventState.update {
+                _eventScreenState.update {
                     it.copy(editMode = null)
                 }
             }
-            is WriteEditModeText -> {
-                when(_addEventState.value.editMode) {
+            is EditMode.SaveText -> {
+                when(_eventScreenState.value.editMode) {
 
                     is EditMode.TitleText -> {
-                        _addEventState.update {
+                        _eventScreenState.update {
                             it.copy(
                                 event = it.event?.copy(title = event.text),
                                 editMode = null
@@ -177,18 +177,18 @@ class AddEventViewModel @Inject constructor(
                         }
                     }
                     is EditMode.DescriptionText -> {
-                        _addEventState.update {
+                        _eventScreenState.update {
                             it.copy(
                                 event = it.event?.copy(description = event.text),
                                 editMode = null
                             )
                         }
                     }
-                    else -> throw java.lang.IllegalStateException("Invalid edit mode for WriteEditModeText: ${_addEventState.value.editMode}")
+                    else -> throw java.lang.IllegalStateException("Invalid type for WriteText: ${_eventScreenState.value.editMode}")
                 }
             }
             is Error -> {
-                _addEventState.update {
+                _eventScreenState.update {
                     it.copy(
                         errorMessage = if (event.message.isRes)
                             event.message
