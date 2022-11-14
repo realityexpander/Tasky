@@ -426,7 +426,7 @@ fun AddEventScreenContent(
             Spacer(modifier = Modifier.smallHeight())
 
 
-            // • Event times (from, to, remind at)
+            // • Event Times & Dates (from, to, remind at)
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
