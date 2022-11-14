@@ -664,6 +664,7 @@ fun AddEventScreenContent(
         }
     }
 
+    // • Editors
     state.editMode?.let { editMode ->
         when (editMode) {
             is EditMode.TitleText,
