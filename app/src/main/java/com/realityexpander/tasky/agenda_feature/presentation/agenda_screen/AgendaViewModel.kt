@@ -13,6 +13,7 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.uuidStr
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -48,8 +49,6 @@ class AgendaViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),
         AgendaState())
 
-    private var lastAgendaItems = emptyList<AgendaItem>()
-
     init {
         viewModelScope.launch {
 
@@ -68,17 +67,6 @@ class AgendaViewModel @Inject constructor(
             yield() // wait for database to load
             if(_agendaState.value.agendaItems.first().isEmpty()) {
                 createFakeAgendaItems(agendaRepository)
-            }
-        }
-
-        // Collect the last state of agendaItems and save it
-        //   for local access for handling in `onEvent`.
-        // Is there a better way to do this? Better with .stateIn?
-        viewModelScope.launch {
-            agendaState.collect {
-                it.agendaItems.collect {
-                    lastAgendaItems = it
-                }
             }
         }
     }
@@ -185,6 +173,7 @@ class AgendaViewModel @Inject constructor(
         )
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)  // for .mapLatest
     private suspend fun onEvent(event: AgendaEvent) {
 
         when(event) {
@@ -212,18 +201,13 @@ class AgendaViewModel @Inject constructor(
                 createAgendaItem(event.agendaItemType)
             }
             is AgendaEvent.TaskToggleCompleted -> {
-                lastAgendaItems.map { agendaItem ->
-                    (agendaItem as? AgendaItem.Task)?.let { task ->
-                        // todo implement update task completed state
-//                        if (task.id == event.agendaItemId) { // don't optimistically update
-//                            task.copy(isDone = !task.isDone)
-//                        } else {
-//                            task
-//                        }
-//                        agendaRepository.updateTaskCompletedState(event.agendaItemId, !event.isCompleted)
+                _agendaState.value.agendaItems.mapLatest {
+                    it.find { item -> item.id == event.agendaItemId }?.let { task ->
+                        if(task is AgendaItem.Task) {
+//                            agendaRepository.updateTask(task.copy(isCompleted = !task.isCompleted)) // todo implement update task - completed state
+                        }
                     }
                 }
-
             }
             is AgendaEvent.Logout -> {
                 _agendaState.update {
