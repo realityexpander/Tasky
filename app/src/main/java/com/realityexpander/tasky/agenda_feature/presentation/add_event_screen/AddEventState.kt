@@ -19,7 +19,9 @@ data class AddEventState(
     // Stateful One-time events
 //    val scrollToItemId: UuidStr? = null,
 
-    val isEditMode: Boolean = false,
+    val isEditable: Boolean = false,
+
+    val editMode: AddEventEvent.EditMode? = null,
 
     // Event Details
 //    val title: String = "",

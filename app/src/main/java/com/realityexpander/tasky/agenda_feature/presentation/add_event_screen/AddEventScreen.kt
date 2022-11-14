@@ -30,11 +30,12 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
+import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.AddEventEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.components.AttendeeList
 import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.components.PillButton
+import com.realityexpander.tasky.agenda_feature.presentation.components.EditTextModal
+import com.realityexpander.tasky.agenda_feature.presentation.components.TimeDateRow
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
-import com.realityexpander.tasky.agenda_feature.util.toShortMonthDayYear
-import com.realityexpander.tasky.agenda_feature.util.toTime12Hour
 import com.realityexpander.tasky.agenda_feature.util.toTimeDifferenceHumanReadable
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
@@ -89,7 +90,7 @@ fun AddEventScreenContent(
     val scope = rememberCoroutineScope()
 
     var attendeeListType by remember { mutableStateOf(AttendeeListType.ALL) }
-    val isEditMode = state.isEditMode
+    val isEditable = state.isEditable
 
     fun popBack() {
         navigator.popBackStack()
@@ -164,7 +165,7 @@ fun AddEventScreenContent(
             )
 
             // • Edit / Save Button
-            if (isEditMode) {
+            if (isEditable) {
                 Text(
                     text = "Save",
                     color = MaterialTheme.colors.surface,
@@ -174,7 +175,7 @@ fun AddEventScreenContent(
                         .alignByBaseline()
                         .width(40.dp)
                         .clickable {
-                            onAction(AddEventEvent.SetIsEditMode(false))
+                            onAction(SetIsEditable(false))
                         }
                 )
             } else {
@@ -186,7 +187,7 @@ fun AddEventScreenContent(
                         .align(Alignment.CenterVertically)
                         .width(40.dp)
                         .clickable {
-                            onAction(AddEventEvent.SetIsEditMode(true))
+                            onAction(SetIsEditable(true))
                         }
                 )
             }
@@ -195,7 +196,7 @@ fun AddEventScreenContent(
         Spacer(modifier = Modifier.smallHeight())
 
 
-        // • Event header / description
+        // • EVENT HEADER / DESCRIPTION
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -232,6 +233,7 @@ fun AddEventScreenContent(
                 }
                 Spacer(modifier = Modifier.smallHeight())
 
+                // • EVENT TITLE
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -260,21 +262,26 @@ fun AddEventScreenContent(
                         )
                     }
 
-                    if (isEditMode) {
-                        Icon(
-                            imageVector = Icons.Filled.ChevronRight,
-                            tint = MaterialTheme.colors.onSurface,
-                            contentDescription = "Edit Event Title",
-                            modifier = Modifier
-                                .size(28.dp)
-                                .weight(.1f)
-                                .align(Alignment.CenterVertically)
-                                .offset(0.dp, 0.dp)
-                                .clickable {
-                                    // todo
+                    Icon(
+                        imageVector = Icons.Filled.ChevronRight,
+                        tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
+                        contentDescription = "Edit Event Title",
+                        modifier = Modifier
+                            .size(28.dp)
+                            .weight(.1f)
+                            .align(Alignment.CenterVertically)
+                            .clickable {
+                                if (isEditable) {
+                                    onAction(
+                                        SetEditMode(
+                                            EditMode.TitleText(
+                                                state.event?.title ?: "",
+                                            )
+                                        )
+                                    )
                                 }
-                        )
-                    }
+                            }
+                    )
 
                 }
 
@@ -284,7 +291,7 @@ fun AddEventScreenContent(
                 )
                 Spacer(modifier = Modifier.smallHeight())
 
-                // • Description
+                // • EVENT DESCRIPTION
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -303,21 +310,26 @@ fun AddEventScreenContent(
                         )
                     }
 
-                    if (state.isEditMode) {
-                        Icon(
-                            imageVector = Icons.Filled.ChevronRight,
-                            tint = MaterialTheme.colors.onSurface,
-                            contentDescription = "Edit Event Title",
-                            modifier = Modifier
-                                .size(28.dp)
-                                .weight(.1f)
-                                .align(Alignment.CenterVertically)
-                                .offset(0.dp, 0.dp)
-                                .clickable {
-                                    // todo
+                    Icon(
+                        imageVector = Icons.Filled.ChevronRight,
+                        tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
+                        contentDescription = "Edit Event Title",
+                        modifier = Modifier
+                            .size(28.dp, 28.dp)
+                            .weight(.1f)
+                            .align(Alignment.CenterVertically)
+                            .clickable {
+                                if (isEditable) {
+                                    onAction(
+                                        SetEditMode(
+                                            EditMode.DescriptionText(
+                                                state.event?.description ?: "",
+                                            )
+                                        )
+                                    )
                                 }
-                        )
-                    }
+                            }
+                    )
                 }
                 Spacer(modifier = Modifier.smallHeight())
             }
@@ -422,7 +434,7 @@ fun AddEventScreenContent(
             Spacer(modifier = Modifier.smallHeight())
 
 
-            // • Event Times & Dates (from, to, remind at)
+            // • EVENT TIMES & DATES (FROM, TO, REMIND AT)
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -436,152 +448,210 @@ fun AddEventScreenContent(
                 )
                 Spacer(modifier = Modifier.smallHeight())
 
-                // • FROM time / date
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colors.surface)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = DP.medium, end = DP.medium)
-                    ) {
-                        Text(
-                            "From",
-                            color = MaterialTheme.colors.onSurface,
-                            textAlign = TextAlign.Start,
-                            modifier = Modifier
-                                .weight(.5f)
-                        )
-                        Text(
-                            state.event?.from?.toTime12Hour() ?: "not set",
-                            color = MaterialTheme.colors.onSurface,
-                            textAlign = TextAlign.End,
-                            modifier = Modifier
-                                .weight(1f)
-                        )
-                    }
-                    Icon(
-                        imageVector = Icons.Filled.ChevronRight,
-                        tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
-                        contentDescription = "Edit Event From Time",
-                        modifier = Modifier
-                            .weight(.2f)
-                            .width(32.dp)
-                            .height(26.dp)
-                            .align(Alignment.CenterVertically)
-                            .clickable {
-                                // todo
-                            }
-                    )
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = DP.medium, end = DP.tiny)
-                    ) {
-                        Text(
-                            state.event?.from?.toShortMonthDayYear() ?: "not set",
-                            color = MaterialTheme.colors.onSurface,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .weight(.8f)
-                        )
-                        Icon(
-                            imageVector = Icons.Filled.ChevronRight,
-                            tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
-                            contentDescription = "Edit Event From Date",
-                            modifier = Modifier
-                                .weight(.2f)
-                                .width(32.dp)
-                                .height(26.dp)
-                                .align(Alignment.CenterVertically)
-                                .clickable {
-                                    // todo
-                                }
-                        )
-                    }
-                }
+                // • FROM TIME / DATE
+                TimeDateRow(
+                    title = "From",
+                    date = state.event?.from ?: ZonedDateTime.now(),
+                    isEditable = isEditable,
+                    onAction = onAction
+                )
+
                 Spacer(modifier = Modifier.smallHeight())
                 Divider(
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.smallHeight())
 
-
-                // • TO time / date
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colors.surface)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = DP.medium, end = DP.medium)
-                    ) {
-                        Text(
-                            "To",
-                            color = MaterialTheme.colors.onSurface,
-                            textAlign = TextAlign.Start,
-                            modifier = Modifier
-                                .weight(.5f)
-                        )
-                        Text(
-                            state.event?.to?.toTime12Hour() ?: "not set",
-                            color = MaterialTheme.colors.onSurface,
-                            textAlign = TextAlign.End,
-                            modifier = Modifier
-                                .weight(1f)
-                        )
-                    }
-
-                    Icon(
-                        imageVector = Icons.Filled.ChevronRight,
-                        tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
-                        contentDescription = "Edit Event To Time",
-                        modifier = Modifier
-                            .weight(.2f)
-                            .width(32.dp)
-                            .height(26.dp)
-                            .align(Alignment.CenterVertically)
-                            .clickable {
-                                // todo
-                            }
-                    )
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = DP.medium, end = DP.tiny)
-                    ) {
-                        Text(
-                            state.event?.to?.toShortMonthDayYear() ?: "not set",
-                            color = MaterialTheme.colors.onSurface,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .weight(.8f)
-                        )
-                        Icon(
-                            imageVector = Icons.Filled.ChevronRight,
-                            tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
-                            contentDescription = "Edit TO Date",
-                            modifier = Modifier
-                                .weight(.2f)
-                                .width(32.dp)
-                                .height(26.dp)
-                                .align(Alignment.CenterVertically)
-                                .clickable {
-                                    // todo
-                                }
-                        )
-                    }
-                }
+                // • TO TIME / DATE
+                TimeDateRow(
+                    title = "To",
+                    date = state.event?.to ?: ZonedDateTime.now(),
+                    isEditable = isEditable,
+                    onAction = onAction
+                )
+//                Row(
+//                    horizontalArrangement = Arrangement.SpaceEvenly,
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .background(MaterialTheme.colors.surface)
+//                ) {
+//                    Row(
+//                        horizontalArrangement = Arrangement.SpaceBetween,
+//                        modifier = Modifier
+//                            .weight(1f)
+//                            .padding(start = DP.medium, end = DP.medium)
+//                            .align(Alignment.CenterVertically)
+//                    ) {
+//                        Text(
+//                            "From",
+//                            color = MaterialTheme.colors.onSurface,
+//                            textAlign = TextAlign.Start,
+//                            modifier = Modifier
+//                                .weight(.5f)
+//                                .align(Alignment.CenterVertically)
+//                        )
+//                        Text(
+//                            state.event?.from?.toTime12Hour() ?: "not set",
+//                            color = MaterialTheme.colors.onSurface,
+//                            textAlign = TextAlign.End,
+//                            modifier = Modifier
+//                                .weight(1f)
+//                                .align(Alignment.CenterVertically)
+//                        )
+//                    }
+//                    Icon(
+//                        imageVector = Icons.Filled.ChevronRight,
+//                        tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
+//                        contentDescription = "Edit Event From Time",
+//                        modifier = Modifier
+//                            .weight(.2f)
+//                            .width(32.dp)
+//                            .height(26.dp)
+//                            .align(Alignment.CenterVertically)
+//                            .clickable {
+//                                if(isEditable) {
+//                                    onAction(
+//                                        SetEditMode(
+//                                            EditMode.FromTime(
+//                                                state.event?.from ?: ZonedDateTime.now()
+//                                            )
+//                                        )
+//                                    )
+//                                }
+//                            }
+//                    )
+//                    Row(
+//                        horizontalArrangement = Arrangement.SpaceBetween,
+//                        modifier = Modifier
+//                            .weight(1f)
+//                            .padding(start = DP.medium, end = DP.tiny)
+//                            .align(Alignment.CenterVertically)
+//                    ) {
+//                        Text(
+//                            state.event?.from?.toShortMonthDayYear() ?: "not set",
+//                            color = MaterialTheme.colors.onSurface,
+//                            textAlign = TextAlign.Center,
+//                            modifier = Modifier
+//                                .weight(.8f)
+//                                .align(Alignment.CenterVertically)
+//                        )
+//                        Icon(
+//                            imageVector = Icons.Filled.ChevronRight,
+//                            tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
+//                            contentDescription = "Edit Event From Date",
+//                            modifier = Modifier
+//                                .weight(.2f)
+//                                .width(32.dp)
+//                                .height(26.dp)
+//                                .align(Alignment.CenterVertically)
+//                                .clickable {
+//                                    if(isEditable) {
+//                                        onAction(
+//                                            SetEditMode(
+//                                                EditMode.FromDate(
+//                                                    state.event?.from ?: ZonedDateTime.now()
+//                                                )
+//                                            )
+//                                        )
+//                                    }
+//                                }
+//                        )
+//                    }
+//                }
+//
+//
+//                // • TO TIME / DATE
+//                Row(
+//                    horizontalArrangement = Arrangement.SpaceEvenly,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .background(MaterialTheme.colors.surface)
+//                ) {
+//                    Row(
+//                        horizontalArrangement = Arrangement.SpaceBetween,
+//                        modifier = Modifier
+//                            .weight(1f)
+//                            .padding(start = DP.medium, end = DP.medium)
+//                            .align(Alignment.CenterVertically)
+//                    ) {
+//                        Text(
+//                            "To",
+//                            color = MaterialTheme.colors.onSurface,
+//                            textAlign = TextAlign.Start,
+//                            modifier = Modifier
+//                                .weight(.5f)
+//                                .align(Alignment.CenterVertically)
+//                        )
+//                        Text(
+//                            state.event?.to?.toTime12Hour() ?: "not set",
+//                            color = MaterialTheme.colors.onSurface,
+//                            textAlign = TextAlign.End,
+//                            modifier = Modifier
+//                                .weight(1f)
+//                                .align(Alignment.CenterVertically)
+//                        )
+//                    }
+//
+//                    Icon(
+//                        imageVector = Icons.Filled.ChevronRight,
+//                        tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
+//                        contentDescription = "Edit Event To Time",
+//                        modifier = Modifier
+//                            .weight(.2f)
+//                            .width(32.dp)
+//                            .height(26.dp)
+//                            .align(Alignment.CenterVertically)
+//                            .clickable {
+//                                if (isEditable) {
+//                                    onAction(
+//                                        SetEditMode(
+//                                            EditMode.ToTime(
+//                                                state.event?.to ?: ZonedDateTime.now()
+//                                            )
+//                                        )
+//                                    )
+//                                }
+//                            }
+//                    )
+//                    Row(
+//                        horizontalArrangement = Arrangement.SpaceBetween,
+//                        modifier = Modifier
+//                            .weight(1f)
+//                            .padding(start = DP.medium, end = DP.tiny)
+//                            .align(Alignment.CenterVertically)
+//                    ) {
+//                        Text(
+//                            state.event?.to?.toShortMonthDayYear() ?: "not set",
+//                            color = MaterialTheme.colors.onSurface,
+//                            textAlign = TextAlign.Center,
+//                            modifier = Modifier
+//                                .weight(.8f)
+//                                .align(Alignment.CenterVertically)
+//                        )
+//                        Icon(
+//                            imageVector = Icons.Filled.ChevronRight,
+//                            tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
+//                            contentDescription = "Edit TO Date",
+//                            modifier = Modifier
+//                                .weight(.2f)
+//                                .width(32.dp)
+//                                .height(26.dp)
+//                                .align(Alignment.CenterVertically)
+//                                .clickable {
+//                                    if (isEditable) {
+//                                        onAction(
+//                                            SetEditMode(
+//                                                EditMode.ToDate(
+//                                                    state.event?.to ?: ZonedDateTime.now()
+//                                                )
+//                                            )
+//                                        )
+//                                    }
+//                                }
+//                        )
+//                    }
+//                }
                 Spacer(modifier = Modifier.smallHeight())
                 Divider(
                     modifier = Modifier.fillMaxWidth()
@@ -595,7 +665,7 @@ fun AddEventScreenContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.surface)
-                        //.padding(start = DP.small)
+                    //.padding(start = DP.small)
                 ) {
 
                     Row(
@@ -636,7 +706,7 @@ fun AddEventScreenContent(
 
                         Icon(
                             imageVector = Icons.Filled.ChevronRight,
-                            tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
+                            tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
                             contentDescription = "Edit Remind At DateTime",
                             modifier = Modifier
                                 .weight(.1125f)
@@ -644,7 +714,15 @@ fun AddEventScreenContent(
                                 .height(26.dp)
                                 .align(Alignment.CenterVertically)
                                 .clickable {
-                                    // todo
+                                    if (isEditable) {
+                                        onAction(
+                                            SetEditMode(
+                                                EditMode.RemindAtDateTime(
+                                                    state.event?.remindAt ?: ZonedDateTime.now()
+                                                )
+                                            )
+                                        )
+                                    }
                                 }
                         )
                     }
@@ -669,14 +747,14 @@ fun AddEventScreenContent(
                     // • Add Attendee Button
                     Icon(
                         imageVector = Icons.Outlined.Add,
-                        tint = if(isEditMode) MaterialTheme.colors.onSurface.copy(alpha = .3f) else Color.Transparent,
+                        tint = if (isEditable) MaterialTheme.colors.onSurface.copy(alpha = .3f) else Color.Transparent,
                         contentDescription = "Add Attendee Button",
                         modifier = Modifier
                             .offset(y = (-4).dp)
                             .size(38.dp)
                             .clip(shape = RoundedCornerShape(5.dp))
                             .background(
-                                if(isEditMode)
+                                if (isEditable)
                                     MaterialTheme.colors.onSurface.copy(alpha = .1f)
                                 else
                                     Color.Transparent
@@ -684,7 +762,13 @@ fun AddEventScreenContent(
                             .padding(4.dp)
                             .align(Alignment.CenterVertically)
                             .clickable {
-                                // todo
+                                if (isEditable) {
+                                    onAction(
+                                        SetEditMode(
+                                            EditMode.AddAttendee()
+                                        )
+                                    )
+                                }
                             }
                     )
                 }
@@ -730,7 +814,8 @@ fun AddEventScreenContent(
 
                 // • ATTENDEES - GOING
                 if (attendeeListType == AttendeeListType.ALL
-                    || attendeeListType == AttendeeListType.GOING) {
+                    || attendeeListType == AttendeeListType.GOING
+                ) {
                     AttendeeList(
                         loggedInUserId = state.authInfo?.userId
                             ?: throw IllegalStateException("user not logged in"),
@@ -745,7 +830,8 @@ fun AddEventScreenContent(
 
                 // • ATTENDEES - NOT GOING
                 if (attendeeListType == AttendeeListType.ALL
-                    || attendeeListType == AttendeeListType.NOT_GOING) {
+                    || attendeeListType == AttendeeListType.NOT_GOING
+                ) {
                     AttendeeList(
                         loggedInUserId = state.authInfo?.userId
                             ?: throw IllegalStateException("user not logged in"),
@@ -761,8 +847,8 @@ fun AddEventScreenContent(
 
                 Text(
                     if (state.event?.isUserEventCreator == true) "DELETE EVENT"
-                        else if (state.event?.isGoing == true) "LEAVE EVENT"
-                        else "JOIN EVENT",
+                    else if (state.event?.isGoing == true) "LEAVE EVENT"
+                    else "JOIN EVENT",
                     style = MaterialTheme.typography.h4,
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
                     textAlign = TextAlign.Center,
@@ -772,9 +858,41 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.mediumHeight())
 
             }
-
         }
     }
+
+    state.editMode?.let { editMode ->
+        when (editMode) {
+            is EditMode.TitleText,
+            is EditMode.DescriptionText -> {
+                EditTextModal(
+                    text = (editMode as EditMode.EditModeText).text,
+                    title = editMode.title,
+                    editTextStyle =
+                        if(editMode is EditMode.TitleText)
+                            MaterialTheme.typography.h2
+                        else
+                            MaterialTheme.typography.body1,
+                    onSave = {
+                        onAction(WriteEditModeText(it))
+                    },
+                    onCancel = {
+                        onAction(CancelEditMode)
+                    }
+                )
+            }
+            is EditMode.FromDate -> TODO()
+            is EditMode.FromTime -> TODO()
+            is EditMode.ToDate -> TODO()
+            is EditMode.ToTime -> TODO()
+            is EditMode.RemindAtDateTime -> TODO()
+            is EditMode.Photos -> TODO()
+            is EditMode.AddAttendee -> TODO()
+            is EditMode.Attendees -> TODO()
+        }
+
+    }
+
 }
 
 @Preview(

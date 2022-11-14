@@ -3,16 +3,21 @@ package com.realityexpander.tasky.agenda_feature.presentation.components
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChevronLeft
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
@@ -21,15 +26,25 @@ import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.theme.TaskyGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EditTextModal(
     title: String,
-    initialText: String = "",
+    text: String = "",
     editTextStyle: TextStyle =  MaterialTheme.typography.body1,
-    onTextChange: (String) -> Unit,
-    onSaveClick: () -> Unit,
-    onCancelClick: () -> Unit,
+    onSave: (String) -> Unit,
+    onCancel: () -> Unit,
 ) {
+
+    var editingText by remember { mutableStateOf(text) }
+    val focusRequester = remember { FocusRequester() }
+    val interactionSource = remember { MutableInteractionSource() }
+
+    DisposableEffect(true) {
+        focusRequester.requestFocus()
+
+        onDispose { /* do nothing */ }
+    }
 
     Box(
         modifier = Modifier
@@ -60,7 +75,7 @@ fun EditTextModal(
                     modifier = Modifier
                         .size(32.dp)
                         .align(Alignment.CenterVertically)
-                        .clickable { onCancelClick() }
+                        .clickable { onCancel() }
                 )
 
                 // Title
@@ -81,7 +96,7 @@ fun EditTextModal(
                     textAlign = TextAlign.Start,
                     modifier = Modifier
                         .clickable {
-                            onSaveClick()
+                            onSave(editingText)
                         }
                 )
             }
@@ -90,10 +105,10 @@ fun EditTextModal(
 
             // Text field
             TextField(
-                value = initialText,
+                value = editingText,
                 isError = false,
-                textStyle = editTextStyle,
-                onValueChange = { onTextChange(it) },
+                textStyle = editTextStyle.copy(textDecoration = null),
+                onValueChange = { editingText = it },
                 singleLine = false,
                 maxLines = 20,
                 colors = TextFieldDefaults.textFieldColors(
@@ -101,12 +116,17 @@ fun EditTextModal(
                     textColor = MaterialTheme.colors.onSurface,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
                 ),
-
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = DP.small, bottom = DP.large, start = 0.dp, end = 0.dp)
                     .background(Color.Transparent)
+                    .focusRequester(focusRequester)
+
             )
         }
 
@@ -126,10 +146,9 @@ fun EditTextModalPreview() {
     TaskyTheme {
         EditTextModal(
             title = "EDIT DESCRIPTION",
-            initialText = LoremIpsum(20).values.joinToString { it },
-            onTextChange = {},
-            onSaveClick = {},
-            onCancelClick = {},
+            text = LoremIpsum(20).values.joinToString { it },
+            onSave = {},
+            onCancel = {},
         )
     }
 }
@@ -154,10 +173,9 @@ fun PreviewDarkLargeText() {
     TaskyTheme {
         EditTextModal(
             title = "EDIT TITLE",
-            initialText = LoremIpsum(20).values.joinToString { it },
-            onTextChange = {},
-            onSaveClick = {},
-            onCancelClick = {},
+            text = LoremIpsum(20).values.joinToString { it },
+            onSave = {},
+            onCancel = {},
             editTextStyle = MaterialTheme.typography.h2
         )
     }

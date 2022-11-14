@@ -7,6 +7,7 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
+import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.AddEventEvent.*
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants
 import com.realityexpander.tasky.core.presentation.common.util.UiText
@@ -34,7 +35,7 @@ class AddEventViewModel @Inject constructor(
     private val _addEventState = MutableStateFlow(AddEventState(
         errorMessage = errorMessage,
         isProgressVisible = true,
-        isEditMode = isEditMode
+        isEditable = isEditMode
     ))
     val addEventState = _addEventState.onEach { state ->
         // save state for process death
@@ -139,22 +140,54 @@ class AddEventViewModel @Inject constructor(
     private suspend fun onEvent(event: AddEventEvent) {
 
         when(event) {
-            is AddEventEvent.ShowProgressIndicator -> {
+            is ShowProgressIndicator -> {
                 _addEventState.update {
                     it.copy(isProgressVisible = event.isShowing)
                 }
             }
-            is AddEventEvent.SetIsLoaded -> {
+            is SetIsLoaded -> {
                 _addEventState.update {
                     it.copy(isProgressVisible = event.isLoaded)
                 }
             }
-            is AddEventEvent.SetIsEditMode -> {
+            is SetIsEditable -> {
                 _addEventState.update {
-                    it.copy(isEditMode = event.isEditMode)
+                    it.copy(isEditable = event.isEditable)
                 }
             }
-            is AddEventEvent.Error -> {
+            is SetEditMode -> {
+                _addEventState.update {
+                    it.copy(editMode = event.editMode)
+                }
+            }
+            is CancelEditMode -> {
+                _addEventState.update {
+                    it.copy(editMode = null)
+                }
+            }
+            is WriteEditModeText -> {
+                when(_addEventState.value.editMode) {
+
+                    is EditMode.TitleText -> {
+                        _addEventState.update {
+                            it.copy(
+                                event = it.event?.copy(title = event.text),
+                                editMode = null
+                            )
+                        }
+                    }
+                    is EditMode.DescriptionText -> {
+                        _addEventState.update {
+                            it.copy(
+                                event = it.event?.copy(description = event.text),
+                                editMode = null
+                            )
+                        }
+                    }
+                    else -> throw java.lang.IllegalStateException("Invalid edit mode for WriteEditModeText: ${_addEventState.value.editMode}")
+                }
+            }
+            is Error -> {
                 _addEventState.update {
                     it.copy(
                         errorMessage = if (event.message.isRes)
@@ -163,7 +196,7 @@ class AddEventViewModel @Inject constructor(
                             UiText.Res(R.string.error_unknown, "")
                     )
                 }
-                sendEvent(AddEventEvent.ShowProgressIndicator(false))
+                sendEvent(ShowProgressIndicator(false))
             }
             else -> {}
         }
