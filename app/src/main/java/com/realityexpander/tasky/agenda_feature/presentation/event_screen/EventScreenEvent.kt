@@ -19,7 +19,7 @@ sealed interface EventScreenEvent {
     // • Errors
     data class Error(val message: UiText) : EventScreenEvent
 
-    // • One-time events
+    // • One-time events  // todo setup one-time events
     sealed interface StatefulOneTimeEvent {
 //        object ResetScrollTo                                        : StatefulOneTimeEvent, AddEventEvent
     }

@@ -17,7 +17,7 @@ data class EventScreenState(
     val errorMessage: UiText? = null,
 
     // Stateful One-time events
-//    val scrollToItemId: UuidStr? = null,
+//    val scrollToItemId: UuidStr? = null,  // todo add one-time events
 
     val isEditable: Boolean = false,
 

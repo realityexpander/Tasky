@@ -21,7 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.ramcosta.composedestinations.rememberNavHostEngine
-import com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.AddEventScreen
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreen
 import com.realityexpander.tasky.auth_feature.presentation.splash_screen.MainActivityViewModel
 import com.realityexpander.tasky.core.data.settings.AppSettingsSerializer
 import com.realityexpander.tasky.core.data.settings.saveSettingsInitialized
@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        // Show AddEventScreen
+        // Show AddEventScreen - temporary for UI work
         if (true) {
             setContent {
                 TaskyTheme {
@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = colorResource(id = R.color.tasky_green)
                     ) {
-                        AddEventScreen(EmptyDestinationsNavigator)
+                        EventScreen(EmptyDestinationsNavigator)
                     }
                 }
             }
@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
 
 
         // Main app
-        if (false) {
+        if (false) {  // - temporary for UI work
 
 
             installSplashScreen().apply {

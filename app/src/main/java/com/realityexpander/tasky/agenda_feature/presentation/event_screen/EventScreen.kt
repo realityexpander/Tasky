@@ -253,8 +253,8 @@ fun AddEventScreenContent(
                             contentDescription = "Meeting title marker",
                             modifier = Modifier
                                 .size(26.dp)
-                                .align(Alignment.CenterVertically)
-                                .offset(0.dp, 0.dp)
+                                .offset(0.dp, 8.dp)
+                                .align(Alignment.Top)
                         )
                         Spacer(modifier = Modifier.extraSmallWidth())
                         Text(
