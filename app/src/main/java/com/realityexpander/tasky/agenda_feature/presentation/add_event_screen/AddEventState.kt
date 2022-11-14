@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.presentation.add_event_screen
 
+import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
@@ -27,4 +28,5 @@ data class AddEventState(
     val remindAt: ZonedDateTime = ZonedDateTime.now(),
     val isEventCreator: Boolean = true,
     val isGoing: Boolean = true,
+    val photos: List<PhotoId> = emptyList(),
 )

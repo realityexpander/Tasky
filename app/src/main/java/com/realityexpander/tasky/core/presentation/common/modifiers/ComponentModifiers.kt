@@ -26,7 +26,6 @@ fun Modifier.taskySmallButton(color: Color = Color.White): Modifier =
 fun Modifier.taskyScreenTopCorners(color: Color = Color.White): Modifier =
     clip(shape = TaskyShapes.ScreenTopCorners)
     .background(color = color)
-//    .padding(DP.small)
 
 object DP {
     val nano       = 1.dp

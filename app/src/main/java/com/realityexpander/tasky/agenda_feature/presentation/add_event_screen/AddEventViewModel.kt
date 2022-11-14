@@ -44,6 +44,7 @@ class AddEventViewModel @Inject constructor(
         remindAt = ZonedDateTime.now().minus(30, ChronoUnit.MINUTES),
         isEventCreator = true,
         isGoing = true,
+        photos = emptyList(),
     ))
     val addEventState = _addEventState.onEach { state ->
         // save state for process death

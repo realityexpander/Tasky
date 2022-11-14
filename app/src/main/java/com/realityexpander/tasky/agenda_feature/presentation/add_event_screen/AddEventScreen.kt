@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.*
@@ -334,9 +335,8 @@ fun AddEventScreenContent(
                     .border(0.dp, Color.Transparent)
                     .wrapContentHeight()
             ) {
-                val photos = 1 // for testing only
 
-                if (photos == 1) {
+                if (state.photos.isEmpty()) {
                     // • No Photos
                     Row(
                         horizontalArrangement = Arrangement.Center,
@@ -470,7 +470,7 @@ fun AddEventScreenContent(
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
-                        contentDescription = "Edit Event From DateTime",
+                        contentDescription = "Edit Event From Time",
                         modifier = Modifier
                             .weight(.2f)
                             .width(32.dp)
@@ -496,7 +496,7 @@ fun AddEventScreenContent(
                         Icon(
                             imageVector = Icons.Filled.ChevronRight,
                             tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
-                            contentDescription = "Edit Event From DateTime",
+                            contentDescription = "Edit Event From Date",
                             modifier = Modifier
                                 .weight(.2f)
                                 .width(32.dp)
@@ -547,7 +547,7 @@ fun AddEventScreenContent(
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
-                        contentDescription = "Edit Event From DateTime",
+                        contentDescription = "Edit Event To Time",
                         modifier = Modifier
                             .weight(.2f)
                             .width(32.dp)
@@ -573,7 +573,7 @@ fun AddEventScreenContent(
                         Icon(
                             imageVector = Icons.Filled.ChevronRight,
                             tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
-                            contentDescription = "Edit Event From DateTime",
+                            contentDescription = "Edit TO Date",
                             modifier = Modifier
                                 .weight(.2f)
                                 .width(32.dp)
@@ -616,7 +616,7 @@ fun AddEventScreenContent(
                             Icon(
                                 imageVector = Icons.Outlined.Notifications,
                                 tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                                contentDescription = "Meeting title marker",
+                                contentDescription = "Remind At Button",
                                 modifier = Modifier
                                     .size(34.dp)
                                     .clip(shape = RoundedCornerShape(5.dp))
@@ -639,7 +639,7 @@ fun AddEventScreenContent(
                         Icon(
                             imageVector = Icons.Filled.ChevronRight,
                             tint = if (isEditMode) MaterialTheme.colors.onSurface else Color.Transparent,
-                            contentDescription = "Edit Event From DateTime",
+                            contentDescription = "Edit Remind At DateTime",
                             modifier = Modifier
                                 .weight(.1125f)
                                 .width(32.dp)
@@ -658,13 +658,38 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.largeHeight())
 
 
-                // • Attendees Header (Visitors)
-                Text(
-                    "Visitors",
-                    color = MaterialTheme.colors.onSurface,
-                    style = MaterialTheme.typography.h3,
-                    modifier = Modifier
-                )
+                // • Attendees Header (Visitors & Add Attendee Buton)
+                Row() {
+                    Text(
+                        "Visitors",
+                        color = MaterialTheme.colors.onSurface,
+                        style = MaterialTheme.typography.h3,
+                        modifier = Modifier
+                    )
+                    Spacer(modifier = Modifier.smallWidth())
+
+                    // • Add Attendee Button
+                    Icon(
+                        imageVector = Icons.Outlined.Add,
+                        tint = if(isEditMode) MaterialTheme.colors.onSurface.copy(alpha = .3f) else Color.Transparent,
+                        contentDescription = "Add Attendee Button",
+                        modifier = Modifier
+                            .offset(y = (-4).dp)
+                            .size(38.dp)
+                            .clip(shape = RoundedCornerShape(5.dp))
+                            .background(
+                                if(isEditMode)
+                                    MaterialTheme.colors.onSurface.copy(alpha = .1f)
+                                else
+                                    Color.Transparent
+                            )
+                            .padding(4.dp)
+                            .align(Alignment.CenterVertically)
+                            .clickable {
+                                // todo
+                            }
+                    )
+                }
                 Spacer(modifier = Modifier.largeHeight())
 
 
@@ -717,7 +742,7 @@ fun AddEventScreenContent(
                                 isGoing = true,
                                 fullName = state.username,
                                 remindAt = ZonedDateTime.now(),
-                                email = "jj@demo.com",
+                                email = state.email,
                                 id = state.authInfo.userId,
                                 photo = "https://randomuser.me/api/portraits/men/75.jpg"
                             ),
