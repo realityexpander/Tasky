@@ -48,6 +48,7 @@ class AddEventViewModel @Inject constructor(
                 isProgressVisible = false,
                 username = authRepository.getAuthInfo()?.username ?: "", // todo get this from the previous screen? // put back in
                 authInfo = authRepository.getAuthInfo(), // todo put this back in
+
                 // Dummy event details for UI work // todo use the AgendaItem.Event DS?
                 event = AgendaItem.Event(
                     id = "0001",

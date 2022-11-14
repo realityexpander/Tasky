@@ -728,7 +728,9 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.mediumHeight())
 
 
-                if (attendeeListType == AttendeeListType.ALL || attendeeListType == AttendeeListType.GOING) {
+                // • ATTENDEES - GOING
+                if (attendeeListType == AttendeeListType.ALL
+                    || attendeeListType == AttendeeListType.GOING) {
                     AttendeeList(
                         loggedInUserId = state.authInfo?.userId
                             ?: throw IllegalStateException("user not logged in"),
@@ -741,7 +743,9 @@ fun AddEventScreenContent(
                     Spacer(modifier = Modifier.mediumHeight())
                 }
 
-                if (attendeeListType == AttendeeListType.ALL || attendeeListType == AttendeeListType.NOT_GOING) {
+                // • ATTENDEES - NOT GOING
+                if (attendeeListType == AttendeeListType.ALL
+                    || attendeeListType == AttendeeListType.NOT_GOING) {
                     AttendeeList(
                         loggedInUserId = state.authInfo?.userId
                             ?: throw IllegalStateException("user not logged in"),
@@ -753,13 +757,12 @@ fun AddEventScreenContent(
                     )
                 }
 
-
                 Spacer(modifier = Modifier.largeHeight())
 
                 Text(
                     if (state.event?.isUserEventCreator == true) "DELETE EVENT"
-                    else if (state.event?.isGoing == true) "LEAVE EVENT"
-                    else "JOIN EVENT",
+                        else if (state.event?.isGoing == true) "LEAVE EVENT"
+                        else "JOIN EVENT",
                     style = MaterialTheme.typography.h4,
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
                     textAlign = TextAlign.Center,
@@ -772,7 +775,6 @@ fun AddEventScreenContent(
 
         }
     }
-
 }
 
 @Preview(
