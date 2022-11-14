@@ -71,7 +71,8 @@ class AgendaViewModel @Inject constructor(
             }
         }
 
-        // Collect the last state of agendaItems and save it for fast access.
+        // Collect the last state of agendaItems and save it
+        //   for local access for handling in `onEvent`.
         // Is there a better way to do this? Better with .stateIn?
         viewModelScope.launch {
             agendaState.collect {
