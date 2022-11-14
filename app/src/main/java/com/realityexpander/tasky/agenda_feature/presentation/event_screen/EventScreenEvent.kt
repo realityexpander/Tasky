@@ -33,22 +33,22 @@ sealed interface EventScreenEvent {
 
         // • Payloads that hold data to write for "Save" events
 
-        // For all EditModes that edit text
+        // Payload for all EditModes that edit text
         sealed interface EditModeText {
             val text: String
         }
 
-        // For all EditModes that edit date
+        // Payload for all EditModes that edit date
         sealed interface EditModeDate {
             val date: ZonedDateTime
         }
 
-        // For all EditModes that edit time
+        // Payload for all EditModes that edit time
         sealed interface EditModeTime {
             val time: ZonedDateTime
         }
 
-        // For all EditModes that edit both date and time
+        // Payload for all EditModes that edit both date and time
         sealed interface EditModeDateTime {
             val dateTime: ZonedDateTime
         }
