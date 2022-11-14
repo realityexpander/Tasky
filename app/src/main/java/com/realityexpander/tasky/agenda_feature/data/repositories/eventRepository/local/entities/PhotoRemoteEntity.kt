@@ -1,7 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities
 
-import com.realityexpander.tasky.agenda_feature.util.PhotoId
-import com.realityexpander.tasky.agenda_feature.util.UrlStr
+import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
+import com.realityexpander.tasky.agenda_feature.common.util.UrlStr
     import kotlinx.serialization.Serializable
 
 @Serializable

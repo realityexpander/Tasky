@@ -144,7 +144,7 @@ fun LoginScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colors.onSurface)
-    ) col1@ {
+    ) col1@{
         Spacer(modifier = Modifier.largeHeight())
         Text(
             text = stringResource(R.string.login_title),
@@ -158,97 +158,107 @@ fun LoginScreenContent(
 
         Column(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
+                .verticalScroll(rememberScrollState())
                 .weight(1f)
         ) {
-            Spacer(modifier = Modifier.mediumHeight())
 
-            // • EMAIL
-            EmailField(
-                value = state.email,
-                label = null,
-                isError = state.isInvalidEmail,
-                onValueChange = {
-                    onAction(LoginEvent.UpdateEmail(it))
-                }
-            )
-            AnimatedVisibility(state.isInvalidEmail && state.isInvalidEmailMessageVisible) {
-                Text(text = stringResource(R.string.error_invalid_email), color = Color.Red)
-            }
-            Spacer(modifier = Modifier.smallHeight())
-
-            // • PASSWORD
-            PasswordField(
-                value = state.password,
-                label = null,
-                isError = state.isInvalidPassword,
-                onValueChange = {
-                    onAction(LoginEvent.UpdatePassword(it))
-                },
-                isPasswordVisible = state.isPasswordVisible,
-                clickTogglePasswordVisibility = {
-                    onAction(
-                        LoginEvent.SetIsPasswordVisible(!state.isPasswordVisible)
-                    )
-                },
-                imeAction = ImeAction.Done,
-                doneAction = {
-                    performLogin()
-                }
-            )
-            AnimatedVisibility(state.isInvalidPassword && state.isInvalidPasswordMessageVisible) {
-                Text(text = stringResource(R.string.error_invalid_password), color = Color.Red)
-            }
-            Spacer(modifier = Modifier.mediumHeight())
-
-            // • LOGIN BUTTON
-            Button(
-                onClick = {
-                    performLogin()
-                },
+            Column(
                 modifier = Modifier
-                    .taskyWideButton(color = MaterialTheme.colors.primary)
-                    .align(alignment = Alignment.CenterHorizontally),
-                enabled = !state.isLoading,
-            ) {
-                Text(
-                    text = stringResource(R.string.login_button),
-                    fontSize = MaterialTheme.typography.button.fontSize,
+                    .fillMaxWidth()
+                    .padding(start = DP.small, end = DP.small)
+            ) colInnerScroll@{
+
+                Spacer(modifier = Modifier.mediumHeight())
+
+                // • EMAIL
+                EmailField(
+                    value = state.email,
+                    label = null,
+                    isError = state.isInvalidEmail,
+                    onValueChange = {
+                        onAction(LoginEvent.UpdateEmail(it))
+                    }
                 )
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .padding(start = DP.small)
-                            .size(DP.small)
-                            .align(alignment = CenterVertically)
-                    )
+                AnimatedVisibility(state.isInvalidEmail && state.isInvalidEmailMessageVisible) {
+                    Text(text = stringResource(R.string.error_invalid_email), color = Color.Red)
                 }
-            }
-            Spacer(modifier = Modifier.mediumHeight())
+                Spacer(modifier = Modifier.smallHeight())
 
-            // STATUS //////////////////////////////////////////
+                // • PASSWORD
+                PasswordField(
+                    value = state.password,
+                    label = null,
+                    isError = state.isInvalidPassword,
+                    onValueChange = {
+                        onAction(LoginEvent.UpdatePassword(it))
+                    },
+                    isPasswordVisible = state.isPasswordVisible,
+                    clickTogglePasswordVisibility = {
+                        onAction(
+                            LoginEvent.SetIsPasswordVisible(!state.isPasswordVisible)
+                        )
+                    },
+                    imeAction = ImeAction.Done,
+                    doneAction = {
+                        performLogin()
+                    }
+                )
+                AnimatedVisibility(state.isInvalidPassword && state.isInvalidPasswordMessageVisible) {
+                    Text(text = stringResource(R.string.error_invalid_password), color = Color.Red)
+                }
+                Spacer(modifier = Modifier.mediumHeight())
 
-            AnimatedVisibility(state.errorMessage != null) {
-                state.errorMessage?.getOrNull?.let { errorMessage ->
-                    Spacer(modifier = Modifier.extraSmallHeight())
+                // • LOGIN BUTTON
+                Button(
+                    onClick = {
+                        performLogin()
+                    },
+                    modifier = Modifier
+                        .taskyWideButton(color = MaterialTheme.colors.primary)
+                        .align(alignment = Alignment.CenterHorizontally),
+                    enabled = !state.isLoading,
+                ) {
                     Text(
-                        text = errorMessage,
-                        color = Color.Red,
-                        modifier = Modifier
-                            .animateContentSize()
+                        text = stringResource(R.string.login_button),
+                        fontSize = MaterialTheme.typography.button.fontSize,
                     )
-                    Spacer(modifier = Modifier.extraSmallHeight())
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(start = DP.small)
+                                .size(DP.small)
+                                .align(alignment = CenterVertically)
+                        )
+                    }
                 }
-            }
-            AnimatedVisibility(state.statusMessage != null) {
-                state.statusMessage?.getOrNull?.let { message ->
-                    Spacer(modifier = Modifier.extraSmallHeight())
-                    Text(text = message)
-                    Spacer(modifier = Modifier.extraSmallHeight())
+                Spacer(modifier = Modifier.mediumHeight())
+
+                // STATUS //////////////////////////////////////////
+
+                AnimatedVisibility(state.errorMessage != null) {
+                    state.errorMessage?.getOrNull?.let { errorMessage ->
+                        Spacer(modifier = Modifier.extraSmallHeight())
+                        Text(
+                            text = errorMessage,
+                            color = Color.Red,
+                            modifier = Modifier
+                                .animateContentSize()
+                        )
+                        Spacer(modifier = Modifier.extraSmallHeight())
+                    }
                 }
+                AnimatedVisibility(state.statusMessage != null) {
+                    state.statusMessage?.getOrNull?.let { message ->
+                        Spacer(modifier = Modifier.extraSmallHeight())
+                        Text(text = message)
+                        Spacer(modifier = Modifier.extraSmallHeight())
+                    }
+                }
+
             }
 
+            // • GO TO REGISTER BUTTON
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -266,7 +276,7 @@ fun LoginScreenContent(
                         .background(color = MaterialTheme.colors.surface)
                         .align(alignment = Alignment.BottomCenter)
                 ) {
-                    // • REGISTER TEXT BUTTON
+                    // • GO TO REGISTER TEXT BUTTON
                     Text(
                         text = stringResource(R.string.login_not_a_member_sign_up),
                         style = MaterialTheme.typography.body1,

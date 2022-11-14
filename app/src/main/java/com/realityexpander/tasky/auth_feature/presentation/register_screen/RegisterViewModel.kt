@@ -71,7 +71,23 @@ class RegisterViewModel @Inject constructor(
     private val errorMessage: UiText? =
         savedStateHandle[SAVED_STATE_errorMessage]
 
-    private val _registerState = MutableStateFlow(RegisterState())
+    private val _registerState = MutableStateFlow(
+        RegisterState(
+            username = username,
+            email = email,
+            password = password,
+            confirmPassword = confirmPassword,
+            isInvalidEmail = isInvalidEmail,
+            isInvalidEmailMessageVisible = isInvalidEmailMessageVisible,
+            isInvalidPassword = isInvalidPassword,
+            isInvalidPasswordMessageVisible = isInvalidPasswordMessageVisible,
+            isInvalidConfirmPassword = isInvalidConfirmPassword,
+            isInvalidConfirmPasswordMessageVisible = isInvalidConfirmPasswordMessageVisible,
+            isPasswordsMatch = isPasswordsMatch,
+            authInfo = authInfo,
+            statusMessage = statusMessage,
+            errorMessage = errorMessage,
+    ))
     val registerState = _registerState.onEach { state ->
         // save state for process death
         savedStateHandle[SAVED_STATE_username] =
@@ -113,25 +129,7 @@ class RegisterViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            // restore state after process death or from another screen (e.g. login)
-            _registerState.update {
-                it.copy(
-                    username = username,
-                    email = email,
-                    password = password,
-                    confirmPassword = confirmPassword,
-                    isInvalidEmail = isInvalidEmail,
-                    isInvalidEmailMessageVisible = isInvalidEmailMessageVisible,
-                    isInvalidPassword = isInvalidPassword,
-                    isInvalidPasswordMessageVisible = isInvalidPasswordMessageVisible,
-                    isInvalidConfirmPassword = isInvalidConfirmPassword,
-                    isInvalidConfirmPasswordMessageVisible = isInvalidConfirmPasswordMessageVisible,
-                    isPasswordsMatch = isPasswordsMatch,
-                    authInfo = authInfo,
-                    statusMessage = statusMessage,
-                    errorMessage = errorMessage,
-                )
-            }
+            // restore state after process death (or coming from another screen)
 
             // Validate email & password when restored from process death or coming from another screen
             if (registerState.value.username.isNotBlank()) sendEvent(RegisterEvent.ValidateUsername)

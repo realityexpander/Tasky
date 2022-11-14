@@ -1,12 +1,12 @@
-package com.realityexpander.tasky.agenda_feature.presentation.add_event_screen
+package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
+import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.Username
-import java.time.ZonedDateTime
 
-data class AddEventState(
+data class EventScreenState(
     val username: Username = "",
     val email: Email = "",
     val authInfo: AuthInfo? = null,
@@ -17,14 +17,12 @@ data class AddEventState(
     val errorMessage: UiText? = null,
 
     // Stateful One-time events
-//    val scrollToItemId: UuidStr? = null,
+//    val scrollToItemId: UuidStr? = null,  // todo add one-time events
 
-    // Event Details
-    val title: String = "",
-    val description: String = "",
-    val fromDateTime: ZonedDateTime = ZonedDateTime.now(),
-    val toDateTime: ZonedDateTime = ZonedDateTime.now(),
-    val remindAt: ZonedDateTime = ZonedDateTime.now(),
-    val isEventCreator: Boolean = true,
-    val isGoing: Boolean = true,
+    val isEditable: Boolean = false,
+
+    val editMode: EventScreenEvent.EditMode? = null,
+
+    // Event to view or edit
+    val event: AgendaItem.Event? = null,
 )

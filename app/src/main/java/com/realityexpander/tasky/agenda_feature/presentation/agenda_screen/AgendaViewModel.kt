@@ -36,28 +36,32 @@ class AgendaViewModel @Inject constructor(
     private val selectedDayIndex: Int? =
         savedStateHandle[SAVED_STATE_selectedDayIndex]
 
-    private val _agendaState = MutableStateFlow(AgendaState())
+    private val _agendaState = MutableStateFlow(
+        AgendaState(
+            errorMessage = errorMessage,
+            selectedDayIndex = selectedDayIndex,
+    ))
     val agendaState = _agendaState.onEach { state ->
         // save state for process death
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
         savedStateHandle[SAVED_STATE_selectedDayIndex] = state.selectedDayIndex
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AgendaState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),
+        AgendaState())
 
     private var lastAgendaItems = emptyList<AgendaItem>()
 
     init {
         viewModelScope.launch {
+
             // restore state after process death
             _agendaState.update {
                 it.copy(
-                    username = authRepository.getAuthInfo()?.username ?: "",
                     isLoaded = true, // only after init occurs
-                    errorMessage = errorMessage,
+                    username = authRepository.getAuthInfo()?.username ?: "",
                     authInfo = authRepository.getAuthInfo(),
                     agendaItems = agendaRepository.getAgendaForDayFlow(
                         getDateForSelectedDayIndex(_agendaState.value.selectedDayIndex)
                     ),
-                    selectedDayIndex = selectedDayIndex
                 )
             }
 
@@ -67,7 +71,8 @@ class AgendaViewModel @Inject constructor(
             }
         }
 
-        // Collect the last state of agendaItems and save it for fast access.
+        // Collect the last state of agendaItems and save it
+        //   for local access for handling in `onEvent`.
         // Is there a better way to do this? Better with .stateIn?
         viewModelScope.launch {
             agendaState.collect {

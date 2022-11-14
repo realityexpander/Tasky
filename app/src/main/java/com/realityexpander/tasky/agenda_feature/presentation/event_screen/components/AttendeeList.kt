@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.agenda_feature.presentation.add_event_screen.components
+package com.realityexpander.tasky.agenda_feature.presentation.event_screen.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -65,7 +65,7 @@ fun AttendeeList(
                         username = attendee.fullName,
                         color = MaterialTheme.colors.surface,
                         circleBackgroundColor = MaterialTheme.colors.onSurface.copy(
-                            alpha = .7f
+                            alpha = .25f
                         ),
                         modifier = Modifier
                             .alignByBaseline()

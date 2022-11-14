@@ -11,5 +11,6 @@ val TaskyPurple = Color(0xFF8E97FD)
 val TaskyLightBlue = Color(0xFFB7C6DE)
 val TaskyLightGreen = Color(0xFFCAEF45)
 val TaskyGray = Color(0xFFF2F3F7)
+val TaskyGreen = Color(0xFF279F70)
 
 val DaySelected = Color(0xFFFDEFA8)

@@ -25,4 +25,7 @@ object SavedStateConstants {
     const val SAVED_STATE_agendaItemIdForMenu                    = "agendaItemIdForMenu"
     const val SAVED_STATE_agendaItems                            = "agendaItems"
     const val SAVED_STATE_selectedDayIndex                       = "selectedDayIndex"
+
+    // Add Event screen
+    const val SAVED_STATE_isEditMode                             = "isEditMode"
 }

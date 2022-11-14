@@ -1,7 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.domain
 
 import android.os.Parcelable
-import com.realityexpander.tasky.agenda_feature.util.PhotoId
+import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
 import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.parcelize.Parcelize
@@ -21,8 +21,8 @@ abstract class AgendaItem {
         val to: ZonedDateTime,
 
         val host: UserId? = null,
-        val isUserEventCreator: Boolean? = null,
-        val isGoing: Boolean? = null,
+        val isUserEventCreator: Boolean? = null,    // todo does this need to be null or false?
+        val isGoing: Boolean? = null,               // todo does this need to be null or false?
 
         val attendees: List<Attendee> = emptyList(),
 

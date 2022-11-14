@@ -87,7 +87,7 @@ object AppModule {
                 // Check for a valid AuthToken in the IAuthApi Companion object.
                 //   If not valid, attempt to get it from the AuthDao.
                 //   If valid, set it in the IAuthApi Companion object, for faster access.
-                if(IAuthApi.authToken == null) {
+                IAuthApi.authToken ?: run {
                     val authToken = authDao.getAuthToken() // could take a while.
                     if(authToken != null) {
                         IAuthApi.authToken = authToken
@@ -95,9 +95,9 @@ object AppModule {
                 }
 
                 // If AuthToken is valid, add it to the request.
-                if(IAuthApi.authToken != null) {
+                IAuthApi.authToken?.let { authToken ->
                     requestBuilder
-                        .addHeader("Authorization", createAuthorizationHeader(IAuthApi.authToken!!))
+                        .addHeader("Authorization", createAuthorizationHeader(authToken))
                 }
 
                 val request = requestBuilder

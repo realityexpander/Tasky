@@ -4,7 +4,7 @@ import com.realityexpander.tasky.BuildConfig
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaDayDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaSyncDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
-import com.realityexpander.tasky.agenda_feature.util.TimeZoneStr
+import com.realityexpander.tasky.agenda_feature.common.util.TimeZoneStr
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.ApiCredentialsDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
