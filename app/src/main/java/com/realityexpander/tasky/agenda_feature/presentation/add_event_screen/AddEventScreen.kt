@@ -658,7 +658,7 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.largeHeight())
 
 
-                // • Attendees Header (Visitors & Add Attendee Buton)
+                // • Attendees Header (Visitors & Add Attendee Button)
                 Row() {
                     Text(
                         "Visitors",
