@@ -647,10 +647,11 @@ fun AddEventScreenContent(
         when (editMode) {
             is EditMode.TitleText,
             is EditMode.DescriptionText -> {
-                editMode as EditMode.EditText
+                editMode as EditMode.EditTextPayload
+
                 EditTextModal(
                     text = editMode.text,
-                    title = editMode.title,
+                    title = editMode.dialogTitle,
                     editTextStyle =
                     if (editMode is EditMode.TitleText)
                         MaterialTheme.typography.h2  // cant access from non-compose function, make a wrapper?
@@ -666,11 +667,11 @@ fun AddEventScreenContent(
             }
             is EditMode.FromDate,
             is EditMode.ToDate -> {
-                editMode as EditMode.EditDateTime
+                editMode as EditMode.EditDateTimePayload
                 var pickedDate by remember { mutableStateOf(LocalDateTime.now()) }
                 val dateDialogState = rememberMaterialDialogState()
-                dateDialogState.show()
 
+                dateDialogState.show()
                 MaterialDialog(
                     dialogState = dateDialogState,
                     buttons = {
@@ -685,7 +686,7 @@ fun AddEventScreenContent(
                 ) {
                     datepicker(
                         initialDate = editMode.dateTime.toLocalDate(),
-                        title = editMode.title,
+                        title = editMode.dialogTitle,
                     ) {
                         pickedDate = it.atTime(editMode.dateTime.toLocalTime())
                     }
@@ -693,11 +694,11 @@ fun AddEventScreenContent(
             }
             is EditMode.FromTime,
             is EditMode.ToTime -> {
-                editMode as EditMode.EditDateTime
+                editMode as EditMode.EditDateTimePayload
                 var pickedTime by remember { mutableStateOf(LocalDateTime.now()) }
                 val dateDialogState = rememberMaterialDialogState()
-                dateDialogState.show()
 
+                dateDialogState.show()
                 MaterialDialog(
                     dialogState = dateDialogState,
                     buttons = {
@@ -712,7 +713,7 @@ fun AddEventScreenContent(
                 ) {
                     timepicker(
                         initialTime = editMode.dateTime.toLocalTime(),
-                        title = editMode.title,
+                        title = editMode.dialogTitle,
                     ) {
                         pickedTime = it.atDate(editMode.dateTime.toLocalDate())
                     }

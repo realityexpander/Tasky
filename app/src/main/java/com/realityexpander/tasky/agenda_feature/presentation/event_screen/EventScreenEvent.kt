@@ -1,6 +1,5 @@
 package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
-import android.widget.EditText
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.core.presentation.common.util.UiText
@@ -27,65 +26,64 @@ sealed interface EventScreenEvent {
 
     sealed interface EditMode {
 
-        // • (1) WHICH item is being edited? (sets initial/default value, sets up the dialog display string)
-        abstract val title: String
+        abstract val dialogTitle: String
 
+        // • (1) WHICH item is being edited?
+        // - sets initial/default value, sets up the dialog display string)
         data class TitleText(
             override val text: String = "",
-            override val title: String = "EDIT TITLE",
-        ) : EditMode, EditText
+            override val dialogTitle: String = "EDIT TITLE",
+        ) : EditMode, EditTextPayload
 
         data class DescriptionText(
             override val text: String = "",
-            override val title: String = "EDIT DESCRIPTION",
-        ) : EditMode, EditText
+            override val dialogTitle: String = "EDIT DESCRIPTION",
+        ) : EditMode, EditTextPayload
 
         data class FromDate(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "SET FROM DATE",
-        ) : EditMode, EditDateTime
+            override val dialogTitle: String = "SET FROM DATE",
+        ) : EditMode, EditDateTimePayload
         data class FromTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "SET FROM TIME",
-        ) : EditMode, EditDateTime
+            override val dialogTitle: String = "SET FROM TIME",
+        ) : EditMode, EditDateTimePayload
 
         data class ToDate(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "SET TO DATE",
-        ) : EditMode, EditDateTime
+            override val dialogTitle: String = "SET TO DATE",
+        ) : EditMode, EditDateTimePayload
         data class ToTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "SET TO TIME",
-        ) : EditMode, EditDateTime
+            override val dialogTitle: String = "SET TO TIME",
+        ) : EditMode, EditDateTimePayload
 
         data class RemindAtDateTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "SET REMIND AT TIME",
-        ) : EditMode, EditDateTime
+            override val dialogTitle: String = "SET REMIND AT TIME",
+        ) : EditMode, EditDateTimePayload
 
         data class AddPhoto(
-            override val title: String = "ADD PHOTO",
+            override val dialogTitle: String = "ADD PHOTO",
         ) : EditMode
         data class ConfirmDeletePhoto(
-            override val title: String = "CONFIRM DELETE PHOTO",
+            override val dialogTitle: String = "CONFIRM DELETE PHOTO",
         ) : EditMode
 
         data class AddAttendee(
-            override val title: String = "ADD ATTENDEE",
+            override val dialogTitle: String = "ADD ATTENDEE",
         ) : EditMode
         data class ConfirmDeleteAttendee(
             val attendee: Attendee,
-            override val title: String = "CONFIRM DELETE ATTENDEE",
+            override val dialogTitle: String = "CONFIRM DELETE ATTENDEE",
         ) : EditMode
 
 
         // • (2) WHAT is being edited? (Text, DateTime, Photo, Attendee)
-        // Payload for all EditModes that edit text
-        sealed interface EditText {
+        sealed interface EditTextPayload {
             val text: String
         }
-        // Payload for all EditModes that edit date or time or both
-        sealed interface EditDateTime {
+        sealed interface EditDateTimePayload {
             val dateTime: ZonedDateTime
         }
 
