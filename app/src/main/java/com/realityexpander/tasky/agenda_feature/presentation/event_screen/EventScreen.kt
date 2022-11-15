@@ -60,7 +60,7 @@ fun EventScreen(
     viewModel: EventViewModel = hiltViewModel(),
 ) {
 
-    val state by viewModel.eventScreenState.collectAsState()
+    val state by viewModel.state.collectAsState()
 
     if (state.isLoaded) {
         AddEventScreenContent(
