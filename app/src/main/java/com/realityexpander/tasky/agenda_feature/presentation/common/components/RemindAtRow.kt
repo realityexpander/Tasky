@@ -72,7 +72,7 @@ fun ColumnScope.RemindAtRow(
                 )
                 Spacer(modifier = Modifier.smallWidth())
                 Text(
-                    fromDateTime.toTimeDifferenceHumanReadable(remindAtDateTime)
+                    fromDateTime.toTimeDifferenceHumanReadable(remindAtDateTime).res
                         ?: "not set",
                     color = MaterialTheme.colors.onSurface,
                     textAlign = TextAlign.Start,

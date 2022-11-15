@@ -245,6 +245,22 @@ open class UiText : Parcelable {
         }
     }
 
+    // Useful for plain kotlin classes that don't have access to @Composable functions.
+    // Returns the string "null" if UiText is `None` or `Str` is null value.
+    // (good for testing)
+    fun asStrOrNull(): String? {
+        return when(this) {
+            is None -> null
+            is Str -> value
+            is Res -> null
+            is StrOrRes -> value
+            is ResOrStr -> value
+            else -> {
+                throw Exception("Invalid UiText type: ${this::class.java.simpleName}")
+            }
+        }
+    }
+
     // Useful for debugging (displayed in the debugger)
     override fun toString(): String {
         return when(this) {

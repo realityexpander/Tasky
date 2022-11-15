@@ -64,6 +64,16 @@
     <string name="error_invalid_username">Invalid username, must be 4–50 characters.</string>
     <string name="error_invalid_user_name">Invalid user name,</string>
 
+    <!-- ZonedDateTimeToString.kt -->
+    <string name="zonedDateTimeToString_same_time">Same time</string>
+    <string name="zonedDateTimeToString_number_day_string">%d day %s</string>
+    <string name="zonedDateTimeToString_number_days_string">%d days %s</string>
+    <string name="zonedDateTimeToString_number_hour_string">%d hour %s</string>
+    <string name="zonedDateTimeToString_number_hours_string">%d hours %s</string>
+    <string name="zonedDateTimeToString_number_minute_string">%d minute %s</string>
+    <string name="zonedDateTimeToString_number_minutes_string">%d minutes %s</string>
+    <string name="zonedDateTimeToString_number_second_string">%d second %s</string>
+    <string name="zonedDateTimeToString_number_seconds_string">%d seconds %s</string>
 
     <!--    Splash screen -->
     <string name="splash_logged_in">Logged in!</string>
