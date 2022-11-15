@@ -53,7 +53,7 @@ class EventViewModel @Inject constructor(
                 username = authRepository.getAuthInfo()?.username ?: "", // todo get this from the previous screen? // put back in
                 authInfo = authRepository.getAuthInfo(), // todo put this back in
 
-                // Dummy event details for UI work // todo use the AgendaItem.Event DS?
+                // Dummy event details for UI work // todo remove soon
                 event = AgendaItem.Event(
                     id = "0001",
                     title = "Title of Event",
