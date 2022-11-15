@@ -637,90 +637,93 @@ fun AddEventScreenContent(
 
             }
 
-            // • EDITORS FOR EVENT PROPERTIES
-            state.editMode?.let { editMode ->
-                when (editMode) {
-                    is EditMode.TitleText,
-                    is EditMode.DescriptionText -> {
-                        editMode as EditMode.EditText
-                        EditTextModal(
-                            text = editMode.text,
-                            title = editMode.title,
-                            editTextStyle =
-                            if (editMode is EditMode.TitleText)
-                                MaterialTheme.typography.h2  // cant access from non-compose function, make a wrapper?
-                            else
-                                MaterialTheme.typography.body1, // cant access from non-compose function, make a wrapper?
-                            onSave = {
-                                onAction(EditMode.SaveText(it))
-                            },
-                            onCancel = {
-                                onAction(CancelEditMode)
-                            }
-                        )
-                    }
-                    is EditMode.FromDate,
-                    is EditMode.ToDate -> {
-                        editMode as EditMode.EditDateTime
-                        var pickedDate by remember { mutableStateOf(LocalDateTime.now()) }
-                        val dateDialogState = rememberMaterialDialogState()
-                        dateDialogState.show()
 
-                        MaterialDialog(
-                            dialogState = dateDialogState,
-                            buttons = {
-                                positiveButton(text = stringResource(R.string.ok)) {
-                                    onAction(EditMode.SaveDateTime(pickedDate?.toZonedDateTime()!!))
-                                }
-                                negativeButton(text = stringResource(R.string.cancel)) {
-                                    dateDialogState.hide()
-                                    onAction(CancelEditMode)
-                                }
-                            }
-                        ) {
-                            datepicker(
-                                initialDate = editMode.dateTime.toLocalDate(),
-                                title = editMode.title,
-                            ) {
-                                pickedDate = it.atTime(editMode.dateTime.toLocalTime())
-                            }
+        }
+
+    }
+
+    // • EDITORS FOR EVENT PROPERTIES
+    state.editMode?.let { editMode ->
+        when (editMode) {
+            is EditMode.TitleText,
+            is EditMode.DescriptionText -> {
+                editMode as EditMode.EditText
+                EditTextModal(
+                    text = editMode.text,
+                    title = editMode.title,
+                    editTextStyle =
+                    if (editMode is EditMode.TitleText)
+                        MaterialTheme.typography.h2  // cant access from non-compose function, make a wrapper?
+                    else
+                        MaterialTheme.typography.body1, // cant access from non-compose function, make a wrapper?
+                    onSave = {
+                        onAction(EditMode.SaveText(it))
+                    },
+                    onCancel = {
+                        onAction(CancelEditMode)
+                    }
+                )
+            }
+            is EditMode.FromDate,
+            is EditMode.ToDate -> {
+                editMode as EditMode.EditDateTime
+                var pickedDate by remember { mutableStateOf(LocalDateTime.now()) }
+                val dateDialogState = rememberMaterialDialogState()
+                dateDialogState.show()
+
+                MaterialDialog(
+                    dialogState = dateDialogState,
+                    buttons = {
+                        positiveButton(text = stringResource(R.string.ok)) {
+                            onAction(EditMode.SaveDateTime(pickedDate?.toZonedDateTime()!!))
+                        }
+                        negativeButton(text = stringResource(R.string.cancel)) {
+                            dateDialogState.hide()
+                            onAction(CancelEditMode)
                         }
                     }
-                    is EditMode.FromTime,
-                    is EditMode.ToTime -> {
-                        editMode as EditMode.EditDateTime
-                        var pickedTime by remember { mutableStateOf(LocalDateTime.now()) }
-                        val dateDialogState = rememberMaterialDialogState()
-                        dateDialogState.show()
-
-                        MaterialDialog(
-                            dialogState = dateDialogState,
-                            buttons = {
-                                positiveButton(text = stringResource(R.string.ok)) {
-                                    onAction(EditMode.SaveDateTime(pickedTime?.toZonedDateTime()!!))
-                                }
-                                negativeButton(text = stringResource(R.string.cancel)) {
-                                    dateDialogState.hide()
-                                    onAction(CancelEditMode)
-                                }
-                            }
-                        ) {
-                            timepicker(
-                                initialTime = editMode.dateTime.toLocalTime(),
-                                title = editMode.title,
-                            ) {
-                                pickedTime = it.atDate(editMode.dateTime.toLocalDate())
-                            }
-                        }
+                ) {
+                    datepicker(
+                        initialDate = editMode.dateTime.toLocalDate(),
+                        title = editMode.title,
+                    ) {
+                        pickedDate = it.atTime(editMode.dateTime.toLocalTime())
                     }
-                    is EditMode.RemindAtDateTime -> { /* handled in the RemindAt UI element, this is here to remove compiler warning */
-                    }
-                    is EditMode.AddPhoto -> TODO()
-                    is EditMode.ConfirmDeletePhoto -> TODO()
-                    is EditMode.AddAttendee -> TODO()
-                    is EditMode.ConfirmDeleteAttendee -> TODO()
                 }
             }
+            is EditMode.FromTime,
+            is EditMode.ToTime -> {
+                editMode as EditMode.EditDateTime
+                var pickedTime by remember { mutableStateOf(LocalDateTime.now()) }
+                val dateDialogState = rememberMaterialDialogState()
+                dateDialogState.show()
+
+                MaterialDialog(
+                    dialogState = dateDialogState,
+                    buttons = {
+                        positiveButton(text = stringResource(R.string.ok)) {
+                            onAction(EditMode.SaveDateTime(pickedTime?.toZonedDateTime()!!))
+                        }
+                        negativeButton(text = stringResource(R.string.cancel)) {
+                            dateDialogState.hide()
+                            onAction(CancelEditMode)
+                        }
+                    }
+                ) {
+                    timepicker(
+                        initialTime = editMode.dateTime.toLocalTime(),
+                        title = editMode.title,
+                    ) {
+                        pickedTime = it.atDate(editMode.dateTime.toLocalDate())
+                    }
+                }
+            }
+            is EditMode.RemindAtDateTime -> { /* handled in the RemindAt UI element, this is here to remove compiler warning */
+            }
+            is EditMode.AddPhoto -> TODO()
+            is EditMode.ConfirmDeletePhoto -> TODO()
+            is EditMode.AddAttendee -> TODO()
+            is EditMode.ConfirmDeleteAttendee -> TODO()
         }
     }
 }
