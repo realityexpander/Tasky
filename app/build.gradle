@@ -170,6 +170,10 @@ dependencies {
     // SplashScreen
     implementation "androidx.core:core-splashscreen:1.0.0"
 
+    // Date & time picker dialogs
+    implementation "com.vanpra.compose-material-dialogs:datetime:$compose_material_dialogs_datetime_version"
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.6'
+
     // For testing
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
