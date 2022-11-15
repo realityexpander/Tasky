@@ -237,8 +237,9 @@ class EventViewModel @Inject constructor(
                         _state.update { _state ->
 
                             // Ensure that `remindAt <= from`
-                            if(_state.event?.from!!.isBefore(uiEvent.dateTime)) {
-                                return@update _state.copy(  // early return
+                            if(uiEvent.dateTime.isAfter(_state.event?.from)) {
+                                // make 'from' and 'remindAt' the same
+                                return@update _state.copy(
                                     event = _state.event?.copy(
                                         remindAt = _state.event.from
                                     ),
