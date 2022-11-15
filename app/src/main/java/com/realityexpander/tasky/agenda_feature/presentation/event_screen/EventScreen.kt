@@ -647,7 +647,7 @@ fun AddEventScreenContent(
         when (editMode) {
             is EditMode.TitleText,
             is EditMode.DescriptionText -> {
-                editMode as EditMode.EditTextPayload
+                editMode as EditMode.TextPayload
 
                 EditTextModal(
                     text = editMode.text,
@@ -667,7 +667,7 @@ fun AddEventScreenContent(
             }
             is EditMode.FromDate,
             is EditMode.ToDate -> {
-                editMode as EditMode.EditDateTimePayload
+                editMode as EditMode.DateTimePayload
                 var pickedDate by remember { mutableStateOf(LocalDateTime.now()) }
                 val dateDialogState = rememberMaterialDialogState()
 
@@ -694,7 +694,7 @@ fun AddEventScreenContent(
             }
             is EditMode.FromTime,
             is EditMode.ToTime -> {
-                editMode as EditMode.EditDateTimePayload
+                editMode as EditMode.DateTimePayload
                 var pickedTime by remember { mutableStateOf(LocalDateTime.now()) }
                 val dateDialogState = rememberMaterialDialogState()
 

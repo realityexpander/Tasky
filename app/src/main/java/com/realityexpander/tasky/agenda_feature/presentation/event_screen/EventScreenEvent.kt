@@ -33,35 +33,35 @@ sealed interface EventScreenEvent {
         data class TitleText(
             override val text: String = "",
             override val dialogTitle: String = "EDIT TITLE",
-        ) : EditMode, EditTextPayload
+        ) : EditMode, TextPayload
 
         data class DescriptionText(
             override val text: String = "",
             override val dialogTitle: String = "EDIT DESCRIPTION",
-        ) : EditMode, EditTextPayload
+        ) : EditMode, TextPayload
 
         data class FromDate(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val dialogTitle: String = "SET FROM DATE",
-        ) : EditMode, EditDateTimePayload
+        ) : EditMode, DateTimePayload
         data class FromTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val dialogTitle: String = "SET FROM TIME",
-        ) : EditMode, EditDateTimePayload
+        ) : EditMode, DateTimePayload
 
         data class ToDate(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val dialogTitle: String = "SET TO DATE",
-        ) : EditMode, EditDateTimePayload
+        ) : EditMode, DateTimePayload
         data class ToTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val dialogTitle: String = "SET TO TIME",
-        ) : EditMode, EditDateTimePayload
+        ) : EditMode, DateTimePayload
 
         data class RemindAtDateTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val dialogTitle: String = "SET REMIND AT TIME",
-        ) : EditMode, EditDateTimePayload
+        ) : EditMode, DateTimePayload
 
         data class AddPhoto(
             override val dialogTitle: String = "ADD PHOTO",
@@ -80,10 +80,10 @@ sealed interface EventScreenEvent {
 
 
         // • (2) WHAT is being edited? (Text, DateTime, Photo, Attendee)
-        sealed interface EditTextPayload {
+        sealed interface TextPayload {
             val text: String
         }
-        sealed interface EditDateTimePayload {
+        sealed interface DateTimePayload {
             val dateTime: ZonedDateTime
         }
 
