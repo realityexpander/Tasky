@@ -30,7 +30,7 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 @Composable
 fun EditTextModal(
     title: String,
-    text: String = "",
+    text: String,
     editTextStyle: TextStyle =  MaterialTheme.typography.body1,
     onSave: (String) -> Unit,
     onCancel: () -> Unit,
@@ -40,10 +40,8 @@ fun EditTextModal(
     val focusRequester = remember { FocusRequester() }
     val interactionSource = remember { MutableInteractionSource() }
 
-    DisposableEffect(true) {
+    LaunchedEffect(true) {
         focusRequester.requestFocus()
-
-        onDispose { /* do nothing */ }
     }
 
     Box(
