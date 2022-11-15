@@ -89,8 +89,8 @@ sealed interface EventScreenEvent {
 
 
         // • (3) FINALLY "Save Data" Events - Delivers the edited data payload to the ViewModel
-        data class SaveText(val text: String) : EventScreenEvent
-        data class SaveDateTime(val dateTime: ZonedDateTime) : EventScreenEvent
+        data class SaveText(override val text: String) : EventScreenEvent, TextPayload
+        data class SaveDateTime(override val dateTime: ZonedDateTime) : EventScreenEvent, DateTimePayload
         data class SavePhoto(val photo: Photo) : EventScreenEvent
     }
 }
