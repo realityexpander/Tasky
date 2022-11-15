@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Tasky</string>
 
+    <!-- general -->
+    <string name="ok">OK</string>
+    <string name="cancel">CANCEL</string>
+
     <!--    Login Screen -->
     <string name="login_title">Welcome Back!</string>
     <string name="login_not_a_member_sign_up">DON\'T HAVE AN ACCOUNT? SIGN UP</string>
@@ -60,6 +64,21 @@
     <string name="error_invalid_username">Invalid username, must be 4–50 characters.</string>
     <string name="error_invalid_user_name">Invalid user name,</string>
 
+    <!-- ZonedDateTimeToString.kt -->
+    <string name="zonedDateTimeToString_same_time">Same time</string>
+    <string name="zonedDateTimeToString_number_day_string">%d day %s</string>
+    <string name="zonedDateTimeToString_number_days_string">%d days %s</string>
+    <string name="zonedDateTimeToString_number_hour_string">%d hour %s</string>
+    <string name="zonedDateTimeToString_number_hours_string">%d hours %s</string>
+    <string name="zonedDateTimeToString_number_minute_string">%d minute %s</string>
+    <string name="zonedDateTimeToString_number_minutes_string">%d minutes %s</string>
+    <string name="zonedDateTimeToString_number_second_string">%d second %s</string>
+    <string name="zonedDateTimeToString_number_seconds_string">%d seconds %s</string>
+
+    <!--    Splash screen -->
+    <string name="splash_logged_in">Logged in!</string>
+    <string name="splash_not_logged_in">Not logged in…</string>
+
     <!--    Agenda screen -->
     <string name="agenda_title">Agenda Screen</string>
     <string name="agenda_description">Agenda Screen</string>
@@ -68,8 +87,29 @@
     <string name="agenda_error_unknown">Agenda unknown error - %s</string>
     <string name="agenda_add_agenda_item">Add Agenda Item</string>
 
-    <!--    Splash screen -->
-    <string name="splash_logged_in">Logged in!</string>
-    <string name="splash_not_logged_in">Not logged in…</string>
+    <!--    Event screen -->
+    <string name="event_description_close">Close Add Event</string>
+    <string name="event_description_edit_event">Edit Event</string>
+    <string name="event_description_meeting_title_marker">Meeting title marker</string>
+    <string name="event_description_edit_event_description">Edit Event Description</string>
+    <string name="event_description_add_photo">Add photo</string>
+    <string name="event_description_add_attendee_button">Add Attendee button</string>
+    <string name="event_save">Save</string>
+    <string name="event_event_title">Event</string>
+    <string name="event_no_title_set">No title set</string>
+    <string name="event_edit_event_title">Edit Event Title</string>
+    <string name="event_no_description_set">No description set</string>
+    <string name="event_add_photos">Add photos</string>
+    <string name="event_photos">Photos</string>
+    <string name="event_from">From</string>
+    <string name="event_to">To</string>
+    <string name="event_visitors">Visitors</string>
+    <string name="event_all">All</string>
+    <string name="event_going">Going</string>
+    <string name="event_not_going">Not going</string>
+    <string name="event_delete_event">DELETE EVENT</string>
+    <string name="event_leave_event">LEAVE EVENT</string>
+    <string name="event_join_event">JOIN EVENT</string>
+
 
 </resources>

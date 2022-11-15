@@ -2,6 +2,8 @@ package com.realityexpander.tasky.agenda_feature.util
 
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
+import com.realityexpander.tasky.R
+import com.realityexpander.tasky.core.presentation.common.util.UiText
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -21,10 +23,9 @@ fun ZonedDateTime.toTime12Hour(): String {
     return DateTimeFormatter.ofPattern("h:mm a").format(this)
 }
 
-fun ZonedDateTime.toTimeDifferenceHumanReadable(remindAtTime: ZonedDateTime): String {
-    //val now = ZonedDateTime.of(dateTime.year, dateTime.monthValue, dateTime.dayOfMonth, dateTime.hour, dateTime.minute, dateTime.second, 0, dateTime.zone)
+fun ZonedDateTime.toTimeDifferenceHumanReadable(remindAtTime: ZonedDateTime): UiText {
     val diff = remindAtTime.toEpochSecond() - this.toEpochSecond()
-    if (diff == 0L) return "same time"
+    if (diff == 0L) return UiText.ResOrStr(R.string.zonedDateTimeToString_same_time, "Same time")
 
     val beforeOrAfter = if (diff < 0) "before" else "after"
     val diffAbs = Math.abs(diff)
@@ -34,34 +35,41 @@ fun ZonedDateTime.toTimeDifferenceHumanReadable(remindAtTime: ZonedDateTime): St
     val minutes = (diffAbs % 3600) / 60
     val seconds = diffAbs % 60
 
-
     return when {
         days > 0 -> {
             if (days == 1L) {
-                "1 day $beforeOrAfter"
+                UiText.ResOrStr(R.string.zonedDateTimeToString_number_day_string,
+                    "1 day $beforeOrAfter", days, beforeOrAfter)
             } else {
-                "$days days $beforeOrAfter"
+                UiText.ResOrStr(R.string.zonedDateTimeToString_number_days_string,
+                    "$days days $beforeOrAfter", days, beforeOrAfter)
             }
         }
         hours > 0 -> {
             if (hours == 1L) {
-                "$hours hour $beforeOrAfter"
+                UiText.ResOrStr(R.string.zonedDateTimeToString_number_hour_string,
+                    "1 hour $beforeOrAfter", hours, beforeOrAfter)
             } else {
-                "$hours hours $beforeOrAfter"
+                UiText.ResOrStr(R.string.zonedDateTimeToString_number_hours_string,
+                    "$hours hours $beforeOrAfter", hours, beforeOrAfter)
             }
         }
         minutes > 0 -> {
             if (minutes == 1L) {
-                "$minutes minute $beforeOrAfter"
+                UiText.ResOrStr(R.string.zonedDateTimeToString_number_minute_string,
+                    "1 minute $beforeOrAfter", minutes, beforeOrAfter)
             } else {
-                "$minutes minutes $beforeOrAfter"
+                UiText.ResOrStr(R.string.zonedDateTimeToString_number_minutes_string,
+                    "$minutes minutes $beforeOrAfter", minutes, beforeOrAfter)
             }
         }
         else -> {
             if (seconds == 1L) {
-                "$seconds second $beforeOrAfter"
+                UiText.ResOrStr(R.string.zonedDateTimeToString_number_second_string,
+                    "1 second $beforeOrAfter", seconds, beforeOrAfter)
             } else {
-                "$seconds seconds $beforeOrAfter"
+                UiText.ResOrStr(R.string.zonedDateTimeToString_number_seconds_string,
+                    "$seconds seconds $beforeOrAfter", seconds, beforeOrAfter)
             }
         }
     }
@@ -87,45 +95,44 @@ fun main() {
     println("remindAt.plusHours(1).toTime12Hour() == \"1:00 AM\": ${remindAt.plusHours(1).toTime12Hour() == "1:00 AM"}")
 
 
-    println()
     val date = ZonedDateTime.of(2021, 1, 1, 0, 0, 0, 0, java.time.ZoneId.of("UTC"))
-    println(remindAt.toTimeDifferenceHumanReadable(remindAt.minusMinutes(30)))
 
     println()
-    println("date.toTimeDifferenceHumanReadable(date) == \"same time\": " +
-            "${date.toTimeDifferenceHumanReadable(date) == "same time"}")
+    println("date.toTimeDifferenceHumanReadable(date) == \"Same time\": " +
+    "${date.toTimeDifferenceHumanReadable(date).asStrOrNull() == "Same time"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.minusSeconds(1)) == \"1 second before\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.minusSeconds(1)) == "1 second before"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.minusSeconds(1)).asStrOrNull() == "1 second before"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.minusSeconds(59)) == \"59 seconds before\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.minusSeconds(59)) == "59 seconds before"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.minusSeconds(59)).asStrOrNull() == "59 seconds before"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.minusMinutes(1)) == \"1 minute before\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.minusMinutes(1)) == "1 minute before"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.minusMinutes(1)).asStrOrNull() == "1 minute before"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.minusMinutes(59)) == \"59 minutes before\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.minusMinutes(59)) == "59 minutes before"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.minusMinutes(59)).asStrOrNull() == "59 minutes before"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.minusHours(1)) == \"1 hour before\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.minusHours(1)) == "1 hour before"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.minusHours(1)).asStrOrNull() == "1 hour before"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.minusHours(23)) == \"23 hours before\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.minusHours(23)) == "23 hours before"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.minusHours(23)).asStrOrNull() == "23 hours before"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.minusDays(1)) == \"1 day ago before\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.minusDays(1)) == "1 day before"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.minusDays(1)).asStrOrNull() == "1 day before"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.minusDays(2)) == \"2 days ago before\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.minusDays(2)) == "2 days before"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.minusDays(2)).asStrOrNull() == "2 days before"}")
 
     println()
     println("date.toTimeDifferenceHumanReadable(remindAt.plusSeconds(1)) == \"1 second after\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.plusSeconds(1)) == "1 second after"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.plusSeconds(1)).asStrOrNull() == "1 second after"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.plusSeconds(59)) == \"59 seconds after\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.plusSeconds(59)) == "59 seconds after"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.plusSeconds(59)).asStrOrNull() == "59 seconds after"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.plusMinutes(1)) == \"1 minute after\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.plusMinutes(1)) == "1 minute after"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.plusMinutes(1)).asStrOrNull() == "1 minute after"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.plusMinutes(59)) == \"59 minutes after\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.plusMinutes(59)) == "59 minutes after"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.plusMinutes(59)).asStrOrNull() == "59 minutes after"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.plusHours(1)) == \"1 hour after\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.plusHours(1)) == "1 hour after"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.plusHours(1)).asStrOrNull() == "1 hour after"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.plusHours(23)) == \"23 hours after\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.plusHours(23)) == "23 hours after"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.plusHours(23)).asStrOrNull() == "23 hours after"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.plusDays(1)) == \"1 day after\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.plusDays(1)) == "1 day after"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.plusDays(1)).asStrOrNull() == "1 day after"}")
     println("date.toTimeDifferenceHumanReadable(remindAt.plusDays(2)) == \"2 days after\": " +
-            "${date.toTimeDifferenceHumanReadable(remindAt.plusDays(2)) == "2 days after"}")
+    "${date.toTimeDifferenceHumanReadable(remindAt.plusDays(2)).asStrOrNull() == "2 days after"}")
+
 }

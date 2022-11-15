@@ -43,7 +43,7 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.agenda_feature.presentation.components.AgendaCard
-import com.realityexpander.tasky.agenda_feature.presentation.components.UserAcronymCircle
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.UserAcronymCircle
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.DaySelected

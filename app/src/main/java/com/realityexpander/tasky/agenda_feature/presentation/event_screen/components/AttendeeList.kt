@@ -16,7 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
-import com.realityexpander.tasky.agenda_feature.presentation.components.UserAcronymCircle
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.UserAcronymCircle
 import com.realityexpander.tasky.core.presentation.common.modifiers.smallHeight
 import com.realityexpander.tasky.core.presentation.common.modifiers.smallWidth
 import com.realityexpander.tasky.core.presentation.common.modifiers.xxSmallHeight

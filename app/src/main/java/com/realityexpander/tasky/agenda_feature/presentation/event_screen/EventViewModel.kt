@@ -7,6 +7,8 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.max
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.min
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants
@@ -15,6 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.*
 import javax.inject.Inject
@@ -32,25 +35,25 @@ class EventViewModel @Inject constructor(
     private val isEditMode: Boolean =
         savedStateHandle[SavedStateConstants.SAVED_STATE_isEditMode] ?: false
 
-    private val _eventScreenState = MutableStateFlow(EventScreenState(
+    private val _state = MutableStateFlow(EventScreenState(
         errorMessage = errorMessage,
         isProgressVisible = true,
         isEditable = isEditMode
     ))
-    val eventScreenState = _eventScreenState.onEach { state ->
+    val state = _state.onEach { state ->
         // save state for process death
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage] = state.errorMessage
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventScreenState())
 
     init {
         viewModelScope.launch {
-            _eventScreenState.value = _eventScreenState.value.copy(
+            _state.value = _state.value.copy(
                 isLoaded = true, // only after state is initialized
                 isProgressVisible = false,
                 username = authRepository.getAuthInfo()?.username ?: "", // todo get this from the previous screen? // put back in
                 authInfo = authRepository.getAuthInfo(), // todo put this back in
 
-                // Dummy event details for UI work // todo use the AgendaItem.Event DS?
+                // Dummy event details for UI work // todo remove soon
                 event = AgendaItem.Event(
                     id = "0001",
                     title = "Title of Event",
@@ -137,61 +140,129 @@ class EventViewModel @Inject constructor(
         }
     }
 
-    private suspend fun onEvent(event: EventScreenEvent) {
+    private suspend fun onEvent(uiEvent: EventScreenEvent) {
 
-        when(event) {
+        when(uiEvent) {
             is ShowProgressIndicator -> {
-                _eventScreenState.update {
-                    it.copy(isProgressVisible = event.isShowing)
+                _state.update { _state ->
+                    _state.copy(isProgressVisible = uiEvent.isShowing)
                 }
             }
             is SetIsLoaded -> {
-                _eventScreenState.update {
-                    it.copy(isProgressVisible = event.isLoaded)
+                _state.update { _state ->
+                    _state.copy(isProgressVisible = uiEvent.isLoaded)
                 }
             }
             is SetIsEditable -> {
-                _eventScreenState.update {
-                    it.copy(isEditable = event.isEditable)
+                _state.update { _state ->
+                    _state.copy(isEditable = uiEvent.isEditable)
                 }
             }
             is SetEditMode -> {
-                _eventScreenState.update {
-                    it.copy(editMode = event.editMode)
+                _state.update { _state ->
+                    _state.copy(editMode = uiEvent.editMode)
                 }
             }
             is CancelEditMode -> {
-                _eventScreenState.update {
-                    it.copy(editMode = null)
+                _state.update { _state ->
+                    _state.copy(editMode = null)
                 }
             }
             is EditMode.SaveText -> {
-                when(_eventScreenState.value.editMode) {
+                when(_state.value.editMode) {
 
                     is EditMode.TitleText -> {
-                        _eventScreenState.update {
-                            it.copy(
-                                event = it.event?.copy(title = event.text),
+                        _state.update { _state ->
+                            _state.copy(
+                                event = _state.event?.copy(title = uiEvent.text),
                                 editMode = null
                             )
                         }
                     }
                     is EditMode.DescriptionText -> {
-                        _eventScreenState.update {
-                            it.copy(
-                                event = it.event?.copy(description = event.text),
+                        _state.update { _state ->
+                            _state.copy(
+                                event = _state.event?.copy(description = uiEvent.text),
                                 editMode = null
                             )
                         }
                     }
-                    else -> throw java.lang.IllegalStateException("Invalid type for WriteText: ${_eventScreenState.value.editMode}")
+                    else -> throw java.lang.IllegalStateException("Invalid type for SaveText: ${_state.value.editMode}")
+                }
+            }
+            is EditMode.SaveDateTime -> {
+                when(_state.value.editMode) {
+
+                    is EditMode.FromTime,
+                    is EditMode.FromDate -> {
+                        _state.update { _state ->
+                            val remindAtDuration = Duration.between(_state.event?.remindAt, _state.event?.from)
+
+                            _state.copy(
+                                event = _state.event?.copy(
+                                    from = uiEvent.dateTime,
+
+                                    // Ensure that `to > from`
+                                    to = max(_state.event.to, uiEvent.dateTime),
+
+                                    // Update the `RemindAt dateTime` to keep same offset from the `From` date
+                                    remindAt = uiEvent.dateTime.minus(remindAtDuration)
+                                ),
+                                editMode = null
+                            )
+                        }
+                    }
+                    is EditMode.ToTime,
+                    is EditMode.ToDate -> {
+                        _state.update { _state ->
+
+                            // Ensure that `from < to`
+                            val minFrom = min(_state.event?.from ?: ZonedDateTime.now(), uiEvent.dateTime)
+
+                            val remindAtDuration = Duration.between(_state.event?.remindAt, _state.event?.from)
+
+                            _state.copy(
+                                event = _state.event?.copy(
+                                    to = uiEvent.dateTime,
+                                    from = minFrom,
+
+                                    // Update the `RemindAt dateTime` to keep same offset from the `From` date
+                                    remindAt = minFrom.minus(remindAtDuration)
+                                ),
+                                editMode = null
+                            )
+                        }
+                    }
+                    is EditMode.RemindAtDateTime -> {
+                        _state.update { _state ->
+
+                            // Ensure that `remindAt <= from`
+                            if(uiEvent.dateTime.isAfter(_state.event?.from)) {
+                                // make 'from' and 'remindAt' the same
+                                return@update _state.copy(
+                                    event = _state.event?.copy(
+                                        remindAt = _state.event.from
+                                    ),
+                                    editMode = null
+                                )
+                            }
+
+                            _state.copy(
+                                event = _state.event?.copy(
+                                    remindAt = uiEvent.dateTime
+                                ),
+                                editMode = null
+                            )
+                        }
+                    }
+                    else -> throw java.lang.IllegalStateException("Invalid type for SaveDateTime: ${_state.value.editMode}")
                 }
             }
             is Error -> {
-                _eventScreenState.update {
-                    it.copy(
-                        errorMessage = if (event.message.isRes)
-                            event.message
+                _state.update { _state ->
+                    _state.copy(
+                        errorMessage = if (uiEvent.message.isRes)
+                            uiEvent.message
                         else
                             UiText.Res(R.string.error_unknown, "")
                     )

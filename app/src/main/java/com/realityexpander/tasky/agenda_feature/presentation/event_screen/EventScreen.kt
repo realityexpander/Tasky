@@ -15,13 +15,13 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Circle
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
@@ -31,20 +31,26 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
-import com.realityexpander.tasky.agenda_feature.presentation.components.EditTextModal
-import com.realityexpander.tasky.agenda_feature.presentation.components.TimeDateRow
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.EditTextModal
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.TimeDateRow
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.toZonedDateTime
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.AttendeeList
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.PillButton
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.SmallHeightHorizontalDivider
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
-import com.realityexpander.tasky.agenda_feature.util.toTimeDifferenceHumanReadable
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.datetime.time.timepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -55,7 +61,7 @@ fun EventScreen(
     viewModel: EventViewModel = hiltViewModel(),
 ) {
 
-    val state by viewModel.eventScreenState.collectAsState()
+    val state by viewModel.state.collectAsState()
 
     if (state.isLoaded) {
         AddEventScreenContent(
@@ -130,7 +136,7 @@ fun AddEventScreenContent(
 
     // todo handle "un-stateful" one-time events (like Snackbar), will use a Channel or SharedFlow
 
-    // • Main Container
+    // • MAIN CONTAINER
     Column(
         modifier = Modifier
             .background(color = MaterialTheme.colors.onSurface)
@@ -146,11 +152,11 @@ fun AddEventScreenContent(
                 .padding(start = DP.small, end = DP.small)
         ) {
 
-            // • Close button
+            // • CLOSE BUTTON
             Icon(
                 imageVector = Icons.Filled.Close,
                 tint = MaterialTheme.colors.surface,
-                contentDescription = "Close Add Event",
+                contentDescription = stringResource(R.string.event_description_close),
                 modifier = Modifier
                     .size(30.dp)
                     .alignByBaseline()
@@ -168,10 +174,10 @@ fun AddEventScreenContent(
                     .weight(1f)
             )
 
-            // • Edit / Save Button
+            // • EDIT / SAVE BUTTON
             if (isEditable) {
                 Text(
-                    text = "Save",
+                    text = stringResource(R.string.event_save),
                     color = MaterialTheme.colors.surface,
                     textAlign = TextAlign.End,
                     modifier = Modifier
@@ -186,7 +192,7 @@ fun AddEventScreenContent(
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     tint = MaterialTheme.colors.surface,
-                    contentDescription = "Edit Event",
+                    contentDescription = stringResource(R.string.event_description_edit_event),
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .width(40.dp)
@@ -214,7 +220,7 @@ fun AddEventScreenContent(
             ) {
                 Spacer(modifier = Modifier.smallHeight())
 
-                // • Agenda Item Type (Event)
+                // • AGENDA ITEM TYPE (EVENT)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -228,7 +234,7 @@ fun AddEventScreenContent(
                     )
                     Spacer(modifier = Modifier.extraSmallWidth())
                     Text(
-                        "Event",
+                        stringResource(R.string.event_event_title),
                         fontWeight = SemiBold,
                         color = MaterialTheme.colors.onSurface,
                         modifier = Modifier
@@ -250,7 +256,7 @@ fun AddEventScreenContent(
                         Icon(
                             imageVector = Icons.Outlined.Circle,
                             tint = MaterialTheme.colors.onSurface,
-                            contentDescription = "Meeting title marker",
+                            contentDescription = stringResource(R.string.event_description_meeting_title_marker),
                             modifier = Modifier
                                 .size(26.dp)
                                 .offset(0.dp, 8.dp)
@@ -258,7 +264,7 @@ fun AddEventScreenContent(
                         )
                         Spacer(modifier = Modifier.extraSmallWidth())
                         Text(
-                            state.event?.title ?: "No title set",
+                            state.event?.title ?: stringResource(R.string.event_no_title_set),
                             style = MaterialTheme.typography.h2,
                             color = MaterialTheme.colors.onSurface,
                             modifier = Modifier
@@ -269,21 +275,19 @@ fun AddEventScreenContent(
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
-                        contentDescription = "Edit Event Title",
+                        contentDescription = stringResource(R.string.event_edit_event_title),
                         modifier = Modifier
                             .size(28.dp)
                             .weight(.1f)
                             .align(Alignment.CenterVertically)
-                            .clickable {
-                                if (isEditable) {
-                                    onAction(
-                                        SetEditMode(
-                                            EditMode.TitleText(
-                                                state.event?.title ?: "",
-                                            )
+                            .clickable(enabled = isEditable) {
+                                onAction(
+                                    SetEditMode(
+                                        EditMode.TitleText(
+                                            state.event?.title ?: "",
                                         )
                                     )
-                                }
+                                )
                             }
                     )
 
@@ -301,7 +305,7 @@ fun AddEventScreenContent(
                             .weight(1f)
                     ) {
                         Text(
-                            text = state.event?.description ?: "No description set",
+                            text = state.event?.description ?: stringResource(R.string.event_no_description_set),
                             style = MaterialTheme.typography.h5,
                             color = MaterialTheme.colors.onSurface,
                             modifier = Modifier
@@ -313,28 +317,26 @@ fun AddEventScreenContent(
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
-                        contentDescription = "Edit Event Title",
+                        contentDescription = stringResource(R.string.event_description_edit_event_description),
                         modifier = Modifier
                             .size(28.dp, 28.dp)
                             .weight(.1f)
                             .align(Alignment.CenterVertically)
-                            .clickable {
-                                if (isEditable) {
-                                    onAction(
-                                        SetEditMode(
-                                            EditMode.DescriptionText(
-                                                state.event?.description ?: "",
-                                            )
+                            .clickable(enabled = isEditable) {
+                                onAction(
+                                    SetEditMode(
+                                        EditMode.DescriptionText(
+                                            state.event?.description ?: "",
                                         )
                                     )
-                                }
+                                )
                             }
                     )
                 }
                 Spacer(modifier = Modifier.smallHeight())
             }
 
-            // • Photo Picker / Add / Remove
+            // • PHOTO PICKER / ADD / REMOVE
             Box(
                 modifier = Modifier
                     .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
@@ -345,7 +347,7 @@ fun AddEventScreenContent(
             ) {
 
                 if (state.event?.photos.isNullOrEmpty()) {
-                    // • No Photos
+                    // • NO PHOTOS
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
@@ -357,13 +359,13 @@ fun AddEventScreenContent(
                         Icon(
                             imageVector = Icons.Filled.Add,
                             tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                            contentDescription = "Meeting title marker",
+                            contentDescription = stringResource(R.string.event_description_add_photo),
                             modifier = Modifier
                                 .size(26.dp)
                         )
                         Spacer(modifier = Modifier.smallWidth())
                         Text(
-                            "Add photos",
+                            stringResource(R.string.event_add_photos),
                             modifier = Modifier
                                 .offset(y = 2.dp),
                             fontWeight = Bold,
@@ -371,7 +373,7 @@ fun AddEventScreenContent(
                         )
                     }
                 } else {
-                    // • List of photo images
+                    // • LIST OF PHOTO IMAGES
                     Column(
                         modifier = Modifier
                             .wrapContentHeight()
@@ -383,7 +385,7 @@ fun AddEventScreenContent(
                                 .fillMaxWidth()
                         ) {
                             Text(
-                                "Photos",
+                                stringResource(R.string.event_photos),
                                 color = MaterialTheme.colors.onSurface,
                                 style = MaterialTheme.typography.h3,
                                 fontWeight = SemiBold,
@@ -416,7 +418,7 @@ fun AddEventScreenContent(
                                     Icon(
                                         imageVector = Icons.Filled.Add,
                                         tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                                        contentDescription = "Meeting title marker",
+                                        contentDescription = stringResource(R.string.event_description_add_photo),
                                         modifier = Modifier
                                             .size(36.dp)
                                             .align(Alignment.Center)
@@ -444,103 +446,80 @@ fun AddEventScreenContent(
 
                 SmallHeightHorizontalDivider()
 
-                // • FROM TIME / DATE
+                // • FROM TIME/DATE ROW
                 TimeDateRow(
-                    title = "From",
+                    title = stringResource(R.string.event_from),
                     date = state.event?.from ?: ZonedDateTime.now(),
                     isEditable = isEditable,
-                    onAction = onAction
-                )
-
-                SmallHeightHorizontalDivider()
-
-                // • TO TIME / DATE
-                TimeDateRow(
-                    title = "To",
-                    date = state.event?.to ?: ZonedDateTime.now(),
-                    isEditable = isEditable,
-                    onAction = onAction
-                )
-
-                SmallHeightHorizontalDivider()
-
-
-                // • Remind At
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colors.surface)
-                    //.padding(start = DP.small)
-                ) {
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .weight(1f)
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.Start,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(start = DP.small, end = DP.medium)
-                        ) {
-                            // • Alarm/Reminder At icon
-                            Icon(
-                                imageVector = Icons.Outlined.Notifications,
-                                tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                                contentDescription = "Remind At Button",
-                                modifier = Modifier
-                                    .size(34.dp)
-                                    .clip(shape = RoundedCornerShape(5.dp))
-                                    .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
-                                    .padding(4.dp)
-                                    .align(Alignment.CenterVertically)
-                                    .weight(.2f)
+                    onEditDate = {
+                        onAction(
+                            SetEditMode(
+                                EditMode.FromDate(state.event?.from ?: ZonedDateTime.now())
                             )
-                            Spacer(modifier = Modifier.smallWidth())
-                            Text(
-                                state.event?.from?.toTimeDifferenceHumanReadable(state.event.remindAt)
-                                    ?: "not set",
-                                color = MaterialTheme.colors.onSurface,
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .weight(1f)
+                        )
+                    },
+                    onEditTime = {
+                        onAction(
+                            SetEditMode(
+                                EditMode.FromTime(state.event?.from ?: ZonedDateTime.now())
                             )
-                        }
-
-                        Icon(
-                            imageVector = Icons.Filled.ChevronRight,
-                            tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
-                            contentDescription = "Edit Remind At DateTime",
-                            modifier = Modifier
-                                .weight(.1125f)
-                                .width(32.dp)
-                                .height(26.dp)
-                                .align(Alignment.CenterVertically)
-                                .clickable {
-                                    if (isEditable) {
-                                        onAction(
-                                            SetEditMode(
-                                                EditMode.RemindAtDateTime(
-                                                    state.event?.remindAt ?: ZonedDateTime.now()
-                                                )
-                                            )
-                                        )
-                                    }
-                                }
                         )
                     }
-                }
+                )
+                SmallHeightHorizontalDivider()
+
+                // • TO TIME/DATE ROW
+                TimeDateRow(
+                    title = stringResource(R.string.event_to),
+                    date = state.event?.to ?: ZonedDateTime.now(),
+                    isEditable = isEditable,
+                    onEditDate = {
+                        onAction(
+                            SetEditMode(
+                                EditMode.ToDate(state.event?.to ?: ZonedDateTime.now())
+                            )
+                        )
+                    },
+                    onEditTime = {
+                        onAction(
+                            SetEditMode(
+                                EditMode.ToTime(state.event?.to ?: ZonedDateTime.now())
+                            )
+                        )
+                    }
+                )
+                SmallHeightHorizontalDivider()
+
+                // • REMIND AT ROW
+                RemindAtRow(
+                    fromDateTime = state.event?.from ?: ZonedDateTime.now(),
+                    remindAtDateTime = state.event?.remindAt ?: ZonedDateTime.now(),
+                    isEditable = isEditable,
+                    isDropdownMenuVisible = state.editMode is EditMode.RemindAtDateTime,
+                    onEditRemindAtDateTime = {
+                        onAction(
+                            SetEditMode(
+                                EditMode.RemindAtDateTime(
+                                    state.event?.remindAt ?: ZonedDateTime.now()
+                                )
+                            )
+                        )
+                    },
+                    onDismissRequest = { onAction(CancelEditMode) },
+                    onSaveRemindAtDateTime = { dateTime ->
+                        onAction(
+                            EditMode.SaveDateTime(dateTime)
+                        )
+                    }
+                )
                 SmallHeightHorizontalDivider()
                 Spacer(modifier = Modifier.smallHeight())
 
 
-                // • Attendees Header (Visitors & Add Attendee Button)
-                Row() {
+                // • ATTENDEES HEADER (VISITORS & ADD ATTENDEE BUTTON)
+                Row {
                     Text(
-                        "Visitors",
+                        stringResource(R.string.event_visitors),
                         color = MaterialTheme.colors.onSurface,
                         style = MaterialTheme.typography.h3,
                         modifier = Modifier
@@ -551,7 +530,7 @@ fun AddEventScreenContent(
                     Icon(
                         imageVector = Icons.Outlined.Add,
                         tint = if (isEditable) MaterialTheme.colors.onSurface.copy(alpha = .3f) else Color.Transparent,
-                        contentDescription = "Add Attendee Button",
+                        contentDescription = stringResource(R.string.event_description_add_attendee_button),
                         modifier = Modifier
                             .offset(y = (-4).dp)
                             .size(38.dp)
@@ -564,21 +543,17 @@ fun AddEventScreenContent(
                             )
                             .padding(4.dp)
                             .align(Alignment.CenterVertically)
-                            .clickable {
-                                if (isEditable) {
-                                    onAction(
-                                        SetEditMode(
-                                            EditMode.AddAttendee()
-                                        )
-                                    )
-                                }
+                            .clickable(enabled = isEditable) {
+                                onAction(
+                                    SetEditMode(EditMode.AddAttendee())
+                                )
                             }
                     )
                 }
                 Spacer(modifier = Modifier.largeHeight())
 
 
-                // • All / Going / Not going
+                // • ATTENDEE LIST SELECTOR: ALL / GOING / NOT GOING
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
@@ -586,7 +561,7 @@ fun AddEventScreenContent(
                         .background(MaterialTheme.colors.surface)
                 ) {
                     PillButton(
-                        text = "All",
+                        text = stringResource(R.string.event_all),
                         isSelected = attendeeListType == AttendeeListType.ALL,
                         onClick = {
                             attendeeListType = AttendeeListType.ALL
@@ -595,7 +570,7 @@ fun AddEventScreenContent(
                     Spacer(modifier = Modifier.smallWidth())
 
                     PillButton(
-                        text = "Going",
+                        text = stringResource(R.string.event_going),
                         isSelected = attendeeListType == AttendeeListType.GOING,
                         onClick = {
                             attendeeListType = AttendeeListType.GOING
@@ -604,13 +579,12 @@ fun AddEventScreenContent(
                     Spacer(modifier = Modifier.smallWidth())
 
                     PillButton(
-                        text = "Not going",
+                        text = stringResource(R.string.event_not_going),
                         isSelected = attendeeListType == AttendeeListType.NOT_GOING,
                         onClick = {
                             attendeeListType = AttendeeListType.NOT_GOING
                         }
                     )
-                    Spacer(modifier = Modifier.smallWidth())
                 }
                 Spacer(modifier = Modifier.mediumHeight())
 
@@ -623,7 +597,7 @@ fun AddEventScreenContent(
                         loggedInUserId = state.authInfo?.userId
                             ?: throw IllegalStateException("user not logged in"),
                         isUserEventCreator = true,
-                        header = "Going",
+                        header = stringResource(R.string.event_going),
                         attendees = state.event?.attendees?.filter { it.isGoing } ?: emptyList(),
                         onAttendeeClick = {},
                         onAttendeeRemoveClick = {}
@@ -639,7 +613,7 @@ fun AddEventScreenContent(
                         loggedInUserId = state.authInfo?.userId
                             ?: throw IllegalStateException("user not logged in"),
                         isUserEventCreator = true,
-                        header = "Not Going",
+                        header = stringResource(R.string.event_not_going),
                         attendees = state.event?.attendees?.filter { !it.isGoing } ?: emptyList(),
                         onAttendeeClick = {},
                         onAttendeeRemoveClick = {}
@@ -648,10 +622,11 @@ fun AddEventScreenContent(
 
                 Spacer(modifier = Modifier.largeHeight())
 
+                // • JOIN/LEAVE/DELETE EVENT BUTTON
                 Text(
-                    if (state.event?.isUserEventCreator == true) "DELETE EVENT"
-                        else if (state.event?.isGoing == true) "LEAVE EVENT"
-                        else "JOIN EVENT",
+                    if (state.event?.isUserEventCreator == true) stringResource(R.string.event_delete_event)
+                        else if (state.event?.isGoing == true) stringResource(R.string.event_leave_event)
+                        else stringResource(R.string.event_join_event),
                     style = MaterialTheme.typography.h4,
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
                     textAlign = TextAlign.Center,
@@ -661,22 +636,27 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.mediumHeight())
 
             }
+
+
         }
+
     }
 
-    // • Editors
+    // • EDITORS FOR EVENT PROPERTIES
     state.editMode?.let { editMode ->
         when (editMode) {
             is EditMode.TitleText,
             is EditMode.DescriptionText -> {
+                editMode as EditMode.TextPayload
+
                 EditTextModal(
-                    text = (editMode as EditMode.EditModeText).text,
-                    title = editMode.title,
+                    text = editMode.text,
+                    title = editMode.dialogTitle,
                     editTextStyle =
-                        if(editMode is EditMode.TitleText)
-                            MaterialTheme.typography.h2  // cant access from non-compose function, make a wrapper?
-                        else
-                            MaterialTheme.typography.body1, // cant access from non-compose function, make a wrapper?
+                    if (editMode is EditMode.TitleText)
+                        MaterialTheme.typography.h2  // cant access from non-compose function, make a wrapper?
+                    else
+                        MaterialTheme.typography.body1, // cant access from non-compose function, make a wrapper?
                     onSave = {
                         onAction(EditMode.SaveText(it))
                     },
@@ -685,19 +665,70 @@ fun AddEventScreenContent(
                     }
                 )
             }
-            is EditMode.FromDate -> TODO()
-            is EditMode.FromTime -> TODO()
-            is EditMode.ToDate -> TODO()
-            is EditMode.ToTime -> TODO()
-            is EditMode.RemindAtDateTime -> TODO()
-            is EditMode.Photos -> TODO()
+            is EditMode.FromDate,
+            is EditMode.ToDate -> {
+                editMode as EditMode.DateTimePayload
+                var pickedDate by remember { mutableStateOf(LocalDateTime.now()) }
+                val dateDialogState = rememberMaterialDialogState()
+
+                dateDialogState.show()
+                MaterialDialog(
+                    dialogState = dateDialogState,
+                    buttons = {
+                        positiveButton(text = stringResource(R.string.ok)) {
+                            onAction(EditMode.SaveDateTime(pickedDate?.toZonedDateTime()!!))
+                        }
+                        negativeButton(text = stringResource(R.string.cancel)) {
+                            dateDialogState.hide()
+                            onAction(CancelEditMode)
+                        }
+                    }
+                ) {
+                    datepicker(
+                        initialDate = editMode.dateTime.toLocalDate(),
+                        title = editMode.dialogTitle,
+                    ) {
+                        pickedDate = it.atTime(editMode.dateTime.toLocalTime())
+                    }
+                }
+            }
+            is EditMode.FromTime,
+            is EditMode.ToTime -> {
+                editMode as EditMode.DateTimePayload
+                var pickedTime by remember { mutableStateOf(LocalDateTime.now()) }
+                val dateDialogState = rememberMaterialDialogState()
+
+                dateDialogState.show()
+                MaterialDialog(
+                    dialogState = dateDialogState,
+                    buttons = {
+                        positiveButton(text = stringResource(R.string.ok)) {
+                            onAction(EditMode.SaveDateTime(pickedTime?.toZonedDateTime()!!))
+                        }
+                        negativeButton(text = stringResource(R.string.cancel)) {
+                            dateDialogState.hide()
+                            onAction(CancelEditMode)
+                        }
+                    }
+                ) {
+                    timepicker(
+                        initialTime = editMode.dateTime.toLocalTime(),
+                        title = editMode.dialogTitle,
+                    ) {
+                        pickedTime = it.atDate(editMode.dateTime.toLocalDate())
+                    }
+                }
+            }
+            is EditMode.RemindAtDateTime -> { /* handled in the RemindAt UI element, this is here to remove compiler warning */
+            }
+            is EditMode.AddPhoto -> TODO()
+            is EditMode.ConfirmDeletePhoto -> TODO()
             is EditMode.AddAttendee -> TODO()
-            is EditMode.Attendees -> TODO()
+            is EditMode.ConfirmDeleteAttendee -> TODO()
         }
-
     }
-
 }
+
 
 @Preview(
     showBackground = true,
