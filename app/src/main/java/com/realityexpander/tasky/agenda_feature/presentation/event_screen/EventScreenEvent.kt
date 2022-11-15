@@ -27,7 +27,7 @@ sealed interface EventScreenEvent {
     sealed interface EditMode {
 
         // • "Save Data" Events
-        data class SaveText(val text:String) : EventScreenEvent
+        data class SaveText(val text: String) : EventScreenEvent
         data class SaveDateTime(val dateTime: ZonedDateTime) : EventScreenEvent
 
 
@@ -54,8 +54,7 @@ sealed interface EventScreenEvent {
         }
 
 
-        // • Edit Modes (setup the UI, set default text, etc)
-
+        // • Edit Modes (setup the UI title, set current data (time, text, etc))
         abstract val title: String
 
         data class TitleText(
@@ -99,7 +98,7 @@ sealed interface EventScreenEvent {
             val attendees: Attendee? = null,
             override val title: String = "ADD ATTENDEES",
         ) : EditMode
-        data class Attendees(
+        data class EditAttendees(
             val attendees: List<Attendee> = emptyList(),
             override val title: String = "EDIT ATTENDEES",
         ) : EditMode
