@@ -35,7 +35,6 @@ import com.realityexpander.tasky.auth_feature.presentation.components.EmailField
 import com.realityexpander.tasky.auth_feature.presentation.components.PasswordField
 import com.realityexpander.tasky.core.data.settings.saveAuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
-import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.dataStore
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
@@ -315,8 +314,8 @@ fun LoginScreenPreview() {
                     isInvalidPasswordMessageVisible = true,
                     isPasswordVisible = true,
                     isLoading = false,
-                    errorMessage = UiText.None,  // UiText.Res(R.string.error_invalid_email),
-                    statusMessage = UiText.None, // UiText.Res(R.string.login_logged_in),
+                    errorMessage = null,
+                    statusMessage = null,
                     authInfo = null,
                 ),
                 onAction = {},

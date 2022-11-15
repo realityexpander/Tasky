@@ -8,6 +8,10 @@ import androidx.compose.ui.res.stringResource
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 
+// String resource wrapper
+// Allows storing normal strings and resource-based strings in the same data class.
+// Depending on the context, the string will be resolved to a string-resource or a normal string.
+
 @Parcelize
 open class UiText : Parcelable {
 
@@ -19,7 +23,7 @@ open class UiText : Parcelable {
     // UiText.Str(str) -> .get = "Goodbye."
     @Parcelize
     class Str(
-        val value: String?,
+        val string: String?,
     ): UiText()
 
 
@@ -51,7 +55,7 @@ open class UiText : Parcelable {
     // UiText.StrOrRes(resId, str, args) -> .get = "Hello, World!"
     @Parcelize
     class StrOrRes(
-        val value: String?,
+        val string: String?,
         @StringRes val resId: Int? = null,
         vararg val args: @RawValue Any
     ): UiText()
@@ -69,19 +73,13 @@ open class UiText : Parcelable {
     @Parcelize
     class ResOrStr(
         @StringRes val resId: Int? = null,
-        val value: String? = null,
+        val string: String? = null,
         vararg val args: @RawValue Any //= arrayOf()
     ): UiText()
 
-    // Example:
-    // .get = null
-    @Parcelize
-    object None : UiText()
 
     /////////////////// IDENTIFIERS ///////////////////
 
-    val isNone: Boolean
-        get() = this is None
 
     val isStr: Boolean
         get() = this is Str
@@ -102,11 +100,10 @@ open class UiText : Parcelable {
     val get: String
         @Composable
         get() = when(this) {
-            is None -> ""
-            is Str -> value ?: ""
+            is Str -> string ?: ""
             is Res -> stringResource(resId, *args)
-            is StrOrRes -> value ?: resId?.let{ stringResource(resId, *args) } ?: ""
-            is ResOrStr -> resId?.let{ stringResource(resId, *args) } ?: value ?: ""
+            is StrOrRes -> string ?: resId?.let{ stringResource(resId, *args) } ?: ""
+            is ResOrStr -> resId?.let{ stringResource(resId, *args) } ?: string ?: ""
             else -> {
                 throw Exception("Invalid UiText type: ${this::class.java.simpleName}")
             }
@@ -117,11 +114,10 @@ open class UiText : Parcelable {
     val getOrNull: String?
         @Composable
         get() = when(this) {
-            is None -> null
-            is Str -> value
+            is Str -> string
             is Res -> stringResource(resId, *args)
-            is StrOrRes -> value ?: resId?.let{ stringResource(resId, *args) }
-            is ResOrStr -> resId?.let{ stringResource(resId, *args) } ?: value
+            is StrOrRes -> string ?: resId?.let{ stringResource(resId, *args) }
+            is ResOrStr -> resId?.let{ stringResource(resId, *args) } ?: string
             else -> {
                 throw Exception("Invalid UiText type: ${this::class.java.simpleName}")
             }
@@ -132,10 +128,9 @@ open class UiText : Parcelable {
     val str: String?
         @Composable
         get() = when(this) {
-            is None -> null
-            is Str -> value
+            is Str -> string
             is Res -> null
-            is StrOrRes -> value
+            is StrOrRes -> string
             is ResOrStr -> null
             else -> {
                 throw Exception("Invalid UiText type: ${this::class.java.simpleName}")
@@ -146,7 +141,6 @@ open class UiText : Parcelable {
     val res: String?
         @Composable
         get() = when(this) {
-            is None -> null
             is Str -> null
             is Res -> stringResource(resId, *args)
             is StrOrRes -> resId?.let{ stringResource(resId, *args) }
@@ -160,11 +154,10 @@ open class UiText : Parcelable {
     val strOrRes: String?
         @Composable
         get() = when(this) {
-            is None -> null
-            is Str -> value
+            is Str -> string
             is Res -> stringResource(resId, *args)
-            is StrOrRes -> value ?: resId?.let{ stringResource(resId, *args) }
-            is ResOrStr -> resId?.let{ stringResource(resId, *args) } ?: value
+            is StrOrRes -> string ?: resId?.let{ stringResource(resId, *args) }
+            is ResOrStr -> resId?.let{ stringResource(resId, *args) } ?: string
             else -> {
                 throw Exception("Invalid UiText type: ${this::class.java.simpleName}")
             }
@@ -174,11 +167,10 @@ open class UiText : Parcelable {
     val resOrStr: String?
         @Composable
         get() = when(this) {
-            is None -> null
-            is Str -> value
+            is Str -> string
             is Res -> stringResource(resId, *args)
-            is StrOrRes -> value ?: resId?.let{ stringResource(resId, *args) }
-            is ResOrStr -> resId?.let{ stringResource(resId, *args) } ?: value
+            is StrOrRes -> string ?: resId?.let{ stringResource(resId, *args) }
+            is ResOrStr -> resId?.let{ stringResource(resId, *args) } ?: string
             else -> {
                 throw Exception("Invalid UiText type: ${this::class.java.simpleName}")
             }
@@ -188,7 +180,6 @@ open class UiText : Parcelable {
     // (good for logical checks or if you just want the resource Id and not the string)
     val asResIdOrNull: Int?
         get() = when(this) {
-            is None -> null
             is Str -> null
             is Res -> resId
             is StrOrRes -> resId
@@ -206,11 +197,10 @@ open class UiText : Parcelable {
     @Composable
     fun asString(): String {
         return when(this) {
-            is None -> "null"
-            is Str -> value ?: "null"
+            is Str -> string ?: "null"
             is Res -> stringResource(resId, *args)
-            is StrOrRes -> value ?: resId?.let{ stringResource(resId, *args) } ?: "null"
-            is ResOrStr -> resId?.let { stringResource(it, *args) } ?: value ?: "null"
+            is StrOrRes -> string ?: resId?.let{ stringResource(resId, *args) } ?: "null"
+            is ResOrStr -> resId?.let { stringResource(it, *args) } ?: string ?: "null"
             else -> {
                 throw Exception("Invalid UiText type: ${this::class.java.simpleName}")
             }
@@ -220,11 +210,10 @@ open class UiText : Parcelable {
     // For use in Contexts/Activities/Fragments.
     fun asString(context: Context): String? {
         return when(this) {
-            is None -> null
-            is Str -> value
+            is Str -> string
             is Res -> context.getString(resId, *args)
-            is StrOrRes -> value ?: resId?.let { context.getStringSafe(it, *args) }
-            is ResOrStr -> resId?.let { context.getStringSafe(it, *args) } ?: value
+            is StrOrRes -> string ?: resId?.let { context.getStringSafe(it, *args) }
+            is ResOrStr -> resId?.let { context.getStringSafe(it, *args) } ?: string
             else -> {
                 throw Exception("Invalid UiText type: ${this::class.java.simpleName}")
             }
@@ -250,11 +239,10 @@ open class UiText : Parcelable {
     // (good for testing)
     fun asStrOrNull(): String? {
         return when(this) {
-            is None -> null
-            is Str -> value
+            is Str -> string
             is Res -> null
-            is StrOrRes -> value
-            is ResOrStr -> value
+            is StrOrRes -> string
+            is ResOrStr -> string
             else -> {
                 throw Exception("Invalid UiText type: ${this::class.java.simpleName}")
             }
@@ -264,20 +252,18 @@ open class UiText : Parcelable {
     // Useful for debugging (displayed in the debugger)
     override fun toString(): String {
         return when(this) {
-            is None ->
-                "UiText.None"
             is Str ->
-                value?.let { "UiText.Str: value=$it" }
+                string?.let { "UiText.Str: string=$it" }
                     ?: "UiText.Str=null"
             is StrOrRes ->
-                value?.let { "UiText.StrOrRes: value=$value" }
+                string?.let { "UiText.StrOrRes: string=$string" }
                     ?: resId?.let { "UiText.StrOrRes: resId=${this.resId}" }
                     ?: "UiText.StrOrRes=both null"
             is Res ->
                     "UiText.Res: resId=$resId"
             is ResOrStr ->
                 resId?.let { "UiText.ResOrStr: resId=$resId" }
-                    ?: value?.let { "UiText.ResOrStr: value=$value" }
+                    ?: string?.let { "UiText.ResOrStr: string=$string" }
                     ?:  "UiText.ResOrStr=both null"
             else -> {
                 "UiText: Unknown type: ${this::class.java.simpleName}"
@@ -285,4 +271,19 @@ open class UiText : Parcelable {
         }
     }
 
+}
+
+// Local test
+fun main() {
+    val uiText = UiText.Str("Hello World")
+    println(uiText)
+
+    // need to use in @Composable function
+//    println(uiText.str)
+//    println(uiText.res)
+//    println(uiText.strOrRes)
+//    println(uiText.resOrStr)
+
+    println(uiText.asResIdOrNull)
+    println(uiText.asStrOrNull())
 }
