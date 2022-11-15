@@ -38,7 +38,7 @@ fun ColumnScope.RemindAtRow(
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colors.surface)
     ) {

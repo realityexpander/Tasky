@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.agenda_feature.presentation.components
+package com.realityexpander.tasky.agenda_feature.presentation.common.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
