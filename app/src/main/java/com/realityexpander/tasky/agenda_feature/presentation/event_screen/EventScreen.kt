@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.EditTextModal
@@ -154,7 +156,7 @@ fun AddEventScreenContent(
             Icon(
                 imageVector = Icons.Filled.Close,
                 tint = MaterialTheme.colors.surface,
-                contentDescription = "Close Add Event",
+                contentDescription = stringResource(R.string.event_description_close),
                 modifier = Modifier
                     .size(30.dp)
                     .alignByBaseline()
@@ -175,7 +177,7 @@ fun AddEventScreenContent(
             // • EDIT / SAVE BUTTON
             if (isEditable) {
                 Text(
-                    text = "Save",
+                    text = stringResource(R.string.event_save),
                     color = MaterialTheme.colors.surface,
                     textAlign = TextAlign.End,
                     modifier = Modifier
@@ -190,7 +192,7 @@ fun AddEventScreenContent(
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     tint = MaterialTheme.colors.surface,
-                    contentDescription = "Edit Event",
+                    contentDescription = stringResource(R.string.event_description_edit_event),
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .width(40.dp)
@@ -232,7 +234,7 @@ fun AddEventScreenContent(
                     )
                     Spacer(modifier = Modifier.extraSmallWidth())
                     Text(
-                        "Event",
+                        stringResource(R.string.event_event_title),
                         fontWeight = SemiBold,
                         color = MaterialTheme.colors.onSurface,
                         modifier = Modifier
@@ -254,7 +256,7 @@ fun AddEventScreenContent(
                         Icon(
                             imageVector = Icons.Outlined.Circle,
                             tint = MaterialTheme.colors.onSurface,
-                            contentDescription = "Meeting title marker",
+                            contentDescription = stringResource(R.string.event_description_meeting_title_marker),
                             modifier = Modifier
                                 .size(26.dp)
                                 .offset(0.dp, 8.dp)
@@ -262,7 +264,7 @@ fun AddEventScreenContent(
                         )
                         Spacer(modifier = Modifier.extraSmallWidth())
                         Text(
-                            state.event?.title ?: "No title set",
+                            state.event?.title ?: stringResource(R.string.event_no_title_set),
                             style = MaterialTheme.typography.h2,
                             color = MaterialTheme.colors.onSurface,
                             modifier = Modifier
@@ -273,7 +275,7 @@ fun AddEventScreenContent(
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
-                        contentDescription = "Edit Event Title",
+                        contentDescription = stringResource(R.string.event_edit_event_title),
                         modifier = Modifier
                             .size(28.dp)
                             .weight(.1f)
@@ -303,7 +305,7 @@ fun AddEventScreenContent(
                             .weight(1f)
                     ) {
                         Text(
-                            text = state.event?.description ?: "No description set",
+                            text = state.event?.description ?: stringResource(R.string.event_no_description_set),
                             style = MaterialTheme.typography.h5,
                             color = MaterialTheme.colors.onSurface,
                             modifier = Modifier
@@ -315,7 +317,7 @@ fun AddEventScreenContent(
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
-                        contentDescription = "Edit Event Title",
+                        contentDescription = stringResource(R.string.event_description_edit_event_description),
                         modifier = Modifier
                             .size(28.dp, 28.dp)
                             .weight(.1f)
@@ -357,13 +359,13 @@ fun AddEventScreenContent(
                         Icon(
                             imageVector = Icons.Filled.Add,
                             tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                            contentDescription = "Meeting title marker",
+                            contentDescription = stringResource(R.string.event_description_add_photo),
                             modifier = Modifier
                                 .size(26.dp)
                         )
                         Spacer(modifier = Modifier.smallWidth())
                         Text(
-                            "Add photos",
+                            stringResource(R.string.event_add_photos),
                             modifier = Modifier
                                 .offset(y = 2.dp),
                             fontWeight = Bold,
@@ -383,7 +385,7 @@ fun AddEventScreenContent(
                                 .fillMaxWidth()
                         ) {
                             Text(
-                                "Photos",
+                                stringResource(R.string.event_photos),
                                 color = MaterialTheme.colors.onSurface,
                                 style = MaterialTheme.typography.h3,
                                 fontWeight = SemiBold,
@@ -416,7 +418,7 @@ fun AddEventScreenContent(
                                     Icon(
                                         imageVector = Icons.Filled.Add,
                                         tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                                        contentDescription = "Meeting title marker",
+                                        contentDescription = stringResource(R.string.event_description_add_photo),
                                         modifier = Modifier
                                             .size(36.dp)
                                             .align(Alignment.Center)
@@ -446,7 +448,7 @@ fun AddEventScreenContent(
 
                 // • FROM TIME/DATE ROW
                 TimeDateRow(
-                    title = "From",
+                    title = stringResource(R.string.event_from),
                     date = state.event?.from ?: ZonedDateTime.now(),
                     isEditable = isEditable,
                     onEditDate = {
@@ -468,7 +470,7 @@ fun AddEventScreenContent(
 
                 // • TO TIME/DATE ROW
                 TimeDateRow(
-                    title = "To",
+                    title = stringResource(R.string.event_to),
                     date = state.event?.to ?: ZonedDateTime.now(),
                     isEditable = isEditable,
                     onEditDate = {
@@ -517,7 +519,7 @@ fun AddEventScreenContent(
                 // • ATTENDEES HEADER (VISITORS & ADD ATTENDEE BUTTON)
                 Row {
                     Text(
-                        "Visitors",
+                        stringResource(R.string.event_visitors),
                         color = MaterialTheme.colors.onSurface,
                         style = MaterialTheme.typography.h3,
                         modifier = Modifier
@@ -528,7 +530,7 @@ fun AddEventScreenContent(
                     Icon(
                         imageVector = Icons.Outlined.Add,
                         tint = if (isEditable) MaterialTheme.colors.onSurface.copy(alpha = .3f) else Color.Transparent,
-                        contentDescription = "Add Attendee Button",
+                        contentDescription = stringResource(R.string.event_description_add_attendee_button),
                         modifier = Modifier
                             .offset(y = (-4).dp)
                             .size(38.dp)
@@ -559,7 +561,7 @@ fun AddEventScreenContent(
                         .background(MaterialTheme.colors.surface)
                 ) {
                     PillButton(
-                        text = "All",
+                        text = stringResource(R.string.event_all),
                         isSelected = attendeeListType == AttendeeListType.ALL,
                         onClick = {
                             attendeeListType = AttendeeListType.ALL
@@ -568,7 +570,7 @@ fun AddEventScreenContent(
                     Spacer(modifier = Modifier.smallWidth())
 
                     PillButton(
-                        text = "Going",
+                        text = stringResource(R.string.event_going),
                         isSelected = attendeeListType == AttendeeListType.GOING,
                         onClick = {
                             attendeeListType = AttendeeListType.GOING
@@ -577,7 +579,7 @@ fun AddEventScreenContent(
                     Spacer(modifier = Modifier.smallWidth())
 
                     PillButton(
-                        text = "Not going",
+                        text = stringResource(R.string.event_not_going),
                         isSelected = attendeeListType == AttendeeListType.NOT_GOING,
                         onClick = {
                             attendeeListType = AttendeeListType.NOT_GOING
@@ -595,7 +597,7 @@ fun AddEventScreenContent(
                         loggedInUserId = state.authInfo?.userId
                             ?: throw IllegalStateException("user not logged in"),
                         isUserEventCreator = true,
-                        header = "Going",
+                        header = stringResource(R.string.event_going),
                         attendees = state.event?.attendees?.filter { it.isGoing } ?: emptyList(),
                         onAttendeeClick = {},
                         onAttendeeRemoveClick = {}
@@ -611,7 +613,7 @@ fun AddEventScreenContent(
                         loggedInUserId = state.authInfo?.userId
                             ?: throw IllegalStateException("user not logged in"),
                         isUserEventCreator = true,
-                        header = "Not Going",
+                        header = stringResource(R.string.event_not_going),
                         attendees = state.event?.attendees?.filter { !it.isGoing } ?: emptyList(),
                         onAttendeeClick = {},
                         onAttendeeRemoveClick = {}
@@ -622,9 +624,9 @@ fun AddEventScreenContent(
 
                 // • JOIN/LEAVE/DELETE EVENT BUTTON
                 Text(
-                    if (state.event?.isUserEventCreator == true) "DELETE EVENT"
-                        else if (state.event?.isGoing == true) "LEAVE EVENT"
-                        else "JOIN EVENT",
+                    if (state.event?.isUserEventCreator == true) stringResource(R.string.event_delete_event)
+                        else if (state.event?.isGoing == true) stringResource(R.string.event_leave_event)
+                        else stringResource(R.string.event_join_event),
                     style = MaterialTheme.typography.h4,
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
                     textAlign = TextAlign.Center,
@@ -667,10 +669,10 @@ fun AddEventScreenContent(
                         MaterialDialog(
                             dialogState = dateDialogState,
                             buttons = {
-                                positiveButton(text = "OK") {
+                                positiveButton(text = stringResource(R.string.ok)) {
                                     onAction(EditMode.SaveDateTime(pickedDate?.toZonedDateTime()!!))
                                 }
-                                negativeButton(text = "CANCEL") {
+                                negativeButton(text = stringResource(R.string.cancel)) {
                                     dateDialogState.hide()
                                     onAction(CancelEditMode)
                                 }
@@ -694,10 +696,10 @@ fun AddEventScreenContent(
                         MaterialDialog(
                             dialogState = dateDialogState,
                             buttons = {
-                                positiveButton(text = "OK") {
+                                positiveButton(text = stringResource(R.string.ok)) {
                                     onAction(EditMode.SaveDateTime(pickedTime?.toZonedDateTime()!!))
                                 }
-                                negativeButton(text = "CANCEL") {
+                                negativeButton(text = stringResource(R.string.cancel)) {
                                     dateDialogState.hide()
                                     onAction(CancelEditMode)
                                 }
