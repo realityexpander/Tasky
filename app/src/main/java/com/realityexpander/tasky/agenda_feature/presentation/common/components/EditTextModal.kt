@@ -3,7 +3,6 @@ package com.realityexpander.tasky.agenda_feature.presentation.common.components
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -38,7 +37,6 @@ fun EditTextModal(
 
     var editingText by remember { mutableStateOf(text) }
     val focusRequester = remember { FocusRequester() }
-    val interactionSource = remember { MutableInteractionSource() }
 
     LaunchedEffect(true) {
         focusRequester.requestFocus()
