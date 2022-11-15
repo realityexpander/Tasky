@@ -27,7 +27,7 @@ sealed interface EventScreenEvent {
 
     sealed interface EditMode {
 
-        // • (1) WHICH item is being edited? (sets initial [or default] value, sets up the display string)
+        // • (1) WHICH item is being edited? (sets initial/default value, sets up the dialog display string)
         abstract val title: String
 
         data class TitleText(
@@ -42,25 +42,25 @@ sealed interface EventScreenEvent {
 
         data class FromDate(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "EDIT `FROM` DATE",
+            override val title: String = "SET FROM DATE",
         ) : EditMode, EditDateTime
         data class FromTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "EDIT `FROM` TIME",
+            override val title: String = "SET FROM TIME",
         ) : EditMode, EditDateTime
 
         data class ToDate(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "EDIT `TO` DATE",
+            override val title: String = "SET TO DATE",
         ) : EditMode, EditDateTime
         data class ToTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "EDIT `TO` TIME",
+            override val title: String = "SET TO TIME",
         ) : EditMode, EditDateTime
 
         data class RemindAtDateTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "SET `REMIND AT` TIME",
+            override val title: String = "SET REMIND AT TIME",
         ) : EditMode, EditDateTime
 
         data class AddPhoto(
