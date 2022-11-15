@@ -274,16 +274,14 @@ fun AddEventScreenContent(
                             .size(28.dp)
                             .weight(.1f)
                             .align(Alignment.CenterVertically)
-                            .clickable {
-                                if (isEditable) {
-                                    onAction(
-                                        SetEditMode(
-                                            EditMode.TitleText(
-                                                state.event?.title ?: "",
-                                            )
+                            .clickable(enabled = isEditable) {
+                                onAction(
+                                    SetEditMode(
+                                        EditMode.TitleText(
+                                            state.event?.title ?: "",
                                         )
                                     )
-                                }
+                                )
                             }
                     )
 
@@ -318,16 +316,14 @@ fun AddEventScreenContent(
                             .size(28.dp, 28.dp)
                             .weight(.1f)
                             .align(Alignment.CenterVertically)
-                            .clickable {
-                                if (isEditable) {
-                                    onAction(
-                                        SetEditMode(
-                                            EditMode.DescriptionText(
-                                                state.event?.description ?: "",
-                                            )
+                            .clickable(enabled = isEditable) {
+                                onAction(
+                                    SetEditMode(
+                                        EditMode.DescriptionText(
+                                            state.event?.description ?: "",
                                         )
                                     )
-                                }
+                                )
                             }
                     )
                 }
@@ -519,16 +515,14 @@ fun AddEventScreenContent(
                                 .width(32.dp)
                                 .height(26.dp)
                                 .align(Alignment.CenterVertically)
-                                .clickable {
-                                    if (isEditable) {
-                                        onAction(
-                                            SetEditMode(
-                                                EditMode.RemindAtDateTime(
-                                                    state.event?.remindAt ?: ZonedDateTime.now()
-                                                )
+                                .clickable(enabled = isEditable) {
+                                    onAction(
+                                        SetEditMode(
+                                            EditMode.RemindAtDateTime(
+                                                state.event?.remindAt ?: ZonedDateTime.now()
                                             )
                                         )
-                                    }
+                                    )
                                 }
                         )
                     }
@@ -564,14 +558,12 @@ fun AddEventScreenContent(
                             )
                             .padding(4.dp)
                             .align(Alignment.CenterVertically)
-                            .clickable {
-                                if (isEditable) {
-                                    onAction(
-                                        SetEditMode(
-                                            EditMode.AddAttendee()
-                                        )
+                            .clickable(enabled = isEditable) {
+                                onAction(
+                                    SetEditMode(
+                                        EditMode.AddAttendee()
                                     )
-                                }
+                                )
                             }
                     )
                 }
@@ -692,7 +684,7 @@ fun AddEventScreenContent(
             is EditMode.RemindAtDateTime -> TODO()
             is EditMode.Photos -> TODO()
             is EditMode.AddAttendee -> TODO()
-            is EditMode.Attendees -> TODO()
+            is EditMode.EditAttendees -> TODO()
         }
 
     }
