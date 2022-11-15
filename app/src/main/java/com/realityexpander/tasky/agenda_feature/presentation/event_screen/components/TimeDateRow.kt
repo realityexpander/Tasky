@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent
 import com.realityexpander.tasky.agenda_feature.util.toShortMonthDayYear
 import com.realityexpander.tasky.agenda_feature.util.toTime12Hour
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
@@ -25,7 +24,8 @@ fun ColumnScope.TimeDateRow(
     title: String,  // `From` or `To`
     date: ZonedDateTime,
     isEditable: Boolean,
-    onAction: (EventScreenEvent) -> Unit,
+    onEditDate: () -> Unit,
+    onEditTime: () -> Unit,
 ) {
     // • FROM TIME / DATE
     Row(
@@ -41,6 +41,9 @@ fun ColumnScope.TimeDateRow(
                 .weight(1f)
                 .padding(start = DP.medium, end = DP.medium)
                 .align(Alignment.CenterVertically)
+                .clickable(enabled = isEditable) {
+                    onEditTime()
+                }
         ) {
             Text(
                 title,
@@ -65,19 +68,9 @@ fun ColumnScope.TimeDateRow(
             contentDescription = "Edit Event `$title` Time",
             modifier = Modifier
                 .weight(.2f)
-//                .width(28.dp)
-//                .height(24.dp)
                 .align(Alignment.CenterVertically)
-                .clickable {
-                    if(isEditable) {
-                        onAction(
-                            EventScreenEvent.SetEditMode(
-                                EventScreenEvent.EditMode.FromTime(
-                                    date
-                                )
-                            )
-                        )
-                    }
+                .clickable(enabled = isEditable) {
+                    onEditTime()
                 }
         )
         Row(
@@ -86,6 +79,9 @@ fun ColumnScope.TimeDateRow(
                 .weight(1f)
                 .padding(start = DP.medium, end = DP.tiny)
                 .align(Alignment.CenterVertically)
+                .clickable(enabled = isEditable) {
+                    onEditDate()
+                }
         ) {
             Text(
                 date.toShortMonthDayYear() ?: "not set",
@@ -102,16 +98,8 @@ fun ColumnScope.TimeDateRow(
                 modifier = Modifier
                     .weight(.2f)
                     .align(Alignment.CenterVertically)
-                    .clickable {
-                        if(isEditable) {
-                            onAction(
-                                EventScreenEvent.SetEditMode(
-                                    EventScreenEvent.EditMode.FromDate(
-                                        date
-                                    )
-                                )
-                            )
-                        }
+                    .clickable(enabled = isEditable) {
+                        onEditDate()
                     }
             )
         }

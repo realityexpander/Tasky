@@ -184,7 +184,43 @@ class EventViewModel @Inject constructor(
                             )
                         }
                     }
-                    else -> throw java.lang.IllegalStateException("Invalid type for WriteText: ${_eventScreenState.value.editMode}")
+                    else -> throw java.lang.IllegalStateException("Invalid type for SaveText: ${_eventScreenState.value.editMode}")
+                }
+            }
+            is EditMode.SaveDateTime -> {
+                when(_eventScreenState.value.editMode) {
+
+                    is EditMode.FromTime,
+                    is EditMode.FromDate -> {
+                        _eventScreenState.update {
+                            it.copy(
+                                event = it.event?.copy(from = event.dateTime),
+                                editMode = null
+                                // todo update the `RemindAt dateTime` to keep same offset from the new `From` date
+                                // todo validate that `from < to`
+                            )
+                        }
+                    }
+                    is EditMode.ToTime,
+                    is EditMode.ToDate -> {
+                        _eventScreenState.update {
+                            it.copy(
+                                event = it.event?.copy(to = event.dateTime),
+                                editMode = null
+                                // todo validate that `to > from`
+                            )
+                        }
+                    }
+                    is EditMode.RemindAtDateTime -> {
+                        _eventScreenState.update {
+                            it.copy(
+                                event = it.event?.copy(remindAt = event.dateTime),
+                                editMode = null
+                                // todo validate that `remindAt < from`
+                            )
+                        }
+                    }
+                    else -> throw java.lang.IllegalStateException("Invalid type for SaveDateTime: ${_eventScreenState.value.editMode}")
                 }
             }
             is Error -> {

@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
+import android.widget.EditText
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.core.presentation.common.util.UiText
@@ -26,81 +27,72 @@ sealed interface EventScreenEvent {
 
     sealed interface EditMode {
 
-        // • "Save Data" Events
-        data class SaveText(val text: String) : EventScreenEvent
-        data class SaveDateTime(val dateTime: ZonedDateTime) : EventScreenEvent
-
-
-        // • Payloads that hold data to write for "Save" events
-
-        // Payload for all EditModes that edit text
-        sealed interface EditModeText {
-            val text: String
-        }
-
-        // Payload for all EditModes that edit date
-        sealed interface EditModeDate {
-            val date: ZonedDateTime
-        }
-
-        // Payload for all EditModes that edit time
-        sealed interface EditModeTime {
-            val time: ZonedDateTime
-        }
-
-        // Payload for all EditModes that edit both date and time
-        sealed interface EditModeDateTime {
-            val dateTime: ZonedDateTime
-        }
-
-
-        // • Edit Modes (setup the UI title, set current data (time, text, etc))
+        // • (1) WHICH item is being edited? (sets initial [or default] value, sets up the display string)
         abstract val title: String
 
         data class TitleText(
             override val text: String = "",
             override val title: String = "EDIT TITLE",
-        ) : EditMode, EditModeText
+        ) : EditMode, EditText
+
         data class DescriptionText(
             override val text: String = "",
             override val title: String = "EDIT DESCRIPTION",
-        ) : EditMode, EditModeText
+        ) : EditMode, EditText
 
         data class FromDate(
-            override val date: ZonedDateTime = ZonedDateTime.now(),
+            override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val title: String = "EDIT `FROM` DATE",
-        ) : EditMode, EditModeDate
+        ) : EditMode, EditDateTime
         data class FromTime(
-            override val time: ZonedDateTime = ZonedDateTime.now(),
+            override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val title: String = "EDIT `FROM` TIME",
-        ) : EditMode, EditModeTime
+        ) : EditMode, EditDateTime
 
         data class ToDate(
-            override val date: ZonedDateTime = ZonedDateTime.now(),
+            override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val title: String = "EDIT `TO` DATE",
-        ) : EditMode, EditModeDate
+        ) : EditMode, EditDateTime
         data class ToTime(
-            override val time: ZonedDateTime = ZonedDateTime.now(),
+            override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val title: String = "EDIT `TO` TIME",
-        ) : EditMode, EditModeTime
+        ) : EditMode, EditDateTime
 
         data class RemindAtDateTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
-            override val title: String = "EDIT `REMIND AT` DATE TIME",
-        ) : EditMode, EditModeDateTime
+            override val title: String = "SET `REMIND AT` TIME",
+        ) : EditMode, EditDateTime
 
-        data class Photos(
-            val photos: List<Photo> = emptyList(),
-            override val title: String = "EDIT PHOTOS",
+        data class AddPhoto(
+            override val title: String = "ADD PHOTO",
+        ) : EditMode
+        data class ConfirmDeletePhoto(
+            override val title: String = "CONFIRM DELETE PHOTO",
         ) : EditMode
 
         data class AddAttendee(
-            val attendees: Attendee? = null,
-            override val title: String = "ADD ATTENDEES",
+            override val title: String = "ADD ATTENDEE",
         ) : EditMode
-        data class EditAttendees(
-            val attendees: List<Attendee> = emptyList(),
-            override val title: String = "EDIT ATTENDEES",
+        data class ConfirmDeleteAttendee(
+            val attendee: Attendee,
+            override val title: String = "CONFIRM DELETE ATTENDEE",
         ) : EditMode
+
+
+        // • (2) WHAT is being edited? (Text, DateTime, Photo, Attendee)
+        // Payload for all EditModes that edit text
+        sealed interface EditText {
+            val text: String
+        }
+        // Payload for all EditModes that edit date or time or both
+        sealed interface EditDateTime {
+            val dateTime: ZonedDateTime
+        }
+
+
+        // • (3) FINALLY "Save Data" Events - Delivers the edited data payload to the ViewModel
+        data class SaveText(val text: String) : EventScreenEvent
+        data class SaveDateTime(val dateTime: ZonedDateTime) : EventScreenEvent
+        data class SavePhoto(val photo: Photo) : EventScreenEvent
     }
 }

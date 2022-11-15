@@ -4,10 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChevronRight
@@ -26,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
@@ -33,6 +31,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
+import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.agenda_feature.presentation.components.EditTextModal
 import com.realityexpander.tasky.agenda_feature.presentation.components.TimeDateRow
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
@@ -45,6 +44,12 @@ import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.datetime.time.timepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -445,7 +450,20 @@ fun AddEventScreenContent(
                     title = "From",
                     date = state.event?.from ?: ZonedDateTime.now(),
                     isEditable = isEditable,
-                    onAction = onAction
+                    onEditDate = {
+                        onAction(
+                            SetEditMode(
+                                EditMode.FromDate(state.event?.from ?: ZonedDateTime.now())
+                            )
+                        )
+                    },
+                    onEditTime = {
+                        onAction(
+                            SetEditMode(
+                                EditMode.FromTime(state.event?.from ?: ZonedDateTime.now())
+                            )
+                        )
+                    }
                 )
 
                 SmallHeightHorizontalDivider()
@@ -455,7 +473,20 @@ fun AddEventScreenContent(
                     title = "To",
                     date = state.event?.to ?: ZonedDateTime.now(),
                     isEditable = isEditable,
-                    onAction = onAction
+                    onEditDate = {
+                        onAction(
+                            SetEditMode(
+                                EditMode.ToDate(state.event?.to ?: ZonedDateTime.now())
+                            )
+                        )
+                    },
+                    onEditTime = {
+                        onAction(
+                            SetEditMode(
+                                EditMode.ToTime(state.event?.to ?: ZonedDateTime.now())
+                            )
+                        )
+                    }
                 )
 
                 SmallHeightHorizontalDivider()
@@ -467,13 +498,21 @@ fun AddEventScreenContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.surface)
-                    //.padding(start = DP.small)
                 ) {
 
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
                             .weight(1f)
+                            .clickable(enabled = isEditable) {
+                                onAction(
+                                    SetEditMode(
+                                        EditMode.RemindAtDateTime(
+                                            state.event?.remindAt ?: ZonedDateTime.now()
+                                        )
+                                    )
+                                )
+                            }
                     ) {
                         Row(
                             horizontalArrangement = Arrangement.Start,
@@ -513,17 +552,75 @@ fun AddEventScreenContent(
                             modifier = Modifier
                                 .weight(.1125f)
                                 .align(Alignment.CenterVertically)
-                                .clickable(enabled = isEditable) {
+                        )
+
+                        // • REMIND AT MENU
+                        DropdownMenu(
+                            expanded = state.editMode is EditMode.RemindAtDateTime,
+                            offset = DpOffset(DP.small, 0.dp),
+                            onDismissRequest = { onAction(CancelEditMode) },
+                            modifier = Modifier
+                                .background(color = MaterialTheme.colors.onSurface)
+
+                        ) {
+                            MenuItem(
+                                title = "10 minutes before",
+                                onClick = {
                                     onAction(
-                                        SetEditMode(
-                                            EditMode.RemindAtDateTime(
-                                                state.event?.remindAt ?: ZonedDateTime.now()
-                                            )
+                                        EditMode.SaveDateTime(
+                                            state.event?.from?.minusMinutes(10)
+                                            ?: ZonedDateTime.now()
                                         )
                                     )
-                                }
-                        )
+                                },
+                            )
+                            MenuItem(
+                                title = "30 minutes before",
+                                onClick = {
+                                    onAction(
+                                        EditMode.SaveDateTime(
+                                            state.event?.from?.minusMinutes(30)
+                                                ?: ZonedDateTime.now()
+                                        )
+                                    )
+                                },
+                            )
+                            MenuItem(
+                                title = "1 hour before",
+                                onClick = {
+                                    onAction(
+                                        EditMode.SaveDateTime(
+                                            state.event?.from?.minusHours(1)
+                                                ?: ZonedDateTime.now()
+                                        )
+                                    )
+                                },
+                            )
+                            MenuItem(
+                                title = "6 hours before",
+                                onClick = {
+                                    onAction(
+                                        EditMode.SaveDateTime(
+                                            state.event?.from?.minusHours(6)
+                                                ?: ZonedDateTime.now()
+                                        )
+                                    )
+                                },
+                            )
+                            MenuItem(
+                                title = "1 day before",
+                                onClick = {
+                                    onAction(
+                                        EditMode.SaveDateTime(
+                                            state.event?.from?.minusDays(1)
+                                                ?: ZonedDateTime.now()
+                                        )
+                                    )
+                                },
+                            )
+                        }
                     }
+
                 }
                 SmallHeightHorizontalDivider()
                 Spacer(modifier = Modifier.smallHeight())
@@ -654,13 +751,14 @@ fun AddEventScreenContent(
         }
     }
 
-    // • Editors
+    // • EDITORS FOR EVENT PROPERTIES
     state.editMode?.let { editMode ->
         when (editMode) {
             is EditMode.TitleText,
             is EditMode.DescriptionText -> {
+                editMode as EditMode.EditText
                 EditTextModal(
-                    text = (editMode as EditMode.EditModeText).text,
+                    text = editMode.text,
                     title = editMode.title,
                     editTextStyle =
                         if(editMode is EditMode.TitleText)
@@ -675,19 +773,76 @@ fun AddEventScreenContent(
                     }
                 )
             }
-            is EditMode.FromDate -> TODO()
-            is EditMode.FromTime -> TODO()
-            is EditMode.ToDate -> TODO()
-            is EditMode.ToTime -> TODO()
-            is EditMode.RemindAtDateTime -> TODO()
-            is EditMode.Photos -> TODO()
+            is EditMode.ToDate,
+            is EditMode.FromDate -> {
+                editMode as EditMode.EditDateTime
+                var pickedDate by remember { mutableStateOf(LocalDateTime.now()) }
+                val dateDialogState = rememberMaterialDialogState()
+                dateDialogState.show()
+
+                MaterialDialog(
+                    dialogState = dateDialogState,
+                    buttons = {
+                        positiveButton(text = "OK") {
+                            onAction(EditMode.SaveDateTime(pickedDate?.toZonedDateTime()!!))
+                        }
+                        negativeButton(text = "CANCEL") {
+                            dateDialogState.hide()
+                            onAction(CancelEditMode)
+                        }
+                    }
+                ) {
+                    datepicker(
+                        initialDate = editMode.dateTime.toLocalDate(),
+                        title = editMode.title,
+                    ) {
+                        pickedDate = it.atTime(editMode.dateTime.toLocalTime())
+                    }
+                }
+            }
+            is EditMode.FromTime,
+            is EditMode.ToTime -> {
+                editMode as EditMode.EditDateTime
+                var pickedTime by remember { mutableStateOf(LocalDateTime.now()) }
+                val dateDialogState = rememberMaterialDialogState()
+                dateDialogState.show()
+
+                MaterialDialog(
+                    dialogState = dateDialogState,
+                    buttons = {
+                        positiveButton(text = "OK") {
+                            onAction(EditMode.SaveDateTime(pickedTime?.toZonedDateTime()!!))
+                        }
+                        negativeButton(text = "CANCEL") {
+                            dateDialogState.hide()
+                            onAction(CancelEditMode)
+                        }
+                    }
+                ) {
+                    timepicker(
+                        initialTime = editMode.dateTime.toLocalTime(),
+                        title = editMode.title,
+                        //timeRange = LocalTime.MIDNIGHT..LocalTime.MIDNIGHT.plusHours(24)
+                    ) {
+                        pickedTime = it.atDate(editMode.dateTime.toLocalDate())
+                    }
+                }
+            }
+            is EditMode.RemindAtDateTime -> { /* handled in the RemindAt UI element, this is here to remove compiler warning */ }
+            is EditMode.AddPhoto -> TODO()
+            is EditMode.ConfirmDeletePhoto -> TODO()
             is EditMode.AddAttendee -> TODO()
-            is EditMode.EditAttendees -> TODO()
+            is EditMode.ConfirmDeleteAttendee -> TODO()
         }
 
     }
 
 }
+
+fun LocalDateTime.toZonedDateTime(): ZonedDateTime {
+    return ZonedDateTime.of(this, ZoneId.systemDefault())
+}
+
 
 @Preview(
     showBackground = true,
