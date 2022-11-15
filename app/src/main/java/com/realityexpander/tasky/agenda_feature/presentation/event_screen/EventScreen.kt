@@ -32,6 +32,7 @@ import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.toZonedDateTime
 import com.realityexpander.tasky.agenda_feature.presentation.components.EditTextModal
 import com.realityexpander.tasky.agenda_feature.presentation.components.TimeDateRow
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
@@ -49,7 +50,6 @@ import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -135,7 +135,7 @@ fun AddEventScreenContent(
 
     // todo handle "un-stateful" one-time events (like Snackbar), will use a Channel or SharedFlow
 
-    // • Main Container
+    // • MAIN CONTAINER
     Column(
         modifier = Modifier
             .background(color = MaterialTheme.colors.onSurface)
@@ -151,7 +151,7 @@ fun AddEventScreenContent(
                 .padding(start = DP.small, end = DP.small)
         ) {
 
-            // • Close button
+            // • CLOSE BUTTON
             Icon(
                 imageVector = Icons.Filled.Close,
                 tint = MaterialTheme.colors.surface,
@@ -219,7 +219,7 @@ fun AddEventScreenContent(
             ) {
                 Spacer(modifier = Modifier.smallHeight())
 
-                // • Agenda Item Type (Event)
+                // • AGENDA ITEM TYPE (EVENT)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -335,7 +335,7 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.smallHeight())
             }
 
-            // • Photo Picker / Add / Remove
+            // • PHOTO PICKER / ADD / REMOVE
             Box(
                 modifier = Modifier
                     .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
@@ -346,7 +346,7 @@ fun AddEventScreenContent(
             ) {
 
                 if (state.event?.photos.isNullOrEmpty()) {
-                    // • No Photos
+                    // • NO PHOTOS
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
@@ -372,7 +372,7 @@ fun AddEventScreenContent(
                         )
                     }
                 } else {
-                    // • List of photo images
+                    // • LIST OF PHOTO IMAGES
                     Column(
                         modifier = Modifier
                             .wrapContentHeight()
@@ -445,7 +445,7 @@ fun AddEventScreenContent(
 
                 SmallHeightHorizontalDivider()
 
-                // • FROM TIME / DATE
+                // • FROM TIME / DATE ROW
                 TimeDateRow(
                     title = "From",
                     date = state.event?.from ?: ZonedDateTime.now(),
@@ -468,7 +468,7 @@ fun AddEventScreenContent(
 
                 SmallHeightHorizontalDivider()
 
-                // • TO TIME / DATE
+                // • TO TIME / DATE ROW
                 TimeDateRow(
                     title = "To",
                     date = state.event?.to ?: ZonedDateTime.now(),
@@ -492,7 +492,7 @@ fun AddEventScreenContent(
                 SmallHeightHorizontalDivider()
 
 
-                // • Remind At
+                // • REMIND AT ROW
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
@@ -520,7 +520,7 @@ fun AddEventScreenContent(
                                 .weight(1f)
                                 .padding(start = DP.small, end = DP.medium)
                         ) {
-                            // • Alarm/Reminder At icon
+                            // • ALARM/REMINDER AT ICON
                             Icon(
                                 imageVector = Icons.Outlined.Notifications,
                                 tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
@@ -579,8 +579,8 @@ fun AddEventScreenContent(
                                 onClick = {
                                     onAction(
                                         EditMode.SaveDateTime(
-                                            state.event?.from?.minusMinutes(30)
-                                                ?: ZonedDateTime.now()
+                                        state.event?.from?.minusMinutes(30)
+                                            ?: ZonedDateTime.now()
                                         )
                                     )
                                 },
@@ -590,8 +590,8 @@ fun AddEventScreenContent(
                                 onClick = {
                                     onAction(
                                         EditMode.SaveDateTime(
-                                            state.event?.from?.minusHours(1)
-                                                ?: ZonedDateTime.now()
+                                        state.event?.from?.minusHours(1)
+                                            ?: ZonedDateTime.now()
                                         )
                                     )
                                 },
@@ -601,8 +601,8 @@ fun AddEventScreenContent(
                                 onClick = {
                                     onAction(
                                         EditMode.SaveDateTime(
-                                            state.event?.from?.minusHours(6)
-                                                ?: ZonedDateTime.now()
+                                        state.event?.from?.minusHours(6)
+                                            ?: ZonedDateTime.now()
                                         )
                                     )
                                 },
@@ -612,8 +612,8 @@ fun AddEventScreenContent(
                                 onClick = {
                                     onAction(
                                         EditMode.SaveDateTime(
-                                            state.event?.from?.minusDays(1)
-                                                ?: ZonedDateTime.now()
+                                        state.event?.from?.minusDays(1)
+                                            ?: ZonedDateTime.now()
                                         )
                                     )
                                 },
@@ -626,7 +626,7 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.smallHeight())
 
 
-                // • Attendees Header (Visitors & Add Attendee Button)
+                // • ATTENDEES HEADER (VISITORS & ADD ATTENDEE BUTTON)
                 Row() {
                     Text(
                         "Visitors",
@@ -655,9 +655,7 @@ fun AddEventScreenContent(
                             .align(Alignment.CenterVertically)
                             .clickable(enabled = isEditable) {
                                 onAction(
-                                    SetEditMode(
-                                        EditMode.AddAttendee()
-                                    )
+                                    SetEditMode(EditMode.AddAttendee())
                                 )
                             }
                     )
@@ -665,7 +663,7 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.largeHeight())
 
 
-                // • All / Going / Not going
+                // • ATTENDEE LIST SELECTOR: ALL / GOING / NOT GOING
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
@@ -735,6 +733,7 @@ fun AddEventScreenContent(
 
                 Spacer(modifier = Modifier.largeHeight())
 
+                // • JOIN/LEAVE/DELETE EVENT BUTTON
                 Text(
                     if (state.event?.isUserEventCreator == true) "DELETE EVENT"
                         else if (state.event?.isGoing == true) "LEAVE EVENT"
@@ -836,10 +835,6 @@ fun AddEventScreenContent(
 
     }
 
-}
-
-fun LocalDateTime.toZonedDateTime(): ZonedDateTime {
-    return ZonedDateTime.of(this, ZoneId.systemDefault())
 }
 
 
