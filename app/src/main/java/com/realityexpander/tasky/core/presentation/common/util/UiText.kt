@@ -246,7 +246,7 @@ open class UiText : Parcelable {
     }
 
     // Useful for plain kotlin classes that don't have access to @Composable functions.
-    // Returns null if UiText is `None` or `Str` is null value.
+    // Returns null if Str is `None` or `Str` is null value. Ignores the Resource value
     // (good for testing)
     fun asStrOrNull(): String? {
         return when(this) {
