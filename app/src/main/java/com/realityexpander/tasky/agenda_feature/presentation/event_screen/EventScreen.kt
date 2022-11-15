@@ -773,8 +773,8 @@ fun AddEventScreenContent(
                     }
                 )
             }
-            is EditMode.ToDate,
-            is EditMode.FromDate -> {
+            is EditMode.FromDate,
+            is EditMode.ToDate -> {
                 editMode as EditMode.EditDateTime
                 var pickedDate by remember { mutableStateOf(LocalDateTime.now()) }
                 val dateDialogState = rememberMaterialDialogState()
@@ -822,7 +822,6 @@ fun AddEventScreenContent(
                     timepicker(
                         initialTime = editMode.dateTime.toLocalTime(),
                         title = editMode.title,
-                        //timeRange = LocalTime.MIDNIGHT..LocalTime.MIDNIGHT.plusHours(24)
                     ) {
                         pickedTime = it.atDate(editMode.dateTime.toLocalDate())
                     }
