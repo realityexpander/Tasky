@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent
 import com.realityexpander.tasky.agenda_feature.util.toShortMonthDayYear
 import com.realityexpander.tasky.agenda_feature.util.toTime12Hour
@@ -66,8 +65,8 @@ fun ColumnScope.TimeDateRow(
             contentDescription = "Edit Event `$title` Time",
             modifier = Modifier
                 .weight(.2f)
-                .width(32.dp)
-                .height(26.dp)
+//                .width(28.dp)
+//                .height(24.dp)
                 .align(Alignment.CenterVertically)
                 .clickable {
                     if(isEditable) {
@@ -102,8 +101,6 @@ fun ColumnScope.TimeDateRow(
                 contentDescription = "Edit Event `$title` Date",
                 modifier = Modifier
                     .weight(.2f)
-                    .width(32.dp)
-                    .height(26.dp)
                     .align(Alignment.CenterVertically)
                     .clickable {
                         if(isEditable) {

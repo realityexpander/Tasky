@@ -512,8 +512,6 @@ fun AddEventScreenContent(
                             contentDescription = "Edit Remind At DateTime",
                             modifier = Modifier
                                 .weight(.1125f)
-                                .width(32.dp)
-                                .height(26.dp)
                                 .align(Alignment.CenterVertically)
                                 .clickable(enabled = isEditable) {
                                     onAction(
