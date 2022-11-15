@@ -29,7 +29,7 @@ sealed interface EventScreenEvent {
         abstract val dialogTitle: String
 
         // • (1) WHICH item is being edited?
-        // - sets initial/default value, sets up the dialog display string)
+        // - sets initial/default value and the dialog display string)
         data class TitleText(
             override val text: String = "",
             override val dialogTitle: String = "EDIT TITLE",
