@@ -4,7 +4,10 @@ import android.content.res.Configuration
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChevronRight
@@ -12,7 +15,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Circle
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
@@ -31,7 +32,6 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
-import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.toZonedDateTime
 import com.realityexpander.tasky.agenda_feature.presentation.components.EditTextModal
 import com.realityexpander.tasky.agenda_feature.presentation.components.TimeDateRow
@@ -40,7 +40,6 @@ import com.realityexpander.tasky.agenda_feature.presentation.event_screen.compon
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.PillButton
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.SmallHeightHorizontalDivider
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
-import com.realityexpander.tasky.agenda_feature.util.toTimeDifferenceHumanReadable
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
@@ -445,7 +444,7 @@ fun AddEventScreenContent(
 
                 SmallHeightHorizontalDivider()
 
-                // • FROM TIME / DATE ROW
+                // • FROM TIME/DATE ROW
                 TimeDateRow(
                     title = "From",
                     date = state.event?.from ?: ZonedDateTime.now(),
@@ -465,10 +464,9 @@ fun AddEventScreenContent(
                         )
                     }
                 )
-
                 SmallHeightHorizontalDivider()
 
-                // • TO TIME / DATE ROW
+                // • TO TIME/DATE ROW
                 TimeDateRow(
                     title = "To",
                     date = state.event?.to ?: ZonedDateTime.now(),
@@ -488,140 +486,160 @@ fun AddEventScreenContent(
                         )
                     }
                 )
-
                 SmallHeightHorizontalDivider()
 
-
                 // • REMIND AT ROW
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colors.surface)
-                ) {
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable(enabled = isEditable) {
-                                onAction(
-                                    SetEditMode(
-                                        EditMode.RemindAtDateTime(
-                                            state.event?.remindAt ?: ZonedDateTime.now()
-                                        )
-                                    )
+                RemindAtRow(
+                    fromDateTime = state.event?.from ?: ZonedDateTime.now(),
+                    remindAtDateTime = state.event?.remindAt ?: ZonedDateTime.now(),
+                    isEditable = isEditable,
+                    isDropdownMenuVisible = state.editMode is EditMode.RemindAtDateTime,
+                    onEditRemindAtDateTime = {
+                        onAction(
+                            SetEditMode(
+                                EditMode.RemindAtDateTime(
+                                    state.event?.remindAt ?: ZonedDateTime.now()
                                 )
-                            }
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.Start,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(start = DP.small, end = DP.medium)
-                        ) {
-                            // • ALARM/REMINDER AT ICON
-                            Icon(
-                                imageVector = Icons.Outlined.Notifications,
-                                tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                                contentDescription = "Remind At Button",
-                                modifier = Modifier
-                                    .size(34.dp)
-                                    .clip(shape = RoundedCornerShape(5.dp))
-                                    .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
-                                    .padding(4.dp)
-                                    .align(Alignment.CenterVertically)
-                                    .weight(.2f)
                             )
-                            Spacer(modifier = Modifier.smallWidth())
-                            Text(
-                                state.event?.from?.toTimeDifferenceHumanReadable(state.event.remindAt)
-                                    ?: "not set",
-                                color = MaterialTheme.colors.onSurface,
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .weight(1f)
-                            )
-                        }
-
-                        Icon(
-                            imageVector = Icons.Filled.ChevronRight,
-                            tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
-                            contentDescription = "Edit Remind At DateTime",
-                            modifier = Modifier
-                                .weight(.1125f)
-                                .align(Alignment.CenterVertically)
                         )
-
-                        // • REMIND AT MENU
-                        DropdownMenu(
-                            expanded = state.editMode is EditMode.RemindAtDateTime,
-                            offset = DpOffset(DP.small, 0.dp),
-                            onDismissRequest = { onAction(CancelEditMode) },
-                            modifier = Modifier
-                                .background(color = MaterialTheme.colors.onSurface)
-
-                        ) {
-                            MenuItem(
-                                title = "10 minutes before",
-                                onClick = {
-                                    onAction(
-                                        EditMode.SaveDateTime(
-                                            state.event?.from?.minusMinutes(10)
-                                            ?: ZonedDateTime.now()
-                                        )
-                                    )
-                                },
-                            )
-                            MenuItem(
-                                title = "30 minutes before",
-                                onClick = {
-                                    onAction(
-                                        EditMode.SaveDateTime(
-                                        state.event?.from?.minusMinutes(30)
-                                            ?: ZonedDateTime.now()
-                                        )
-                                    )
-                                },
-                            )
-                            MenuItem(
-                                title = "1 hour before",
-                                onClick = {
-                                    onAction(
-                                        EditMode.SaveDateTime(
-                                        state.event?.from?.minusHours(1)
-                                            ?: ZonedDateTime.now()
-                                        )
-                                    )
-                                },
-                            )
-                            MenuItem(
-                                title = "6 hours before",
-                                onClick = {
-                                    onAction(
-                                        EditMode.SaveDateTime(
-                                        state.event?.from?.minusHours(6)
-                                            ?: ZonedDateTime.now()
-                                        )
-                                    )
-                                },
-                            )
-                            MenuItem(
-                                title = "1 day before",
-                                onClick = {
-                                    onAction(
-                                        EditMode.SaveDateTime(
-                                        state.event?.from?.minusDays(1)
-                                            ?: ZonedDateTime.now()
-                                        )
-                                    )
-                                },
-                            )
-                        }
+                    },
+                    onDismissRequest = { onAction(CancelEditMode) },
+                    onSaveRemindAtDateTime = { dateTime ->
+                        onAction(
+                            EditMode.SaveDateTime(dateTime)
+                        )
                     }
+                )
 
-                }
+//                Row(
+//                    horizontalArrangement = Arrangement.SpaceBetween,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .background(MaterialTheme.colors.surface)
+//                ) {
+//
+//                    Row(
+//                        horizontalArrangement = Arrangement.SpaceBetween,
+//                        modifier = Modifier
+//                            .weight(1f)
+//                            .clickable(enabled = isEditable) {
+//                                onAction(
+//                                    SetEditMode(
+//                                        EditMode.RemindAtDateTime(
+//                                            state.event?.remindAt ?: ZonedDateTime.now()
+//                                        )
+//                                    )
+//                                )
+//                            }
+//                    ) {
+//                        Row(
+//                            horizontalArrangement = Arrangement.Start,
+//                            modifier = Modifier
+//                                .weight(1f)
+//                                .padding(start = DP.small, end = DP.medium)
+//                        ) {
+//                            // • ALARM/REMINDER AT ICON
+//                            Icon(
+//                                imageVector = Icons.Outlined.Notifications,
+//                                tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
+//                                contentDescription = "Remind At Button",
+//                                modifier = Modifier
+//                                    .size(34.dp)
+//                                    .clip(shape = RoundedCornerShape(5.dp))
+//                                    .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
+//                                    .padding(4.dp)
+//                                    .align(Alignment.CenterVertically)
+//                                    .weight(.2f)
+//                            )
+//                            Spacer(modifier = Modifier.smallWidth())
+//                            Text(
+//                                state.event?.from?.toTimeDifferenceHumanReadable(state.event.remindAt)
+//                                    ?: "not set",
+//                                color = MaterialTheme.colors.onSurface,
+//                                textAlign = TextAlign.Start,
+//                                modifier = Modifier
+//                                    .align(Alignment.CenterVertically)
+//                                    .weight(1f)
+//                            )
+//                        }
+//
+//                        Icon(
+//                            imageVector = Icons.Filled.ChevronRight,
+//                            tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
+//                            contentDescription = "Edit Remind At DateTime",
+//                            modifier = Modifier
+//                                .weight(.1125f)
+//                                .align(Alignment.CenterVertically)
+//                        )
+//
+//                        // • REMIND AT MENU
+//                        DropdownMenu(
+//                            expanded = state.editMode is EditMode.RemindAtDateTime,
+//                            offset = DpOffset(DP.small, 0.dp),
+//                            onDismissRequest = { onAction(CancelEditMode) },
+//                            modifier = Modifier
+//                                .background(color = MaterialTheme.colors.onSurface)
+//
+//                        ) {
+//                            MenuItem(
+//                                title = "10 minutes before",
+//                                onClick = {
+//                                    onAction(
+//                                        EditMode.SaveDateTime(
+//                                            state.event?.from?.minusMinutes(10)
+//                                            ?: ZonedDateTime.now()
+//                                        )
+//                                    )
+//                                },
+//                            )
+//                            MenuItem(
+//                                title = "30 minutes before",
+//                                onClick = {
+//                                    onAction(
+//                                        EditMode.SaveDateTime(
+//                                        state.event?.from?.minusMinutes(30)
+//                                            ?: ZonedDateTime.now()
+//                                        )
+//                                    )
+//                                },
+//                            )
+//                            MenuItem(
+//                                title = "1 hour before",
+//                                onClick = {
+//                                    onAction(
+//                                        EditMode.SaveDateTime(
+//                                        state.event?.from?.minusHours(1)
+//                                            ?: ZonedDateTime.now()
+//                                        )
+//                                    )
+//                                },
+//                            )
+//                            MenuItem(
+//                                title = "6 hours before",
+//                                onClick = {
+//                                    onAction(
+//                                        EditMode.SaveDateTime(
+//                                        state.event?.from?.minusHours(6)
+//                                            ?: ZonedDateTime.now()
+//                                        )
+//                                    )
+//                                },
+//                            )
+//                            MenuItem(
+//                                title = "1 day before",
+//                                onClick = {
+//                                    onAction(
+//                                        EditMode.SaveDateTime(
+//                                        state.event?.from?.minusDays(1)
+//                                            ?: ZonedDateTime.now()
+//                                        )
+//                                    )
+//                                },
+//                            )
+//                        }
+//            }
+
+//        }
                 SmallHeightHorizontalDivider()
                 Spacer(modifier = Modifier.smallHeight())
 
@@ -695,7 +713,7 @@ fun AddEventScreenContent(
                             attendeeListType = AttendeeListType.NOT_GOING
                         }
                     )
-                    Spacer(modifier = Modifier.smallWidth())
+//                    Spacer(modifier = Modifier.smallWidth())
                 }
                 Spacer(modifier = Modifier.mediumHeight())
 
@@ -736,8 +754,8 @@ fun AddEventScreenContent(
                 // • JOIN/LEAVE/DELETE EVENT BUTTON
                 Text(
                     if (state.event?.isUserEventCreator == true) "DELETE EVENT"
-                        else if (state.event?.isGoing == true) "LEAVE EVENT"
-                        else "JOIN EVENT",
+                    else if (state.event?.isGoing == true) "LEAVE EVENT"
+                    else "JOIN EVENT",
                     style = MaterialTheme.typography.h4,
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
                     textAlign = TextAlign.Center,
@@ -747,94 +765,94 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.mediumHeight())
 
             }
-        }
-    }
 
-    // • EDITORS FOR EVENT PROPERTIES
-    state.editMode?.let { editMode ->
-        when (editMode) {
-            is EditMode.TitleText,
-            is EditMode.DescriptionText -> {
-                editMode as EditMode.EditText
-                EditTextModal(
-                    text = editMode.text,
-                    title = editMode.title,
-                    editTextStyle =
-                        if(editMode is EditMode.TitleText)
-                            MaterialTheme.typography.h2  // cant access from non-compose function, make a wrapper?
-                        else
-                            MaterialTheme.typography.body1, // cant access from non-compose function, make a wrapper?
-                    onSave = {
-                        onAction(EditMode.SaveText(it))
-                    },
-                    onCancel = {
-                        onAction(CancelEditMode)
-                    }
-                )
-            }
-            is EditMode.FromDate,
-            is EditMode.ToDate -> {
-                editMode as EditMode.EditDateTime
-                var pickedDate by remember { mutableStateOf(LocalDateTime.now()) }
-                val dateDialogState = rememberMaterialDialogState()
-                dateDialogState.show()
+                // • EDITORS FOR EVENT PROPERTIES
+                state.editMode?.let { editMode ->
+                    when (editMode) {
+                        is EditMode.TitleText,
+                        is EditMode.DescriptionText -> {
+                            editMode as EditMode.EditText
+                            EditTextModal(
+                                text = editMode.text,
+                                title = editMode.title,
+                                editTextStyle =
+                                if (editMode is EditMode.TitleText)
+                                    MaterialTheme.typography.h2  // cant access from non-compose function, make a wrapper?
+                                else
+                                    MaterialTheme.typography.body1, // cant access from non-compose function, make a wrapper?
+                                onSave = {
+                                    onAction(EditMode.SaveText(it))
+                                },
+                                onCancel = {
+                                    onAction(CancelEditMode)
+                                }
+                            )
+                        }
+                        is EditMode.FromDate,
+                        is EditMode.ToDate -> {
+                            editMode as EditMode.EditDateTime
+                            var pickedDate by remember { mutableStateOf(LocalDateTime.now()) }
+                            val dateDialogState = rememberMaterialDialogState()
+                            dateDialogState.show()
 
-                MaterialDialog(
-                    dialogState = dateDialogState,
-                    buttons = {
-                        positiveButton(text = "OK") {
-                            onAction(EditMode.SaveDateTime(pickedDate?.toZonedDateTime()!!))
+                            MaterialDialog(
+                                dialogState = dateDialogState,
+                                buttons = {
+                                    positiveButton(text = "OK") {
+                                        onAction(EditMode.SaveDateTime(pickedDate?.toZonedDateTime()!!))
+                                    }
+                                    negativeButton(text = "CANCEL") {
+                                        dateDialogState.hide()
+                                        onAction(CancelEditMode)
+                                    }
+                                }
+                            ) {
+                                datepicker(
+                                    initialDate = editMode.dateTime.toLocalDate(),
+                                    title = editMode.title,
+                                ) {
+                                    pickedDate = it.atTime(editMode.dateTime.toLocalTime())
+                                }
+                            }
                         }
-                        negativeButton(text = "CANCEL") {
-                            dateDialogState.hide()
-                            onAction(CancelEditMode)
+                        is EditMode.FromTime,
+                        is EditMode.ToTime -> {
+                            editMode as EditMode.EditDateTime
+                            var pickedTime by remember { mutableStateOf(LocalDateTime.now()) }
+                            val dateDialogState = rememberMaterialDialogState()
+                            dateDialogState.show()
+
+                            MaterialDialog(
+                                dialogState = dateDialogState,
+                                buttons = {
+                                    positiveButton(text = "OK") {
+                                        onAction(EditMode.SaveDateTime(pickedTime?.toZonedDateTime()!!))
+                                    }
+                                    negativeButton(text = "CANCEL") {
+                                        dateDialogState.hide()
+                                        onAction(CancelEditMode)
+                                    }
+                                }
+                            ) {
+                                timepicker(
+                                    initialTime = editMode.dateTime.toLocalTime(),
+                                    title = editMode.title,
+                                ) {
+                                    pickedTime = it.atDate(editMode.dateTime.toLocalDate())
+                                }
+                            }
                         }
-                    }
-                ) {
-                    datepicker(
-                        initialDate = editMode.dateTime.toLocalDate(),
-                        title = editMode.title,
-                    ) {
-                        pickedDate = it.atTime(editMode.dateTime.toLocalTime())
+                        is EditMode.RemindAtDateTime -> { /* handled in the RemindAt UI element, this is here to remove compiler warning */
+                        }
+                        is EditMode.AddPhoto -> TODO()
+                        is EditMode.ConfirmDeletePhoto -> TODO()
+                        is EditMode.AddAttendee -> TODO()
+                        is EditMode.ConfirmDeleteAttendee -> TODO()
                     }
                 }
             }
-            is EditMode.FromTime,
-            is EditMode.ToTime -> {
-                editMode as EditMode.EditDateTime
-                var pickedTime by remember { mutableStateOf(LocalDateTime.now()) }
-                val dateDialogState = rememberMaterialDialogState()
-                dateDialogState.show()
-
-                MaterialDialog(
-                    dialogState = dateDialogState,
-                    buttons = {
-                        positiveButton(text = "OK") {
-                            onAction(EditMode.SaveDateTime(pickedTime?.toZonedDateTime()!!))
-                        }
-                        negativeButton(text = "CANCEL") {
-                            dateDialogState.hide()
-                            onAction(CancelEditMode)
-                        }
-                    }
-                ) {
-                    timepicker(
-                        initialTime = editMode.dateTime.toLocalTime(),
-                        title = editMode.title,
-                    ) {
-                        pickedTime = it.atDate(editMode.dateTime.toLocalDate())
-                    }
-                }
-            }
-            is EditMode.RemindAtDateTime -> { /* handled in the RemindAt UI element, this is here to remove compiler warning */ }
-            is EditMode.AddPhoto -> TODO()
-            is EditMode.ConfirmDeletePhoto -> TODO()
-            is EditMode.AddAttendee -> TODO()
-            is EditMode.ConfirmDeleteAttendee -> TODO()
-        }
-
+//        }
     }
-
 }
 
 
