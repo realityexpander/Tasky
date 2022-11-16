@@ -186,7 +186,7 @@ class EventViewModel @Inject constructor(
                         sendEvent(ShowProgressIndicator(false))
 
                         attendeeInfo?.let { attendee ->
-                            // addAttendee(attendeeInfo)
+                            // addAttendee(attendee)
                             _state.update { _state ->
                                 _state.copy(
                                     event = _state.event?.copy(
