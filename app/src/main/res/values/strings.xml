@@ -111,5 +111,9 @@
     <string name="event_leave_event">LEAVE EVENT</string>
     <string name="event_join_event">JOIN EVENT</string>
 
+    <!--    Add Attendee Dialog -->
+    <string name="add_attendee_dialog_title">Add Attendee</string>
+    <string name="add_attendee_dialog_email_title">Attendee email</string>
+    <string name="add_attendee_dialog_error_email_not_found">Attendee email not found!</string>
 
 </resources>

@@ -165,8 +165,57 @@ class EventViewModel @Inject constructor(
             }
             is CancelEditMode -> {
                 _state.update { _state ->
-                    _state.copy(editMode = null)
+                    _state.copy(
+                        editMode = null,
+                        addAttendeeErrorMessage = null,
+                    )
                 }
+            }
+            is ClearAddAttendeeErrorMessage -> {
+                _state.update { _state ->
+                    _state.copy(addAttendeeErrorMessage = null)
+                }
+            }
+            is ConfirmAttendeeEmailExistsThenSave -> {
+                sendEvent(ShowProgressIndicator(true))
+
+                // call API to check if attendee email exists
+                agendaRepository.confirmAttendeeExists(
+                    uiEvent.email,
+                    onSuccess = { attendeeInfo ->
+                        sendEvent(ShowProgressIndicator(false))
+
+                        attendeeInfo?.let { attendee ->
+                            // addAttendee(attendeeInfo)
+                            _state.update { _state ->
+                                _state.copy(
+                                    event = _state.event?.copy(
+                                        attendees = _state.event.attendees +
+                                                attendee.copy(isGoing = true)
+                                    ),
+                                )
+                            }
+                            sendEvent(CancelEditMode)
+                        } ?: run {
+                            // show error
+                            _state.update { _state ->
+                                _state.copy(
+                                    addAttendeeErrorMessage = UiText.Res(R.string.add_attendee_dialog_error_email_not_found),
+                                )
+                            }
+                        }
+                    },
+                    onFailure = { error ->
+                        sendEvent(ShowProgressIndicator(false))
+
+                        // show error
+                        _state.update { _state ->
+                            _state.copy(
+                                addAttendeeErrorMessage = UiText.Str(error),
+                            )
+                        }
+                    }
+                )
             }
             is EditMode.SaveText -> {
                 when(_state.value.editMode) {
@@ -258,6 +307,16 @@ class EventViewModel @Inject constructor(
                     else -> throw java.lang.IllegalStateException("Invalid type for SaveDateTime: ${_state.value.editMode}")
                 }
             }
+            is EditMode.SaveNewAttendee -> {
+                _state.update { _state ->
+                    _state.copy(
+                        event = _state.event?.copy(
+                            attendees = _state.event.attendees + uiEvent.attendee
+                        )
+                    )
+                }
+            }
+
             is Error -> {
                 _state.update { _state ->
                     _state.copy(

@@ -4,10 +4,8 @@ import android.content.res.Configuration
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChevronRight
@@ -24,9 +22,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -719,11 +719,81 @@ fun AddEventScreenContent(
                     }
                 }
             }
-            is EditMode.RemindAtDateTime -> { /* handled in the RemindAt UI element, this is here to remove compiler warning */
+            is EditMode.RemindAtDateTime -> { // handled in the RemindAt UI element, this is here to remove compiler warning
             }
             is EditMode.AddPhoto -> TODO()
             is EditMode.ConfirmDeletePhoto -> TODO()
-            is EditMode.AddAttendee -> TODO()
+            is EditMode.AddAttendee -> {
+                val addAttendeeDialogState = rememberMaterialDialogState()
+                var attendeeEmail by remember { mutableStateOf("") }
+
+                addAttendeeDialogState.show()
+                MaterialDialog (
+                    dialogState = addAttendeeDialogState,
+                    properties = DialogProperties(
+                        dismissOnBackPress = true,
+                        dismissOnClickOutside = true
+                    ),
+                    buttons = {
+                        positiveButton(text = stringResource(R.string.ok)) {
+                            addAttendeeDialogState.hide()
+                            onAction(ConfirmAttendeeEmailExistsThenSave(attendeeEmail))
+                        }
+                        negativeButton(text = stringResource(R.string.cancel)) {
+                            addAttendeeDialogState.hide()
+                            onAction(CancelEditMode)
+                        }
+                    },
+                    onCloseRequest = {
+                        addAttendeeDialogState.hide()
+                        onAction(CancelEditMode)
+                    }
+                ) {
+                    Spacer(modifier = Modifier.tinyHeight())
+
+                    Text(
+                        text = stringResource(R.string.add_attendee_dialog_title),
+                        style = MaterialTheme.typography.h4,
+                        color = MaterialTheme.colors.onSurface,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.mediumHeight())
+
+                    OutlinedTextField(
+                        value = attendeeEmail,
+                        onValueChange = {
+                            attendeeEmail = it
+                            onAction(ClearAddAttendeeErrorMessage)
+                        },
+                        label = { Text(stringResource(R.string.add_attendee_dialog_email_title)) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                        trailingIcon = {
+                            if (state.isProgressVisible) {
+                                CircularProgressIndicator(
+                                    color = MaterialTheme.colors.primary,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = DP.small, end = DP.small)
+                    )
+                    Spacer(modifier = Modifier.smallHeight())
+
+                    // • ERROR MESSAGE
+                    Text(
+                        text = state.addAttendeeErrorMessage?.get ?: "",
+                        style = MaterialTheme.typography.body1,
+                        color = MaterialTheme.colors.error,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.smallHeight())
+                }
+            }
             is EditMode.ConfirmDeleteAttendee -> TODO()
         }
     }

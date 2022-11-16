@@ -1,19 +1,19 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls
 
 import com.realityexpander.tasky.agenda_feature.common.RepositoryResult
+import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
-import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
-import com.realityexpander.tasky.agenda_feature.domain.AgendaSync
-import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
-import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
-import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.IAttendeeRepository
+import com.realityexpander.tasky.agenda_feature.domain.*
+import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class AgendaRepositoryImpl @Inject constructor(
     private val eventRepository: IEventRepository, // = EventRepositoryImpl(),
+    private val attendeeRepository: IAttendeeRepository, // = AttendeeRepositoryImpl(),
 //    private val taskRepository: ITaskRepository,                                  // todo implement tasks repo
 //    private val reminderRepository: IReminderRepository,                          // todo implement reminders repo
     private val agendaApi: IAgendaApi,
@@ -72,5 +72,20 @@ class AgendaRepositoryImpl @Inject constructor(
 
     override suspend fun clearAllEvents(): RepositoryResult {
         return eventRepository.clearAllEvents()
+    }
+
+    override suspend fun confirmAttendeeExists(
+        attendeeEmail: Email,
+        onSuccess: (attendee: Attendee?) -> Unit,
+        onFailure: (error: String) -> Unit
+    ) {
+        val result = attendeeRepository.getAttendee(attendeeEmail)
+        if (result.isSuccess) {
+            onSuccess(result.getOrElse {
+                throw IllegalStateException("Result success for .getAttendee() should have an Attendee value")
+            })
+        } else {
+            onFailure(result.exceptionOrNull()?.message ?: "Unknown error")
+        }
     }
 }

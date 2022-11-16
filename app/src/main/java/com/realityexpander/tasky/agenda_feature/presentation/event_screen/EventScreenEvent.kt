@@ -3,6 +3,7 @@ package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.util.Email
 import java.time.ZonedDateTime
 
 sealed interface EventScreenEvent {
@@ -15,6 +16,9 @@ sealed interface EventScreenEvent {
     // • The Current EditMode of Event (Title, Description, FromDateTime, ToDateTime, RemindAt, Photos)
     data class SetEditMode(val editMode: EditMode) : EventScreenEvent
     object CancelEditMode : EventScreenEvent
+
+    data class ConfirmAttendeeEmailExistsThenSave(val email: Email) : EventScreenEvent
+    object ClearAddAttendeeErrorMessage : EventScreenEvent
 
     // • Errors
     data class Error(val message: UiText) : EventScreenEvent
@@ -92,5 +96,6 @@ sealed interface EventScreenEvent {
         data class SaveText(override val text: String) : EventScreenEvent, TextPayload
         data class SaveDateTime(override val dateTime: ZonedDateTime) : EventScreenEvent, DateTimePayload
         data class SavePhoto(val photo: Photo) : EventScreenEvent
+        data class SaveNewAttendee(val attendee: Attendee) : EventScreenEvent
     }
 }

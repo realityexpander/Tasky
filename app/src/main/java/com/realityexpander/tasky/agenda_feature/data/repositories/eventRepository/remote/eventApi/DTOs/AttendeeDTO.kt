@@ -25,7 +25,7 @@ data class AttendeeDTO(
 )
 
 @Serializable
-data class AttendeeResponseDTO(  // todo add Domain & Entity, & converters
+data class AttendeeExistsResponseDTO(  // todo add Domain & Entity, & converters
     val doesUserExist: Boolean,
     val attendee: AttendeeDTO? = null,
 )
