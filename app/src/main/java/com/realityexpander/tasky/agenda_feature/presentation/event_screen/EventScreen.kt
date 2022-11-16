@@ -545,7 +545,7 @@ fun AddEventScreenContent(
                             .align(Alignment.CenterVertically)
                             .clickable(enabled = isEditable) {
                                 onAction(
-                                    SetEditMode(EditMode.AddAttendee())
+                                    SetEditMode(EditMode.ConfirmAddAttendee())
                                 )
                             }
                     )
@@ -735,7 +735,7 @@ fun AddEventScreenContent(
             }
             is EditMode.AddPhoto -> TODO()
             is EditMode.ConfirmDeletePhoto -> TODO()
-            is EditMode.AddAttendee -> {
+            is EditMode.ConfirmAddAttendee -> {
                 val addAttendeeDialogState = rememberMaterialDialogState()
                 var attendeeEmail by remember { mutableStateOf("") }
 
@@ -748,7 +748,7 @@ fun AddEventScreenContent(
                     ),
                     buttons = {
                         positiveButton(text = stringResource(R.string.ok)) {
-                            onAction(ConfirmAttendeeEmailExistsThenAddNewAttendee(attendeeEmail))
+                            onAction(ValidateAttendeeEmailExistsThenAddAttendee(attendeeEmail))
                         }
                         negativeButton(text = stringResource(R.string.cancel)) {
                             addAttendeeDialogState.hide()

@@ -171,12 +171,7 @@ class EventViewModel @Inject constructor(
                     )
                 }
             }
-            is ClearAddAttendeeErrorMessage -> {
-                _state.update { _state ->
-                    _state.copy(addAttendeeErrorMessage = null)
-                }
-            }
-            is ConfirmAttendeeEmailExistsThenAddNewAttendee -> {
+            is ValidateAttendeeEmailExistsThenAddAttendee -> {
                 sendEvent(ShowProgressIndicator(true))
 
                 // call API to check if attendee email exists
@@ -200,7 +195,7 @@ class EventViewModel @Inject constructor(
                             }
 
                             // Add attendee to event
-                            sendEvent(EditMode.AddNewAttendee(attendee))
+                            sendEvent(EditMode.AddAttendee(attendee))
 
                             sendEvent(CancelEditMode)
                         } ?: run {
@@ -223,6 +218,11 @@ class EventViewModel @Inject constructor(
                         }
                     }
                 )
+            }
+            is ClearAddAttendeeErrorMessage -> {
+                _state.update { _state ->
+                    _state.copy(addAttendeeErrorMessage = null)
+                }
             }
             is EditMode.UpdateText -> {
                 when(_state.value.editMode) {
@@ -314,7 +314,7 @@ class EventViewModel @Inject constructor(
                     else -> throw java.lang.IllegalStateException("Invalid type for SaveDateTime: ${_state.value.editMode}")
                 }
             }
-            is EditMode.AddNewAttendee -> {
+            is EditMode.AddAttendee -> {
                 _state.update { _state ->
                     _state.copy(
                         event = _state.event?.copy(

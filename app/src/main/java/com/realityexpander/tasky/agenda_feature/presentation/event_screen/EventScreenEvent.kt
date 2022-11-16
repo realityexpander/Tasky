@@ -19,7 +19,7 @@ sealed interface EventScreenEvent {
     object CancelEditMode : EventScreenEvent
 
     // • Add Attendee Dialog
-    data class ConfirmAttendeeEmailExistsThenAddNewAttendee(val email: Email) : EventScreenEvent
+    data class ValidateAttendeeEmailExistsThenAddAttendee(val email: Email) : EventScreenEvent
     object ClearAddAttendeeErrorMessage : EventScreenEvent
 
     // • Errors
@@ -76,7 +76,7 @@ sealed interface EventScreenEvent {
             override val dialogTitle: String = "CONFIRM DELETE PHOTO",
         ) : EditMode
 
-        data class AddAttendee(
+        data class ConfirmAddAttendee(
             override val dialogTitle: String = "ADD ATTENDEE",
         ) : EditMode
         data class ConfirmRemoveAttendee(
@@ -101,7 +101,7 @@ sealed interface EventScreenEvent {
         data class UpdateText(override val text: String) : EventScreenEvent, TextPayload
         data class UpdateDateTime(override val dateTime: ZonedDateTime) : EventScreenEvent, DateTimePayload
         data class SavePhoto(val photo: Photo) : EventScreenEvent
-        data class AddNewAttendee(val attendee: Attendee) : EventScreenEvent
+        data class AddAttendee(val attendee: Attendee) : EventScreenEvent
         data class RemoveAttendee(override val attendeeId: AttendeeId) : EventScreenEvent, AttendeeIdPayload
     }
 }
