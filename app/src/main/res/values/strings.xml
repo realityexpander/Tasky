@@ -66,14 +66,14 @@
 
     <!-- ZonedDateTimeToString.kt -->
     <string name="zonedDateTimeToString_same_time">Same time</string>
-    <string name="zonedDateTimeToString_number_day_string">%d day %s</string>
-    <string name="zonedDateTimeToString_number_days_string">%d days %s</string>
-    <string name="zonedDateTimeToString_number_hour_string">%d hour %s</string>
-    <string name="zonedDateTimeToString_number_hours_string">%d hours %s</string>
-    <string name="zonedDateTimeToString_number_minute_string">%d minute %s</string>
-    <string name="zonedDateTimeToString_number_minutes_string">%d minutes %s</string>
-    <string name="zonedDateTimeToString_number_second_string">%d second %s</string>
-    <string name="zonedDateTimeToString_number_seconds_string">%d seconds %s</string>
+    <string name="zonedDateTimeToString_number_day_string">%1$d day %2$s</string>
+    <string name="zonedDateTimeToString_number_days_string">%1$d days %2$s</string>
+    <string name="zonedDateTimeToString_number_hour_string">%1$d hour %2$s</string>
+    <string name="zonedDateTimeToString_number_hours_string">%1$d hours %2$s</string>
+    <string name="zonedDateTimeToString_number_minute_string">%1$d minute %2$s</string>
+    <string name="zonedDateTimeToString_number_minutes_string">%1$d minutes %2$s</string>
+    <string name="zonedDateTimeToString_number_second_string">%1$d second %2$s</string>
+    <string name="zonedDateTimeToString_number_seconds_string">%1$d seconds %2$s</string>
 
     <!--    Splash screen -->
     <string name="splash_logged_in">Logged in!</string>
