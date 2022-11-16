@@ -10,8 +10,8 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.agendaReposito
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.AgendaApiImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.IAttendeeRepository
-import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.attendeeRepositoryImpls.AttendeeApiImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.attendeeRepositoryImpls.AttendeeRepositoryImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.remote.AttendeeApiImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.remote.IAttendeeApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls.EventRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
@@ -308,7 +308,7 @@ object AppModule {
     ): IEventRepository =
         EventRepositoryImpl(eventDao, eventApi)
 
-    /////////// ATTENDEES REPOSITORY ///////////
+    /////////// ATTENDEE REPOSITORY ///////////
 
     @Provides
     @Singleton
@@ -318,9 +318,13 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAttendeeRepository(
-        attendeeApi: IAttendeeApi
+        attendeeApi: IAttendeeApi,
+        validateEmail: ValidateEmail,
     ): IAttendeeRepository =
-        AttendeeRepositoryImpl(attendeeApi)
+        AttendeeRepositoryImpl(
+            attendeeApi = attendeeApi,
+            validateEmail = validateEmail,
+        )
 
 
     //////////////////////////////////////
