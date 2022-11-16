@@ -167,7 +167,7 @@ class EventViewModel @Inject constructor(
                 _state.update { _state ->
                     _state.copy(
                         editMode = null,
-                        addAttendeeErrorMessage = null,
+                        addAttendeeDialogErrorMessage = null,
                     )
                 }
             }
@@ -186,11 +186,7 @@ class EventViewModel @Inject constructor(
                             // Check if attendee is already in the list
                             val attendeeAlreadyInList = _state.value.event?.attendees?.any { attendee.id == it.id }
                             if (attendeeAlreadyInList == true) {
-                                _state.update { _state ->
-                                    _state.copy(
-                                        addAttendeeErrorMessage = UiText.Res(R.string.add_attendee_dialog_error_email_already_added),
-                                    )
-                                }
+                                sendEvent(SetAddAttendeeDialogErrorMessage(UiText.Res(R.string.add_attendee_dialog_error_email_already_added)))
                                 return@confirmAttendeeExists
                             }
 
@@ -199,29 +195,23 @@ class EventViewModel @Inject constructor(
 
                             sendEvent(CancelEditMode)
                         } ?: run {
-                            // show error
-                            _state.update { _state ->
-                                _state.copy(
-                                    addAttendeeErrorMessage = UiText.Res(R.string.add_attendee_dialog_error_email_not_found),
-                                )
-                            }
+                            sendEvent(SetAddAttendeeDialogErrorMessage(UiText.Res(R.string.add_attendee_dialog_error_email_not_found)))
                         }
                     },
                     onFailure = { error ->
                         sendEvent(ShowProgressIndicator(false))
-
-                        // show error
-                        _state.update { _state ->
-                            _state.copy(
-                                addAttendeeErrorMessage = error,
-                            )
-                        }
+                        sendEvent(SetAddAttendeeDialogErrorMessage(error))
                     }
                 )
             }
-            is ClearAddAttendeeErrorMessage -> {
+            is SetAddAttendeeDialogErrorMessage -> {
                 _state.update { _state ->
-                    _state.copy(addAttendeeErrorMessage = null)
+                    _state.copy(addAttendeeDialogErrorMessage = uiEvent.message)
+                }
+            }
+            is ClearAddAttendeeDialogErrorMessage -> {
+                _state.update { _state ->
+                    _state.copy(addAttendeeDialogErrorMessage = null)
                 }
             }
             is EditMode.UpdateText -> {

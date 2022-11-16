@@ -646,12 +646,8 @@ fun AddEventScreenContent(
                         .fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.mediumHeight())
-
             }
-
-
         }
-
     }
 
     // • EDITORS FOR EVENT PROPERTIES
@@ -776,7 +772,7 @@ fun AddEventScreenContent(
                         value = attendeeEmail,
                         onValueChange = {
                             attendeeEmail = it
-                            onAction(ClearAddAttendeeErrorMessage)
+                            onAction(ClearAddAttendeeDialogErrorMessage)
                         },
                         label = { Text(stringResource(R.string.add_attendee_dialog_email_title)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -795,7 +791,7 @@ fun AddEventScreenContent(
 
                     // • ERROR MESSAGE
                     Text(
-                        text = state.addAttendeeErrorMessage?.get ?: "",
+                        text = state.addAttendeeDialogErrorMessage?.get ?: "",
                         style = MaterialTheme.typography.body1,
                         color = MaterialTheme.colors.error,
                         textAlign = TextAlign.Center,

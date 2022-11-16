@@ -20,7 +20,8 @@ sealed interface EventScreenEvent {
 
     // • Add Attendee Dialog
     data class ValidateAttendeeEmailExistsThenAddAttendee(val email: Email) : EventScreenEvent
-    object ClearAddAttendeeErrorMessage : EventScreenEvent
+    object ClearAddAttendeeDialogErrorMessage : EventScreenEvent
+    data class SetAddAttendeeDialogErrorMessage(val message: UiText) : EventScreenEvent
 
     // • Errors
     data class Error(val message: UiText) : EventScreenEvent
