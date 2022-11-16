@@ -70,14 +70,14 @@ sealed interface EventScreenEvent {
             override val dialogTitle: String = "SET REMIND AT TIME",
         ) : EditMode, DateTimePayload
 
-        data class AddPhoto(
+        data class ChooseAddPhoto(
             override val dialogTitle: String = "ADD PHOTO",
         ) : EditMode
         data class ConfirmDeletePhoto(
             override val dialogTitle: String = "CONFIRM DELETE PHOTO",
         ) : EditMode
 
-        data class ConfirmAddAttendee(
+        data class ChooseAddAttendee(
             override val dialogTitle: String = "ADD ATTENDEE",
         ) : EditMode
         data class ConfirmRemoveAttendee(
@@ -93,6 +93,9 @@ sealed interface EventScreenEvent {
         sealed interface DateTimePayload {
             val dateTime: ZonedDateTime
         }
+        sealed interface AttendeePayload {
+            val attendee: Attendee
+        }
         sealed interface AttendeeIdPayload {
             val attendeeId: AttendeeId
         }
@@ -101,8 +104,9 @@ sealed interface EventScreenEvent {
         // • (3) FINALLY "Update Data" Events - Delivers the edited data payload to the ViewModel
         data class UpdateText(override val text: String) : EventScreenEvent, TextPayload
         data class UpdateDateTime(override val dateTime: ZonedDateTime) : EventScreenEvent, DateTimePayload
-        data class SavePhoto(val photo: Photo) : EventScreenEvent
-        data class AddAttendee(val attendee: Attendee) : EventScreenEvent
+        data class AddPhoto(val photo: Photo) : EventScreenEvent
+        data class RemovePhoto(val photo: Photo) : EventScreenEvent
+        data class AddAttendee(override val attendee: Attendee) : EventScreenEvent, AttendeePayload
         data class RemoveAttendee(override val attendeeId: AttendeeId) : EventScreenEvent, AttendeeIdPayload
     }
 }

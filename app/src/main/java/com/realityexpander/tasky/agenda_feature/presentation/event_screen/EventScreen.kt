@@ -545,7 +545,7 @@ fun AddEventScreenContent(
                             .align(Alignment.CenterVertically)
                             .clickable(enabled = isEditable) {
                                 onAction(
-                                    SetEditMode(EditMode.ConfirmAddAttendee())
+                                    SetEditMode(EditMode.ChooseAddAttendee())
                                 )
                             }
                     )
@@ -729,9 +729,9 @@ fun AddEventScreenContent(
             }
             is EditMode.RemindAtDateTime -> { // handled in the RemindAt UI element, this is here to remove compiler warning
             }
-            is EditMode.AddPhoto -> TODO()
+            is EditMode.ChooseAddPhoto -> TODO()
             is EditMode.ConfirmDeletePhoto -> TODO()
-            is EditMode.ConfirmAddAttendee -> {
+            is EditMode.ChooseAddAttendee -> {
                 val addAttendeeDialogState = rememberMaterialDialogState()
                 var attendeeEmail by remember { mutableStateOf("") }
 
