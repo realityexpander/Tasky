@@ -82,7 +82,7 @@ class AgendaRepositoryImpl @Inject constructor(
         val result = attendeeRepository.getAttendee(attendeeEmail)
         if (result.isSuccess) {
             onSuccess(result.getOrElse {
-                throw IllegalStateException("Result success for .getAttendee() should have an Attendee value")
+                throw IllegalStateException("Success Result for .getAttendee() should have an Attendee value")
             })
         } else {
             onFailure(result.exceptionOrNull()?.message ?: "Unknown error")
