@@ -217,7 +217,7 @@ class EventViewModel @Inject constructor(
             is EditMode.UpdateText -> {
                 when(_state.value.editMode) {
 
-                    is EditMode.TitleText -> {
+                    is EditMode.ChooseTitleText -> {
                         _state.update { _state ->
                             _state.copy(
                                 event = _state.event?.copy(title = uiEvent.text),
@@ -225,7 +225,7 @@ class EventViewModel @Inject constructor(
                             )
                         }
                     }
-                    is EditMode.DescriptionText -> {
+                    is EditMode.ChooseDescriptionText -> {
                         _state.update { _state ->
                             _state.copy(
                                 event = _state.event?.copy(description = uiEvent.text),
@@ -239,8 +239,8 @@ class EventViewModel @Inject constructor(
             is EditMode.UpdateDateTime -> {
                 when(_state.value.editMode) {
 
-                    is EditMode.FromTime,
-                    is EditMode.FromDate -> {
+                    is EditMode.ChooseFromTime,
+                    is EditMode.ChooseFromDate -> {
                         _state.update { _state ->
                             val remindAtDuration = Duration.between(_state.event?.remindAt, _state.event?.from)
 
@@ -258,8 +258,8 @@ class EventViewModel @Inject constructor(
                             )
                         }
                     }
-                    is EditMode.ToTime,
-                    is EditMode.ToDate -> {
+                    is EditMode.ChooseToTime,
+                    is EditMode.ChooseToDate -> {
                         _state.update { _state ->
 
                             // Ensure that `from < to`
@@ -279,7 +279,7 @@ class EventViewModel @Inject constructor(
                             )
                         }
                     }
-                    is EditMode.RemindAtDateTime -> {
+                    is EditMode.ChooseRemindAtDateTime -> {
                         _state.update { _state ->
 
                             // Ensure that `remindAt <= from`

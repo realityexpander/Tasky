@@ -37,35 +37,35 @@ sealed interface EventScreenEvent {
 
         // • (1) WHICH item is being edited?
         // - sets initial/default value and the dialog display string)
-        data class TitleText(
+        data class ChooseTitleText(
             override val text: String = "",
             override val dialogTitle: String = "EDIT TITLE",
         ) : EditMode, TextPayload
 
-        data class DescriptionText(
+        data class ChooseDescriptionText(
             override val text: String = "",
             override val dialogTitle: String = "EDIT DESCRIPTION",
         ) : EditMode, TextPayload
 
-        data class FromDate(
+        data class ChooseFromDate(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val dialogTitle: String = "SET FROM DATE",
         ) : EditMode, DateTimePayload
-        data class FromTime(
+        data class ChooseFromTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val dialogTitle: String = "SET FROM TIME",
         ) : EditMode, DateTimePayload
 
-        data class ToDate(
+        data class ChooseToDate(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val dialogTitle: String = "SET TO DATE",
         ) : EditMode, DateTimePayload
-        data class ToTime(
+        data class ChooseToTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val dialogTitle: String = "SET TO TIME",
         ) : EditMode, DateTimePayload
 
-        data class RemindAtDateTime(
+        data class ChooseRemindAtDateTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val dialogTitle: String = "SET REMIND AT TIME",
         ) : EditMode, DateTimePayload
@@ -73,7 +73,7 @@ sealed interface EventScreenEvent {
         data class ChooseAddPhoto(
             override val dialogTitle: String = "ADD PHOTO",
         ) : EditMode
-        data class ConfirmDeletePhoto(
+        data class ConfirmRemovePhoto(
             override val dialogTitle: String = "CONFIRM DELETE PHOTO",
         ) : EditMode
 

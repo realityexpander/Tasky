@@ -283,7 +283,7 @@ fun AddEventScreenContent(
                             .clickable(enabled = isEditable) {
                                 onAction(
                                     SetEditMode(
-                                        EditMode.TitleText(
+                                        EditMode.ChooseTitleText(
                                             state.event?.title ?: "",
                                         )
                                     )
@@ -325,7 +325,7 @@ fun AddEventScreenContent(
                             .clickable(enabled = isEditable) {
                                 onAction(
                                     SetEditMode(
-                                        EditMode.DescriptionText(
+                                        EditMode.ChooseDescriptionText(
                                             state.event?.description ?: "",
                                         )
                                     )
@@ -454,14 +454,14 @@ fun AddEventScreenContent(
                     onEditDate = {
                         onAction(
                             SetEditMode(
-                                EditMode.FromDate(state.event?.from ?: ZonedDateTime.now())
+                                EditMode.ChooseFromDate(state.event?.from ?: ZonedDateTime.now())
                             )
                         )
                     },
                     onEditTime = {
                         onAction(
                             SetEditMode(
-                                EditMode.FromTime(state.event?.from ?: ZonedDateTime.now())
+                                EditMode.ChooseFromTime(state.event?.from ?: ZonedDateTime.now())
                             )
                         )
                     }
@@ -476,14 +476,14 @@ fun AddEventScreenContent(
                     onEditDate = {
                         onAction(
                             SetEditMode(
-                                EditMode.ToDate(state.event?.to ?: ZonedDateTime.now())
+                                EditMode.ChooseToDate(state.event?.to ?: ZonedDateTime.now())
                             )
                         )
                     },
                     onEditTime = {
                         onAction(
                             SetEditMode(
-                                EditMode.ToTime(state.event?.to ?: ZonedDateTime.now())
+                                EditMode.ChooseToTime(state.event?.to ?: ZonedDateTime.now())
                             )
                         )
                     }
@@ -495,11 +495,11 @@ fun AddEventScreenContent(
                     fromDateTime = state.event?.from ?: ZonedDateTime.now(),
                     remindAtDateTime = state.event?.remindAt ?: ZonedDateTime.now(),
                     isEditable = isEditable,
-                    isDropdownMenuVisible = state.editMode is EditMode.RemindAtDateTime,
+                    isDropdownMenuVisible = state.editMode is EditMode.ChooseRemindAtDateTime,
                     onEditRemindAtDateTime = {
                         onAction(
                             SetEditMode(
-                                EditMode.RemindAtDateTime(
+                                EditMode.ChooseRemindAtDateTime(
                                     state.event?.remindAt ?: ZonedDateTime.now()
                                 )
                             )
@@ -653,15 +653,15 @@ fun AddEventScreenContent(
     // • EDITORS FOR EVENT PROPERTIES
     state.editMode?.let { editMode ->
         when (editMode) {
-            is EditMode.TitleText,
-            is EditMode.DescriptionText -> {
+            is EditMode.ChooseTitleText,
+            is EditMode.ChooseDescriptionText -> {
                 editMode as EditMode.TextPayload
 
                 EditTextModal(
                     text = editMode.text,
                     title = editMode.dialogTitle,
                     editTextStyle =
-                    if (editMode is EditMode.TitleText)
+                    if (editMode is EditMode.ChooseTitleText)
                         MaterialTheme.typography.h2  // cant access from non-compose function, make a wrapper?
                     else
                         MaterialTheme.typography.body1, // cant access from non-compose function, make a wrapper?
@@ -673,8 +673,8 @@ fun AddEventScreenContent(
                     }
                 )
             }
-            is EditMode.FromDate,
-            is EditMode.ToDate -> {
+            is EditMode.ChooseFromDate,
+            is EditMode.ChooseToDate -> {
                 editMode as EditMode.DateTimePayload
                 var pickedDate by remember { mutableStateOf(LocalDateTime.now()) }
                 val dateDialogState = rememberMaterialDialogState()
@@ -700,8 +700,8 @@ fun AddEventScreenContent(
                     }
                 }
             }
-            is EditMode.FromTime,
-            is EditMode.ToTime -> {
+            is EditMode.ChooseFromTime,
+            is EditMode.ChooseToTime -> {
                 editMode as EditMode.DateTimePayload
                 var pickedTime by remember { mutableStateOf(LocalDateTime.now()) }
                 val dateDialogState = rememberMaterialDialogState()
@@ -727,10 +727,10 @@ fun AddEventScreenContent(
                     }
                 }
             }
-            is EditMode.RemindAtDateTime -> { // handled in the RemindAt UI element, this is here to remove compiler warning
+            is EditMode.ChooseRemindAtDateTime -> { // handled in the RemindAt UI element, this is here to remove compiler warning
             }
             is EditMode.ChooseAddPhoto -> TODO()
-            is EditMode.ConfirmDeletePhoto -> TODO()
+            is EditMode.ConfirmRemovePhoto -> TODO()
             is EditMode.ChooseAddAttendee -> {
                 val addAttendeeDialogState = rememberMaterialDialogState()
                 var attendeeEmail by remember { mutableStateOf("") }
