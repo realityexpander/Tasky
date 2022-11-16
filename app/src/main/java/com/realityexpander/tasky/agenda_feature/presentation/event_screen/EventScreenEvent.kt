@@ -101,7 +101,7 @@ sealed interface EventScreenEvent {
         sealed interface PhotoIdPayload {
             val photoId: PhotoId
         }
-        sealed interface AttendeePayload m
+        sealed interface AttendeePayload {
             val attendee: Attendee
         }
         sealed interface AttendeeIdPayload {
