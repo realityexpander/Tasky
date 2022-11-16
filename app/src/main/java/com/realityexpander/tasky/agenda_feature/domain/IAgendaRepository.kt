@@ -2,6 +2,7 @@ package com.realityexpander.tasky.agenda_feature.domain
 
 import com.realityexpander.tasky.agenda_feature.common.RepositoryResult
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
@@ -10,19 +11,19 @@ interface IAgendaRepository {
 
     suspend fun getAgendaForDay(dateTime: ZonedDateTime): List<AgendaItem>
     fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>>
-    suspend fun syncAgenda(): RepositoryResult
+    suspend fun syncAgenda(): RepositoryResult<Void>
 
-    suspend fun createEvent(event: AgendaItem.Event): RepositoryResult
+    suspend fun createEvent(event: AgendaItem.Event): RepositoryResult<AgendaItem.Event>
     suspend fun getEvent(eventId: EventId): AgendaItem.Event?
-    suspend fun updateEvent(event: AgendaItem.Event): RepositoryResult
-    suspend fun deleteEventId(eventId: EventId): RepositoryResult
-    suspend fun clearAllEvents(): RepositoryResult
+    suspend fun updateEvent(event: AgendaItem.Event): RepositoryResult<AgendaItem.Event>
+    suspend fun deleteEventId(eventId: EventId): RepositoryResult<AgendaItem.Event>
+    suspend fun clearAllEvents(): RepositoryResult<Void>
 
     // Attendee Repository
     suspend fun confirmAttendeeExists(
         attendeeEmail: Email,
         onSuccess: (Attendee?) -> Unit,
-        onFailure: (String) -> Unit
+        onFailure: (UiText) -> Unit
     )
 
     // todo implement repository

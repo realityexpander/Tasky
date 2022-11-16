@@ -1,10 +1,11 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository
 
+import com.realityexpander.tasky.agenda_feature.common.RepositoryResult
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.core.util.Email
 
 interface IAttendeeRepository {
-    suspend fun getAttendee(email: Email): Result<Attendee>
+    suspend fun getAttendee(email: Email): RepositoryResult<Attendee>
     suspend fun deleteAttendeeFromEvent(eventId: EventId): Boolean
 }

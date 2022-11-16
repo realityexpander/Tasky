@@ -508,7 +508,7 @@ fun AddEventScreenContent(
                     onDismissRequest = { onAction(CancelEditMode) },
                     onSaveRemindAtDateTime = { dateTime ->
                         onAction(
-                            EditMode.SaveDateTime(dateTime)
+                            EditMode.UpdateDateTime(dateTime)
                         )
                     }
                 )
@@ -600,7 +600,13 @@ fun AddEventScreenContent(
                         header = stringResource(R.string.event_going),
                         attendees = state.event?.attendees?.filter { it.isGoing } ?: emptyList(),
                         onAttendeeClick = {},
-                        onAttendeeRemoveClick = {}
+                        onAttendeeRemoveClick = { attendee ->
+                            onAction(
+                                SetEditMode(
+                                    EditMode.ConfirmRemoveAttendee(attendee)
+                                )
+                            )
+                        }
                     )
                     Spacer(modifier = Modifier.mediumHeight())
                 }
@@ -616,7 +622,13 @@ fun AddEventScreenContent(
                         header = stringResource(R.string.event_not_going),
                         attendees = state.event?.attendees?.filter { !it.isGoing } ?: emptyList(),
                         onAttendeeClick = {},
-                        onAttendeeRemoveClick = {}
+                        onAttendeeRemoveClick = { attendee ->
+                            onAction(
+                                SetEditMode(
+                                    EditMode.ConfirmRemoveAttendee(attendee)
+                                )
+                            )
+                        }
                     )
                 }
 
@@ -658,7 +670,7 @@ fun AddEventScreenContent(
                     else
                         MaterialTheme.typography.body1, // cant access from non-compose function, make a wrapper?
                     onSave = {
-                        onAction(EditMode.SaveText(it))
+                        onAction(EditMode.UpdateText(it))
                     },
                     onCancel = {
                         onAction(CancelEditMode)
@@ -676,7 +688,7 @@ fun AddEventScreenContent(
                     dialogState = dateDialogState,
                     buttons = {
                         positiveButton(text = stringResource(R.string.ok)) {
-                            onAction(EditMode.SaveDateTime(pickedDate?.toZonedDateTime()!!))
+                            onAction(EditMode.UpdateDateTime(pickedDate?.toZonedDateTime()!!))
                         }
                         negativeButton(text = stringResource(R.string.cancel)) {
                             dateDialogState.hide()
@@ -703,7 +715,7 @@ fun AddEventScreenContent(
                     dialogState = dateDialogState,
                     buttons = {
                         positiveButton(text = stringResource(R.string.ok)) {
-                            onAction(EditMode.SaveDateTime(pickedTime?.toZonedDateTime()!!))
+                            onAction(EditMode.UpdateDateTime(pickedTime?.toZonedDateTime()!!))
                         }
                         negativeButton(text = stringResource(R.string.cancel)) {
                             dateDialogState.hide()
@@ -736,8 +748,7 @@ fun AddEventScreenContent(
                     ),
                     buttons = {
                         positiveButton(text = stringResource(R.string.ok)) {
-                            addAttendeeDialogState.hide()
-                            onAction(ConfirmAttendeeEmailExistsThenSave(attendeeEmail))
+                            onAction(ConfirmAttendeeEmailExistsThenAddNewAttendee(attendeeEmail))
                         }
                         negativeButton(text = stringResource(R.string.cancel)) {
                             addAttendeeDialogState.hide()
@@ -794,7 +805,60 @@ fun AddEventScreenContent(
                     Spacer(modifier = Modifier.smallHeight())
                 }
             }
-            is EditMode.ConfirmDeleteAttendee -> TODO()
+            is EditMode.ConfirmRemoveAttendee -> {
+                val attendee = editMode.attendee
+                val deleteAttendeeDialogState = rememberMaterialDialogState()
+                onAction(SetIsEditable(true  )) // turn on edit mode when removing attendee
+
+                deleteAttendeeDialogState.show()
+                MaterialDialog (
+                    dialogState = deleteAttendeeDialogState,
+                    properties = DialogProperties(
+                        dismissOnBackPress = true,
+                        dismissOnClickOutside = true
+                    ),
+                    buttons = {
+                        positiveButton(text = stringResource(R.string.remove_attendee_dialog_remove_button)) {
+                            onAction(EditMode.RemoveAttendee(attendee.id))
+                        }
+                        negativeButton(text = stringResource(R.string.cancel)) {
+                            deleteAttendeeDialogState.hide()
+                            onAction(CancelEditMode)
+                        }
+                    },
+                    onCloseRequest = {
+                        deleteAttendeeDialogState.hide()
+                        onAction(CancelEditMode)
+                    }
+                ) {
+                    Spacer(modifier = Modifier.tinyHeight())
+
+                    Text(
+                        text = stringResource(R.string.remove_attendee_dialog_title),
+                        style = MaterialTheme.typography.h4,
+                        color = MaterialTheme.colors.onSurface,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.mediumHeight())
+
+                    Text(
+                        text = attendee.fullName,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.h4,
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = DP.small, end = DP.small)
+                    )
+                    Text(
+                        text = attendee.email,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = DP.small, end = DP.small)
+                    )
+                    Spacer(modifier = Modifier.smallHeight())
+                }
+            }
         }
     }
 }

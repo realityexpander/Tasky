@@ -176,7 +176,7 @@ class EventViewModel @Inject constructor(
                     _state.copy(addAttendeeErrorMessage = null)
                 }
             }
-            is ConfirmAttendeeEmailExistsThenSave -> {
+            is ConfirmAttendeeEmailExistsThenAddNewAttendee -> {
                 sendEvent(ShowProgressIndicator(true))
 
                 // call API to check if attendee email exists
@@ -185,16 +185,23 @@ class EventViewModel @Inject constructor(
                     onSuccess = { attendeeInfo ->
                         sendEvent(ShowProgressIndicator(false))
 
+                        // Attempt Add Attendee to Event
                         attendeeInfo?.let { attendee ->
-                            // addAttendee(attendee)
-                            _state.update { _state ->
-                                _state.copy(
-                                    event = _state.event?.copy(
-                                        attendees = _state.event.attendees +
-                                                attendee.copy(isGoing = true)
-                                    ),
-                                )
+
+                            // Check if attendee is already in the list
+                            val attendeeAlreadyInList = _state.value.event?.attendees?.any { attendee.id == it.id }
+                            if (attendeeAlreadyInList == true) {
+                                _state.update { _state ->
+                                    _state.copy(
+                                        addAttendeeErrorMessage = UiText.Res(R.string.add_attendee_dialog_error_email_already_added),
+                                    )
+                                }
+                                return@confirmAttendeeExists
                             }
+
+                            // Add attendee to event
+                            sendEvent(EditMode.AddNewAttendee(attendee))
+
                             sendEvent(CancelEditMode)
                         } ?: run {
                             // show error
@@ -211,13 +218,13 @@ class EventViewModel @Inject constructor(
                         // show error
                         _state.update { _state ->
                             _state.copy(
-                                addAttendeeErrorMessage = UiText.Str(error),
+                                addAttendeeErrorMessage = error,
                             )
                         }
                     }
                 )
             }
-            is EditMode.SaveText -> {
+            is EditMode.UpdateText -> {
                 when(_state.value.editMode) {
 
                     is EditMode.TitleText -> {
@@ -239,7 +246,7 @@ class EventViewModel @Inject constructor(
                     else -> throw java.lang.IllegalStateException("Invalid type for SaveText: ${_state.value.editMode}")
                 }
             }
-            is EditMode.SaveDateTime -> {
+            is EditMode.UpdateDateTime -> {
                 when(_state.value.editMode) {
 
                     is EditMode.FromTime,
@@ -307,14 +314,25 @@ class EventViewModel @Inject constructor(
                     else -> throw java.lang.IllegalStateException("Invalid type for SaveDateTime: ${_state.value.editMode}")
                 }
             }
-            is EditMode.SaveNewAttendee -> {
+            is EditMode.AddNewAttendee -> {
                 _state.update { _state ->
                     _state.copy(
                         event = _state.event?.copy(
-                            attendees = _state.event.attendees + uiEvent.attendee
+                            attendees = _state.event.attendees +
+                                    uiEvent.attendee.copy(isGoing = true)
                         )
                     )
                 }
+            }
+            is EditMode.RemoveAttendee -> {
+                _state.update { _state ->
+                    _state.copy(
+                        event = _state.event?.copy(
+                            attendees = _state.event.attendees.filter { it.id != uiEvent.attendeeId }
+                        ),
+                    )
+                }
+                sendEvent(CancelEditMode)
             }
 
             is Error -> {

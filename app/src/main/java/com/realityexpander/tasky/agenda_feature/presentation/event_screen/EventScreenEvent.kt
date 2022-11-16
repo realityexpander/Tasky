@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
+import com.realityexpander.tasky.agenda_feature.common.util.AttendeeId
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.core.presentation.common.util.UiText
@@ -17,7 +18,8 @@ sealed interface EventScreenEvent {
     data class SetEditMode(val editMode: EditMode) : EventScreenEvent
     object CancelEditMode : EventScreenEvent
 
-    data class ConfirmAttendeeEmailExistsThenSave(val email: Email) : EventScreenEvent
+    // • Add Attendee Dialog
+    data class ConfirmAttendeeEmailExistsThenAddNewAttendee(val email: Email) : EventScreenEvent
     object ClearAddAttendeeErrorMessage : EventScreenEvent
 
     // • Errors
@@ -77,9 +79,9 @@ sealed interface EventScreenEvent {
         data class AddAttendee(
             override val dialogTitle: String = "ADD ATTENDEE",
         ) : EditMode
-        data class ConfirmDeleteAttendee(
+        data class ConfirmRemoveAttendee(
             val attendee: Attendee,
-            override val dialogTitle: String = "CONFIRM DELETE ATTENDEE",
+            override val dialogTitle: String = "CONFIRM REMOVE ATTENDEE",
         ) : EditMode
 
 
@@ -90,12 +92,16 @@ sealed interface EventScreenEvent {
         sealed interface DateTimePayload {
             val dateTime: ZonedDateTime
         }
+        sealed interface AttendeeIdPayload {
+            val attendeeId: AttendeeId
+        }
 
 
-        // • (3) FINALLY "Save Data" Events - Delivers the edited data payload to the ViewModel
-        data class SaveText(override val text: String) : EventScreenEvent, TextPayload
-        data class SaveDateTime(override val dateTime: ZonedDateTime) : EventScreenEvent, DateTimePayload
+        // • (3) FINALLY "Update Data" Events - Delivers the edited data payload to the ViewModel
+        data class UpdateText(override val text: String) : EventScreenEvent, TextPayload
+        data class UpdateDateTime(override val dateTime: ZonedDateTime) : EventScreenEvent, DateTimePayload
         data class SavePhoto(val photo: Photo) : EventScreenEvent
-        data class SaveNewAttendee(val attendee: Attendee) : EventScreenEvent
+        data class AddNewAttendee(val attendee: Attendee) : EventScreenEvent
+        data class RemoveAttendee(override val attendeeId: AttendeeId) : EventScreenEvent, AttendeeIdPayload
     }
 }

@@ -1,11 +1,13 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls
 
+import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.RepositoryResult
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.IAttendeeRepository
 import com.realityexpander.tasky.agenda_feature.domain.*
+import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
@@ -33,7 +35,7 @@ class AgendaRepositoryImpl @Inject constructor(
         return events // + tasks + reminders
     }
 
-    override suspend fun syncAgenda(): RepositoryResult {
+    override suspend fun syncAgenda(): RepositoryResult<Void> {
         val deletedEventIds = eventRepository.getDeletedEventIds()
 //        val deletedTaskIds = taskRepository.getDeletedTaskIds()                   // todo implement tasks repo
 //        val deletedReminderIds = reminderRepository.getDeletedReminderIds()       // todo implement reminders repo
@@ -50,11 +52,11 @@ class AgendaRepositoryImpl @Inject constructor(
         if (deletedSuccessfully) {
             return eventRepository.deleteFinallyEventIds(deletedEventIds)
         } else {
-            return RepositoryResult.Error("Failed to sync agenda - deleteFinallyEventIds")
+            return RepositoryResult.Error(UiText.ResOrStr(R.string.agenda_sync_error, "Failed to sync agenda - deleteFinallyEventIds"))
         }
     }
 
-    override suspend fun createEvent(event: AgendaItem.Event): RepositoryResult {
+    override suspend fun createEvent(event: AgendaItem.Event): RepositoryResult<AgendaItem.Event> {
         return eventRepository.createEvent(event)
     }
 
@@ -62,30 +64,31 @@ class AgendaRepositoryImpl @Inject constructor(
         return eventRepository.getEvent(eventId)
     }
 
-    override suspend fun updateEvent(event: AgendaItem.Event): RepositoryResult {
+    override suspend fun updateEvent(event: AgendaItem.Event): RepositoryResult<AgendaItem.Event> {
         return eventRepository.updateEvent(event)
     }
 
-    override suspend fun deleteEventId(eventId: EventId): RepositoryResult {
+    override suspend fun deleteEventId(eventId: EventId): RepositoryResult<AgendaItem.Event> {
         return eventRepository.deleteEventId(eventId)
     }
 
-    override suspend fun clearAllEvents(): RepositoryResult {
+    override suspend fun clearAllEvents(): RepositoryResult<Void> {
         return eventRepository.clearAllEvents()
     }
 
     override suspend fun confirmAttendeeExists(
         attendeeEmail: Email,
         onSuccess: (attendee: Attendee?) -> Unit,
-        onFailure: (error: String) -> Unit
+        onFailure: (error: UiText) -> Unit
     ) {
         val result = attendeeRepository.getAttendee(attendeeEmail)
-        if (result.isSuccess) {
-            onSuccess(result.getOrElse {
-                throw IllegalStateException("Success Result for .getAttendee() should have an Attendee value")
-            })
-        } else {
-            onFailure(result.exceptionOrNull()?.message ?: "Unknown error")
+        when(result) {
+            is RepositoryResult.Success -> {
+                onSuccess(result.data)
+            }
+            is RepositoryResult.Error -> {
+                onFailure(result.message)
+            }
         }
     }
 }
