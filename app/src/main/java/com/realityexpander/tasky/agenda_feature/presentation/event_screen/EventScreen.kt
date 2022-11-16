@@ -659,7 +659,7 @@ fun AddEventScreenContent(
 
                 EditTextModal(
                     text = editMode.text,
-                    title = editMode.dialogTitle,
+                    title = editMode.dialogTitle.get,
                     editTextStyle =
                     if (editMode is EditMode.ChooseTitleText)
                         MaterialTheme.typography.h2  // cant access from non-compose function, make a wrapper?
@@ -694,7 +694,7 @@ fun AddEventScreenContent(
                 ) {
                     datepicker(
                         initialDate = editMode.dateTime.toLocalDate(),
-                        title = editMode.dialogTitle,
+                        title = editMode.dialogTitle.get,
                     ) {
                         pickedDate = it.atTime(editMode.dateTime.toLocalTime())
                     }
@@ -721,7 +721,7 @@ fun AddEventScreenContent(
                 ) {
                     timepicker(
                         initialTime = editMode.dateTime.toLocalTime(),
-                        title = editMode.dialogTitle,
+                        title = editMode.dialogTitle.get,
                     ) {
                         pickedTime = it.atDate(editMode.dateTime.toLocalDate())
                     }
@@ -830,7 +830,7 @@ fun AddEventScreenContent(
                     Spacer(modifier = Modifier.tinyHeight())
 
                     Text(
-                        text = stringResource(R.string.remove_attendee_dialog_title),
+                        text = stringResource(R.string.event_dialog_title_remove_attendee),
                         style = MaterialTheme.typography.h4,
                         color = MaterialTheme.colors.onSurface,
                         textAlign = TextAlign.Center,

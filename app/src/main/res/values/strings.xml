@@ -111,16 +111,28 @@
     <string name="event_leave_event">LEAVE EVENT</string>
     <string name="event_join_event">JOIN EVENT</string>
 
+    <!--    Event Screen Dialog Titles -->
+    <string name="event_dialog_title_choose_title_text">EDIT TITLE</string>
+    <string name="event_dialog_title_choose_description_text">EDIT DESCRIPTION</string>
+    <string name="event_dialog_title_choose_from_time">SET FROM TIME</string>
+    <string name="event_dialog_title_choose_to_time">SET TO TIME</string>
+    <string name="event_dialog_title_choose_from_date">SET FROM DATE</string>
+    <string name="event_dialog_title_choose_to_date">SET TO DATE</string>
+    <string name="event_dialog_title_choose_remind_at_date_time">SET REMIND AT TIME</string>
+    <string name="event_dialog_title_choose_add_photo">ADD PHOTO</string>
+    <string name="event_dialog_title_confirm_remove_photo">CONFIRM REMOVE PHOTO</string>
+    <string name="event_dialog_title_choose_add_attendee">ADD ATTENDEE</string>
+    <string name="event_dialog_title_confirm_remove_attendee">CONFIRM REMOVE ATTENDEE</string>
+    <string name="event_dialog_title_remove_attendee">Remove Attendee</string>
+    <string name="remove_attendee_dialog_remove_button">REMOVE</string>
+
+
     <!--    Add Attendee -->
     <string name="add_attendee_dialog_title">Add Attendee</string>
     <string name="add_attendee_dialog_email_title">Attendee email</string>
     <string name="add_attendee_dialog_error_email_not_found">Attendee email not found</string>
     <string name="add_attendee_dialog_error_email_already_added">Attendee email is already added</string>
     <string name="add_attendee_api_error">Api Error - Attendee value not found</string>
-
-    <!--    Remove Attendee -->
-    <string name="remove_attendee_dialog_title">Remove Attendee</string>
-    <string name="remove_attendee_dialog_remove_button">REMOVE</string>
 
     <!--    Agenda Sync -->
     <string name="agenda_sync_error">Failed to sync agenda</string>
