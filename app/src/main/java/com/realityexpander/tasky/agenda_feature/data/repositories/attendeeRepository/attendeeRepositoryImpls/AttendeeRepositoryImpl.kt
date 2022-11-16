@@ -22,7 +22,7 @@ class AttendeeRepositoryImpl @Inject constructor(
             return RepositoryResult.Error(
                 UiText.ResOrStr(
                     R.string.error_invalid_email,
-                    "Invalid email address."
+                    "Invalid email address"
                 )
             )
         }
