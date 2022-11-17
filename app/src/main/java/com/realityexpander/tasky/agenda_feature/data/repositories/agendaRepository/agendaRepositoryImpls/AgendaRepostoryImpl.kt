@@ -1,19 +1,20 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls
 
-import com.realityexpander.tasky.agenda_feature.common.RepositoryResult
+import com.realityexpander.tasky.R
+import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
-import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
-import com.realityexpander.tasky.agenda_feature.domain.AgendaSync
-import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
-import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
-import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.IAttendeeRepository
+import com.realityexpander.tasky.agenda_feature.domain.*
+import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class AgendaRepositoryImpl @Inject constructor(
     private val eventRepository: IEventRepository, // = EventRepositoryImpl(),
+    private val attendeeRepository: IAttendeeRepository, // = AttendeeRepositoryImpl(),
 //    private val taskRepository: ITaskRepository,                                  // todo implement tasks repo
 //    private val reminderRepository: IReminderRepository,                          // todo implement reminders repo
     private val agendaApi: IAgendaApi,
@@ -33,7 +34,7 @@ class AgendaRepositoryImpl @Inject constructor(
         return events // + tasks + reminders
     }
 
-    override suspend fun syncAgenda(): RepositoryResult {
+    override suspend fun syncAgenda(): ResultUiText<Void> {
         val deletedEventIds = eventRepository.getDeletedEventIds()
 //        val deletedTaskIds = taskRepository.getDeletedTaskIds()                   // todo implement tasks repo
 //        val deletedReminderIds = reminderRepository.getDeletedReminderIds()       // todo implement reminders repo
@@ -50,11 +51,11 @@ class AgendaRepositoryImpl @Inject constructor(
         if (deletedSuccessfully) {
             return eventRepository.deleteFinallyEventIds(deletedEventIds)
         } else {
-            return RepositoryResult.Error("Failed to sync agenda - deleteFinallyEventIds")
+            return ResultUiText.Error(UiText.ResOrStr(R.string.agenda_sync_error, "Failed to sync agenda - deleteFinallyEventIds"))
         }
     }
 
-    override suspend fun createEvent(event: AgendaItem.Event): RepositoryResult {
+    override suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
         return eventRepository.createEvent(event)
     }
 
@@ -62,15 +63,19 @@ class AgendaRepositoryImpl @Inject constructor(
         return eventRepository.getEvent(eventId)
     }
 
-    override suspend fun updateEvent(event: AgendaItem.Event): RepositoryResult {
+    override suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
         return eventRepository.updateEvent(event)
     }
 
-    override suspend fun deleteEventId(eventId: EventId): RepositoryResult {
+    override suspend fun deleteEventId(eventId: EventId): ResultUiText<AgendaItem.Event> {
         return eventRepository.deleteEventId(eventId)
     }
 
-    override suspend fun clearAllEvents(): RepositoryResult {
+    override suspend fun clearAllEvents(): ResultUiText<Void> {
         return eventRepository.clearAllEvents()
+    }
+
+    override suspend fun validateAttendeeExists(attendeeEmail: Email): ResultUiText<Attendee> {
+        return attendeeRepository.getAttendee(attendeeEmail)
     }
 }

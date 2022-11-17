@@ -1,14 +1,16 @@
 package com.realityexpander.tasky.core.data.remote
 
 import com.realityexpander.tasky.BuildConfig
+import com.realityexpander.tasky.agenda_feature.common.util.TimeZoneStr
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaDayDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaSyncDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
-import com.realityexpander.tasky.agenda_feature.common.util.TimeZoneStr
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.GetAttendeeResponseDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.ApiCredentialsDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
 import com.realityexpander.tasky.core.util.AuthToken
+import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.UtcMillis
 import com.realityexpander.tasky.core.util.UuidStr
 import okhttp3.MultipartBody
@@ -87,6 +89,19 @@ interface TaskyApi {
 
     @DELETE("event/{eventId}")
     suspend fun deleteEvent(
+        @Path("eventId") eventId: UuidStr,
+    ): Response<Void>
+
+
+    ////////////////// ATTENDEE //////////////////
+
+    @GET("attendee")
+    suspend fun getAttendee(
+        @Query("email") email: Email,
+    ): Response<GetAttendeeResponseDTO>
+
+    @DELETE("attendee/{eventId}")
+    suspend fun deleteAttendee(
         @Path("eventId") eventId: UuidStr,
     ): Response<Void>
 }

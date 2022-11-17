@@ -7,6 +7,7 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
+import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.max
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.min
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
@@ -35,11 +36,13 @@ class EventViewModel @Inject constructor(
     private val isEditMode: Boolean =
         savedStateHandle[SavedStateConstants.SAVED_STATE_isEditMode] ?: false
 
-    private val _state = MutableStateFlow(EventScreenState(
-        errorMessage = errorMessage,
-        isProgressVisible = true,
-        isEditable = isEditMode
-    ))
+    private val _state = MutableStateFlow(
+        EventScreenState(
+            errorMessage = errorMessage,
+            isProgressVisible = true,
+            isEditable = isEditMode
+        )
+    )
     val state = _state.onEach { state ->
         // save state for process death
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage] = state.errorMessage
@@ -50,7 +53,8 @@ class EventViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 isLoaded = true, // only after state is initialized
                 isProgressVisible = false,
-                username = authRepository.getAuthInfo()?.username ?: "", // todo get this from the previous screen? // put back in
+                username = authRepository.getAuthInfo()?.username
+                    ?: "", // todo get this from the previous screen? // put back in
                 authInfo = authRepository.getAuthInfo(), // todo put this back in
 
                 // Dummy event details for UI work // todo remove soon
@@ -142,7 +146,7 @@ class EventViewModel @Inject constructor(
 
     private suspend fun onEvent(uiEvent: EventScreenEvent) {
 
-        when(uiEvent) {
+        when (uiEvent) {
             is ShowProgressIndicator -> {
                 _state.update { _state ->
                     _state.copy(isProgressVisible = uiEvent.isShowing)
@@ -165,13 +169,61 @@ class EventViewModel @Inject constructor(
             }
             is CancelEditMode -> {
                 _state.update { _state ->
-                    _state.copy(editMode = null)
+                    _state.copy(
+                        editMode = null,
+                        addAttendeeDialogErrorMessage = null,
+                    )
                 }
             }
-            is EditMode.SaveText -> {
-                when(_state.value.editMode) {
+            is ValidateAttendeeEmailExistsThenAddAttendee -> {
+                sendEvent(ShowProgressIndicator(true))
 
-                    is EditMode.TitleText -> {
+                // call API to check if attendee email exists
+                when (val result =
+                    agendaRepository.validateAttendeeExists(uiEvent.email.trim().lowercase())
+                ) {
+                    is ResultUiText.Success -> {
+                        val attendeeInfo = result.data
+                        sendEvent(ShowProgressIndicator(false))
+
+                        // Attempt Add Attendee to Event
+                        attendeeInfo?.let { attendee ->
+
+                            // Check if attendee is already in the list
+                            val attendeeAlreadyInList =
+                                _state.value.event?.attendees?.any { attendee.id == it.id }
+                            if (attendeeAlreadyInList == true) {
+                                sendEvent(SetAddAttendeeDialogErrorMessage(UiText.Res(R.string.add_attendee_dialog_error_email_already_added)))
+                                return
+                            }
+
+                            // Add attendee to event
+                            sendEvent(EditMode.AddAttendee(attendee))
+                            sendEvent(CancelEditMode)
+                        } ?: run {
+                            sendEvent(SetAddAttendeeDialogErrorMessage(UiText.Res(R.string.add_attendee_dialog_error_email_not_found)))
+                        }
+                    }
+                    is ResultUiText.Error -> {
+                        sendEvent(ShowProgressIndicator(false))
+                        sendEvent(SetAddAttendeeDialogErrorMessage(result.message))
+                    }
+                }
+            }
+            is SetAddAttendeeDialogErrorMessage -> {
+                _state.update { _state ->
+                    _state.copy(addAttendeeDialogErrorMessage = uiEvent.message)
+                }
+            }
+            is ClearAddAttendeeDialogErrorMessage -> {
+                _state.update { _state ->
+                    _state.copy(addAttendeeDialogErrorMessage = null)
+                }
+            }
+            is EditMode.UpdateText -> {
+                when (_state.value.editMode) {
+
+                    is EditMode.ChooseTitleText -> {
                         _state.update { _state ->
                             _state.copy(
                                 event = _state.event?.copy(title = uiEvent.text),
@@ -179,7 +231,7 @@ class EventViewModel @Inject constructor(
                             )
                         }
                     }
-                    is EditMode.DescriptionText -> {
+                    is EditMode.ChooseDescriptionText -> {
                         _state.update { _state ->
                             _state.copy(
                                 event = _state.event?.copy(description = uiEvent.text),
@@ -190,13 +242,14 @@ class EventViewModel @Inject constructor(
                     else -> throw java.lang.IllegalStateException("Invalid type for SaveText: ${_state.value.editMode}")
                 }
             }
-            is EditMode.SaveDateTime -> {
-                when(_state.value.editMode) {
+            is EditMode.UpdateDateTime -> {
+                when (_state.value.editMode) {
 
-                    is EditMode.FromTime,
-                    is EditMode.FromDate -> {
+                    is EditMode.ChooseFromTime,
+                    is EditMode.ChooseFromDate -> {
                         _state.update { _state ->
-                            val remindAtDuration = Duration.between(_state.event?.remindAt, _state.event?.from)
+                            val remindAtDuration =
+                                Duration.between(_state.event?.remindAt, _state.event?.from)
 
                             _state.copy(
                                 event = _state.event?.copy(
@@ -212,14 +265,16 @@ class EventViewModel @Inject constructor(
                             )
                         }
                     }
-                    is EditMode.ToTime,
-                    is EditMode.ToDate -> {
+                    is EditMode.ChooseToTime,
+                    is EditMode.ChooseToDate -> {
                         _state.update { _state ->
 
                             // Ensure that `from < to`
-                            val minFrom = min(_state.event?.from ?: ZonedDateTime.now(), uiEvent.dateTime)
+                            val minFrom =
+                                min(_state.event?.from ?: ZonedDateTime.now(), uiEvent.dateTime)
 
-                            val remindAtDuration = Duration.between(_state.event?.remindAt, _state.event?.from)
+                            val remindAtDuration =
+                                Duration.between(_state.event?.remindAt, _state.event?.from)
 
                             _state.copy(
                                 event = _state.event?.copy(
@@ -233,11 +288,11 @@ class EventViewModel @Inject constructor(
                             )
                         }
                     }
-                    is EditMode.RemindAtDateTime -> {
+                    is EditMode.ChooseRemindAtDateTime -> {
                         _state.update { _state ->
 
                             // Ensure that `remindAt <= from`
-                            if(uiEvent.dateTime.isAfter(_state.event?.from)) {
+                            if (uiEvent.dateTime.isAfter(_state.event?.from)) {
                                 // make 'from' and 'remindAt' the same
                                 return@update _state.copy(
                                     event = _state.event?.copy(
@@ -258,6 +313,27 @@ class EventViewModel @Inject constructor(
                     else -> throw java.lang.IllegalStateException("Invalid type for SaveDateTime: ${_state.value.editMode}")
                 }
             }
+            is EditMode.AddAttendee -> {
+                _state.update { _state ->
+                    _state.copy(
+                        event = _state.event?.copy(
+                            attendees = _state.event.attendees +
+                                    uiEvent.attendee.copy(isGoing = true)
+                        )
+                    )
+                }
+            }
+            is EditMode.RemoveAttendee -> {
+                _state.update { _state ->
+                    _state.copy(
+                        event = _state.event?.copy(
+                            attendees = _state.event.attendees.filter { it.id != uiEvent.attendeeId }
+                        ),
+                    )
+                }
+                sendEvent(CancelEditMode)
+            }
+
             is Error -> {
                 _state.update { _state ->
                     _state.copy(

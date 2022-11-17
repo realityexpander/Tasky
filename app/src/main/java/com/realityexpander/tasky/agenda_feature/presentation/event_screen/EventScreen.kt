@@ -4,10 +4,8 @@ import android.content.res.Configuration
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChevronRight
@@ -24,9 +22,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -283,7 +283,7 @@ fun AddEventScreenContent(
                             .clickable(enabled = isEditable) {
                                 onAction(
                                     SetEditMode(
-                                        EditMode.TitleText(
+                                        EditMode.ChooseTitleText(
                                             state.event?.title ?: "",
                                         )
                                     )
@@ -325,7 +325,7 @@ fun AddEventScreenContent(
                             .clickable(enabled = isEditable) {
                                 onAction(
                                     SetEditMode(
-                                        EditMode.DescriptionText(
+                                        EditMode.ChooseDescriptionText(
                                             state.event?.description ?: "",
                                         )
                                     )
@@ -454,14 +454,14 @@ fun AddEventScreenContent(
                     onEditDate = {
                         onAction(
                             SetEditMode(
-                                EditMode.FromDate(state.event?.from ?: ZonedDateTime.now())
+                                EditMode.ChooseFromDate(state.event?.from ?: ZonedDateTime.now())
                             )
                         )
                     },
                     onEditTime = {
                         onAction(
                             SetEditMode(
-                                EditMode.FromTime(state.event?.from ?: ZonedDateTime.now())
+                                EditMode.ChooseFromTime(state.event?.from ?: ZonedDateTime.now())
                             )
                         )
                     }
@@ -476,14 +476,14 @@ fun AddEventScreenContent(
                     onEditDate = {
                         onAction(
                             SetEditMode(
-                                EditMode.ToDate(state.event?.to ?: ZonedDateTime.now())
+                                EditMode.ChooseToDate(state.event?.to ?: ZonedDateTime.now())
                             )
                         )
                     },
                     onEditTime = {
                         onAction(
                             SetEditMode(
-                                EditMode.ToTime(state.event?.to ?: ZonedDateTime.now())
+                                EditMode.ChooseToTime(state.event?.to ?: ZonedDateTime.now())
                             )
                         )
                     }
@@ -495,11 +495,11 @@ fun AddEventScreenContent(
                     fromDateTime = state.event?.from ?: ZonedDateTime.now(),
                     remindAtDateTime = state.event?.remindAt ?: ZonedDateTime.now(),
                     isEditable = isEditable,
-                    isDropdownMenuVisible = state.editMode is EditMode.RemindAtDateTime,
+                    isDropdownMenuVisible = state.editMode is EditMode.ChooseRemindAtDateTime,
                     onEditRemindAtDateTime = {
                         onAction(
                             SetEditMode(
-                                EditMode.RemindAtDateTime(
+                                EditMode.ChooseRemindAtDateTime(
                                     state.event?.remindAt ?: ZonedDateTime.now()
                                 )
                             )
@@ -508,7 +508,7 @@ fun AddEventScreenContent(
                     onDismissRequest = { onAction(CancelEditMode) },
                     onSaveRemindAtDateTime = { dateTime ->
                         onAction(
-                            EditMode.SaveDateTime(dateTime)
+                            EditMode.UpdateDateTime(dateTime)
                         )
                     }
                 )
@@ -545,7 +545,7 @@ fun AddEventScreenContent(
                             .align(Alignment.CenterVertically)
                             .clickable(enabled = isEditable) {
                                 onAction(
-                                    SetEditMode(EditMode.AddAttendee())
+                                    SetEditMode(EditMode.ChooseAddAttendee())
                                 )
                             }
                     )
@@ -600,7 +600,13 @@ fun AddEventScreenContent(
                         header = stringResource(R.string.event_going),
                         attendees = state.event?.attendees?.filter { it.isGoing } ?: emptyList(),
                         onAttendeeClick = {},
-                        onAttendeeRemoveClick = {}
+                        onAttendeeRemoveClick = { attendee ->
+                            onAction(
+                                SetEditMode(
+                                    EditMode.ConfirmRemoveAttendee(attendee)
+                                )
+                            )
+                        }
                     )
                     Spacer(modifier = Modifier.mediumHeight())
                 }
@@ -616,7 +622,13 @@ fun AddEventScreenContent(
                         header = stringResource(R.string.event_not_going),
                         attendees = state.event?.attendees?.filter { !it.isGoing } ?: emptyList(),
                         onAttendeeClick = {},
-                        onAttendeeRemoveClick = {}
+                        onAttendeeRemoveClick = { attendee ->
+                            onAction(
+                                SetEditMode(
+                                    EditMode.ConfirmRemoveAttendee(attendee)
+                                )
+                            )
+                        }
                     )
                 }
 
@@ -634,39 +646,35 @@ fun AddEventScreenContent(
                         .fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.mediumHeight())
-
             }
-
-
         }
-
     }
 
     // • EDITORS FOR EVENT PROPERTIES
     state.editMode?.let { editMode ->
         when (editMode) {
-            is EditMode.TitleText,
-            is EditMode.DescriptionText -> {
+            is EditMode.ChooseTitleText,
+            is EditMode.ChooseDescriptionText -> {
                 editMode as EditMode.TextPayload
 
                 EditTextModal(
                     text = editMode.text,
-                    title = editMode.dialogTitle,
+                    title = editMode.dialogTitle.get,
                     editTextStyle =
-                    if (editMode is EditMode.TitleText)
+                    if (editMode is EditMode.ChooseTitleText)
                         MaterialTheme.typography.h2  // cant access from non-compose function, make a wrapper?
                     else
                         MaterialTheme.typography.body1, // cant access from non-compose function, make a wrapper?
                     onSave = {
-                        onAction(EditMode.SaveText(it))
+                        onAction(EditMode.UpdateText(it))
                     },
                     onCancel = {
                         onAction(CancelEditMode)
                     }
                 )
             }
-            is EditMode.FromDate,
-            is EditMode.ToDate -> {
+            is EditMode.ChooseFromDate,
+            is EditMode.ChooseToDate -> {
                 editMode as EditMode.DateTimePayload
                 var pickedDate by remember { mutableStateOf(LocalDateTime.now()) }
                 val dateDialogState = rememberMaterialDialogState()
@@ -676,7 +684,7 @@ fun AddEventScreenContent(
                     dialogState = dateDialogState,
                     buttons = {
                         positiveButton(text = stringResource(R.string.ok)) {
-                            onAction(EditMode.SaveDateTime(pickedDate?.toZonedDateTime()!!))
+                            onAction(EditMode.UpdateDateTime(pickedDate?.toZonedDateTime()!!))
                         }
                         negativeButton(text = stringResource(R.string.cancel)) {
                             dateDialogState.hide()
@@ -686,14 +694,14 @@ fun AddEventScreenContent(
                 ) {
                     datepicker(
                         initialDate = editMode.dateTime.toLocalDate(),
-                        title = editMode.dialogTitle,
+                        title = editMode.dialogTitle.get,
                     ) {
                         pickedDate = it.atTime(editMode.dateTime.toLocalTime())
                     }
                 }
             }
-            is EditMode.FromTime,
-            is EditMode.ToTime -> {
+            is EditMode.ChooseFromTime,
+            is EditMode.ChooseToTime -> {
                 editMode as EditMode.DateTimePayload
                 var pickedTime by remember { mutableStateOf(LocalDateTime.now()) }
                 val dateDialogState = rememberMaterialDialogState()
@@ -703,7 +711,7 @@ fun AddEventScreenContent(
                     dialogState = dateDialogState,
                     buttons = {
                         positiveButton(text = stringResource(R.string.ok)) {
-                            onAction(EditMode.SaveDateTime(pickedTime?.toZonedDateTime()!!))
+                            onAction(EditMode.UpdateDateTime(pickedTime?.toZonedDateTime()!!))
                         }
                         negativeButton(text = stringResource(R.string.cancel)) {
                             dateDialogState.hide()
@@ -713,18 +721,140 @@ fun AddEventScreenContent(
                 ) {
                     timepicker(
                         initialTime = editMode.dateTime.toLocalTime(),
-                        title = editMode.dialogTitle,
+                        title = editMode.dialogTitle.get,
                     ) {
                         pickedTime = it.atDate(editMode.dateTime.toLocalDate())
                     }
                 }
             }
-            is EditMode.RemindAtDateTime -> { /* handled in the RemindAt UI element, this is here to remove compiler warning */
+            is EditMode.ChooseRemindAtDateTime -> { // handled in the RemindAt UI element, this is here to remove compiler warning
             }
-            is EditMode.AddPhoto -> TODO()
-            is EditMode.ConfirmDeletePhoto -> TODO()
-            is EditMode.AddAttendee -> TODO()
-            is EditMode.ConfirmDeleteAttendee -> TODO()
+            is EditMode.ChooseAddPhoto -> TODO()
+            is EditMode.ConfirmRemovePhoto -> TODO()
+            is EditMode.ChooseAddAttendee -> {
+                val addAttendeeDialogState = rememberMaterialDialogState()
+                var attendeeEmail by remember { mutableStateOf("") }
+
+                addAttendeeDialogState.show()
+                MaterialDialog (
+                    dialogState = addAttendeeDialogState,
+                    properties = DialogProperties(
+                        dismissOnBackPress = true,
+                        dismissOnClickOutside = true
+                    ),
+                    buttons = {
+                        positiveButton(text = stringResource(R.string.ok)) {
+                            onAction(ValidateAttendeeEmailExistsThenAddAttendee(attendeeEmail))
+                        }
+                        negativeButton(text = stringResource(R.string.cancel)) {
+                            addAttendeeDialogState.hide()
+                            onAction(CancelEditMode)
+                        }
+                    },
+                    onCloseRequest = {
+                        addAttendeeDialogState.hide()
+                        onAction(CancelEditMode)
+                    }
+                ) {
+                    Spacer(modifier = Modifier.tinyHeight())
+
+                    Text(
+                        text = stringResource(R.string.add_attendee_dialog_title),
+                        style = MaterialTheme.typography.h4,
+                        color = MaterialTheme.colors.onSurface,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.mediumHeight())
+
+                    OutlinedTextField(
+                        value = attendeeEmail,
+                        onValueChange = {
+                            attendeeEmail = it
+                            onAction(ClearAddAttendeeDialogErrorMessage)
+                        },
+                        label = { Text(stringResource(R.string.add_attendee_dialog_email_title)) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                        trailingIcon = {
+                            if (state.isProgressVisible) {
+                                CircularProgressIndicator(
+                                    color = MaterialTheme.colors.primary,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = DP.small, end = DP.small)
+                    )
+                    Spacer(modifier = Modifier.smallHeight())
+
+                    // • ERROR MESSAGE
+                    Text(
+                        text = state.addAttendeeDialogErrorMessage?.get ?: "",
+                        style = MaterialTheme.typography.body1,
+                        color = MaterialTheme.colors.error,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.smallHeight())
+                }
+            }
+            is EditMode.ConfirmRemoveAttendee -> {
+                val attendee = editMode.attendee
+                val deleteAttendeeDialogState = rememberMaterialDialogState()
+                onAction(SetIsEditable(true  )) // turn on edit mode when removing attendee
+
+                deleteAttendeeDialogState.show()
+                MaterialDialog (
+                    dialogState = deleteAttendeeDialogState,
+                    properties = DialogProperties(
+                        dismissOnBackPress = true,
+                        dismissOnClickOutside = true
+                    ),
+                    buttons = {
+                        positiveButton(text = stringResource(R.string.remove_attendee_dialog_remove_button)) {
+                            onAction(EditMode.RemoveAttendee(attendee.id))
+                        }
+                        negativeButton(text = stringResource(R.string.cancel)) {
+                            deleteAttendeeDialogState.hide()
+                            onAction(CancelEditMode)
+                        }
+                    },
+                    onCloseRequest = {
+                        deleteAttendeeDialogState.hide()
+                        onAction(CancelEditMode)
+                    }
+                ) {
+                    Spacer(modifier = Modifier.tinyHeight())
+
+                    Text(
+                        text = stringResource(R.string.event_dialog_title_remove_attendee),
+                        style = MaterialTheme.typography.h4,
+                        color = MaterialTheme.colors.onSurface,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.mediumHeight())
+
+                    Text(
+                        text = attendee.fullName,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.h4,
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = DP.small, end = DP.small)
+                    )
+                    Text(
+                        text = attendee.email,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = DP.small, end = DP.small)
+                    )
+                    Spacer(modifier = Modifier.smallHeight())
+                }
+            }
         }
     }
 }

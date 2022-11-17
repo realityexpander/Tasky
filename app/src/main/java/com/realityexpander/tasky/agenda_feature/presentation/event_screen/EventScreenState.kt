@@ -16,6 +16,8 @@ data class EventScreenState(
 
     val errorMessage: UiText? = null,
 
+    val addAttendeeDialogErrorMessage: UiText? = null,
+
     // Stateful One-time events
 //    val scrollToItemId: UuidStr? = null,  // todo add one-time events
 

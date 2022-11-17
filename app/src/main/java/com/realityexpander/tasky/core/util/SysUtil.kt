@@ -21,7 +21,7 @@ fun Any.log(msg: String) {
 fun String.repeat(times: Int): String {
     return buildString {
         repeat(times) {
-            append(this@repeat)
+            append(this)
         }
     }
 }

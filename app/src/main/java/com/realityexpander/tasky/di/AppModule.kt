@@ -9,6 +9,10 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.TaskyDatabase
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls.AgendaRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.AgendaApiImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.IAttendeeRepository
+import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.attendeeRepositoryImpls.AttendeeRepositoryImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.remote.AttendeeApiImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.remote.IAttendeeApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls.EventRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
@@ -271,13 +275,15 @@ object AppModule {
     @Singleton
     fun provideAgendaRepository(
         eventRepository: IEventRepository,
+        attendeeRepository: IAttendeeRepository,
 //        taskRepository: ITaskRepository,              // todo implement soon
 //        reminderRepository: IReminderRepository,      // todo implement soon
         agendaApi: IAgendaApi,
     ): IAgendaRepository =
         AgendaRepositoryImpl(
-            eventRepository,
-            agendaApi
+            eventRepository = eventRepository,
+            attendeeRepository = attendeeRepository,
+            agendaApi = agendaApi,
         )
 
     /////////// EVENTS REPOSITORY ///////////
@@ -301,6 +307,24 @@ object AppModule {
         eventApi: IEventApi
     ): IEventRepository =
         EventRepositoryImpl(eventDao, eventApi)
+
+    /////////// ATTENDEE REPOSITORY ///////////
+
+    @Provides
+    @Singleton
+    fun provideAttendeeApiProd(taskyApi: TaskyApi): IAttendeeApi =
+        AttendeeApiImpl(taskyApi)
+
+    @Provides
+    @Singleton
+    fun provideAttendeeRepository(
+        attendeeApi: IAttendeeApi,
+        validateEmail: ValidateEmail,
+    ): IAttendeeRepository =
+        AttendeeRepositoryImpl(
+            attendeeApi = attendeeApi,
+            validateEmail = validateEmail,
+        )
 
 
     //////////////////////////////////////

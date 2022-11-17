@@ -186,6 +186,7 @@ fun main() {
     val eventDTO2 = event.toEventDTOCreate()
     try {
         val eventDTO2toDomain = eventDTO2.toDomain()
+        println("eventDTO2toDomain: $eventDTO2toDomain") // should never get here
     } catch (e: Exception) {
         println("EventDTO.Create should not be converted to Domain = true")
     }
@@ -194,6 +195,7 @@ fun main() {
     val eventDTO3 = event.toEventDTOUpdate()
     try {
         val eventDTO3toDomain = eventDTO3.toDomain()
+        println("eventDTO3toDomain: $eventDTO3toDomain") // should never get here
     } catch (e: Exception) {
         println("EventDTO.Update should not be converted to Domain = true")
     }
