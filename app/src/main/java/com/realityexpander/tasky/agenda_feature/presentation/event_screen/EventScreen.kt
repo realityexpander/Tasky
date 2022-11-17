@@ -437,12 +437,12 @@ fun AddEventScreenContent(
                             ) {
                                 val photos =
                                     remember(
-                                        state.event?.photos?.toMutableList(),
-                                        state.event?.photosToUpload?.toMutableList(),
+                                        state.event.photos.toMutableList(),
+                                        state.event.photosToUpload?.toMutableList(),
                                         state.isEditable
                                     ) {
                                         derivedStateOf {
-                                            var photoList = (state.event?.photos)
+                                            var photoList = (state.event.photos)
                                                 ?.plus(state.event.photosToUpload)
 
                                             if (state.isEditable) {
