@@ -164,7 +164,7 @@ fun EventPropertyEditors(
                     value = attendeeEmail,
                     onValueChange = {email ->
                         attendeeEmail = email
-                        onAction(ClearAddAttendeeDialogErrors)
+                        onAction(ClearErrorsForAddAttendeeDialog)
                         onAction(ValidateAttendeeEmail(email))
                     },
                     label = { Text(stringResource(R.string.add_attendee_dialog_email_title)) },
