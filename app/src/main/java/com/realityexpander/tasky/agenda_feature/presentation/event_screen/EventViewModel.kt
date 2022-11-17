@@ -180,7 +180,7 @@ class EventViewModel @Inject constructor(
 
                 // call API to check if attendee email exists
                 when (val result =
-                    agendaRepository.validateAttendeeExists(uiEvent.email)
+                    agendaRepository.validateAttendeeExists(uiEvent.email.trim().lowercase())
                 ) {
                     is ResultUiText.Success -> {
                         val attendeeInfo = result.data

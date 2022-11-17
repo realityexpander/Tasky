@@ -116,7 +116,7 @@ class LoginViewModel @Inject constructor(
 
     private suspend fun login(email: String, password: String) {
         try {
-            val authInfo = authRepository.login(email, password)
+            val authInfo = authRepository.login(email.trim().lowercase(), password)
 
             // will be saved in datastore in the LoginScreen composable
             authRepository.setAuthInfo(authInfo)
