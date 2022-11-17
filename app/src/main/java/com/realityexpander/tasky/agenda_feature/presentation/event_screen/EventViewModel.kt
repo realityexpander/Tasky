@@ -35,19 +35,35 @@ class EventViewModel @Inject constructor(
     // Get params from savedStateHandle (from another screen or after process death)
     private val errorMessage: UiText? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage]
-    private val isEditMode: Boolean =
-        savedStateHandle[SavedStateConstants.SAVED_STATE_isEditMode] ?: false
+    private val isEditable: Boolean =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] ?: false
+    private val editMode: EventScreenEvent.EditMode? =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_editMode]
+    private val addAttendeeDialogErrorMessage: UiText? =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_addAttendeeDialogErrorMessage]
+    private val isAttendeeEmailValid: Boolean? =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid]
 
     private val _state = MutableStateFlow(
         EventScreenState(
             errorMessage = errorMessage,
             isProgressVisible = true,
-            isEditable = isEditMode
+            isEditable = isEditable,
+            editMode = editMode,
+            addAttendeeDialogErrorMessage = addAttendeeDialogErrorMessage,
+            isAttendeeEmailValid = isAttendeeEmailValid,
         )
     )
     val state = _state.onEach { state ->
         // save state for process death
-        savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage] = state.errorMessage
+        savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage] =
+            state.errorMessage
+        savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] =
+            state.isEditable
+        savedStateHandle[SavedStateConstants.SAVED_STATE_addAttendeeDialogErrorMessage] =
+            state.addAttendeeDialogErrorMessage
+        savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid] =
+            state.isAttendeeEmailValid
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventScreenState())
 
     init {
@@ -55,9 +71,8 @@ class EventViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 isLoaded = true, // only after state is initialized
                 isProgressVisible = false,
-                username = authRepository.getAuthInfo()?.username
-                    ?: "", // todo get this from the previous screen? // put back in
-                authInfo = authRepository.getAuthInfo(), // todo put this back in
+                username = authRepository.getAuthInfo()?.username ?: "",
+                authInfo = authRepository.getAuthInfo(),
 
                 // Dummy event details for UI work // todo remove soon
                 event = AgendaItem.Event(

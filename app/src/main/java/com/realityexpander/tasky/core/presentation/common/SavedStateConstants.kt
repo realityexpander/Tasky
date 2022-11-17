@@ -27,5 +27,9 @@ object SavedStateConstants {
     const val SAVED_STATE_selectedDayIndex                       = "selectedDayIndex"
 
     // Add Event screen
-    const val SAVED_STATE_isEditMode                             = "isEditMode"
+    const val SAVED_STATE_isEditable                             = "isEditable"
+    const val SAVED_STATE_editMode                               = "editMode"
+    const val SAVED_STATE_addAttendeeDialogErrorMessage          = "addAttendeeDialogErrorMessage"
+    const val SAVED_STATE_isAttendeeEmailValid                   = "isAttendeeEmailValid"
+
 }
