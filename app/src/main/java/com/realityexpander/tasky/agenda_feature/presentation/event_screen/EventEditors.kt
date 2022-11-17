@@ -124,30 +124,10 @@ fun EventPropertyEditors(
             var selectedImageUri by remember {
                 mutableStateOf<Uri?>(null)
             }
-//            val singlePhotoPickerLauncher =
-//                rememberLauncherForActivityResult(
-//                    contract = ActivityResultContracts.PickVisualMedia(),
-//                    onResult = { uri ->
-//                        selectedImageUri = uri
-//
-//                        uri?.let {
-//                            onAction(
-//                                EditMode.AddPhoto(
-//                                    Photo.Local(
-//                                        id = UUID.randomUUID().toString(),
-//                                        uri = uri
-//                                    )
-//                                )
-//                            )
-//                        }
-//                    }
-//                )
 
             singlePhotoPickerLauncher.launch(
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             )
-
-
         }
         is EditMode.ConfirmRemovePhoto -> TODO()
         is EditMode.ChooseAddAttendee -> {
