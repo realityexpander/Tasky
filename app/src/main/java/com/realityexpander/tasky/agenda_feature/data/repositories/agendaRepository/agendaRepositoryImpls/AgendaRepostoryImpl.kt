@@ -1,7 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls
 
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.agenda_feature.common.RepositoryResult
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
@@ -35,7 +34,7 @@ class AgendaRepositoryImpl @Inject constructor(
         return events // + tasks + reminders
     }
 
-    override suspend fun syncAgenda(): RepositoryResult<Void> {
+    override suspend fun syncAgenda(): ResultUiText<Void> {
         val deletedEventIds = eventRepository.getDeletedEventIds()
 //        val deletedTaskIds = taskRepository.getDeletedTaskIds()                   // todo implement tasks repo
 //        val deletedReminderIds = reminderRepository.getDeletedReminderIds()       // todo implement reminders repo
@@ -52,11 +51,11 @@ class AgendaRepositoryImpl @Inject constructor(
         if (deletedSuccessfully) {
             return eventRepository.deleteFinallyEventIds(deletedEventIds)
         } else {
-            return RepositoryResult.Error(UiText.ResOrStr(R.string.agenda_sync_error, "Failed to sync agenda - deleteFinallyEventIds"))
+            return ResultUiText.Error(UiText.ResOrStr(R.string.agenda_sync_error, "Failed to sync agenda - deleteFinallyEventIds"))
         }
     }
 
-    override suspend fun createEvent(event: AgendaItem.Event): RepositoryResult<AgendaItem.Event> {
+    override suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
         return eventRepository.createEvent(event)
     }
 
@@ -64,31 +63,19 @@ class AgendaRepositoryImpl @Inject constructor(
         return eventRepository.getEvent(eventId)
     }
 
-    override suspend fun updateEvent(event: AgendaItem.Event): RepositoryResult<AgendaItem.Event> {
+    override suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
         return eventRepository.updateEvent(event)
     }
 
-    override suspend fun deleteEventId(eventId: EventId): RepositoryResult<AgendaItem.Event> {
+    override suspend fun deleteEventId(eventId: EventId): ResultUiText<AgendaItem.Event> {
         return eventRepository.deleteEventId(eventId)
     }
 
-    override suspend fun clearAllEvents(): RepositoryResult<Void> {
+    override suspend fun clearAllEvents(): ResultUiText<Void> {
         return eventRepository.clearAllEvents()
     }
 
-    override suspend fun confirmAttendeeExists(
-        attendeeEmail: Email,
-        onSuccess: (attendee: Attendee?) -> Unit,
-        onFailure: (error: UiText) -> Unit
-    ) {
-        val result = attendeeRepository.getAttendee(attendeeEmail)
-        when(result) {
-            is RepositoryResult.Success -> {
-                onSuccess(result.data)
-            }
-            is RepositoryResult.Error -> {
-                onFailure(result.message)
-            }
-        }
+    override suspend fun validateAttendeeExists(attendeeEmail: Email): ResultUiText<Attendee> {
+        return attendeeRepository.getAttendee(attendeeEmail)
     }
 }

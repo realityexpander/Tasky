@@ -132,7 +132,7 @@
     <string name="add_attendee_dialog_email_title">Attendee email</string>
     <string name="add_attendee_dialog_error_email_not_found">Attendee email not found</string>
     <string name="add_attendee_dialog_error_email_already_added">Attendee email is already added</string>
-    <string name="add_attendee_api_error">Api Error - Attendee value not found</string>
+    <string name="add_attendee_api_error">Api Error - Attendee object expected and not found</string>
 
     <!--    Agenda Sync -->
     <string name="agenda_sync_error">Failed to sync agenda</string>

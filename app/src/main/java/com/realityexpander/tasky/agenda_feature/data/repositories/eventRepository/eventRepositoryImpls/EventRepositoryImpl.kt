@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls
 
-import com.realityexpander.tasky.agenda_feature.common.RepositoryResult
+import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEntity
@@ -20,16 +20,16 @@ class EventRepositoryImpl(
     private val eventApi: IEventApi, // = EventApiFakeImpl(),
 ) : IEventRepository {
 
-    override suspend fun createEvent(event: AgendaItem.Event): RepositoryResult<AgendaItem.Event> {
+    override suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
         return try {
             eventDao.createEvent(event.toEntity())
             eventApi.createEvent(event.toEventDTOCreate())
 
-            RepositoryResult.Success()  // todo return the created event
+            ResultUiText.Success()  // todo return the created event
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            RepositoryResult.Error(UiText.Str(e.message ?: "createEvent error"))
+            ResultUiText.Error(UiText.Str(e.message ?: "createEvent error"))
         }
     }
 
@@ -65,27 +65,27 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun updateEvent(event: AgendaItem.Event): RepositoryResult<AgendaItem.Event> {
+    override suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
         return try {
             eventDao.updateEvent(event.toEntity())
 
-            RepositoryResult.Success() // todo return the updated event
+            ResultUiText.Success() // todo return the updated event
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            RepositoryResult.Error(UiText.Str(e.message ?: "updateEvent error"))
+            ResultUiText.Error(UiText.Str(e.message ?: "updateEvent error"))
         }
     }
 
-    override suspend fun deleteEventId(eventId: EventId): RepositoryResult<AgendaItem.Event> {
+    override suspend fun deleteEventId(eventId: EventId): ResultUiText<AgendaItem.Event> {
         return try {
             eventDao.markEventDeletedById(eventId)
 
-            RepositoryResult.Success() // todo return the deleted event?
+            ResultUiText.Success() // todo return the deleted event?
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            RepositoryResult.Error(UiText.Str(e.message ?: "deleteEventId error"))
+            ResultUiText.Error(UiText.Str(e.message ?: "deleteEventId error"))
         }
     }
 
@@ -99,27 +99,27 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun deleteFinallyEventIds(eventIds: List<EventId>): RepositoryResult<Void> {
+    override suspend fun deleteFinallyEventIds(eventIds: List<EventId>): ResultUiText<Void> {
         return try {
             eventDao.deleteFinallyByEventIds(eventIds)
 
-            RepositoryResult.Success() // todo return the deleted events?
+            ResultUiText.Success() // todo return the deleted events?
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            RepositoryResult.Error(UiText.Str(e.message ?: "deleteFinallyEventIds error"))
+            ResultUiText.Error(UiText.Str(e.message ?: "deleteFinallyEventIds error"))
         }
     }
 
-    override suspend fun clearAllEvents(): RepositoryResult<Void> {
+    override suspend fun clearAllEvents(): ResultUiText<Void> {
         return try {
             eventDao.clearAllEvents()
 
-            RepositoryResult.Success() // todo return the cleared event?
+            ResultUiText.Success() // todo return the cleared event?
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            RepositoryResult.Error(UiText.Str(e.message ?: "clearAllEvents error"))
+            ResultUiText.Error(UiText.Str(e.message ?: "clearAllEvents error"))
         }
     }
 }
