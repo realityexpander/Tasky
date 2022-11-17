@@ -129,7 +129,7 @@ fun EventPropertyEditors(
                 buttons = {
                     positiveButton(
                         text = stringResource(R.string.ok),
-                        disableDismiss = true,
+                        disableDismiss = true,  // don't close the dialog automatically when the button is pressed
                         textStyle = MaterialTheme.typography.button.copy(
                             if(state.isAttendeeEmailValid == true)
                                 MaterialTheme.colors.onSurface
@@ -162,7 +162,7 @@ fun EventPropertyEditors(
 
                 OutlinedTextField(
                     value = attendeeEmail,
-                    onValueChange = {email ->
+                    onValueChange = { email ->
                         attendeeEmail = email
                         onAction(ClearErrorsForAddAttendeeDialog)
                         onAction(ValidateAttendeeEmail(email))
