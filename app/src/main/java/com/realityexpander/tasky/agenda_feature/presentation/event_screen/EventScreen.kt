@@ -89,6 +89,8 @@ enum class AttendeeListType {
     NOT_GOING,
 }
 
+const val ADD_PHOTO_PLACEHOLDER = "ADD_PHOTO_PLACEHOLDER"
+
 @Composable
 fun AddEventScreenContent(
     state: EventScreenState,
@@ -450,7 +452,7 @@ fun AddEventScreenContent(
                                                 if (photoList.isEmpty()) {
                                                     photoList = listOf(
                                                         Photo.Local(
-                                                            "ADD_PHOTO_PLACEHOLDER",
+                                                            ADD_PHOTO_PLACEHOLDER,
                                                             uri = Uri.EMPTY
                                                         )
                                                     )
@@ -459,7 +461,7 @@ fun AddEventScreenContent(
                                                     if (photoList.size <= 10) {
                                                         photoList = photoList.plus(
                                                             Photo.Local(
-                                                                "ADD_PHOTO_PLACEHOLDER",
+                                                                ADD_PHOTO_PLACEHOLDER,
                                                                 uri = Uri.EMPTY
                                                             )
                                                         )
@@ -486,7 +488,7 @@ fun AddEventScreenContent(
                                     ) {
                                         when (photo) {
                                             is Photo.Local -> {
-                                                if (photo.id == "ADD_PHOTO_PLACEHOLDER") {
+                                                if (photo.id == ADD_PHOTO_PLACEHOLDER) {
                                                     // • Add Photo Icon
                                                     Icon(
                                                         imageVector = Icons.Filled.Add,
@@ -508,7 +510,7 @@ fun AddEventScreenContent(
                                                 } else {
                                                     AsyncImage(
                                                         model = photo.uri,
-                                                        contentDescription = "Photo",
+                                                        contentDescription = stringResource(id = R.string.event_description_photo),
                                                         modifier = Modifier.fillMaxWidth(),
                                                         contentScale = ContentScale.Crop
                                                     )
@@ -517,7 +519,7 @@ fun AddEventScreenContent(
                                             is Photo.Remote -> {
                                                 AsyncImage(
                                                     model = photo.url,
-                                                    contentDescription = "Photo",
+                                                    contentDescription = stringResource(id = R.string.event_description_photo),
                                                     modifier = Modifier.fillMaxWidth(),
                                                     contentScale = ContentScale.Crop
                                                 )
