@@ -1,5 +1,9 @@
 package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
+import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,6 +39,7 @@ fun EventPropertyEditors(
     editMode: EditMode,
     state: EventScreenState,
     onAction: (EventScreenEvent) -> Unit,
+    singlePhotoPickerLauncher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
 ) {
     when (editMode) {
         is EditMode.ChooseTitleText,
@@ -113,14 +118,44 @@ fun EventPropertyEditors(
         }
         is EditMode.ChooseRemindAtDateTime -> { // handled in the RemindAt UI element, this is here to remove compiler warning
         }
-        is EditMode.ChooseAddPhoto -> TODO()
+        is EditMode.ChooseAddPhoto -> {
+            // Reference: https://github.com/philipplackner/NewPhotoPickerAndroid13/blob/master/app/src/main/java/com/plcoding/newphotopickerandroid13/MainActivity.kt
+
+            var selectedImageUri by remember {
+                mutableStateOf<Uri?>(null)
+            }
+//            val singlePhotoPickerLauncher =
+//                rememberLauncherForActivityResult(
+//                    contract = ActivityResultContracts.PickVisualMedia(),
+//                    onResult = { uri ->
+//                        selectedImageUri = uri
+//
+//                        uri?.let {
+//                            onAction(
+//                                EditMode.AddPhoto(
+//                                    Photo.Local(
+//                                        id = UUID.randomUUID().toString(),
+//                                        uri = uri
+//                                    )
+//                                )
+//                            )
+//                        }
+//                    }
+//                )
+
+            singlePhotoPickerLauncher.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
+
+
+        }
         is EditMode.ConfirmRemovePhoto -> TODO()
         is EditMode.ChooseAddAttendee -> {
             val addAttendeeDialogState = rememberMaterialDialogState()
             var attendeeEmail by remember { mutableStateOf("") }
 
             addAttendeeDialogState.show()
-            MaterialDialog (
+            MaterialDialog(
                 dialogState = addAttendeeDialogState,
                 properties = DialogProperties(
                     dismissOnBackPress = true,
@@ -131,13 +166,13 @@ fun EventPropertyEditors(
                         text = stringResource(R.string.ok),
                         disableDismiss = true,  // don't close the dialog automatically when OK button is tapped
                         textStyle = MaterialTheme.typography.button.copy(
-                            if(state.isAttendeeEmailValid == true)
+                            if (state.isAttendeeEmailValid == true)
                                 MaterialTheme.colors.onSurface
                             else
                                 MaterialTheme.colors.onSurface.copy(alpha = 0.3f)
                         )
                     ) {
-                        if(state.isAttendeeEmailValid == true) {
+                        if (state.isAttendeeEmailValid == true) {
                             onAction(ValidateAttendeeEmailExistsThenAddAttendee(attendeeEmail))
                         }
                     }
@@ -196,7 +231,8 @@ fun EventPropertyEditors(
                             }
                         }
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(start = DP.small, end = DP.small)
                 )
                 Spacer(modifier = Modifier.smallHeight())
@@ -216,10 +252,10 @@ fun EventPropertyEditors(
         is EditMode.ConfirmRemoveAttendee -> {
             val attendee = editMode.attendee
             val deleteAttendeeDialogState = rememberMaterialDialogState()
-            onAction(SetIsEditable(true  )) // turn on edit mode when removing attendee
+            onAction(SetIsEditable(true)) // turn on edit mode when removing attendee
 
             deleteAttendeeDialogState.show()
-            MaterialDialog (
+            MaterialDialog(
                 dialogState = deleteAttendeeDialogState,
                 properties = DialogProperties(
                     dismissOnBackPress = true,
@@ -255,13 +291,15 @@ fun EventPropertyEditors(
                     text = attendee.fullName,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.h4,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(start = DP.small, end = DP.small)
                 )
                 Text(
                     text = attendee.email,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(start = DP.small, end = DP.small)
                 )
                 Spacer(modifier = Modifier.smallHeight())

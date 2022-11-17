@@ -97,7 +97,7 @@ sealed interface EventScreenEvent {
             val dateTime: ZonedDateTime
         }
         sealed interface PhotoPayload {
-            val photo: Photo
+            val photoLocal: Photo.Local
         }
         sealed interface PhotoIdPayload {
             val photoId: PhotoId
@@ -113,7 +113,7 @@ sealed interface EventScreenEvent {
         // • (3) FINALLY "Update Data" Events - Delivers the edited/added/deleted data payload to the ViewModel
         data class UpdateText(override val text: String) : EventScreenEvent, TextPayload
         data class UpdateDateTime(override val dateTime: ZonedDateTime) : EventScreenEvent, DateTimePayload
-        data class AddPhoto(override val photo: Photo) : EventScreenEvent, PhotoPayload
+        data class AddPhoto(override val photoLocal: Photo.Local) : EventScreenEvent, PhotoPayload
         data class RemovePhoto(override val photoId: PhotoId) : EventScreenEvent, PhotoIdPayload
         data class AddAttendee(override val attendee: Attendee) : EventScreenEvent, AttendeePayload
         data class RemoveAttendee(override val attendeeId: AttendeeId) : EventScreenEvent, AttendeeIdPayload
