@@ -120,11 +120,6 @@ fun EventPropertyEditors(
         }
         is EditMode.ChooseAddPhoto -> {
             // Reference: https://github.com/philipplackner/NewPhotoPickerAndroid13/blob/master/app/src/main/java/com/plcoding/newphotopickerandroid13/MainActivity.kt
-
-            var selectedImageUri by remember {
-                mutableStateOf<Uri?>(null)
-            }
-
             singlePhotoPickerLauncher.launch(
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             )
