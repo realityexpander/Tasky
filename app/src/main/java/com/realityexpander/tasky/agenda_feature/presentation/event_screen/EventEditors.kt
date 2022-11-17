@@ -129,7 +129,7 @@ fun EventPropertyEditors(
                 buttons = {
                     positiveButton(
                         text = stringResource(R.string.ok),
-                        disableDismiss = true,  // don't close the dialog automatically when the button is pressed
+                        disableDismiss = true,  // don't close the dialog automatically when OK button is tapped
                         textStyle = MaterialTheme.typography.button.copy(
                             if(state.isAttendeeEmailValid == true)
                                 MaterialTheme.colors.onSurface
@@ -141,7 +141,10 @@ fun EventPropertyEditors(
                             onAction(ValidateAttendeeEmailExistsThenAddAttendee(attendeeEmail))
                         }
                     }
-                    negativeButton(text = stringResource(R.string.cancel)) { /* handled by onCloseRequest */ }
+                    negativeButton(text = stringResource(R.string.cancel)) {
+                        addAttendeeDialogState.hide()
+                        onAction(CancelEditMode)
+                    }
                 },
                 onCloseRequest = {
                     addAttendeeDialogState.hide()
