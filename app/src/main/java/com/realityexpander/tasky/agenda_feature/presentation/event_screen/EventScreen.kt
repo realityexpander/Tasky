@@ -438,15 +438,16 @@ fun AddEventScreenContent(
                                 val photos =
                                     remember(
                                         state.event.photos.toMutableList(),
-                                        state.event.photosToUpload?.toMutableList(),
+                                        state.event.photosToUpload.toMutableList(),
                                         state.isEditable
                                     ) {
                                         derivedStateOf {
                                             var photoList = (state.event.photos)
-                                                ?.plus(state.event.photosToUpload)
+                                                .plus(state.event.photosToUpload)
 
+                                            // Add the "Add Photo" item if in edit mode
                                             if (state.isEditable) {
-                                                if (photoList?.isEmpty() == true) {
+                                                if (photoList.isEmpty() == true) {
                                                     photoList = listOf(
                                                         Photo.Local(
                                                             "ADD_PHOTO_PLACEHOLDER",
@@ -455,7 +456,7 @@ fun AddEventScreenContent(
                                                     )
                                                 } else {
                                                     // Max 10 photos
-                                                    if (photoList?.size!! <= 10) {
+                                                    if (photoList.size <= 10) {
                                                         photoList = photoList.plus(
                                                             Photo.Local(
                                                                 "ADD_PHOTO_PLACEHOLDER",
