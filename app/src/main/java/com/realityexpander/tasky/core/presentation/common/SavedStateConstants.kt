@@ -20,12 +20,16 @@ object SavedStateConstants {
     // App-wide
     const val SAVED_STATE_authInfo                               = "authInfo"
     const val SAVED_STATE_isLoaded                               = "isLoaded"
+    const val SAVED_STATE_isEditable                             = "isEditable"
+    const val SAVED_STATE_editMode                               = "editMode"
 
     // Agenda screen
     const val SAVED_STATE_agendaItemIdForMenu                    = "agendaItemIdForMenu"
     const val SAVED_STATE_agendaItems                            = "agendaItems"
     const val SAVED_STATE_selectedDayIndex                       = "selectedDayIndex"
 
-    // Add Event screen
-    const val SAVED_STATE_isEditMode                             = "isEditMode"
+    // Event screen
+    const val SAVED_STATE_addAttendeeDialogErrorMessage          = "addAttendeeDialogErrorMessage"
+    const val SAVED_STATE_isAttendeeEmailValid                   = "isAttendeeEmailValid"
+
 }

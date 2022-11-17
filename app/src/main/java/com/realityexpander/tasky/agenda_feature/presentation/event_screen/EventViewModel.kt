@@ -12,6 +12,7 @@ import com.realityexpander.tasky.agenda_feature.presentation.common.util.max
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.min
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,24 +29,41 @@ class EventViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     private val agendaRepository: IAgendaRepository,
     private val savedStateHandle: SavedStateHandle,
+    private val validateEmail: ValidateEmail
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)
     private val errorMessage: UiText? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage]
-    private val isEditMode: Boolean =
-        savedStateHandle[SavedStateConstants.SAVED_STATE_isEditMode] ?: false
+    private val isEditable: Boolean =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] ?: false
+    private val editMode: EventScreenEvent.EditMode? =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_editMode]
+    private val addAttendeeDialogErrorMessage: UiText? =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_addAttendeeDialogErrorMessage]
+    private val isAttendeeEmailValid: Boolean? =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid]
 
     private val _state = MutableStateFlow(
         EventScreenState(
             errorMessage = errorMessage,
             isProgressVisible = true,
-            isEditable = isEditMode
+            isEditable = isEditable,
+            editMode = editMode,
+            addAttendeeDialogErrorMessage = addAttendeeDialogErrorMessage,
+            isAttendeeEmailValid = isAttendeeEmailValid,
         )
     )
     val state = _state.onEach { state ->
         // save state for process death
-        savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage] = state.errorMessage
+        savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage] =
+            state.errorMessage
+        savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] =
+            state.isEditable
+        savedStateHandle[SavedStateConstants.SAVED_STATE_addAttendeeDialogErrorMessage] =
+            state.addAttendeeDialogErrorMessage
+        savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid] =
+            state.isAttendeeEmailValid
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventScreenState())
 
     init {
@@ -53,9 +71,8 @@ class EventViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 isLoaded = true, // only after state is initialized
                 isProgressVisible = false,
-                username = authRepository.getAuthInfo()?.username
-                    ?: "", // todo get this from the previous screen? // put back in
-                authInfo = authRepository.getAuthInfo(), // todo put this back in
+                username = authRepository.getAuthInfo()?.username ?: "",
+                authInfo = authRepository.getAuthInfo(),
 
                 // Dummy event details for UI work // todo remove soon
                 event = AgendaItem.Event(
@@ -171,7 +188,18 @@ class EventViewModel @Inject constructor(
                 _state.update { _state ->
                     _state.copy(
                         editMode = null,
-                        addAttendeeDialogErrorMessage = null,
+                    )
+                }
+                sendEvent(ClearErrorsForAddAttendeeDialog)
+            }
+            is ValidateAttendeeEmail -> {
+                _state.update { _state ->
+                    _state.copy(
+                        isAttendeeEmailValid =
+                            if (uiEvent.email.isBlank())
+                                    null
+                                else
+                                    validateEmail.validate(uiEvent.email)
                     )
                 }
             }
@@ -193,7 +221,7 @@ class EventViewModel @Inject constructor(
                             val attendeeAlreadyInList =
                                 _state.value.event?.attendees?.any { attendee.id == it.id }
                             if (attendeeAlreadyInList == true) {
-                                sendEvent(SetAddAttendeeDialogErrorMessage(UiText.Res(R.string.add_attendee_dialog_error_email_already_added)))
+                                sendEvent(SetErrorMessageForAddAttendeeDialog(UiText.Res(R.string.add_attendee_dialog_error_email_already_added)))
                                 return
                             }
 
@@ -201,23 +229,26 @@ class EventViewModel @Inject constructor(
                             sendEvent(EditMode.AddAttendee(attendee))
                             sendEvent(CancelEditMode)
                         } ?: run {
-                            sendEvent(SetAddAttendeeDialogErrorMessage(UiText.Res(R.string.add_attendee_dialog_error_email_not_found)))
+                            sendEvent(SetErrorMessageForAddAttendeeDialog(UiText.Res(R.string.add_attendee_dialog_error_email_not_found)))
                         }
                     }
                     is ResultUiText.Error -> {
                         sendEvent(ShowProgressIndicator(false))
-                        sendEvent(SetAddAttendeeDialogErrorMessage(result.message))
+                        sendEvent(SetErrorMessageForAddAttendeeDialog(result.message))
                     }
                 }
             }
-            is SetAddAttendeeDialogErrorMessage -> {
+            is SetErrorMessageForAddAttendeeDialog -> {
                 _state.update { _state ->
                     _state.copy(addAttendeeDialogErrorMessage = uiEvent.message)
                 }
             }
-            is ClearAddAttendeeDialogErrorMessage -> {
+            is ClearErrorsForAddAttendeeDialog -> {
                 _state.update { _state ->
-                    _state.copy(addAttendeeDialogErrorMessage = null)
+                    _state.copy(
+                        addAttendeeDialogErrorMessage = null,
+                        isAttendeeEmailValid = null
+                    )
                 }
             }
             is EditMode.UpdateText -> {
