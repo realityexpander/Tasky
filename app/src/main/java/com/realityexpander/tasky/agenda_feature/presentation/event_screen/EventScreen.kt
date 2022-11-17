@@ -645,7 +645,7 @@ fun AddEventScreenContent(
 
     // • EDITORS FOR EVENT PROPERTIES
     state.editMode?.let {
-        Editors(
+        EventPropertyEditors(
             editMode = it,
             state = state,
             onAction = onAction

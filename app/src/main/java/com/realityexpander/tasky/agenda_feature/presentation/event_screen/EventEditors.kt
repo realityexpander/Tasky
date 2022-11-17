@@ -1,6 +1,9 @@
 package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -28,7 +31,7 @@ import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDateTime
 
 @Composable
-fun Editors(
+fun EventPropertyEditors(
     editMode: EditMode,
     state: EventScreenState,
     onAction: (EventScreenEvent) -> Unit,
@@ -262,4 +265,4 @@ fun Editors(
             }
         }
     }
-}
+}n
