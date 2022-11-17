@@ -139,7 +139,6 @@ fun EventPropertyEditors(
                 buttons = {
                     positiveButton(
                         text = stringResource(R.string.ok),
-                        disableDismiss = true,  // don't close the dialog automatically when OK button is tapped
                         textStyle = MaterialTheme.typography.button.copy(
                             if (state.isAttendeeEmailValid == true)
                                 MaterialTheme.colors.onSurface
