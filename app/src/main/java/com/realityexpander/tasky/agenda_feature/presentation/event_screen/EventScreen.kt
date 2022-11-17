@@ -193,7 +193,7 @@ fun AddEventScreenContent(
             )
 
             // • EDIT / SAVE BUTTON
-            if(state.event?.isUserEventCreator == true) {
+            if (state.event?.isUserEventCreator == true) {
                 if (isEditable) {
                     Text(
                         text = stringResource(R.string.event_save),
@@ -327,7 +327,8 @@ fun AddEventScreenContent(
                             .weight(1f)
                     ) {
                         Text(
-                            text = state.event?.description ?: stringResource(R.string.event_no_description_set),
+                            text = state.event?.description
+                                ?: stringResource(R.string.event_no_description_set),
                             style = MaterialTheme.typography.h5,
                             color = MaterialTheme.colors.onSurface,
                             modifier = Modifier
@@ -359,7 +360,7 @@ fun AddEventScreenContent(
             }
 
             // • PHOTO PICKER / ADD & REMOVE PHOTOS
-            if(state.event?.isUserEventCreator == true) {
+            if (state.event?.isUserEventCreator == true) {
                 Box(
                     modifier = Modifier
                         .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
@@ -389,7 +390,7 @@ fun AddEventScreenContent(
                                     onAction(SetIsEditable(true)) // turn on edit mode
                                 }
                         ) {
-                            // • Add Photo Icon
+                            // • ADD PHOTO ICON
                             Icon(
                                 imageVector = Icons.Filled.Add,
                                 tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
@@ -439,35 +440,37 @@ fun AddEventScreenContent(
                                         state.event?.photos?.toMutableList(),
                                         state.event?.photosToUpload?.toMutableList(),
                                         state.isEditable
-                                    )
-                                    {
-                                    derivedStateOf {
-                                        var photoList = (state.event?.photos)
-                                            ?.plus(state.event.photosToUpload)
+                                    ) {
+                                        derivedStateOf {
+                                            var photoList = (state.event?.photos)
+                                                ?.plus(state.event.photosToUpload)
 
-                                        if (state.isEditable) {
-                                            if (photoList.isNullOrEmpty()) {
-                                                photoList = listOf(
-                                                    Photo.Local(
-                                                        "ADD_PHOTO_PLACEHOLDER",
-                                                        uri = Uri.EMPTY
+                                            if (state.isEditable) {
+                                                if (photoList?.isEmpty() == true) {
+                                                    photoList = listOf(
+                                                        Photo.Local(
+                                                            "ADD_PHOTO_PLACEHOLDER",
+                                                            uri = Uri.EMPTY
+                                                        )
                                                     )
-                                                )
-                                            } else {
-                                                photoList = photoList.plus(
-                                                    Photo.Local(
-                                                        "ADD_PHOTO_PLACEHOLDER",
-                                                        uri = Uri.EMPTY
-                                                    )
-                                                )
+                                                } else {
+                                                    // Max 10 photos
+                                                    if (photoList?.size!! <= 10) {
+                                                        photoList = photoList.plus(
+                                                            Photo.Local(
+                                                                "ADD_PHOTO_PLACEHOLDER",
+                                                                uri = Uri.EMPTY
+                                                            )
+                                                        )
+                                                    }
+                                                }
                                             }
-                                        }
 
-                                        photoList
-                                }
+                                            photoList
+                                        }
                                     }
 
-                                photos.value?.forEach { photo ->
+                                photos.value?.forEachIndexed { index, photo ->
                                     // • Photo content box
                                     Box(
                                         modifier = Modifier
@@ -734,8 +737,8 @@ fun AddEventScreenContent(
                 // • JOIN/LEAVE/DELETE EVENT BUTTON
                 Text(
                     if (state.event?.isUserEventCreator == true) stringResource(R.string.event_delete_event)
-                        else if (state.event?.isGoing == true) stringResource(R.string.event_leave_event)
-                        else stringResource(R.string.event_join_event),
+                    else if (state.event?.isGoing == true) stringResource(R.string.event_leave_event)
+                    else stringResource(R.string.event_join_event),
                     style = MaterialTheme.typography.h4,
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
                     textAlign = TextAlign.Center,
