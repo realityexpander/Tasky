@@ -447,7 +447,7 @@ fun AddEventScreenContent(
 
                                             // Add the "Add Photo" item if in edit mode
                                             if (state.isEditable) {
-                                                if (photoList.isEmpty() == true) {
+                                                if (photoList.isEmpty()) {
                                                     photoList = listOf(
                                                         Photo.Local(
                                                             "ADD_PHOTO_PLACEHOLDER",
