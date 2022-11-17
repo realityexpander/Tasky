@@ -12,6 +12,7 @@ import com.realityexpander.tasky.agenda_feature.presentation.common.util.max
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.min
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
+import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +29,7 @@ class EventViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     private val agendaRepository: IAgendaRepository,
     private val savedStateHandle: SavedStateHandle,
+    private val validateEmail: ValidateEmail
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)
@@ -171,7 +173,18 @@ class EventViewModel @Inject constructor(
                 _state.update { _state ->
                     _state.copy(
                         editMode = null,
-                        addAttendeeDialogErrorMessage = null,
+                    )
+                }
+                sendEvent(ClearAddAttendeeDialogErrors)
+            }
+            is ValidateAttendeeEmail -> {
+                _state.update { _state ->
+                    _state.copy(
+                        isAttendeeEmailValid =
+                            if (uiEvent.email.isBlank())
+                                    null
+                                else
+                                    validateEmail.validate(uiEvent.email)
                     )
                 }
             }
@@ -215,9 +228,12 @@ class EventViewModel @Inject constructor(
                     _state.copy(addAttendeeDialogErrorMessage = uiEvent.message)
                 }
             }
-            is ClearAddAttendeeDialogErrorMessage -> {
+            is ClearAddAttendeeDialogErrors -> {
                 _state.update { _state ->
-                    _state.copy(addAttendeeDialogErrorMessage = null)
+                    _state.copy(
+                        addAttendeeDialogErrorMessage = null,
+                        isAttendeeEmailValid = null
+                    )
                 }
             }
             is EditMode.UpdateText -> {
