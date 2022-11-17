@@ -79,7 +79,7 @@ class EventViewModel @Inject constructor(
                     id = "0001",
                     title = "Title of Event",
                     description = "Description of Event",
-                    isUserEventCreator = false,
+                    isUserEventCreator = true,
                     from = ZonedDateTime.now().plusHours(1),
                     to = ZonedDateTime.now().plusHours(2),
                     remindAt = ZonedDateTime.now().plusMinutes(30),

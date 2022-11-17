@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
 import android.content.res.Configuration
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
@@ -192,31 +193,33 @@ fun AddEventScreenContent(
             )
 
             // • EDIT / SAVE BUTTON
-            if (isEditable) {
-                Text(
-                    text = stringResource(R.string.event_save),
-                    color = MaterialTheme.colors.surface,
-                    textAlign = TextAlign.End,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .alignByBaseline()
-                        .width(40.dp)
-                        .clickable {
-                            onAction(SetIsEditable(false))
-                        }
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Filled.Edit,
-                    tint = MaterialTheme.colors.surface,
-                    contentDescription = stringResource(R.string.event_description_edit_event),
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .width(40.dp)
-                        .clickable {
-                            onAction(SetIsEditable(true))
-                        }
-                )
+            if(state.event?.isUserEventCreator == true) {
+                if (isEditable) {
+                    Text(
+                        text = stringResource(R.string.event_save),
+                        color = MaterialTheme.colors.surface,
+                        textAlign = TextAlign.End,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .alignByBaseline()
+                            .width(40.dp)
+                            .clickable {
+                                onAction(SetIsEditable(false))
+                            }
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        tint = MaterialTheme.colors.surface,
+                        contentDescription = stringResource(R.string.event_description_edit_event),
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .width(40.dp)
+                            .clickable {
+                                onAction(SetIsEditable(true))
+                            }
+                    )
+                }
             }
 
         }
@@ -356,122 +359,172 @@ fun AddEventScreenContent(
             }
 
             // • PHOTO PICKER / ADD & REMOVE PHOTOS
-            Box(
-                modifier = Modifier
-                    .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
-                    .fillMaxWidth()
-                    .padding(DP.small)
-                    .border(0.dp, Color.Transparent)
-                    .wrapContentHeight()
-            ) {
-
-                if (state.event?.photos.isNullOrEmpty()
-                    && state.event?.photosToUpload.isNullOrEmpty()
+            if(state.event?.isUserEventCreator == true) {
+                Box(
+                    modifier = Modifier
+                        .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
+                        .fillMaxWidth()
+                        .padding(DP.small)
+                        .border(0.dp, Color.Transparent)
+                        .wrapContentHeight()
                 ) {
-                    // • NO PHOTOS
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.Center)
-                            .padding(top = DP.medium, bottom = DP.medium)
-                            .clickable { //(enabled = isEditable) {
-                                onAction(
-                                    SetEditMode(
-                                        EditMode.ChooseAddPhoto()
-                                    )
-                                )
-                            }
+
+                    if (state.event.photos.isEmpty()
+                        && state.event.photosToUpload.isEmpty()
+                        && !state.isEditable
                     ) {
-                        // • Add Photo Icon
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                            contentDescription = stringResource(R.string.event_description_add_photo),
-                            modifier = Modifier
-                                .size(26.dp)
-                        )
-                        Spacer(modifier = Modifier.smallWidth())
-                        Text(
-                            stringResource(R.string.event_add_photos),
-                            modifier = Modifier
-                                .offset(y = 2.dp),
-                            fontWeight = Bold,
-                            color = MaterialTheme.colors.onSurface.copy(alpha = .3f)
-                        )
-                    }
-                } else {
-                    // • LIST OF PHOTO IMAGES
-                    Column(
-                        modifier = Modifier
-                            .wrapContentHeight()
-                    ) {
-                        // • Photos Header
+                        // • NO PHOTOS
                         Row(
-                            horizontalArrangement = Arrangement.Start,
+                            horizontalArrangement = Arrangement.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .align(Alignment.Center)
+                                .padding(top = DP.medium, bottom = DP.medium)
+                                .clickable {
+                                    onAction(
+                                        SetEditMode(
+                                            EditMode.ChooseAddPhoto()
+                                        )
+                                    )
+                                    onAction(SetIsEditable(true)) // turn on edit mode
+                                }
                         ) {
+                            // • Add Photo Icon
+                            Icon(
+                                imageVector = Icons.Filled.Add,
+                                tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
+                                contentDescription = stringResource(R.string.event_description_add_photo),
+                                modifier = Modifier
+                                    .size(26.dp)
+                            )
+                            Spacer(modifier = Modifier.smallWidth())
                             Text(
-                                stringResource(R.string.event_photos),
-                                color = MaterialTheme.colors.onSurface,
-                                style = MaterialTheme.typography.h3,
-                                fontWeight = SemiBold,
+                                stringResource(R.string.event_add_photos),
+                                modifier = Modifier
+                                    .offset(y = 2.dp),
+                                fontWeight = Bold,
+                                color = MaterialTheme.colors.onSurface.copy(alpha = .3f)
                             )
                         }
-                        Spacer(modifier = Modifier.extraSmallHeight())
-
-                        // • Photo Items
-                        Row(
+                    } else {
+                        // • LIST OF PHOTO IMAGES
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
                                 .wrapContentHeight()
-                                .horizontalScroll(state = rememberScrollState())
                         ) {
+                            // • Photos Header
+                            Row(
+                                horizontalArrangement = Arrangement.Start,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    stringResource(R.string.event_photos),
+                                    color = MaterialTheme.colors.onSurface,
+                                    style = MaterialTheme.typography.h3,
+                                    fontWeight = SemiBold,
+                                )
+                            }
+                            Spacer(modifier = Modifier.extraSmallHeight())
 
-//                            state.event?.photos?.forEach {  // todo  - show remote photos
-                            state.event?.photosToUpload?.forEach { photoLocal ->
-                                // • Photo content box
-                                Box(
-                                    modifier = Modifier
-                                        .size(60.dp)
-                                        .clip(RoundedCornerShape(10.dp))
-                                        .background(Color.Transparent)
-                                        .border(
-                                            2.dp,  // Border width
-                                            MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                                            RoundedCornerShape(10.dp)
-                                        )
-                                ) {
-                                    // • Add Photo Icon
-                                    Icon(
-                                        imageVector = Icons.Filled.Add,
-                                        tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                                        contentDescription = stringResource(R.string.event_description_add_photo),
-                                        modifier = Modifier
-                                            .size(36.dp)
-                                            .align(Alignment.Center)
-                                            .clickable(enabled = isEditable) {
-                                                onAction(
-                                                    SetEditMode(
-                                                        EditMode.ChooseAddPhoto()
+                            // • Photo Items
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .horizontalScroll(state = rememberScrollState())
+                            ) {
+                                val photos =
+                                    remember(
+                                        state.event?.photos?.toMutableList(),
+                                        state.event?.photosToUpload?.toMutableList(),
+                                        state.isEditable
+                                    )
+                                    {
+                                    derivedStateOf {
+                                        var photoList = (state.event?.photos)
+                                            ?.plus(state.event.photosToUpload)
+
+                                        if (state.isEditable) {
+                                            if (photoList.isNullOrEmpty()) {
+                                                photoList = listOf(
+                                                    Photo.Local(
+                                                        "ADD_PHOTO_PLACEHOLDER",
+                                                        uri = Uri.EMPTY
+                                                    )
+                                                )
+                                            } else {
+                                                photoList = photoList.plus(
+                                                    Photo.Local(
+                                                        "ADD_PHOTO_PLACEHOLDER",
+                                                        uri = Uri.EMPTY
                                                     )
                                                 )
                                             }
-                                    )
+                                        }
 
-                                    // • Photo Image
-                                    AsyncImage(
-                                        model = photoLocal.uri,
-                                        contentDescription = "Photo",
-                                        modifier = Modifier.fillMaxWidth(),
-                                        contentScale = ContentScale.Crop
+                                        photoList
+                                }
+                                    }
+
+                                photos.value?.forEach { photo ->
+                                    // • Photo content box
+                                    Box(
+                                        modifier = Modifier
+                                            .size(60.dp)
+                                            .clip(RoundedCornerShape(10.dp))
+                                            .background(Color.Transparent)
+                                            .border(
+                                                2.dp,  // Border width
+                                                MaterialTheme.colors.onSurface.copy(alpha = .3f),
+                                                RoundedCornerShape(10.dp)
+                                            )
+                                    ) {
+                                        when (photo) {
+                                            is Photo.Local -> {
+                                                if (photo.id == "ADD_PHOTO_PLACEHOLDER") {
+                                                    // • Add Photo Icon
+                                                    Icon(
+                                                        imageVector = Icons.Filled.Add,
+                                                        tint = MaterialTheme.colors.onSurface.copy(
+                                                            alpha = .3f
+                                                        ),
+                                                        contentDescription = stringResource(R.string.event_description_add_photo),
+                                                        modifier = Modifier
+                                                            .size(36.dp)
+                                                            .align(Alignment.Center)
+                                                            .clickable(enabled = isEditable) {
+                                                                onAction(
+                                                                    SetEditMode(
+                                                                        EditMode.ChooseAddPhoto()
+                                                                    )
+                                                                )
+                                                            }
+                                                    )
+                                                } else {
+                                                    AsyncImage(
+                                                        model = photo.uri,
+                                                        contentDescription = "Photo",
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        contentScale = ContentScale.Crop
+                                                    )
+                                                }
+                                            }
+                                            is Photo.Remote -> {
+                                                AsyncImage(
+                                                    model = photo.url,
+                                                    contentDescription = "Photo",
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    contentScale = ContentScale.Crop
+                                                )
+                                            }
+                                        }
+                                    }
+                                    Spacer(
+                                        modifier = Modifier
+                                            .width(10.dp)
                                     )
                                 }
-                                Spacer(
-                                    modifier = Modifier
-                                        .width(10.dp)
-                                )
                             }
                         }
                     }
