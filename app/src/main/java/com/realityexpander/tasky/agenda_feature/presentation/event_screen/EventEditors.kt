@@ -127,7 +127,7 @@ fun EventPropertyEditors(
                 title = editMode.dialogTitle.get,
                 isDeleteEnabled = state.isEditable,
                 onDelete = {
-                    onAction(EditMode.RemovePhoto(editMode.photo.id))
+                    onAction(EditMode.RemovePhoto(editMode.photo))
                 },
                 onCancel = {
                     onAction(CancelEditMode)
