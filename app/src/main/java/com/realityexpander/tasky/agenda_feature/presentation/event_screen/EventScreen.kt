@@ -59,6 +59,7 @@ import java.util.*
 @Destination
 fun EventScreen(
     eventId: UuidStr? = null,
+    isEditable: Boolean = false,
     navigator: DestinationsNavigator,
     viewModel: EventViewModel = hiltViewModel(),
 ) {

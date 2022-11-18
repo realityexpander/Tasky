@@ -190,6 +190,7 @@ fun AgendaScreenContent(
                 navigator.navigate(
                     EventScreenDestination(
                         eventId = null,  // create new event
+                        isEditable = true,
                     )
                 ) {
                     launchSingleTop = true
@@ -210,7 +211,7 @@ fun AgendaScreenContent(
                 navigator.navigate(
                     EventScreenDestination(
                         eventId = oneTimeEvent.eventId,
-//                        isEditable = true, // todo add this to the destination
+                        isEditable = true,
                     )
                 ) {
                     launchSingleTop = true
