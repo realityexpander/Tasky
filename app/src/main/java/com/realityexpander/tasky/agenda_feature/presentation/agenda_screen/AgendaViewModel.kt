@@ -49,6 +49,9 @@ class AgendaViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),
         AgendaState())
 
+    private val _oneTimeEvent = MutableSharedFlow<AgendaEvent.OneTimeEvent>()
+    val oneTimeEvent = _oneTimeEvent.asSharedFlow()
+
     init {
         viewModelScope.launch {
 
@@ -262,6 +265,12 @@ class AgendaViewModel @Inject constructor(
             }
             is AgendaEvent.CreateAgendaItemError -> TODO()
             is AgendaEvent.CreateAgendaItemSuccess -> TODO()
+            is AgendaEvent.OneTimeEvent.NavigateToOpenEvent -> {
+                _oneTimeEvent.emit(AgendaEvent.OneTimeEvent.NavigateToOpenEvent(event.eventId))
+            }
+            is AgendaEvent.OneTimeEvent.ConfirmDeleteEvent -> TODO()
+            AgendaEvent.OneTimeEvent.NavigateToCreateEvent -> TODO()
+            is AgendaEvent.OneTimeEvent.NavigateToEditEvent -> TODO()
         }
     }
 

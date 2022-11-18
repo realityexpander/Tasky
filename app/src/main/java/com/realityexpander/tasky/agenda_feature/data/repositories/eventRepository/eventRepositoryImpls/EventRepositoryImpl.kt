@@ -1,14 +1,13 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls
 
-import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEntity
-import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEventDTOCreate
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
+import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -23,7 +22,7 @@ class EventRepositoryImpl(
     override suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
         return try {
             eventDao.createEvent(event.toEntity())
-            eventApi.createEvent(event.toEventDTOCreate())
+            //eventApi.createEvent(event.toEventDTOCreate())
 
             ResultUiText.Success()  // todo return the created event
         } catch (e: CancellationException) {

@@ -41,14 +41,15 @@ import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.UserAcronymCircle
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.agenda_feature.presentation.components.AgendaCard
-import com.realityexpander.tasky.agenda_feature.presentation.common.components.UserAcronymCircle
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.DaySelected
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.realityexpander.tasky.destinations.EventScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -73,10 +74,12 @@ fun AgendaScreen(
     viewModel: AgendaViewModel = hiltViewModel(),
 ) {
     val state by viewModel.agendaState.collectAsState()
+    val oneTimeEvent by viewModel.oneTimeEvent.collectAsState(null)
 
     AgendaScreenContent(
         state = state,
         onAction = viewModel::sendEvent,
+        oneTimeEvent = oneTimeEvent,
         navigator = navigator,
     )
 
@@ -97,6 +100,7 @@ fun AgendaScreen(
 fun AgendaScreenContent(
     state: AgendaState,
     onAction: (AgendaEvent) -> Unit,
+    oneTimeEvent: AgendaEvent.OneTimeEvent?,
     navigator: DestinationsNavigator,
 ) {
     val focusManager = LocalFocusManager.current
@@ -180,6 +184,27 @@ fun AgendaScreenContent(
     }
 
     // todo Handle "un-sequenced" one-time events (like Snackbar), will use a Channel or SharedFlow
+    LaunchedEffect(oneTimeEvent) {
+        when (oneTimeEvent) {
+            is AgendaEvent.OneTimeEvent.NavigateToOpenEvent -> {
+                navigator.navigate(
+                    EventScreenDestination(
+                        // authInfo = authInfo
+                        //username = authInfo.username,
+                        //email = authInfo.email,
+                        eventId = oneTimeEvent.eventId,
+                    )
+                ) {
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+            is AgendaEvent.OneTimeEvent.ConfirmDeleteEvent -> TODO()
+            AgendaEvent.OneTimeEvent.NavigateToCreateEvent -> TODO()
+            is AgendaEvent.OneTimeEvent.NavigateToEditEvent -> TODO()
+            null -> {}
+        }
+    }
 
     // Check keyboard open/closed (how to make this a function?)
     val view = LocalView.current
@@ -196,7 +221,7 @@ fun AgendaScreenContent(
         }
     }
 
-    // • Main Container
+    // • MAIN CONTAINER
     Column(
         modifier = Modifier
             .background(color = MaterialTheme.colors.onSurface)
@@ -460,6 +485,7 @@ fun AgendaScreenContent(
 
     }
 
+    // • FAB BUTTON
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -531,7 +557,6 @@ fun performActionForAgendaItem(
     action: AgendaItemAction,
     onAction: (AgendaEvent)-> Unit
 ) {
-
     agendaItem ?: return
 
     when (agendaItem) {
@@ -539,7 +564,7 @@ fun performActionForAgendaItem(
             when (action) {
                 AgendaItemAction.OPEN_DETAILS -> {
                     println("OPEN DETAILS FOR EVENT ${agendaItem.id}")
-//                    onAction(AgendaEvent.NavigateToOpenEvent(agendaItem))
+                    onAction(AgendaEvent.OneTimeEvent.NavigateToOpenEvent(agendaItem.id))
                 }
                 AgendaItemAction.EDIT -> {
                     println("EDIT EVENT ${agendaItem.id}")
@@ -646,6 +671,7 @@ fun AgendaScreenPreview() {
             ),
             onAction = { println("ACTION: $it") },
             navigator = EmptyDestinationsNavigator,
+            oneTimeEvent = null,
         )
     }
 }

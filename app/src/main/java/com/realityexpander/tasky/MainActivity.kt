@@ -51,14 +51,17 @@ class MainActivity : ComponentActivity() {
 
 
         // Show AddEventScreen - temporary for UI work
-        if (true) {
+        if (false) {
             setContent {
                 TaskyTheme {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = colorResource(id = R.color.tasky_green)
                     ) {
-                        EventScreen(EmptyDestinationsNavigator)
+                        EventScreen(
+                            "0",
+                            EmptyDestinationsNavigator
+                        )
                     }
                 }
             }
@@ -66,7 +69,7 @@ class MainActivity : ComponentActivity() {
 
 
         // Main app
-        if (false) {  // - temporary for UI work
+        if (true) {  // - temporary for UI work
 
 
             installSplashScreen().apply {

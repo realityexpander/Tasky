@@ -50,16 +50,17 @@ import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.realityexpander.tasky.core.util.UuidStr
 import java.time.ZonedDateTime
 import java.util.*
 
 @Composable
 @Destination
 fun EventScreen(
+    eventId: UuidStr,
     navigator: DestinationsNavigator,
     viewModel: EventViewModel = hiltViewModel(),
 ) {
-
     val state by viewModel.state.collectAsState()
 
     if (state.isLoaded) {
@@ -106,6 +107,7 @@ fun AddEventScreenContent(
     fun popBack() {
         navigator.popBackStack()
 
+        // todo check for AuthInfo?
 //        navigate(
 //            LoginScreenDestination(
 //                username = null,

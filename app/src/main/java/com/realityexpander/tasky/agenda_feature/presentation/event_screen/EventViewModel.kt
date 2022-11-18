@@ -4,7 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.agenda_feature.domain.*
+import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.common.util.eventId
+import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
+import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.max
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.min
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
@@ -41,6 +44,9 @@ class EventViewModel @Inject constructor(
     private val isAttendeeEmailValid: Boolean? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid]
 
+    private val eventId: EventId =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_eventId] ?: eventId(UUID.randomUUID().toString())
+
     private val _state = MutableStateFlow(
         EventScreenState(
             errorMessage = errorMessage,
@@ -72,8 +78,10 @@ class EventViewModel @Inject constructor(
                 authInfo = authRepository.getAuthInfo(),
 
                 // Dummy event details for UI work // todo remove soon
+                event = agendaRepository.getEvent(eventId),
+/*
                 event = AgendaItem.Event(
-                    id = "0001",
+                    id = eventId,
                     title = "Title of Event",
                     description = "Description of Event",
                     isUserEventCreator = true,
@@ -154,6 +162,7 @@ class EventViewModel @Inject constructor(
                         ),
                     ),
                 ),
+ */
             )
         }
     }
