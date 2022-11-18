@@ -37,7 +37,7 @@ class EventViewModel @Inject constructor(
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage]
     private val isEditable: Boolean =
         savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] ?: false
-    private val editMode: EventScreenEvent.EditMode? =
+    private val editMode: EditMode? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_editMode]
     private val addAttendeeDialogErrorMessage: UiText? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_addAttendeeDialogErrorMessage]
@@ -57,7 +57,8 @@ class EventViewModel @Inject constructor(
             isAttendeeEmailValid = isAttendeeEmailValid,
         )
     )
-    val state = _state.onEach { state ->
+    val state =
+        _state.onEach { state ->
         // save state for process death
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage] =
             state.errorMessage
@@ -67,7 +68,11 @@ class EventViewModel @Inject constructor(
             state.addAttendeeDialogErrorMessage
         savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid] =
             state.isAttendeeEmailValid
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventScreenState())
+    }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventScreenState())
+
+    private val _oneTimeEvent = MutableSharedFlow<OneTimeEvent>()
+    val oneTimeEvent = _oneTimeEvent.asSharedFlow()
 
     init {
         viewModelScope.launch {

@@ -106,22 +106,6 @@ fun AddEventScreenContent(
 
     fun popBack() {
         navigator.popBackStack()
-
-        // todo check for AuthInfo?
-//        navigate(
-//            LoginScreenDestination(
-//                username = null,
-//                email = null,
-//                password = null,
-//                confirmPassword = null,
-//            )
-//        ) {
-//            popUpTo(LoginScreenDestination.route) {
-//                inclusive = true
-//            }
-//            launchSingleTop = true
-//            restoreState = true
-//        }
     }
 
     // Handle stateful one-time events
@@ -183,6 +167,9 @@ fun AddEventScreenContent(
                     .size(30.dp)
                     .alignByBaseline()
                     .align(Alignment.CenterVertically)
+                    .clickable {
+                        popBack()
+                    }
             )
 
             // • TODAY'S DATE

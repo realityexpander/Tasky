@@ -11,6 +11,6 @@ data class PhotoEntity(
     val id: PhotoId,
     val url: UrlStr? = null,    // url of the photo on server
 
-    @Serializable(with = UriSerializer::class)  // for Room
+    @Serializable(with = UriSerializer::class)  // for Room - List<Photo> is stored as a string
     val uri: Uri? = null        // path to the photo on device
 )
