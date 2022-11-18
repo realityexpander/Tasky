@@ -26,10 +26,8 @@ abstract class AgendaItem {
 
         val attendees: List<Attendee> = emptyList(),
 
-        val photos: List<Photo.Remote> = emptyList(),
+        val photos: List<Photo> = emptyList(),
         val deletedPhotoKeys: List<PhotoId> = emptyList(),  // only used for EventDTO.Update
-
-        val photosToUpload: List<Photo.Local> = emptyList(),
 
         val isDeleted: Boolean = false,
     ) : AgendaItem(), Parcelable

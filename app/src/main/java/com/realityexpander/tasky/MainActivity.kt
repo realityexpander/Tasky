@@ -47,8 +47,8 @@ class MainActivity : ComponentActivity() {
         if (false) {
             waitForDebugger() // leave for testing process death
         }
-
         super.onCreate(savedInstanceState)
+
 
         // Show AddEventScreen - temporary for UI work
         if (true) {

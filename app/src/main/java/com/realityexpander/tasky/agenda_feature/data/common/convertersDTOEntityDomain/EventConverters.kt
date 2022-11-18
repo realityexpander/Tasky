@@ -3,6 +3,7 @@ package com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntity
 import com.google.gson.GsonBuilder
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.PhotoDTO
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
@@ -89,7 +90,9 @@ fun AgendaItem.Event.toEventDTOCreate(): EventDTO.Create {
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
         attendeeIds = attendees.map { it.id },
-        photos = photosToUpload.map { it.toDTO() },
+        photos = photos
+            .filterIsInstance<Photo.Local>()        // only upload Local photos
+            .map { it.toDTO() },
     )
 }
 
@@ -109,7 +112,7 @@ fun AgendaItem.Event.toEventDTOUpdate(): EventDTO.Update {
 }
 
 // from Domain to EventDTO.Response (also converts local ZonedDateTime to UTC time millis)
-//   Note: this is used for fake implementations internally. It is not used in the normal app.
+//   Note: this is used for fake implementations internally. It is *NOT* used in the normal app.
 fun AgendaItem.Event.toEventDTOResponse(): EventDTO.Response {
     return EventDTO.Response(
         id = id,
@@ -119,9 +122,10 @@ fun AgendaItem.Event.toEventDTOResponse(): EventDTO.Response {
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
         isGoing = isGoing ?: false,
-        photos = photos.map {
-                    it.toDTO()
-                },
+        photos = photos
+            .map { it.toDTO() }
+            .filterIsInstance<PhotoDTO.Remote>()        // ensure only respond with Remote photos
+        ,
         attendees = attendees.map { it.toDTO() },
         isUserEventCreator = isUserEventCreator ?: false,
         host = host ?: "",

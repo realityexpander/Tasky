@@ -94,6 +94,7 @@
     <string name="event_description_edit_event_description">Edit Event Description</string>
     <string name="event_description_add_photo">Add photo</string>
     <string name="event_description_add_attendee_button">Add Attendee button</string>
+    <string name="event_description_photo">Photo</string>
     <string name="event_save">Save</string>
     <string name="event_event_title">Event</string>
     <string name="event_no_title_set">No title set</string>

@@ -1,5 +1,9 @@
 package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
+import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,6 +39,7 @@ fun EventPropertyEditors(
     editMode: EditMode,
     state: EventScreenState,
     onAction: (EventScreenEvent) -> Unit,
+    singlePhotoPickerLauncher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
 ) {
     when (editMode) {
         is EditMode.ChooseTitleText,
@@ -44,11 +49,7 @@ fun EventPropertyEditors(
             EditTextModal(
                 text = editMode.text,
                 title = editMode.dialogTitle.get,
-                editTextStyle =
-                if (editMode is EditMode.ChooseTitleText)
-                    MaterialTheme.typography.h2  // cant access from non-compose function, make a wrapper?
-                else
-                    MaterialTheme.typography.body1, // cant access from non-compose function, make a wrapper?
+                editTextStyle = (editMode as EditMode.EditTextStyle).editTextStyle,
                 onSave = {
                     onAction(EditMode.UpdateText(it))
                 },
@@ -113,14 +114,19 @@ fun EventPropertyEditors(
         }
         is EditMode.ChooseRemindAtDateTime -> { // handled in the RemindAt UI element, this is here to remove compiler warning
         }
-        is EditMode.ChooseAddPhoto -> TODO()
+        is EditMode.ChooseAddPhoto -> {
+            // Reference: https://github.com/philipplackner/NewPhotoPickerAndroid13/blob/master/app/src/main/java/com/plcoding/newphotopickerandroid13/MainActivity.kt
+            singlePhotoPickerLauncher.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
+        }
         is EditMode.ConfirmRemovePhoto -> TODO()
         is EditMode.ChooseAddAttendee -> {
             val addAttendeeDialogState = rememberMaterialDialogState()
             var attendeeEmail by remember { mutableStateOf("") }
 
             addAttendeeDialogState.show()
-            MaterialDialog (
+            MaterialDialog(
                 dialogState = addAttendeeDialogState,
                 properties = DialogProperties(
                     dismissOnBackPress = true,
@@ -129,19 +135,21 @@ fun EventPropertyEditors(
                 buttons = {
                     positiveButton(
                         text = stringResource(R.string.ok),
-                        disableDismiss = true,
                         textStyle = MaterialTheme.typography.button.copy(
-                            if(state.isAttendeeEmailValid == true)
+                            if (state.isAttendeeEmailValid == true)
                                 MaterialTheme.colors.onSurface
                             else
                                 MaterialTheme.colors.onSurface.copy(alpha = 0.3f)
                         )
                     ) {
-                        if(state.isAttendeeEmailValid == true) {
+                        if (state.isAttendeeEmailValid == true) {
                             onAction(ValidateAttendeeEmailExistsThenAddAttendee(attendeeEmail))
                         }
                     }
-                    negativeButton(text = stringResource(R.string.cancel)) { /* handled by onCloseRequest */ }
+                    negativeButton(text = stringResource(R.string.cancel)) {
+                        addAttendeeDialogState.hide()
+                        onAction(CancelEditMode)
+                    }
                 },
                 onCloseRequest = {
                     addAttendeeDialogState.hide()
@@ -162,7 +170,7 @@ fun EventPropertyEditors(
 
                 OutlinedTextField(
                     value = attendeeEmail,
-                    onValueChange = {email ->
+                    onValueChange = { email ->
                         attendeeEmail = email
                         onAction(ClearErrorsForAddAttendeeDialog)
                         onAction(ValidateAttendeeEmail(email))
@@ -193,7 +201,8 @@ fun EventPropertyEditors(
                             }
                         }
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(start = DP.small, end = DP.small)
                 )
                 Spacer(modifier = Modifier.smallHeight())
@@ -213,10 +222,10 @@ fun EventPropertyEditors(
         is EditMode.ConfirmRemoveAttendee -> {
             val attendee = editMode.attendee
             val deleteAttendeeDialogState = rememberMaterialDialogState()
-            onAction(SetIsEditable(true  )) // turn on edit mode when removing attendee
+            onAction(SetIsEditable(true)) // turn on edit mode when removing attendee
 
             deleteAttendeeDialogState.show()
-            MaterialDialog (
+            MaterialDialog(
                 dialogState = deleteAttendeeDialogState,
                 properties = DialogProperties(
                     dismissOnBackPress = true,
@@ -252,13 +261,15 @@ fun EventPropertyEditors(
                     text = attendee.fullName,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.h4,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(start = DP.small, end = DP.small)
                 )
                 Text(
                     text = attendee.email,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(start = DP.small, end = DP.small)
                 )
                 Spacer(modifier = Modifier.smallHeight())

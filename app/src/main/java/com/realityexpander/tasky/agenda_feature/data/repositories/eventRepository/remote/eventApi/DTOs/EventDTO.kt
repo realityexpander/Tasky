@@ -73,6 +73,6 @@ abstract class EventDTO {
         val attendees: List<AttendeeDTO> = emptyList(),
 
         // Note: Returns complete Photo objects (not Ids)
-        val photos: List<PhotoDTO.Remote> = emptyList(),
+        val photos: List<PhotoDTO.Remote> = emptyList(),  // NOTE: Only Remote photos are returned
     ) : EventDTO()
 }

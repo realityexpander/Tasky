@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
+import androidx.compose.ui.text.TextStyle
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.AttendeeId
 import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
@@ -36,19 +37,25 @@ sealed interface EventScreenEvent {
 
     sealed interface EditMode {
 
+        // Dialog Display values
         abstract val dialogTitle: UiText
+        sealed interface EditTextStyle { // dialog uses a specific text style
+            val editTextStyle: TextStyle
+        }
 
         // • (1) WHICH item is being edited?
         // - sets initial/default value and the dialog display string)
         data class ChooseTitleText(
             override val text: String = "",
-            override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_choose_title_text)
-        ) : EditMode, TextPayload
+            override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_choose_title_text),
+            override val editTextStyle: TextStyle = TextStyle.Default
+        ) : EditMode, EditTextStyle, TextPayload
 
         data class ChooseDescriptionText(
             override val text: String = "",
-            override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_choose_description_text)
-        ) : EditMode, TextPayload
+            override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_choose_description_text),
+            override val editTextStyle: TextStyle = TextStyle.Default
+        ) : EditMode, EditTextStyle, TextPayload
 
         data class ChooseFromDate(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
@@ -97,7 +104,7 @@ sealed interface EventScreenEvent {
             val dateTime: ZonedDateTime
         }
         sealed interface PhotoPayload {
-            val photo: Photo
+            val photoLocal: Photo.Local
         }
         sealed interface PhotoIdPayload {
             val photoId: PhotoId
@@ -113,7 +120,7 @@ sealed interface EventScreenEvent {
         // • (3) FINALLY "Update Data" Events - Delivers the edited/added/deleted data payload to the ViewModel
         data class UpdateText(override val text: String) : EventScreenEvent, TextPayload
         data class UpdateDateTime(override val dateTime: ZonedDateTime) : EventScreenEvent, DateTimePayload
-        data class AddPhoto(override val photo: Photo) : EventScreenEvent, PhotoPayload
+        data class AddPhoto(override val photoLocal: Photo.Local) : EventScreenEvent, PhotoPayload
         data class RemovePhoto(override val photoId: PhotoId) : EventScreenEvent, PhotoIdPayload
         data class AddAttendee(override val attendee: Attendee) : EventScreenEvent, AttendeePayload
         data class RemoveAttendee(override val attendeeId: AttendeeId) : EventScreenEvent, AttendeeIdPayload

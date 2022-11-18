@@ -1,6 +1,9 @@
 package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
 import android.content.res.Configuration
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
@@ -28,12 +32,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
+import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.TimeDateRow
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.AttendeeList
@@ -83,6 +89,8 @@ enum class AttendeeListType {
     NOT_GOING,
 }
 
+const val ADD_PHOTO_PLACEHOLDER = "ADD_PHOTO_PLACEHOLDER"
+
 @Composable
 fun AddEventScreenContent(
     state: EventScreenState,
@@ -127,6 +135,25 @@ fun AddEventScreenContent(
 //        }
     }
 
+    val singlePhotoPickerLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.PickVisualMedia(),
+            onResult = { uri ->
+                //selectedImageUri = uri
+
+                uri?.let {
+                    onAction(
+                        EditMode.AddPhoto(
+                            Photo.Local(
+                                id = UUID.randomUUID().toString(),
+                                uri = uri
+                            )
+                        )
+                    )
+                }
+            }
+        )
+
     // todo handle "un-stateful" one-time events (like Snackbar), will use a Channel or SharedFlow
 
     // • MAIN CONTAINER
@@ -168,44 +195,48 @@ fun AddEventScreenContent(
             )
 
             // • EDIT / SAVE BUTTON
-            if (isEditable) {
-                Text(
-                    text = stringResource(R.string.event_save),
-                    color = MaterialTheme.colors.surface,
-                    textAlign = TextAlign.End,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .alignByBaseline()
-                        .width(40.dp)
-                        .clickable {
-                            onAction(SetIsEditable(false))
-                        }
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Filled.Edit,
-                    tint = MaterialTheme.colors.surface,
-                    contentDescription = stringResource(R.string.event_description_edit_event),
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .width(40.dp)
-                        .clickable {
-                            onAction(SetIsEditable(true))
-                        }
-                )
+            if (state.event?.isUserEventCreator == true) {
+                if (isEditable) {
+                    Text(
+                        text = stringResource(R.string.event_save),
+                        color = MaterialTheme.colors.surface,
+                        textAlign = TextAlign.End,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .alignByBaseline()
+                            .width(40.dp)
+                            .clickable {
+                                onAction(SetIsEditable(false))
+                            }
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        tint = MaterialTheme.colors.surface,
+                        contentDescription = stringResource(R.string.event_description_edit_event),
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .width(40.dp)
+                            .clickable {
+                                onAction(SetIsEditable(true))
+                            }
+                    )
+                }
             }
 
         }
         Spacer(modifier = Modifier.smallHeight())
 
 
-        // • EVENT HEADER / DESCRIPTION
+        // • EVENT HEADER & MAIN CONTENT
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
                 .verticalScroll(rememberScrollState())
         ) col2@{
+
+            // • EVENT TITLE & DESCRIPTION
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -265,6 +296,7 @@ fun AddEventScreenContent(
                         )
                     }
 
+                    val editTextStyle = MaterialTheme.typography.h2  // can only access in Composable scope
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
@@ -278,6 +310,7 @@ fun AddEventScreenContent(
                                     SetEditMode(
                                         EditMode.ChooseTitleText(
                                             state.event?.title ?: "",
+                                            editTextStyle = editTextStyle
                                         )
                                     )
                                 )
@@ -298,7 +331,8 @@ fun AddEventScreenContent(
                             .weight(1f)
                     ) {
                         Text(
-                            text = state.event?.description ?: stringResource(R.string.event_no_description_set),
+                            text = state.event?.description
+                                ?: stringResource(R.string.event_no_description_set),
                             style = MaterialTheme.typography.h5,
                             color = MaterialTheme.colors.onSurface,
                             modifier = Modifier
@@ -307,6 +341,7 @@ fun AddEventScreenContent(
                         )
                     }
 
+                    val editTextStyle = MaterialTheme.typography.body1  // can only access in Composable scope
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
@@ -320,6 +355,7 @@ fun AddEventScreenContent(
                                     SetEditMode(
                                         EditMode.ChooseDescriptionText(
                                             state.event?.description ?: "",
+                                            editTextStyle = editTextStyle
                                         )
                                     )
                                 )
@@ -329,98 +365,164 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.smallHeight())
             }
 
-            // • PHOTO PICKER / ADD / REMOVE
-            Box(
-                modifier = Modifier
-                    .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
-                    .fillMaxWidth()
-                    .padding(DP.small)
-                    .border(0.dp, Color.Transparent)
-                    .wrapContentHeight()
-            ) {
+            // • PHOTO PICKER / ADD & REMOVE PHOTOS
+            if (state.event?.isUserEventCreator == true) {
+                Box(
+                    modifier = Modifier
+                        .background(MaterialTheme.colors.onSurface.copy(alpha = .1f))
+                        .fillMaxWidth()
+                        .padding(DP.small)
+                        .border(0.dp, Color.Transparent)
+                        .wrapContentHeight()
+                ) {
 
-                if (state.event?.photos.isNullOrEmpty()) {
-                    // • NO PHOTOS
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.Center)
-                            .padding(top = DP.medium, bottom = DP.medium)
+                    if (state.event.photos.isEmpty()
+//                        && state.event.photosToUpload.isEmpty()  // todo remove
+                        && !state.isEditable
                     ) {
-                        // • Add Photo Icon
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                            contentDescription = stringResource(R.string.event_description_add_photo),
-                            modifier = Modifier
-                                .size(26.dp)
-                        )
-                        Spacer(modifier = Modifier.smallWidth())
-                        Text(
-                            stringResource(R.string.event_add_photos),
-                            modifier = Modifier
-                                .offset(y = 2.dp),
-                            fontWeight = Bold,
-                            color = MaterialTheme.colors.onSurface.copy(alpha = .3f)
-                        )
-                    }
-                } else {
-                    // • LIST OF PHOTO IMAGES
-                    Column(
-                        modifier = Modifier
-                            .wrapContentHeight()
-                    ) {
-                        // • Photos Header
+                        // • NO PHOTOS
                         Row(
-                            horizontalArrangement = Arrangement.Start,
+                            horizontalArrangement = Arrangement.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .align(Alignment.Center)
+                                .padding(top = DP.medium, bottom = DP.medium)
+                                .clickable {
+                                    onAction(
+                                        SetEditMode(
+                                            EditMode.ChooseAddPhoto()
+                                        )
+                                    )
+                                    onAction(SetIsEditable(true)) // turn on edit mode
+                                }
                         ) {
+                            // • ADD PHOTO ICON
+                            Icon(
+                                imageVector = Icons.Filled.Add,
+                                tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
+                                contentDescription = stringResource(R.string.event_description_add_photo),
+                                modifier = Modifier
+                                    .size(26.dp)
+                            )
+                            Spacer(modifier = Modifier.smallWidth())
                             Text(
-                                stringResource(R.string.event_photos),
-                                color = MaterialTheme.colors.onSurface,
-                                style = MaterialTheme.typography.h3,
-                                fontWeight = SemiBold,
+                                stringResource(R.string.event_add_photos),
+                                modifier = Modifier
+                                    .offset(y = 2.dp),
+                                fontWeight = Bold,
+                                color = MaterialTheme.colors.onSurface.copy(alpha = .3f)
                             )
                         }
-                        Spacer(modifier = Modifier.extraSmallHeight())
-
-                        // • Photo Items
-                        Row(
+                    } else {
+                        // • LIST OF PHOTO IMAGES
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
                                 .wrapContentHeight()
-                                .horizontalScroll(state = rememberScrollState())
                         ) {
+                            // • Photos Header
+                            Row(
+                                horizontalArrangement = Arrangement.Start,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    stringResource(R.string.event_photos),
+                                    color = MaterialTheme.colors.onSurface,
+                                    style = MaterialTheme.typography.h3,
+                                    fontWeight = SemiBold,
+                                )
+                            }
+                            Spacer(modifier = Modifier.extraSmallHeight())
 
-                            (1..9).forEach {
-                                // • Photo content box
-                                Box(
-                                    modifier = Modifier
-                                        .size(60.dp)
-                                        .clip(RoundedCornerShape(10.dp))
-                                        .background(Color.Transparent)
-                                        .border(
-                                            2.dp,  // Border width
-                                            MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                                            RoundedCornerShape(10.dp)
+                            // • Photo Items
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .horizontalScroll(state = rememberScrollState())
+                            ) {
+                                var photoList  = state.event.photos
+
+                                // Add the "Add Photo" button if in edit mode
+                                if (state.isEditable) {
+                                    if (photoList.isEmpty()) {
+                                        photoList = listOf(
+                                            Photo.Local(
+                                                ADD_PHOTO_PLACEHOLDER,
+                                                uri = Uri.EMPTY
+                                            )
                                         )
-                                ) {
-                                    // • Add Photo Icon
-                                    Icon(
-                                        imageVector = Icons.Filled.Add,
-                                        tint = MaterialTheme.colors.onSurface.copy(alpha = .3f),
-                                        contentDescription = stringResource(R.string.event_description_add_photo),
+                                    } else {
+                                        // Max 10 photos
+                                        if (photoList.size <= 10) {
+                                            photoList = photoList.plus(
+                                                Photo.Local(
+                                                    ADD_PHOTO_PLACEHOLDER,
+                                                    uri = Uri.EMPTY
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+
+                                photoList.forEachIndexed { index, photo ->
+                                    // • Photo content box
+                                    Box(
                                         modifier = Modifier
-                                            .size(36.dp)
-                                            .align(Alignment.Center)
+                                            .size(60.dp)
+                                            .clip(RoundedCornerShape(10.dp))
+                                            .background(Color.Transparent)
+                                            .border(
+                                                2.dp,  // Border width
+                                                MaterialTheme.colors.onSurface.copy(alpha = .3f),
+                                                RoundedCornerShape(10.dp)
+                                            )
+                                    ) {
+                                        when (photo) {
+                                            is Photo.Local -> {
+                                                if (photo.id == ADD_PHOTO_PLACEHOLDER) {
+                                                    // • Add Photo Icon
+                                                    Icon(
+                                                        imageVector = Icons.Filled.Add,
+                                                        tint = MaterialTheme.colors.onSurface.copy(
+                                                            alpha = .3f
+                                                        ),
+                                                        contentDescription = stringResource(R.string.event_description_add_photo),
+                                                        modifier = Modifier
+                                                            .size(36.dp)
+                                                            .align(Alignment.Center)
+                                                            .clickable(enabled = isEditable) {
+                                                                onAction(
+                                                                    SetEditMode(
+                                                                        EditMode.ChooseAddPhoto()
+                                                                    )
+                                                                )
+                                                            }
+                                                    )
+                                                } else {
+                                                    AsyncImage(
+                                                        model = photo.uri,
+                                                        contentDescription = stringResource(id = R.string.event_description_photo),
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        contentScale = ContentScale.Crop
+                                                    )
+                                                }
+                                            }
+                                            is Photo.Remote -> {
+                                                AsyncImage(
+                                                    model = photo.url,
+                                                    contentDescription = stringResource(id = R.string.event_description_photo),
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    contentScale = ContentScale.Crop
+                                                )
+                                            }
+                                        }
+                                    }
+                                    Spacer(
+                                        modifier = Modifier
+                                            .width(10.dp)
                                     )
                                 }
-                                Spacer(
-                                    modifier = Modifier
-                                        .width(10.dp)
-                                )
                             }
                         }
                     }
@@ -630,8 +732,8 @@ fun AddEventScreenContent(
                 // • JOIN/LEAVE/DELETE EVENT BUTTON
                 Text(
                     if (state.event?.isUserEventCreator == true) stringResource(R.string.event_delete_event)
-                        else if (state.event?.isGoing == true) stringResource(R.string.event_leave_event)
-                        else stringResource(R.string.event_join_event),
+                    else if (state.event?.isGoing == true) stringResource(R.string.event_leave_event)
+                    else stringResource(R.string.event_join_event),
                     style = MaterialTheme.typography.h4,
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
                     textAlign = TextAlign.Center,
@@ -648,7 +750,8 @@ fun AddEventScreenContent(
         EventPropertyEditors(
             editMode = it,
             state = state,
-            onAction = onAction
+            onAction = onAction,
+            singlePhotoPickerLauncher = singlePhotoPickerLauncher
         )
     }
 }

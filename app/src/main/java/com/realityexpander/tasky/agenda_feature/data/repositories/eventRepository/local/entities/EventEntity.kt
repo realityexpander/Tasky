@@ -22,7 +22,7 @@ data class EventEntity(
     val isGoing: Boolean? = null,
 
     val attendees: List<AttendeeEntity> = emptyList(),
-    val photos: List<PhotoRemoteEntity> = emptyList(),
+    val photos: List<PhotoEntity> = emptyList(),
 
     val deletedPhotoKeys: List<PhotoId> = emptyList(),
 
