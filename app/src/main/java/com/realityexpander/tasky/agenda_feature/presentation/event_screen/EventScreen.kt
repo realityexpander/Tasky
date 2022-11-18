@@ -296,7 +296,8 @@ fun AddEventScreenContent(
                         )
                     }
 
-                    val editTextStyle = MaterialTheme.typography.h2  // can only access in Composable scope
+                    val editTextStyle =
+                        MaterialTheme.typography.h2  // can only access in Composable scope
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
@@ -341,7 +342,8 @@ fun AddEventScreenContent(
                         )
                     }
 
-                    val editTextStyle = MaterialTheme.typography.body1  // can only access in Composable scope
+                    val editTextStyle =
+                        MaterialTheme.typography.body1  // can only access in Composable scope
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
@@ -376,8 +378,7 @@ fun AddEventScreenContent(
                         .wrapContentHeight()
                 ) {
 
-                    if (state.event.photos.isEmpty()
-//                        && state.event.photosToUpload.isEmpty()  // todo remove
+                    if (state.event.photos.isEmpty()  // todo fix to show photos to non-creator
                         && !state.isEditable
                     ) {
                         // • NO PHOTOS
@@ -441,7 +442,7 @@ fun AddEventScreenContent(
                                     .wrapContentHeight()
                                     .horizontalScroll(state = rememberScrollState())
                             ) {
-                                var photoList  = state.event.photos
+                                var photoList = state.event.photos
 
                                 // Add the "Add Photo" button if in edit mode
                                 if (state.isEditable) {
@@ -503,8 +504,18 @@ fun AddEventScreenContent(
                                                     AsyncImage(
                                                         model = photo.uri,
                                                         contentDescription = stringResource(id = R.string.event_description_photo),
-                                                        modifier = Modifier.fillMaxWidth(),
-                                                        contentScale = ContentScale.Crop
+                                                        contentScale = ContentScale.Crop,
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .clickable {
+                                                                onAction(
+                                                                    SetEditMode(
+                                                                        EditMode.ViewOrDeletePhoto(
+                                                                            photo
+                                                                        )
+                                                                    )
+                                                                )
+                                                            },
                                                     )
                                                 }
                                             }
@@ -512,8 +523,18 @@ fun AddEventScreenContent(
                                                 AsyncImage(
                                                     model = photo.url,
                                                     contentDescription = stringResource(id = R.string.event_description_photo),
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                    contentScale = ContentScale.Crop
+                                                    contentScale = ContentScale.Crop,
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .clickable {
+                                                            onAction(
+                                                                SetEditMode(
+                                                                    EditMode.ViewOrDeletePhoto(
+                                                                        photo
+                                                                    )
+                                                                )
+                                                            )
+                                                        },
                                                 )
                                             }
                                         }

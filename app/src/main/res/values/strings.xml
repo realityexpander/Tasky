@@ -121,7 +121,7 @@
     <string name="event_dialog_title_choose_to_date">SET TO DATE</string>
     <string name="event_dialog_title_choose_remind_at_date_time">SET REMIND AT TIME</string>
     <string name="event_dialog_title_choose_add_photo">ADD PHOTO</string>
-    <string name="event_dialog_title_confirm_remove_photo">CONFIRM REMOVE PHOTO</string>
+    <string name="event_dialog_title_view_or_delete_photo">PHOTO</string>
     <string name="event_dialog_title_choose_add_attendee">ADD ATTENDEE</string>
     <string name="event_dialog_title_confirm_remove_attendee">CONFIRM REMOVE ATTENDEE</string>
     <string name="event_dialog_title_remove_attendee">Remove Attendee</string>

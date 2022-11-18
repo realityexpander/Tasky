@@ -83,8 +83,9 @@ sealed interface EventScreenEvent {
         data class ChooseAddPhoto(
             override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_choose_add_photo)
         ) : EditMode
-        data class ConfirmRemovePhoto(
-            override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_confirm_remove_photo)
+        data class ViewOrDeletePhoto(
+            val photo: Photo,
+            override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_view_or_delete_photo)
         ) : EditMode
 
         data class ChooseAddAttendee(
