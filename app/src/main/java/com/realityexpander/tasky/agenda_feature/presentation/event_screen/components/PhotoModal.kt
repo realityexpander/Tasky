@@ -33,7 +33,7 @@ fun PhotoModal(
     onCancel: () -> Unit,
 ) {
 
-    var isConfirmRemove by remember { mutableStateOf(false) }
+    var isConfirmRemoveDialogVisible by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -85,7 +85,7 @@ fun PhotoModal(
                         .size(32.dp)
                         .align(Alignment.CenterVertically)
                         .clickable(isRemoveEnabled) {
-                            isConfirmRemove = true
+                            isConfirmRemoveDialogVisible = true
                         }
                 )
             }
@@ -121,15 +121,15 @@ fun PhotoModal(
     Box( modifier = Modifier
         .fillMaxSize()
     ) {
-        if (isConfirmRemove) {
+        if (isConfirmRemoveDialogVisible) {
             AlertDialog(
-                onDismissRequest = { isConfirmRemove = false },
+                onDismissRequest = { isConfirmRemoveDialogVisible = false },
                 title = { Text("Delete Photo?") },
                 text = { Text("Are you sure you want to remove this photo?") },
                 confirmButton = {
                     Button(
                         onClick = {
-                            isConfirmRemove = false
+                            isConfirmRemoveDialogVisible = false
                             onRemove()
                         },
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
@@ -139,7 +139,7 @@ fun PhotoModal(
                 },
                 dismissButton = {
                     Button(
-                        onClick = { isConfirmRemove = false },
+                        onClick = { isConfirmRemoveDialogVisible = false },
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
                     ) {
                         Text("CANCEL")
