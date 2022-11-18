@@ -56,11 +56,11 @@ fun PhotoModal(
                     .padding(DP.small)
             ) {
 
-                // Back caret icon
+                // Close button
                 Icon(
                     Icons.Outlined.Close,
                     tint = MaterialTheme.colors.onSurface,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.back_description),
                     modifier = Modifier
                         .size(32.dp)
                         .align(Alignment.CenterVertically)
@@ -76,11 +76,11 @@ fun PhotoModal(
                     modifier = Modifier
                 )
 
-                // Delete button
+                // Remove button
                 Icon(
                     Icons.Outlined.Delete,
                     tint = if (isRemoveEnabled) MaterialTheme.colors.onSurface else Color.Transparent,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(R.string.remove_description),
                     modifier = Modifier
                         .size(32.dp)
                         .align(Alignment.CenterVertically)

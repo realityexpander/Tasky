@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
+import com.realityexpander.tasky.R
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.theme.TaskyGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
@@ -67,7 +69,7 @@ fun EditTextModal(
                 Icon(
                     Icons.Outlined.ChevronLeft,
                     tint = MaterialTheme.colors.onSurface,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.back_description),
                     modifier = Modifier
                         .size(32.dp)
                         .align(Alignment.CenterVertically)
