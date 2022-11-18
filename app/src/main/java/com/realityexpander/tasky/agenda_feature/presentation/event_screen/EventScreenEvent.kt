@@ -117,7 +117,7 @@ sealed interface EventScreenEvent {
         }
 
 
-        // • (3) FINALLY "Update Data" Events - Delivers the edited/added/deleted data payload to the ViewModel
+        // • (3) FINALLY "Update/Add/Remove Data" Events - Delivers the updated/added/removed data payload to the ViewModel
         data class UpdateText(override val text: String) : EventScreenEvent, TextPayload
         data class UpdateDateTime(override val dateTime: ZonedDateTime) : EventScreenEvent, DateTimePayload
         data class AddLocalPhoto(override val photoLocal: Photo.Local) : EventScreenEvent, PhotoLocalPayload
