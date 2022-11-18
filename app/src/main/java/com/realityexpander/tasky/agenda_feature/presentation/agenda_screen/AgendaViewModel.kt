@@ -6,12 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
+import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
 import com.realityexpander.tasky.core.presentation.common.util.UiText
-import com.realityexpander.tasky.core.util.uuidStr
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -49,7 +49,7 @@ class AgendaViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),
         AgendaState())
 
-    private val _oneTimeEvent = MutableSharedFlow<AgendaEvent.OneTimeEvent>()
+    private val _oneTimeEvent = MutableSharedFlow<OneTimeEvent>()
     val oneTimeEvent = _oneTimeEvent.asSharedFlow()
 
     init {
@@ -80,86 +80,6 @@ class AgendaViewModel @Inject constructor(
         }
     }
 
-    private fun createAgendaItem(agendaItemType: AgendaItemType) {
-        viewModelScope.launch {
-            val today = LocalDate.now()
-            val todayDayOfWeek = today.dayOfWeek.name
-            val todayDayOfMonth = today.dayOfMonth
-            val todayMonth = today.month
-            val todayYear = today.year
-            val todayDate = LocalDate.of(todayYear, todayMonth, todayDayOfMonth)
-
-            // todo create Dummy data for now - replace with actual data soon
-            val id = when(agendaItemType) {
-                AgendaItemType.Event -> {
-                    val uuid = UUID.randomUUID().toString()
-                    agendaRepository.createEvent(
-                       AgendaItem.Event(
-                           id = uuid,
-                           title = "New Event for ** $todayDate",
-                           description = "New Event Description - $uuid",
-                           from = ZonedDateTime.of(
-                               todayDate.plusDays(1),
-                               LocalTime.now(),
-                               ZoneId.systemDefault()
-                           ),
-                           to = ZonedDateTime.of(
-                               todayDate.plusDays(1),
-                               LocalTime.now().plusHours(1),
-                               ZoneId.systemDefault()
-                           ),
-                           remindAt = ZonedDateTime.of(
-                               todayDate.plusDays(1),
-                               LocalTime.now().minusMinutes(30),
-                               ZoneId.systemDefault()
-                           ),
-                           attendees =  emptyList(), //listOf(attendeeId("634e5c33628cc62b5ec50b37")),
-                           photos = emptyList()
-                       ))
-                    uuidStr(uuid)
-                    // todo add error checking
-               }
-                AgendaItemType.Task -> { null } // todo replace with actual type
-//                     AgendaItem.Task(
-//                          id = UUID.randomUUID().toString(),
-//                          title = "New Task for $todayDate",
-//                          time = ZonedDateTime.of(
-//                              todayDate,
-//                              LocalTime.now().plusHours(1),
-//                              ZoneId.systemDefault()
-//                          ),
-//                          remindAt = ZonedDateTime.of(
-//                              todayDate,
-//                              LocalTime.now().plusMinutes(30),
-//                              ZoneId.systemDefault()
-//                          ),
-//                          description = "New Task Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
-//                     )
-//                }
-                AgendaItemType.Reminder -> { null } // todo replace with actual type
-//                     AgendaItem.Reminder(
-//                          id = UUID.randomUUID().toString(),
-//                          title = "New Reminder for $todayDate",
-//                          time = ZonedDateTime.of(
-//                              todayDate,
-//                              LocalTime.now().plusHours(2),
-//                              ZoneId.systemDefault()
-//                          ),
-//                          remindAt = ZonedDateTime.of(
-//                              todayDate,
-//                              LocalTime.now().plusMinutes(60),
-//                              ZoneId.systemDefault()
-//                          ),
-//                          description = "New Reminder Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
-//                     )
-//
-//                }
-            }
-
-            id?.let { sendEvent(AgendaEvent.StatefulOneTimeEvent.ScrollToItemId(id)) }
-        }
-    }
-
     fun sendEvent(event: AgendaEvent) {
         viewModelScope.launch {
             onEvent(event)
@@ -180,17 +100,17 @@ class AgendaViewModel @Inject constructor(
     private suspend fun onEvent(event: AgendaEvent) {
 
         when(event) {
-            is AgendaEvent.ShowProgressIndicator -> {
+            is ShowProgressIndicator -> {
                 _agendaState.update {
                     it.copy(isProgressVisible = event.isShowing)
                 }
             }
-            is AgendaEvent.SetIsLoaded -> {
+            is SetIsLoaded -> {
                 _agendaState.update {
                     it.copy(isProgressVisible = event.isLoaded)
                 }
             }
-            is AgendaEvent.SetSelectedDayIndex -> {
+            is SetSelectedDayIndex -> {
                 _agendaState.update {
                     it.copy(
                         selectedDayIndex = event.dayIndex,
@@ -200,10 +120,20 @@ class AgendaViewModel @Inject constructor(
                     )
                 }
             }
-            is AgendaEvent.CreateAgendaItem -> {
-                createAgendaItem(event.agendaItemType)
+            is CreateAgendaItem -> {
+                when(event.agendaItemType) {
+                    AgendaItemType.Event -> {
+                        _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateEvent)
+                    }
+                    AgendaItemType.Task -> {
+//                        _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateTask)
+                    }
+                    AgendaItemType.Reminder -> {
+//                        _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateReminder)
+                    }
+                }
             }
-            is AgendaEvent.TaskToggleCompleted -> {
+            is ToggleTaskCompleted -> {
                 _agendaState.value.agendaItems.mapLatest {
                     it.find { item -> item.id == event.agendaItemId }?.let { task ->
                         if(task is AgendaItem.Task) {
@@ -212,18 +142,18 @@ class AgendaViewModel @Inject constructor(
                     }
                 }
             }
-            is AgendaEvent.Logout -> {
+            is Logout -> {
                 _agendaState.update {
                     it.copy(authInfo = null)
                 }
                 logout()
             }
-            is AgendaEvent.StatefulOneTimeEvent -> {
+            is StatefulOneTimeEvent -> {
                 when (event) {
 
                     // Because you can only scroll to one location at a time, we only
                     // need one reset event to reset all the scrolling events.
-                    is AgendaEvent.StatefulOneTimeEvent.ResetScrollTo -> {
+                    is StatefulOneTimeEvent.ResetScrollTo -> {
                         _agendaState.update {
                             it.copy(
                                 scrollToItemId = null,
@@ -232,19 +162,19 @@ class AgendaViewModel @Inject constructor(
                             )
                         }
                     }
-                    is AgendaEvent.StatefulOneTimeEvent.ScrollToTop -> {
+                    is StatefulOneTimeEvent.ScrollToTop -> {
                         // • Send the one time event
                         _agendaState.update {
                             it.copy(scrollToTop = true)
                         }
                     }
-                    is AgendaEvent.StatefulOneTimeEvent.ScrollToBottom -> {
+                    is StatefulOneTimeEvent.ScrollToBottom -> {
                         // • Send the one time event
                         _agendaState.update {
                             it.copy(scrollToBottom = true)
                         }
                     }
-                    is AgendaEvent.StatefulOneTimeEvent.ScrollToItemId -> {
+                    is StatefulOneTimeEvent.ScrollToItemId -> {
                         // • Send the one time event
                         _agendaState.update {
                             it.copy(scrollToItemId = event.agendaItemId)
@@ -252,7 +182,7 @@ class AgendaViewModel @Inject constructor(
                     }
                 }
             }
-            is AgendaEvent.Error -> {
+            is Error -> {
                 _agendaState.update {
                     it.copy(
                         errorMessage = if(event.message.isRes)
@@ -261,16 +191,17 @@ class AgendaViewModel @Inject constructor(
                             UiText.Res(R.string.error_unknown, "")
                     )
                 }
-                sendEvent(AgendaEvent.ShowProgressIndicator(false))
+                sendEvent(ShowProgressIndicator(false))
             }
-            is AgendaEvent.CreateAgendaItemError -> TODO()
-            is AgendaEvent.CreateAgendaItemSuccess -> TODO()
-            is AgendaEvent.OneTimeEvent.NavigateToOpenEvent -> {
-                _oneTimeEvent.emit(AgendaEvent.OneTimeEvent.NavigateToOpenEvent(event.eventId))
+            is OneTimeEvent.NavigateToCreateEvent -> {
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateEvent)
             }
-            is AgendaEvent.OneTimeEvent.ConfirmDeleteEvent -> TODO()
-            AgendaEvent.OneTimeEvent.NavigateToCreateEvent -> TODO()
-            is AgendaEvent.OneTimeEvent.NavigateToEditEvent -> TODO()
+            is OneTimeEvent.NavigateToOpenEvent -> {
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToOpenEvent(event.eventId))
+            }
+            is OneTimeEvent.NavigateToEditEvent -> {
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToEditEvent(event.eventId))
+            }
         }
     }
 
@@ -382,4 +313,85 @@ class AgendaViewModel @Inject constructor(
 //                )
         }
     }
+
+    //    private fun createAgendaItem(agendaItemType: AgendaItemType) {
+//        viewModelScope.launch {
+//            val today = LocalDate.now()
+//            val todayDayOfWeek = today.dayOfWeek.name
+//            val todayDayOfMonth = today.dayOfMonth
+//            val todayMonth = today.month
+//            val todayYear = today.year
+//            val todayDate = LocalDate.of(todayYear, todayMonth, todayDayOfMonth)
+//
+//            // todo create Dummy data for now - replace with actual data soon
+//            val id = when(agendaItemType) {
+//                AgendaItemType.Event -> {
+////                    val uuid = UUID.randomUUID().toString()
+////                    agendaRepository.createEvent(
+////                       AgendaItem.Event(
+////                           id = uuid,
+////                           title = "New Event for ** $todayDate",
+////                           description = "New Event Description - $uuid",
+////                           from = ZonedDateTime.of(
+////                               todayDate.plusDays(1),
+////                               LocalTime.now(),
+////                               ZoneId.systemDefault()
+////                           ),
+////                           to = ZonedDateTime.of(
+////                               todayDate.plusDays(1),
+////                               LocalTime.now().plusHours(1),
+////                               ZoneId.systemDefault()
+////                           ),
+////                           remindAt = ZonedDateTime.of(
+////                               todayDate.plusDays(1),
+////                               LocalTime.now().minusMinutes(30),
+////                               ZoneId.systemDefault()
+////                           ),
+////                           attendees =  emptyList(), //listOf(attendeeId("634e5c33628cc62b5ec50b37")),
+////                           photos = emptyList()
+////                       ))
+////                    uuidStr(uuid)
+////                    // todo add error checking
+//                    sendEvent(OneTimeEvent.NavigateToCreateEvent)
+//               }
+//                AgendaItemType.Task -> { null } // todo replace with actual type
+////                     AgendaItem.Task(
+////                          id = UUID.randomUUID().toString(),
+////                          title = "New Task for $todayDate",
+////                          time = ZonedDateTime.of(
+////                              todayDate,
+////                              LocalTime.now().plusHours(1),
+////                              ZoneId.systemDefault()
+////                          ),
+////                          remindAt = ZonedDateTime.of(
+////                              todayDate,
+////                              LocalTime.now().plusMinutes(30),
+////                              ZoneId.systemDefault()
+////                          ),
+////                          description = "New Task Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
+////                     )
+////                }
+//                AgendaItemType.Reminder -> { null } // todo replace with actual type
+////                     AgendaItem.Reminder(
+////                          id = UUID.randomUUID().toString(),
+////                          title = "New Reminder for $todayDate",
+////                          time = ZonedDateTime.of(
+////                              todayDate,
+////                              LocalTime.now().plusHours(2),
+////                              ZoneId.systemDefault()
+////                          ),
+////                          remindAt = ZonedDateTime.of(
+////                              todayDate,
+////                              LocalTime.now().plusMinutes(60),
+////                              ZoneId.systemDefault()
+////                          ),
+////                          description = "New Reminder Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
+////                     )
+////
+////                }
+//            }
+//
+//            id?.let { sendEvent(StatefulOneTimeEvent.ScrollToItemId(id)) }
+//        }
+//    }
 }

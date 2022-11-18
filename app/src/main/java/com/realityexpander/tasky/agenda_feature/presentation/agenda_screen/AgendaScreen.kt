@@ -186,6 +186,16 @@ fun AgendaScreenContent(
     // • One-time events (like Navigation, SnackBars, etc) are handled here
     LaunchedEffect(oneTimeEvent) {
         when (oneTimeEvent) {
+            AgendaEvent.OneTimeEvent.NavigateToCreateEvent -> {
+                navigator.navigate(
+                    EventScreenDestination(
+                        eventId = null,  // create new event
+                    )
+                ) {
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
             is AgendaEvent.OneTimeEvent.NavigateToOpenEvent -> {
                 navigator.navigate(
                     EventScreenDestination(
@@ -196,9 +206,17 @@ fun AgendaScreenContent(
                     restoreState = true
                 }
             }
-            is AgendaEvent.OneTimeEvent.ConfirmDeleteEvent -> TODO()
-            AgendaEvent.OneTimeEvent.NavigateToCreateEvent -> TODO()
-            is AgendaEvent.OneTimeEvent.NavigateToEditEvent -> TODO()
+            is AgendaEvent.OneTimeEvent.NavigateToEditEvent -> {
+                navigator.navigate(
+                    EventScreenDestination(
+                        eventId = oneTimeEvent.eventId,
+//                        isEditable = true, // todo add this to the destination
+                    )
+                ) {
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
             null -> {}
         }
     }
@@ -421,7 +439,7 @@ fun AgendaScreenContent(
                         agendaItem = agendaItem,
                         onToggleCompleted = {
                             if (agendaItem is AgendaItem.Task) {
-                                onAction(AgendaEvent.TaskToggleCompleted(agendaItem.id))
+                                onAction(AgendaEvent.ToggleTaskCompleted(agendaItem.id))
                             }
                         },
                         modifier = Modifier
@@ -560,15 +578,14 @@ fun performActionForAgendaItem(
         is AgendaItem.Event -> {
             when (action) {
                 AgendaItemAction.OPEN_DETAILS -> {
-                    println("OPEN DETAILS FOR EVENT ${agendaItem.id}")
                     onAction(AgendaEvent.OneTimeEvent.NavigateToOpenEvent(agendaItem.id))
                 }
                 AgendaItemAction.EDIT -> {
-                    println("EDIT EVENT ${agendaItem.id}")
-//                    onAction(AgendaEvent.NavigateToEditEvent(agendaItem))
+                    onAction(AgendaEvent.OneTimeEvent.NavigateToEditEvent(agendaItem.id))
                 }
                 AgendaItemAction.DELETE -> {
                     println("DELETE EVENT ${agendaItem.id}")
+                    // todo show confirmation dialog before sending delete `AgendaItem ID` to VM
 //                    onAction(AgendaEvent.DeleteEvent(agendaItem))
                 }
                 else -> {}

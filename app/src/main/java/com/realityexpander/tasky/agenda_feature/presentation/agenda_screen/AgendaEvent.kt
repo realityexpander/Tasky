@@ -15,10 +15,8 @@ sealed interface AgendaEvent {
 
     // • Agenda Item - Create
     data class CreateAgendaItem(val agendaItemType: AgendaItemType) : AgendaEvent
-    data class CreateAgendaItemSuccess(val message: UiText) : AgendaEvent
-    data class CreateAgendaItemError(val message: UiText) : AgendaEvent
 
-    data class TaskToggleCompleted(val agendaItemId: UuidStr) : AgendaEvent
+    data class ToggleTaskCompleted(val agendaItemId: UuidStr) : AgendaEvent
 
     // • Errors
     data class Error(val message: UiText) : AgendaEvent
@@ -37,9 +35,6 @@ sealed interface AgendaEvent {
         object NavigateToCreateEvent : AgendaEvent, OneTimeEvent
         data class NavigateToOpenEvent(val eventId: EventId) : AgendaEvent, OneTimeEvent
         data class NavigateToEditEvent(val eventId: EventId) : AgendaEvent, OneTimeEvent
-
-        // • Event - Confirm delete
-        data class ConfirmDeleteEvent(val eventId: EventId) : AgendaEvent, OneTimeEvent
     }
 
 }
