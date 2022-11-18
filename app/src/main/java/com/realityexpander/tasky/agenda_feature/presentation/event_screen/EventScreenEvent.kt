@@ -20,6 +20,9 @@ sealed interface EventScreenEvent {
     data class SetEditMode(val editMode: EditMode) : EventScreenEvent
     object CancelEditMode : EventScreenEvent
 
+    // • Save Updated Event
+    object SaveEvent : EventScreenEvent
+
     // • Add Attendee Dialog
     data class ValidateAttendeeEmailExistsThenAddAttendee(val email: Email) : EventScreenEvent
     object ClearErrorsForAddAttendeeDialog : EventScreenEvent
@@ -38,6 +41,7 @@ sealed interface EventScreenEvent {
     sealed interface OneTimeEvent {
         // • Event - Navigate Back to Previous Screen
         object NavigateBack : EventScreenEvent, OneTimeEvent
+        data class ShowToast(val message: UiText) : EventScreenEvent, OneTimeEvent
     }
 
     sealed interface EditMode {

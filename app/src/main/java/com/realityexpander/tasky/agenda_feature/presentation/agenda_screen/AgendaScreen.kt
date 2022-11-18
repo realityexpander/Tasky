@@ -183,15 +183,12 @@ fun AgendaScreenContent(
         }
     }
 
-    // todo Handle "un-sequenced" one-time events (like Snackbar), will use a Channel or SharedFlow
+    // • One-time events (like Navigation, SnackBars, etc) are handled here
     LaunchedEffect(oneTimeEvent) {
         when (oneTimeEvent) {
             is AgendaEvent.OneTimeEvent.NavigateToOpenEvent -> {
                 navigator.navigate(
                     EventScreenDestination(
-                        // authInfo = authInfo
-                        //username = authInfo.username,
-                        //email = authInfo.email,
                         eventId = oneTimeEvent.eventId,
                     )
                 ) {

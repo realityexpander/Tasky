@@ -2,6 +2,7 @@ package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
 import android.content.res.Configuration
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
@@ -57,15 +58,17 @@ import java.util.*
 @Composable
 @Destination
 fun EventScreen(
-    eventId: UuidStr,
+    eventId: UuidStr? = null,
     navigator: DestinationsNavigator,
     viewModel: EventViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
+    val oneTimeEvent by viewModel.oneTimeEvent.collectAsState(null)
 
     if (state.isLoaded) {
         AddEventScreenContent(
             state = state,
+            oneTimeEvent = oneTimeEvent,
             onAction = viewModel::sendEvent,
             navigator = navigator,
         )
@@ -95,6 +98,7 @@ const val ADD_PHOTO_PLACEHOLDER = "ADD_PHOTO_PLACEHOLDER"
 @Composable
 fun AddEventScreenContent(
     state: EventScreenState,
+    oneTimeEvent: OneTimeEvent?,
     onAction: (EventScreenEvent) -> Unit,
     navigator: DestinationsNavigator,
 ) {
@@ -108,7 +112,7 @@ fun AddEventScreenContent(
         navigator.popBackStack()
     }
 
-    // Handle stateful one-time events
+    // • Stateful one-time events
     LaunchedEffect(state) {
 //        if (state.scrollToItemId != null) {
 //            val item = agendaItems.indexOfFirst { it.id == state.scrollToItemId }
@@ -140,7 +144,23 @@ fun AddEventScreenContent(
             }
         )
 
-    // todo handle "un-stateful" one-time events (like Snackbar), will use a Channel or SharedFlow
+    // • One-time events (like Navigation, Toasts, etc) are handled here
+    LaunchedEffect(oneTimeEvent) {
+        when (oneTimeEvent) {
+            is OneTimeEvent.NavigateBack -> {
+                popBack()
+            }
+            is OneTimeEvent.ShowToast -> {
+                Toast.makeText(
+                    context,
+                    context.getString(
+                        oneTimeEvent.message.asResIdOrNull
+                            ?: R.string.error_invalid_string_resource_id
+                    ), Toast.LENGTH_SHORT).show()
+            }
+            null -> {}
+        }
+    }
 
     // • MAIN CONTAINER
     Column(
@@ -196,6 +216,7 @@ fun AddEventScreenContent(
                             .width(40.dp)
                             .clickable {
                                 onAction(SetIsEditable(false))
+                                onAction(SaveEvent)
                             }
                     )
                 } else {
@@ -215,6 +236,19 @@ fun AddEventScreenContent(
 
         }
         Spacer(modifier = Modifier.smallHeight())
+
+        // • ERROR MESSAGE
+        if (state.errorMessage != null) {
+            Text(
+                text = state.errorMessage.get,
+                color = MaterialTheme.colors.error,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = DP.small, end = DP.small)
+            )
+            Spacer(modifier = Modifier.smallHeight())
+        }
 
 
         // • EVENT HEADER & MAIN CONTENT
@@ -846,6 +880,7 @@ fun Preview() {
             ),
             onAction = { println("ACTION: $it") },
             navigator = EmptyDestinationsNavigator,
+            oneTimeEvent = null,
         )
     }
 }

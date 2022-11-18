@@ -10,7 +10,8 @@ fun AuthInfo?.toDTO(): AuthInfoDTO? {
     return AuthInfoDTO(
         authToken = this?.authToken,
         userId = this?.userId,
-        username = this?.username
+        username = this?.username,
+        email = this?.email
     )
 }
 
@@ -20,7 +21,8 @@ fun AuthInfoDTO?.toDomain(): AuthInfo? {
         AuthInfo(
             authToken = authToken,
             userId = userId,
-            username = username
+            username = username,
+            email = email
         )
     }
 }
@@ -31,7 +33,8 @@ fun AuthInfo?.toEntity(): AuthInfoEntity? {
         AuthInfoEntity(
             authToken = authToken,
             userId = userId,
-            username = username
+            username = username,
+            email = email
         )
     }
 }
@@ -42,7 +45,8 @@ fun AuthInfoEntity?.toDomain(): AuthInfo? {
         AuthInfo(
             authToken = authToken,
             userId = userId,
-            username = username
+            username = username,
+            email = email
         )
     }
 }

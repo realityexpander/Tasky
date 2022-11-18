@@ -5,7 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
-import com.realityexpander.tasky.agenda_feature.common.util.eventId
+import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
+import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.max
@@ -32,7 +33,7 @@ class EventViewModel @Inject constructor(
     private val validateEmail: ValidateEmail
 ) : ViewModel() {
 
-    // Get params from savedStateHandle (from another screen or after process death)
+    // Get savedStateHandle (after process death)
     private val errorMessage: UiText? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage]
     private val isEditable: Boolean =
@@ -44,8 +45,9 @@ class EventViewModel @Inject constructor(
     private val isAttendeeEmailValid: Boolean? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid]
 
-    private val eventId: EventId =
-        savedStateHandle[SavedStateConstants.SAVED_STATE_eventId] ?: eventId(UUID.randomUUID().toString())
+    // Get params from savedStateHandle (from another screen)
+    private val eventId: EventId? =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_eventId]
 
     private val _state = MutableStateFlow(
         EventScreenState(
@@ -59,16 +61,16 @@ class EventViewModel @Inject constructor(
     )
     val state =
         _state.onEach { state ->
-        // save state for process death
-        savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage] =
-            state.errorMessage
-        savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] =
-            state.isEditable
-        savedStateHandle[SavedStateConstants.SAVED_STATE_addAttendeeDialogErrorMessage] =
-            state.addAttendeeDialogErrorMessage
-        savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid] =
-            state.isAttendeeEmailValid
-    }
+            // save state for process death
+            savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage] =
+                state.errorMessage
+            savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] =
+                state.isEditable
+            savedStateHandle[SavedStateConstants.SAVED_STATE_addAttendeeDialogErrorMessage] =
+                state.addAttendeeDialogErrorMessage
+            savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid] =
+                state.isAttendeeEmailValid
+        }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventScreenState())
 
     private val _oneTimeEvent = MutableSharedFlow<OneTimeEvent>()
@@ -82,92 +84,102 @@ class EventViewModel @Inject constructor(
                 username = authRepository.getAuthInfo()?.username ?: "",
                 authInfo = authRepository.getAuthInfo(),
 
-                // Dummy event details for UI work // todo remove soon
-                event = agendaRepository.getEvent(eventId),
-/*
-                event = AgendaItem.Event(
-                    id = eventId,
-                    title = "Title of Event",
-                    description = "Description of Event",
+                // If eventId is null, then we are creating a new event
+                event = eventId?.let { eventId ->
+                    agendaRepository.getEvent(eventId)   // load event from repository
+                } ?: AgendaItem.Event(
+                    id = UUID.randomUUID().toString(),
+                    title = "Title of New Event",
+                    description = "Description of New Event",
                     isUserEventCreator = true,
-                    from = ZonedDateTime.now().plusHours(1),
-                    to = ZonedDateTime.now().plusHours(2),
+                    from = ZonedDateTime.now(),
+                    to = ZonedDateTime.now().plusHours(1),
                     remindAt = ZonedDateTime.now().plusMinutes(30),
                     isGoing = true,
-                    photos = //emptyList(),
-                    listOf(
-                        Photo.Remote(
-                            UUID.randomUUID().toString(),
-                            "https://randomuser.me/api/portraits/men/75.jpg"
-                        )
-                    ),
+                    photos = emptyList(),
                     attendees = listOf(
                         Attendee(
-                            eventId = "0001",
-                            isGoing = true,
-                            fullName = authRepository.getAuthInfo()?.username!!,
-                            email = "cameron@demo.com",
-                            remindAt = ZonedDateTime.now(),
                             id = authRepository.getAuthInfo()?.userId!!,
-                            photo = "https://randomuser.me/api/portraits/men/75.jpg"
-                        ),
-                        Attendee(
-                            eventId = "0001",
+                            fullName = authRepository.getAuthInfo()?.username ?: "",
+                            email = authRepository.getAuthInfo()?.email ?: "",
                             isGoing = true,
-                            fullName = "Jeremy Johnson",
-                            remindAt = ZonedDateTime.now(),
-                            email = "jj@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/75.jpg"
-                        ),
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = true,
-                            fullName = "Fred Flintstone",
-                            remindAt = ZonedDateTime.now(),
-                            email = "ff@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/71.jpg"
-                        ),
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = true,
-                            fullName = "Sam Bankman",
-                            remindAt = ZonedDateTime.now(),
-                            email = "sb@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/70.jpg"
-                        ),
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = false,
-                            fullName = "Billy Johnson",
-                            remindAt = ZonedDateTime.now(),
-                            email = "bj@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/73.jpg"
-                        ),
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = false,
-                            fullName = "Edward Flintstone",
-                            remindAt = ZonedDateTime.now(),
-                            email = "FE@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/21.jpg"
-                        ),
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = false,
-                            fullName = "Jill Bankman",
-                            remindAt = ZonedDateTime.now(),
-                            email = "jb@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/30.jpg"
-                        ),
-                    ),
+                        )
+                    )
                 ),
- */
+
+                /* // todo remove soon
+                                   listOf(
+                                       Photo.Remote(
+                                           UUID.randomUUID().toString(),
+                                           "https://randomuser.me/api/portraits/men/75.jpg"
+                                       )
+                                   ),
+                                   attendees = listOf(
+                                       Attendee(
+                                           eventId = "0001",
+                                           isGoing = true,
+                                           fullName = authRepository.getAuthInfo()?.username!!,
+                                           email = "cameron@demo.com",
+                                           remindAt = ZonedDateTime.now(),
+                                           id = authRepository.getAuthInfo()?.userId!!,
+                                           photo = "https://randomuser.me/api/portraits/men/75.jpg"
+                                       ),
+                                       Attendee(
+                                           eventId = "0001",
+                                           isGoing = true,
+                                           fullName = "Jeremy Johnson",
+                                           remindAt = ZonedDateTime.now(),
+                                           email = "jj@demo.com",
+                                           id = UUID.randomUUID().toString(),
+                                           photo = "https://randomuser.me/api/portraits/men/75.jpg"
+                                       ),
+                                       Attendee(
+                                           eventId = "0001",
+                                           isGoing = true,
+                                           fullName = "Fred Flintstone",
+                                           remindAt = ZonedDateTime.now(),
+                                           email = "ff@demo.com",
+                                           id = UUID.randomUUID().toString(),
+                                           photo = "https://randomuser.me/api/portraits/men/71.jpg"
+                                       ),
+                                       Attendee(
+                                           eventId = "0001",
+                                           isGoing = true,
+                                           fullName = "Sam Bankman",
+                                           remindAt = ZonedDateTime.now(),
+                                           email = "sb@demo.com",
+                                           id = UUID.randomUUID().toString(),
+                                           photo = "https://randomuser.me/api/portraits/men/70.jpg"
+                                       ),
+                                       Attendee(
+                                           eventId = "0001",
+                                           isGoing = false,
+                                           fullName = "Billy Johnson",
+                                           remindAt = ZonedDateTime.now(),
+                                           email = "bj@demo.com",
+                                           id = UUID.randomUUID().toString(),
+                                           photo = "https://randomuser.me/api/portraits/men/73.jpg"
+                                       ),
+                                       Attendee(
+                                           eventId = "0001",
+                                           isGoing = false,
+                                           fullName = "Edward Flintstone",
+                                           remindAt = ZonedDateTime.now(),
+                                           email = "FE@demo.com",
+                                           id = UUID.randomUUID().toString(),
+                                           photo = "https://randomuser.me/api/portraits/men/21.jpg"
+                                       ),
+                                       Attendee(
+                                           eventId = "0001",
+                                           isGoing = false,
+                                           fullName = "Jill Bankman",
+                                           remindAt = ZonedDateTime.now(),
+                                           email = "jb@demo.com",
+                                           id = UUID.randomUUID().toString(),
+                                           photo = "https://randomuser.me/api/portraits/men/30.jpg"
+                                       ),
+                                   ),
+                */
             )
         }
     }
@@ -214,10 +226,10 @@ class EventViewModel @Inject constructor(
                 _state.update { _state ->
                     _state.copy(
                         isAttendeeEmailValid =
-                            if (uiEvent.email.isBlank())
-                                    null
-                                else
-                                    validateEmail.validate(uiEvent.email)
+                        if (uiEvent.email.isBlank())
+                            null
+                        else
+                            validateEmail.validate(uiEvent.email)
                     )
                 }
             }
@@ -401,6 +413,58 @@ class EventViewModel @Inject constructor(
                     )
                 }
                 sendEvent(CancelEditMode)
+            }
+            OneTimeEvent.NavigateBack -> {
+                _oneTimeEvent.emit(
+                    OneTimeEvent.NavigateBack
+                )
+            }
+            is SaveEvent -> {
+                val event = _state.value.event ?: return
+                _state.update { _state ->
+                    _state.copy(
+                        isProgressVisible = true,
+                        errorMessage = null
+                    )
+                }
+
+                val result =
+                    when (eventId) {
+                        null -> {
+                            // Create new event
+                            agendaRepository.createEvent(event)
+                        }
+                        else -> {
+                            // Update existing event
+                            agendaRepository.updateEvent(event)
+                        }
+                    }
+
+                when (result) {
+                    is ResultUiText.Success -> {
+                        _state.update { _state ->
+                            _state.copy(
+                                isProgressVisible = false,
+                                errorMessage = null
+                            )
+                        }
+                        _oneTimeEvent.emit(
+                            OneTimeEvent.ShowToast(
+                                UiText.StrOrRes("Event saved", R.string.event_message_event_saved)
+                            )
+                        )
+                        sendEvent(CancelEditMode)
+                        sendEvent(OneTimeEvent.NavigateBack)
+                    }
+                    is ResultUiText.Error -> {
+                        _state.update { _state ->
+                            _state.copy(
+                                isProgressVisible = false,
+                                errorMessage = UiText.Res(R.string.event_error_save_event)
+                            )
+                        }
+                    }
+                }
             }
 
             is Error -> {

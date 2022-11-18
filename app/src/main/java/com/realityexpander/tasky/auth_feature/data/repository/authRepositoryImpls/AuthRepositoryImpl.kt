@@ -50,7 +50,7 @@ class AuthRepositoryImpl @Inject constructor(
             throw Exceptions.UnknownErrorException(e.message)
         }
 
-        val authInfo = authInfoDTO.toDomain()
+        val authInfo = authInfoDTO?.copy(email = email).toDomain() // include email in the AuthInfo
 
         authInfo?.let {
             authDao.setAuthInfo(authInfo)
