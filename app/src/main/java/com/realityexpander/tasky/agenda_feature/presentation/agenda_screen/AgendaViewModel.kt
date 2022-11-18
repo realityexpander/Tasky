@@ -205,7 +205,7 @@ class AgendaViewModel @Inject constructor(
         }
     }
 
-    // Create Dummy data to pre-populate the Agenda // todo remove later
+    // Create Dummy data to pre-populate the Agenda // todo remove later - left for reference
     private fun createFakeAgendaItems(agendaRepository: IAgendaRepository) {
         val today = ZonedDateTime.now()
         val zoneId = ZoneId.systemDefault()
