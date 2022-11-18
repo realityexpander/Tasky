@@ -58,7 +58,9 @@ import java.util.*
 @Composable
 @Destination
 fun EventScreen(
+    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     eventId: UuidStr? = null,
+    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     isEditable: Boolean = false,
     navigator: DestinationsNavigator,
     viewModel: EventViewModel = hiltViewModel(),
