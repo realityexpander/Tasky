@@ -351,7 +351,7 @@ class EventViewModel @Inject constructor(
                 _state.update { _state ->
                     _state.copy(
                         event = _state.event?.copy(
-                            photosToUpload = _state.event.photosToUpload + uiEvent.photoLocal
+                            photos = _state.event.photos + uiEvent.photoLocal
                         ),
                         editMode = null
                     )

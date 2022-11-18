@@ -17,7 +17,7 @@ sealed interface PhotoDTO {
         val url: UrlStr,      // url of the photo on server
     ) : PhotoDTO
 
-    data class Local(
+    data class Local(         // Only used for uploading. NOT sent from/to server.
         val id: PhotoId,
         val uri: Uri,         // path to the photo on device
     ) : PhotoDTO

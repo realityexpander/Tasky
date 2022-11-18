@@ -373,7 +373,7 @@ fun AddEventScreenContent(
                 ) {
 
                     if (state.event.photos.isEmpty()
-                        && state.event.photosToUpload.isEmpty()
+//                        && state.event.photosToUpload.isEmpty()  // todo remove
                         && !state.isEditable
                     ) {
                         // • NO PHOTOS
@@ -437,43 +437,31 @@ fun AddEventScreenContent(
                                     .wrapContentHeight()
                                     .horizontalScroll(state = rememberScrollState())
                             ) {
-                                val photos =
-                                    remember(
-                                        state.event.photos.toMutableList(),
-                                        state.event.photosToUpload.toMutableList(),
-                                        state.isEditable
-                                    ) {
-                                        derivedStateOf {
-                                            var photoList = (state.event.photos)
-                                                .plus(state.event.photosToUpload)
+                                var photoList  = state.event.photos
 
-                                            // Add the "Add Photo" item if in edit mode
-                                            if (state.isEditable) {
-                                                if (photoList.isEmpty()) {
-                                                    photoList = listOf(
-                                                        Photo.Local(
-                                                            ADD_PHOTO_PLACEHOLDER,
-                                                            uri = Uri.EMPTY
-                                                        )
-                                                    )
-                                                } else {
-                                                    // Max 10 photos
-                                                    if (photoList.size <= 10) {
-                                                        photoList = photoList.plus(
-                                                            Photo.Local(
-                                                                ADD_PHOTO_PLACEHOLDER,
-                                                                uri = Uri.EMPTY
-                                                            )
-                                                        )
-                                                    }
-                                                }
-                                            }
-
-                                            photoList
+                                // Add the "Add Photo" button if in edit mode
+                                if (state.isEditable) {
+                                    if (photoList.isEmpty()) {
+                                        photoList = listOf(
+                                            Photo.Local(
+                                                ADD_PHOTO_PLACEHOLDER,
+                                                uri = Uri.EMPTY
+                                            )
+                                        )
+                                    } else {
+                                        // Max 10 photos
+                                        if (photoList.size <= 10) {
+                                            photoList = photoList.plus(
+                                                Photo.Local(
+                                                    ADD_PHOTO_PLACEHOLDER,
+                                                    uri = Uri.EMPTY
+                                                )
+                                            )
                                         }
                                     }
+                                }
 
-                                photos.value.forEachIndexed { index, photo ->
+                                photoList.forEachIndexed { index, photo ->
                                     // • Photo content box
                                     Box(
                                         modifier = Modifier
