@@ -49,11 +49,7 @@ fun EventPropertyEditors(
             EditTextModal(
                 text = editMode.text,
                 title = editMode.dialogTitle.get,
-                editTextStyle =
-                if (editMode is EditMode.ChooseTitleText)
-                    MaterialTheme.typography.h2  // cant access from non-compose function, make a wrapper?
-                else
-                    MaterialTheme.typography.body1, // cant access from non-compose function, make a wrapper?
+                editTextStyle = (editMode as EditMode.EditTextStyle).editTextStyle,
                 onSave = {
                     onAction(EditMode.UpdateText(it))
                 },

@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
+import androidx.compose.ui.text.TextStyle
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.AttendeeId
 import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
@@ -36,19 +37,25 @@ sealed interface EventScreenEvent {
 
     sealed interface EditMode {
 
+        // Dialog Display values
         abstract val dialogTitle: UiText
+        sealed interface EditTextStyle { // dialog uses a specific text style
+            val editTextStyle: TextStyle
+        }
 
         // • (1) WHICH item is being edited?
         // - sets initial/default value and the dialog display string)
         data class ChooseTitleText(
             override val text: String = "",
-            override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_choose_title_text)
-        ) : EditMode, TextPayload
+            override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_choose_title_text),
+            override val editTextStyle: TextStyle = TextStyle.Default
+        ) : EditMode, EditTextStyle, TextPayload
 
         data class ChooseDescriptionText(
             override val text: String = "",
-            override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_choose_description_text)
-        ) : EditMode, TextPayload
+            override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_choose_description_text),
+            override val editTextStyle: TextStyle = TextStyle.Default
+        ) : EditMode, EditTextStyle, TextPayload
 
         data class ChooseFromDate(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),

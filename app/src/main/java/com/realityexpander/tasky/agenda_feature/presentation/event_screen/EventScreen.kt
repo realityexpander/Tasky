@@ -296,6 +296,7 @@ fun AddEventScreenContent(
                         )
                     }
 
+                    val editTextStyle = MaterialTheme.typography.h2  // can only access in Composable scope
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
@@ -309,6 +310,7 @@ fun AddEventScreenContent(
                                     SetEditMode(
                                         EditMode.ChooseTitleText(
                                             state.event?.title ?: "",
+                                            editTextStyle = editTextStyle
                                         )
                                     )
                                 )
@@ -339,6 +341,7 @@ fun AddEventScreenContent(
                         )
                     }
 
+                    val editTextStyle = MaterialTheme.typography.body1  // can only access in Composable scope
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
@@ -352,6 +355,7 @@ fun AddEventScreenContent(
                                     SetEditMode(
                                         EditMode.ChooseDescriptionText(
                                             state.event?.description ?: "",
+                                            editTextStyle = editTextStyle
                                         )
                                     )
                                 )
