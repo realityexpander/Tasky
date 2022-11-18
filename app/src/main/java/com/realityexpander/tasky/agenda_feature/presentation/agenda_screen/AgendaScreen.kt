@@ -586,8 +586,9 @@ fun performActionForAgendaItem(
                 }
                 AgendaItemAction.DELETE -> {
                     println("DELETE EVENT ${agendaItem.id}")
+
                     // todo show confirmation dialog before sending delete `AgendaItem ID` to VM
-//                    onAction(AgendaEvent.DeleteEvent(agendaItem))
+//                    onAction(AgendaEvent.ConfirmDeleteEvent(agendaItem))
                 }
                 else -> {}
             }
