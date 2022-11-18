@@ -37,7 +37,7 @@ sealed interface EventScreenEvent {
 
     sealed interface EditMode {
 
-        // Dialog Display values
+        // Dialog Display options
         abstract val dialogTitle: UiText
         sealed interface EditTextStyle { // dialog uses a specific text style
             val editTextStyle: TextStyle
