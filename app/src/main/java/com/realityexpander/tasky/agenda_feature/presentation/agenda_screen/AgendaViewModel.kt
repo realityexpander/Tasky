@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
-import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaEvent.*
+import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
@@ -80,7 +80,7 @@ class AgendaViewModel @Inject constructor(
         }
     }
 
-    fun sendEvent(event: AgendaEvent) {
+    fun sendEvent(event: AgendaScreenEvent) {
         viewModelScope.launch {
             onEvent(event)
             yield() // allow events to percolate
@@ -97,7 +97,7 @@ class AgendaViewModel @Inject constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)  // for .mapLatest
-    private suspend fun onEvent(event: AgendaEvent) {
+    private suspend fun onEvent(event: AgendaScreenEvent) {
 
         when(event) {
             is ShowProgressIndicator -> {

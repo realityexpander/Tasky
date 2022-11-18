@@ -93,8 +93,8 @@ fun AgendaScreen(
 @Composable
 fun AgendaScreenContent(
     state: AgendaState,
-    onAction: (AgendaEvent) -> Unit,
-    oneTimeEvent: AgendaEvent.OneTimeEvent?,
+    onAction: (AgendaScreenEvent) -> Unit,
+    oneTimeEvent: AgendaScreenEvent.OneTimeEvent?,
     navigator: DestinationsNavigator,
 ) {
     val focusManager = LocalFocusManager.current
@@ -142,7 +142,7 @@ fun AgendaScreenContent(
     // Guard against invalid authentication state OR perform logout
     SideEffect {
         if (state.isLoaded && state.authInfo == null) {
-            onAction(AgendaEvent.SetIsLoaded(false))
+            onAction(AgendaScreenEvent.SetIsLoaded(false))
             navigateToLogin()
         }
     }
@@ -161,26 +161,26 @@ fun AgendaScreenContent(
                     scrollState.animateScrollToItem(item)
                 }
             }
-            onAction(AgendaEvent.StatefulOneTimeEvent.ResetScrollTo)
+            onAction(AgendaScreenEvent.StatefulOneTimeEvent.ResetScrollTo)
         }
         if(state.scrollToTop) {
             scope.launch {
                 scrollState.animateScrollToItem(0)
             }
-            onAction(AgendaEvent.StatefulOneTimeEvent.ResetScrollTo)
+            onAction(AgendaScreenEvent.StatefulOneTimeEvent.ResetScrollTo)
         }
         if(state.scrollToBottom) {
             scope.launch {
                 scrollState.animateScrollToItem(agendaItems.size - 1)
             }
-            onAction(AgendaEvent.StatefulOneTimeEvent.ResetScrollTo)
+            onAction(AgendaScreenEvent.StatefulOneTimeEvent.ResetScrollTo)
         }
     }
 
     // • One-time events (like Navigation, SnackBars, etc) are handled here
     LaunchedEffect(oneTimeEvent) {
         when (oneTimeEvent) {
-            AgendaEvent.OneTimeEvent.NavigateToCreateEvent -> {
+            AgendaScreenEvent.OneTimeEvent.NavigateToCreateEvent -> {
                 navigator.navigate(
                     EventScreenDestination(
                         eventId = null,  // create new event
@@ -191,7 +191,7 @@ fun AgendaScreenContent(
                     restoreState = true
                 }
             }
-            is AgendaEvent.OneTimeEvent.NavigateToOpenEvent -> {
+            is AgendaScreenEvent.OneTimeEvent.NavigateToOpenEvent -> {
                 navigator.navigate(
                     EventScreenDestination(
                         eventId = oneTimeEvent.eventId,
@@ -201,7 +201,7 @@ fun AgendaScreenContent(
                     restoreState = true
                 }
             }
-            is AgendaEvent.OneTimeEvent.NavigateToEditEvent -> {
+            is AgendaScreenEvent.OneTimeEvent.NavigateToEditEvent -> {
                 navigator.navigate(
                     EventScreenDestination(
                         eventId = oneTimeEvent.eventId,
@@ -300,7 +300,7 @@ fun AgendaScreenContent(
                         vectorIcon = Icons.Filled.Logout,
                         onClick = {
                             isLogoutMenuExpanded = false
-                            onAction(AgendaEvent.Logout)
+                            onAction(AgendaScreenEvent.Logout)
                         },
                     )
                 }
@@ -345,7 +345,7 @@ fun AgendaScreenContent(
                                 }
                             }
                             .clickable {
-                                onAction(AgendaEvent.SetSelectedDayIndex(dayIndex))
+                                onAction(AgendaScreenEvent.SetSelectedDayIndex(dayIndex))
                             }
                     ) {
                         // Day of week (S, M, T, W, T, F, S)
@@ -434,7 +434,7 @@ fun AgendaScreenContent(
                         agendaItem = agendaItem,
                         onToggleCompleted = {
                             if (agendaItem is AgendaItem.Task) {
-                                onAction(AgendaEvent.ToggleTaskCompleted(agendaItem.id))
+                                onAction(AgendaScreenEvent.ToggleTaskCompleted(agendaItem.id))
                             }
                         },
                         modifier = Modifier
@@ -538,7 +538,7 @@ fun AgendaScreenContent(
                     painterIcon = painterResource(id = R.drawable.calendar_add_on),
                     onClick = {
                         isFabMenuExpanded = false
-                        onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Event))
+                        onAction(AgendaScreenEvent.CreateAgendaItem(AgendaItemType.Event))
                     },
                 )
                 MenuItem(
@@ -546,7 +546,7 @@ fun AgendaScreenContent(
                     vectorIcon = Icons.Filled.AddTask,
                     onClick = {
                         isFabMenuExpanded = false
-                        onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Task))
+                        onAction(AgendaScreenEvent.CreateAgendaItem(AgendaItemType.Task))
                     },
                 )
                 MenuItem(
@@ -554,7 +554,7 @@ fun AgendaScreenContent(
                     vectorIcon = Icons.Filled.NotificationAdd,
                     onClick = {
                         isFabMenuExpanded = false
-                        onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Reminder))
+                        onAction(AgendaScreenEvent.CreateAgendaItem(AgendaItemType.Reminder))
                     },
                 )
             }
@@ -565,7 +565,7 @@ fun AgendaScreenContent(
 fun performActionForAgendaItem(
     agendaItem: AgendaItem?,
     action: AgendaItemAction,
-    onAction: (AgendaEvent)-> Unit
+    onAction: (AgendaScreenEvent)-> Unit
 ) {
     agendaItem ?: return
 
@@ -573,10 +573,10 @@ fun performActionForAgendaItem(
         is AgendaItem.Event -> {
             when (action) {
                 AgendaItemAction.OPEN_DETAILS -> {
-                    onAction(AgendaEvent.OneTimeEvent.NavigateToOpenEvent(agendaItem.id))
+                    onAction(AgendaScreenEvent.OneTimeEvent.NavigateToOpenEvent(agendaItem.id))
                 }
                 AgendaItemAction.EDIT -> {
-                    onAction(AgendaEvent.OneTimeEvent.NavigateToEditEvent(agendaItem.id))
+                    onAction(AgendaScreenEvent.OneTimeEvent.NavigateToEditEvent(agendaItem.id))
                 }
                 AgendaItemAction.DELETE -> {
                     println("DELETE EVENT ${agendaItem.id}")
