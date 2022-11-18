@@ -61,12 +61,6 @@ import java.util.*
 @Composable
 @Destination
 fun AgendaScreen(
-//    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-//    username: String?,//  = null,
-//    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-//    email: String? = null,
-//    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-//    password: String? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     selectedDayIndex: Int? = 0,
 
