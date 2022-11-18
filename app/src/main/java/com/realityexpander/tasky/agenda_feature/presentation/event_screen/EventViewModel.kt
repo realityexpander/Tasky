@@ -4,10 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
-import com.realityexpander.tasky.agenda_feature.domain.Attendee
-import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
-import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
+import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.max
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.min
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
@@ -84,13 +81,13 @@ class EventViewModel @Inject constructor(
                     to = ZonedDateTime.now().plusHours(2),
                     remindAt = ZonedDateTime.now().plusMinutes(30),
                     isGoing = true,
-                    photos = emptyList(),
-//                    listOf(
-//                        Photo.Remote(
-//                            UUID.randomUUID().toString(),
-//                            "https://randomuser.me/api/portraits/men/75.jpg"
-//                        )
-//                    ),
+                    photos = //emptyList(),
+                    listOf(
+                        Photo.Remote(
+                            UUID.randomUUID().toString(),
+                            "https://randomuser.me/api/portraits/men/75.jpg"
+                        )
+                    ),
                     attendees = listOf(
                         Attendee(
                             eventId = "0001",

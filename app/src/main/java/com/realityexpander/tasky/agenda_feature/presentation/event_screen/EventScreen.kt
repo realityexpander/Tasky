@@ -512,7 +512,7 @@ fun AddEventScreenContent(
                                                                 .clickable {
                                                                     onAction(
                                                                         SetEditMode(
-                                                                            EditMode.ViewOrDeletePhoto(
+                                                                            EditMode.ViewOrRemovePhoto(
                                                                                 photo
                                                                             )
                                                                         )
@@ -531,7 +531,7 @@ fun AddEventScreenContent(
                                                             .clickable {
                                                                 onAction(
                                                                     SetEditMode(
-                                                                        EditMode.ViewOrDeletePhoto(
+                                                                        EditMode.ViewOrRemovePhoto(
                                                                             photo
                                                                         )
                                                                     )

@@ -28,12 +28,12 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 fun PhotoModal(
     title: String,
     photo: Photo,
-    isDeleteEnabled: Boolean = false,
-    onDelete: () -> Unit,
+    isRemoveEnabled: Boolean = false,
+    onRemove: () -> Unit,
     onCancel: () -> Unit,
 ) {
 
-    var isConfirmDelete by remember { mutableStateOf(false) }
+    var isConfirmRemove by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -79,13 +79,13 @@ fun PhotoModal(
                 // Delete button
                 Icon(
                     Icons.Outlined.Delete,
-                    tint = if (isDeleteEnabled) MaterialTheme.colors.onSurface else Color.Transparent,
+                    tint = if (isRemoveEnabled) MaterialTheme.colors.onSurface else Color.Transparent,
                     contentDescription = "Delete",
                     modifier = Modifier
                         .size(32.dp)
                         .align(Alignment.CenterVertically)
-                        .clickable(isDeleteEnabled) {
-                            isConfirmDelete = true
+                        .clickable(isRemoveEnabled) {
+                            isConfirmRemove = true
                         }
                 )
             }
@@ -121,25 +121,25 @@ fun PhotoModal(
     Box( modifier = Modifier
         .fillMaxSize()
     ) {
-        if (isConfirmDelete) {
+        if (isConfirmRemove) {
             AlertDialog(
-                onDismissRequest = { isConfirmDelete = false },
+                onDismissRequest = { isConfirmRemove = false },
                 title = { Text("Delete Photo?") },
-                text = { Text("Are you sure you want to delete this photo?") },
+                text = { Text("Are you sure you want to remove this photo?") },
                 confirmButton = {
                     Button(
                         onClick = {
-                            isConfirmDelete = false
-                            onDelete()
+                            isConfirmRemove = false
+                            onRemove()
                         },
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
                     ) {
-                        Text("DELETE")
+                        Text("REMOVE")
                     }
                 },
                 dismissButton = {
                     Button(
-                        onClick = { isConfirmDelete = false },
+                        onClick = { isConfirmRemove = false },
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
                     ) {
                         Text("CANCEL")
@@ -164,7 +164,7 @@ fun PhotoModalPreview() {
         PhotoModal(
             title = "Photo",
             photo = Photo.Remote("0001", "https://randomuser.me/api/portraits/men/75.jpg"),
-            onDelete = {},
+            onRemove = {},
             onCancel = {},
         )
     }

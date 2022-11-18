@@ -121,12 +121,12 @@ fun EventPropertyEditors(
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             )
         }
-        is EditMode.ViewOrDeletePhoto -> {
+        is EditMode.ViewOrRemovePhoto -> {
             PhotoModal(
                 photo = editMode.photo,
                 title = editMode.dialogTitle.get,
-                isDeleteEnabled = state.isEditable,
-                onDelete = {
+                isRemoveEnabled = state.isEditable,
+                onRemove = {
                     onAction(EditMode.RemovePhoto(editMode.photo))
                 },
                 onCancel = {
