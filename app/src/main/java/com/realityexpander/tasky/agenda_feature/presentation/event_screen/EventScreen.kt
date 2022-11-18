@@ -507,64 +507,46 @@ fun AddEventScreenContent(
                                                     RoundedCornerShape(10.dp)
                                                 )
                                         ) {
-                                            when (photo) {
-                                                is Photo.Local -> {
-                                                    if (photo.id == ADD_PHOTO_PLACEHOLDER) {
-                                                        // • Add Photo Icon
-                                                        Icon(
-                                                            imageVector = Icons.Filled.Add,
-                                                            tint = MaterialTheme.colors.onSurface.copy(
-                                                                alpha = .3f
-                                                            ),
-                                                            contentDescription = stringResource(R.string.event_description_add_photo),
-                                                            modifier = Modifier
-                                                                .size(36.dp)
-                                                                .align(Alignment.Center)
-                                                                .clickable(enabled = isEditable) {
-                                                                    onAction(
-                                                                        SetEditMode(
-                                                                            EditMode.ChooseAddPhoto()
-                                                                        )
-                                                                    )
-                                                                }
-                                                        )
-                                                    } else {
-                                                        AsyncImage(
-                                                            model = photo.uri,
-                                                            contentDescription = stringResource(id = R.string.event_description_photo),
-                                                            contentScale = ContentScale.Crop,
-                                                            modifier = Modifier
-                                                                .fillMaxWidth()
-                                                                .clickable {
-                                                                    onAction(
-                                                                        SetEditMode(
-                                                                            EditMode.ViewOrRemovePhoto(
-                                                                                photo
-                                                                            )
-                                                                        )
-                                                                    )
-                                                                },
-                                                        )
-                                                    }
-                                                }
-                                                is Photo.Remote -> {
-                                                    AsyncImage(
-                                                        model = photo.url,
-                                                        contentDescription = stringResource(id = R.string.event_description_photo),
-                                                        contentScale = ContentScale.Crop,
-                                                        modifier = Modifier
-                                                            .fillMaxWidth()
-                                                            .clickable {
-                                                                onAction(
-                                                                    SetEditMode(
-                                                                        EditMode.ViewOrRemovePhoto(
-                                                                            photo
-                                                                        )
+                                            if (photo.id == ADD_PHOTO_PLACEHOLDER) {
+                                                // • ADD PHOTO ICON
+                                                Icon(
+                                                    imageVector = Icons.Filled.Add,
+                                                    tint = MaterialTheme.colors.onSurface.copy(
+                                                        alpha = .3f
+                                                    ),
+                                                    contentDescription = stringResource(R.string.event_description_add_photo),
+                                                    modifier = Modifier
+                                                        .size(36.dp)
+                                                        .align(Alignment.Center)
+                                                        .clickable(enabled = isEditable) {
+                                                            onAction(
+                                                                SetEditMode(
+                                                                    EditMode.ChooseAddPhoto()
+                                                                )
+                                                            )
+                                                        }
+                                                )
+                                            } else {
+                                                // • PHOTO IMAGE
+                                                AsyncImage(
+                                                    model = when(photo) {
+                                                        is Photo.Local -> photo.uri
+                                                        is Photo.Remote -> photo.url
+                                                    },
+                                                    contentDescription = stringResource(id = R.string.event_description_photo),
+                                                    contentScale = ContentScale.Crop,
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .clickable {
+                                                            onAction(
+                                                                SetEditMode(
+                                                                    EditMode.ViewOrRemovePhoto(
+                                                                        photo
                                                                     )
                                                                 )
-                                                            },
-                                                    )
-                                                }
+                                                            )
+                                                        },
+                                                )
                                             }
                                         }
                                         Spacer(
