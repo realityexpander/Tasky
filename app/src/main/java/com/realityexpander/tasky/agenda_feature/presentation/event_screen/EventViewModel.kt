@@ -351,7 +351,7 @@ class EventViewModel @Inject constructor(
                     else -> throw java.lang.IllegalStateException("Invalid type for SaveDateTime: ${_state.value.editMode}")
                 }
             }
-            is EditMode.AddPhotoLocal -> {
+            is EditMode.AddLocalPhoto -> {
                 _state.update { _state ->
                     _state.copy(
                         event = _state.event?.copy(

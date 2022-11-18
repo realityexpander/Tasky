@@ -143,7 +143,7 @@ fun AddEventScreenContent(
 
                 uri?.let {
                     onAction(
-                        EditMode.AddPhotoLocal(
+                        EditMode.AddLocalPhoto(
                             Photo.Local(
                                 id = UUID.randomUUID().toString(),
                                 uri = uri
