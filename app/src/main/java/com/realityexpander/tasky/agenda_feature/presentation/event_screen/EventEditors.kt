@@ -24,6 +24,7 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.EditTextModal
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.toZonedDateTime
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.PhotoModal
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.common.modifiers.mediumHeight
 import com.realityexpander.tasky.core.presentation.common.modifiers.smallHeight
@@ -120,7 +121,19 @@ fun EventPropertyEditors(
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             )
         }
-        is EditMode.ConfirmRemovePhoto -> TODO()
+        is EditMode.ViewOrRemovePhoto -> {
+            PhotoModal(
+                photo = editMode.photo,
+                title = editMode.dialogTitle.get,
+                isRemoveEnabled = state.isEditable,
+                onRemove = {
+                    onAction(EditMode.RemovePhoto(editMode.photo))
+                },
+                onCancel = {
+                    onAction(CancelEditMode)
+                }
+            )
+        }
         is EditMode.ChooseAddAttendee -> {
             val addAttendeeDialogState = rememberMaterialDialogState()
             var attendeeEmail by remember { mutableStateOf("") }

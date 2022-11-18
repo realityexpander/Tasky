@@ -81,7 +81,8 @@ class EventViewModel @Inject constructor(
                     to = ZonedDateTime.now().plusHours(2),
                     remindAt = ZonedDateTime.now().plusMinutes(30),
                     isGoing = true,
-                    photos = listOf(
+                    photos = //emptyList(),
+                    listOf(
                         Photo.Remote(
                             UUID.randomUUID().toString(),
                             "https://randomuser.me/api/portraits/men/75.jpg"
@@ -347,13 +348,23 @@ class EventViewModel @Inject constructor(
                     else -> throw java.lang.IllegalStateException("Invalid type for SaveDateTime: ${_state.value.editMode}")
                 }
             }
-            is EditMode.AddPhoto -> {
+            is EditMode.AddLocalPhoto -> {
                 _state.update { _state ->
                     _state.copy(
                         event = _state.event?.copy(
                             photos = _state.event.photos + uiEvent.photoLocal
                         ),
                         editMode = null
+                    )
+                }
+            }
+            is EditMode.RemovePhoto -> {
+                _state.update { _state ->
+                    _state.copy(
+                        editMode = null,
+                        event = _state.event?.copy(
+                            photos = _state.event.photos - uiEvent.photo
+                        ),
                     )
                 }
             }
