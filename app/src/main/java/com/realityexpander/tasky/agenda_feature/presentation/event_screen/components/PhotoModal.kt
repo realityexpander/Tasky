@@ -33,6 +33,8 @@ fun PhotoModal(
     onCancel: () -> Unit,
 ) {
 
+    var isConfirmDelete by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -78,11 +80,13 @@ fun PhotoModal(
                 Icon(
                     Icons.Outlined.Delete,
                     tint = if (isDeleteEnabled) MaterialTheme.colors.onSurface else Color.Transparent,
-                    contentDescription = "Back",
+                    contentDescription = "Delete",
                     modifier = Modifier
                         .size(32.dp)
                         .align(Alignment.CenterVertically)
-                        .clickable(isDeleteEnabled) { onDelete() }
+                        .clickable(isDeleteEnabled) {
+                            isConfirmDelete = true
+                        }
                 )
             }
 
@@ -112,7 +116,37 @@ fun PhotoModal(
                 }
             }
         }
+    }
 
+    Box( modifier = Modifier
+        .fillMaxSize()
+    ) {
+        if (isConfirmDelete) {
+            AlertDialog(
+                onDismissRequest = { isConfirmDelete = false },
+                title = { Text("Delete Photo?") },
+                text = { Text("Are you sure you want to delete this photo?") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            isConfirmDelete = false
+                            onDelete()
+                        },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+                    ) {
+                        Text("DELETE")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = { isConfirmDelete = false },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
+                    ) {
+                        Text("CANCEL")
+                    }
+                }
+            )
+        }
     }
 }
 
