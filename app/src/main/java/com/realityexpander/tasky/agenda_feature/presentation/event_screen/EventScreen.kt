@@ -448,7 +448,9 @@ fun AddEventScreenContent(
                             )
                         }
                     } else {
-                        if (state.isEditable || state.event?.photos?.isNotEmpty() == true) {
+                        if (state.isEditable
+                            || state.event?.photos?.isNotEmpty() == true
+                        ) {
                             // • LIST OF PHOTO IMAGES
                             Column(
                                 modifier = Modifier

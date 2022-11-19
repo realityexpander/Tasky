@@ -220,8 +220,8 @@ class AgendaViewModel @Inject constructor(
                 AgendaItem.Event(
                     id = UUID.randomUUID().toString(),
                     title = "Meeting with John",
-                    from = ZonedDateTime.of(todayDate, today.toLocalTime().minusHours(1), zoneId),
-                    to = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(1), zoneId),
+                    from = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(1), zoneId),
+                    to = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(2), zoneId),
                     remindAt = ZonedDateTime.of(
                         todayDate,
                         today.toLocalTime().minusMinutes(30),
@@ -261,11 +261,19 @@ class AgendaViewModel @Inject constructor(
                 AgendaItem.Event(
                     id = UUID.randomUUID().toString(),
                     title = "Meeting with Jack",
-                    from = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(5), zoneId),
-                    to = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(6), zoneId),
-                    remindAt = ZonedDateTime.of(
+                    from = ZonedDateTime.of(
+                        todayDate,
+                        today.toLocalTime().plusHours(3),
+                        zoneId
+                    ),
+                    to = ZonedDateTime.of(
                         todayDate,
                         today.toLocalTime().plusHours(4),
+                        zoneId
+                    ),
+                    remindAt = ZonedDateTime.of(
+                        todayDate,
+                        today.toLocalTime().plusHours(2),
                         zoneId
                     ),
                     description = "Discuss the yet another project",
@@ -287,11 +295,11 @@ class AgendaViewModel @Inject constructor(
                 AgendaItem.Event(
                     id = UUID.randomUUID().toString(),
                     title = "Meeting with Jeremy",
-                    from = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(8), zoneId),
-                    to = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(9), zoneId),
+                    from = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(4), zoneId),
+                    to = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(5), zoneId),
                     remindAt = ZonedDateTime.of(
                         todayDate,
-                        today.toLocalTime().plusHours(7),
+                        today.toLocalTime().plusHours(3),
                         zoneId
                     ),
                     description = "Discuss the worse project",
