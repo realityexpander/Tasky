@@ -204,31 +204,42 @@ fun AddEventScreenContent(
             // • EDIT / SAVE BUTTON
             if (state.event?.isUserEventCreator == true) {
                 if (isEditable) {
-                    Text(
-                        text = stringResource(R.string.event_save),
-                        color = MaterialTheme.colors.surface,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .alignByBaseline()
-                            .width(40.dp)
-                            .clickable {
-                                onAction(SetIsEditable(false))
-                                onAction(SaveEvent)
-                            }
-                    )
+                    TextButton(
+                        onClick = {
+                            onAction(SetIsEditable(false))
+                            onAction(SaveEvent)
+                        },
+                        modifier = Modifier.weight(.25f)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.event_save),
+                            color = MaterialTheme.colors.surface,
+                            textAlign = TextAlign.End,
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .alignByBaseline()
+                                .width(40.dp)
+                        )
+                    }
                 } else {
-                    Icon(
-                        imageVector = Icons.Filled.Edit,
-                        tint = MaterialTheme.colors.surface,
-                        contentDescription = stringResource(R.string.event_description_edit_event),
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .width(40.dp)
-                            .clickable {
-                                onAction(SetIsEditable(true))
-                            }
-                    )
+                    IconButton(
+                        onClick = {
+                            onAction(SetIsEditable(true))
+                        },
+                        modifier = Modifier.weight(.25f)
+                    ) {
+                        Row {
+                            Spacer(modifier = Modifier.smallWidth())
+                            Icon(
+                                imageVector = Icons.Filled.Edit,
+                                tint = MaterialTheme.colors.surface,
+                                contentDescription = stringResource(R.string.event_description_edit_event),
+                                modifier = Modifier
+                                    .align(Alignment.CenterVertically)
+                                    .width(40.dp)
+                            )
+                        }
+                    }
                 }
             }
 
