@@ -550,6 +550,59 @@ fun AgendaScreenContent(
             }
         }
     }
+
+    // • Confirm `Delete Agenda Item` Dialog
+    state.confirmDeleteAgendaItem?.let { agendaItem ->
+
+        val agendaItemType =
+            when(agendaItem) {
+                is AgendaItem.Event -> {
+                    stringResource(R.string.agenda_item_type_event)
+                }
+                is AgendaItem.Task -> {
+                    stringResource(R.string.agenda_item_type_task)
+                }
+                is AgendaItem.Reminder -> {
+                    stringResource(R.string.agenda_item_type_reminder)
+                }
+                else -> throw IllegalStateException("Unknown AgendaItem type")
+            }
+
+        AlertDialog(
+            title = {
+                Text("Delete $agendaItemType?")
+            },
+            text = {
+                Text("Are you sure you want to delete $agendaItemType: '${agendaItem.title}'?")
+            },
+            onDismissRequest = { onAction(AgendaScreenEvent.DismissDeleteAgendaItem) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onAction(AgendaScreenEvent.DeleteAgendaItem(agendaItem))
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = Color.Transparent
+                    )
+                ) {
+                    Text(stringResource(R.string.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        onAction(AgendaScreenEvent.DismissDeleteAgendaItem)
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = Color.Transparent
+                    )
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
 }
 
 fun performActionForAgendaItem(
@@ -569,10 +622,7 @@ fun performActionForAgendaItem(
                     onAction(AgendaScreenEvent.OneTimeEvent.NavigateToEditEvent(agendaItem.id))
                 }
                 AgendaItemAction.DELETE -> {
-                    println("DELETE EVENT ${agendaItem.id}")
-
-                    // todo show confirmation dialog before sending delete `AgendaItem ID` to VM
-//                    onAction(AgendaEvent.ConfirmDeleteEvent(agendaItem))
+                    onAction(AgendaScreenEvent.ConfirmDeleteAgendaItem(agendaItem))
                 }
                 else -> {}
             }

@@ -20,8 +20,11 @@ sealed interface EventScreenEvent {
     data class SetEditMode(val editMode: EditMode) : EventScreenEvent
     object CancelEditMode : EventScreenEvent
 
-    // • Save Updated Event
+    // • Update/Delete/Join/Leave Event
     object SaveEvent : EventScreenEvent
+    object DeleteEvent : EventScreenEvent
+    object LeaveEvent : EventScreenEvent
+    object JoinEvent : EventScreenEvent
 
     // • Add Attendee Dialog
     data class ValidateAttendeeEmailExistsThenAddAttendee(val email: Email) : EventScreenEvent

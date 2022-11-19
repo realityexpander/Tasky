@@ -13,7 +13,6 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -96,7 +95,6 @@ class AgendaViewModel @Inject constructor(
         )
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)  // for .mapLatest
     private suspend fun onEvent(event: AgendaScreenEvent) {
 
         when(event) {
@@ -134,8 +132,10 @@ class AgendaViewModel @Inject constructor(
                 }
             }
             is ToggleTaskCompleted -> {
-                _agendaState.value.agendaItems.mapLatest {
-                    it.find { item -> item.id == event.agendaItemId }?.let { task ->
+                _agendaState.value.agendaItems.collectLatest {
+                    it.find {
+                        item -> item.id == event.agendaItemId
+                    }?.let { task ->
                         if(task is AgendaItem.Task) {
 //                            agendaRepository.updateTask(task.copy(isCompleted = !task.isCompleted)) // todo implement update task - completed state
                         }
@@ -201,6 +201,44 @@ class AgendaViewModel @Inject constructor(
             }
             is OneTimeEvent.NavigateToEditEvent -> {
                 _oneTimeEvent.emit(OneTimeEvent.NavigateToEditEvent(event.eventId))
+            }
+            is ConfirmDeleteAgendaItem -> {
+                _agendaState.update {
+                    it.copy(
+                        confirmDeleteAgendaItem = event.agendaItem
+                    )
+                }
+            }
+            is DeleteAgendaItem -> {
+                // Question: Is it necessary to do a search in UI items for the ID before deleting?
+                //   Or is it OK to simply delete the AgendaItem that was passed in?
+                _agendaState.value.agendaItems.collectLatest {
+                    it.find {
+                        item -> item.id == event.agendaItem.id
+                    }?.let { agendaItem ->
+                        when (agendaItem) {
+                            is AgendaItem.Event -> {
+                                agendaRepository.deleteEventId(agendaItem.id) // todo check result errors
+                            }
+                            is AgendaItem.Task -> {
+//                                agendaRepository.deleteTaskId(agendaItem)  // todo implement
+                            }
+                            is AgendaItem.Reminder -> {
+//                                agendaRepository.deleteReminderId(agendaItem) // todo implement
+                            }
+                            else -> throw IllegalArgumentException("Unknown AgendaItem type")
+                        }
+                    } ?: sendEvent(Error(UiText.Res(R.string.agenda_error_agenda_item_not_found)))
+
+                    sendEvent(DismissDeleteAgendaItem)
+                }
+            }
+            is DismissDeleteAgendaItem -> {
+                _agendaState.update {
+                    it.copy(
+                        confirmDeleteAgendaItem = null
+                    )
+                }
             }
         }
     }
@@ -322,7 +360,10 @@ class AgendaViewModel @Inject constructor(
         }
     }
 
-    //    private fun createAgendaItem(agendaItemType: AgendaItemType) {
+}
+
+
+//    private fun createAgendaItem(agendaItemType: AgendaItemType) {
 //        viewModelScope.launch {
 //            val today = LocalDate.now()
 //            val todayDayOfWeek = today.dayOfWeek.name
@@ -359,7 +400,6 @@ class AgendaViewModel @Inject constructor(
 ////                           photos = emptyList()
 ////                       ))
 ////                    uuidStr(uuid)
-////                    // todo add error checking
 //                    sendEvent(OneTimeEvent.NavigateToCreateEvent)
 //               }
 //                AgendaItemType.Task -> { null } // todo replace with actual type
@@ -402,4 +442,3 @@ class AgendaViewModel @Inject constructor(
 //            id?.let { sendEvent(StatefulOneTimeEvent.ScrollToItemId(id)) }
 //        }
 //    }
-}

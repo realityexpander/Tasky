@@ -10,12 +10,14 @@ import java.time.ZonedDateTime
 abstract class AgendaItem {
 
     abstract val id: UuidStr
+    abstract val title: String
+    abstract val description: String
 
     @Parcelize
     data class Event(
         override val id: UuidStr,
-        val title: String,
-        val description: String,
+        override val title: String,
+        override val description: String,
         val remindAt: ZonedDateTime,
         val from: ZonedDateTime,
         val to: ZonedDateTime,
@@ -35,8 +37,8 @@ abstract class AgendaItem {
     @Parcelize
     data class Task(
         override val id: UuidStr,
-        val title: String,
-        val description: String,
+        override val title: String,
+        override val description: String,
         val remindAt: ZonedDateTime,
         val time: ZonedDateTime,
         val isDone: Boolean = false,
@@ -47,8 +49,8 @@ abstract class AgendaItem {
     @Parcelize
     data class Reminder(
         override val id: UuidStr,
-        val title: String,
-        val description: String,
+        override val title: String,
+        override val description: String,
         val remindAt: ZonedDateTime,
         val time: ZonedDateTime,
 

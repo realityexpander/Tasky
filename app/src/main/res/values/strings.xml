@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">Tasky</string>
 
-    <!-- general -->
+    <!-- general dialogs -->
     <string name="ok">OK</string>
     <string name="cancel">CANCEL</string>
+    <string name="delete">DELETE</string>
+
+    <!-- general descriptions -->
     <string name="back_description">Back</string>
     <string name="remove_description">Remove</string>
 
@@ -82,12 +85,18 @@
     <string name="splash_logged_in">Logged in!</string>
     <string name="splash_not_logged_in">Not logged in…</string>
 
+    <!-- Agenda Item types -->
+    <string name="agenda_item_type_task">Task</string>
+    <string name="agenda_item_type_event">Event</string>
+    <string name="agenda_item_type_reminder">Reminder</string>
+
     <!--    Agenda screen -->
     <string name="agenda_title">Agenda Screen</string>
     <string name="agenda_description">Agenda Screen</string>
     <string name="agenda_error">Agenda error - %s</string>
     <string name="agenda_error_network">Agenda network error - %s</string>
     <string name="agenda_error_unknown">Agenda unknown error - %s</string>
+    <string name="agenda_error_agenda_item_not_found">Agenda item not found</string>
     <string name="agenda_add_agenda_item">Add Agenda Item</string>
 
     <!--    Event screen -->

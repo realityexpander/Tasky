@@ -394,6 +394,9 @@ class EventViewModel @Inject constructor(
                     }
                 }
             }
+            is DeleteEvent -> {}
+            is JoinEvent -> {}   // todo implement
+            is LeaveEvent -> {}  // todo implement
 
             is Error -> {
                 _state.update { _state ->
