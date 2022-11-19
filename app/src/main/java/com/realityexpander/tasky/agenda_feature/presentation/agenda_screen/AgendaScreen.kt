@@ -39,6 +39,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.UserAcronymCircle
@@ -122,7 +123,7 @@ fun AgendaScreenContent(
     // Display month name
     val month = remember(LocalDate.now().month) { LocalDate.now().month.getDisplayName(TextStyle.FULL, Locale.getDefault()).uppercase() }
 
-    fun navigateToLogin() {
+    fun navigateToLoginScreen() {
         navigator.navigate(
             LoginScreenDestination(
                 username = null,
@@ -139,11 +140,23 @@ fun AgendaScreenContent(
         }
     }
 
+    fun navigateToEventScreen(eventId: EventId?, isEditable: Boolean = false) {
+        navigator.navigate(
+            EventScreenDestination(
+                eventId = eventId,  // create new event
+                isEditable = isEditable,
+            )
+        ) {
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     // Guard against invalid authentication state OR perform logout
     SideEffect {
         if (state.isLoaded && state.authInfo == null) {
             onAction(AgendaScreenEvent.SetIsLoaded(false))
-            navigateToLogin()
+            navigateToLoginScreen()
         }
     }
 
@@ -181,36 +194,13 @@ fun AgendaScreenContent(
     LaunchedEffect(oneTimeEvent) {
         when (oneTimeEvent) {
             AgendaScreenEvent.OneTimeEvent.NavigateToCreateEvent -> {
-                navigator.navigate(
-                    EventScreenDestination(
-                        eventId = null,  // create new event
-                        isEditable = true,
-                    )
-                ) {
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                navigateToEventScreen(null, true)
             }
             is AgendaScreenEvent.OneTimeEvent.NavigateToOpenEvent -> {
-                navigator.navigate(
-                    EventScreenDestination(
-                        eventId = oneTimeEvent.eventId,
-                    )
-                ) {
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                navigateToEventScreen(oneTimeEvent.eventId)
             }
             is AgendaScreenEvent.OneTimeEvent.NavigateToEditEvent -> {
-                navigator.navigate(
-                    EventScreenDestination(
-                        eventId = oneTimeEvent.eventId,
-                        isEditable = true,
-                    )
-                ) {
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                navigateToEventScreen(oneTimeEvent.eventId, true)
             }
             null -> {}
         }
