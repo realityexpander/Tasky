@@ -104,6 +104,7 @@ fun AddEventScreenContent(
 
     var attendeeListType by remember { mutableStateOf(AttendeeListType.ALL) }
     val isEditable = state.isEditable
+    val isUserCreator = state.event?.isUserEventCreator == true
 
     fun popBack() {
         navigator.popBackStack()
@@ -202,7 +203,6 @@ fun AddEventScreenContent(
             )
 
             // • EDIT / SAVE BUTTON
-            if (state.event?.isUserEventCreator == true) {
                 if (isEditable) {
                     TextButton(
                         onClick = {
@@ -241,7 +241,6 @@ fun AddEventScreenContent(
                         }
                     }
                 }
-            }
 
         }
         //Spacer(modifier = Modifier.smallHeight())
@@ -332,13 +331,13 @@ fun AddEventScreenContent(
                         MaterialTheme.typography.h2  // can only access in Composable scope
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
-                        tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
+                        tint = if (isEditable && isUserCreator) MaterialTheme.colors.onSurface else Color.Transparent,
                         contentDescription = stringResource(R.string.event_edit_event_title),
                         modifier = Modifier
                             .size(28.dp)
                             .weight(.1f)
                             .align(Alignment.CenterVertically)
-                            .clickable(enabled = isEditable) {
+                            .clickable(isEditable && isUserCreator) {
                                 onAction(
                                     SetEditMode(
                                         EditMode.ChooseTitleText(
@@ -373,18 +372,17 @@ fun AddEventScreenContent(
                                 .wrapContentHeight()
                         )
                     }
-
                     val editTextStyle =
                         MaterialTheme.typography.body1  // can only access in Composable scope
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
-                        tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
+                        tint = if (isEditable && isUserCreator) MaterialTheme.colors.onSurface else Color.Transparent,
                         contentDescription = stringResource(R.string.event_description_edit_event_description),
                         modifier = Modifier
                             .size(28.dp, 28.dp)
                             .weight(.1f)
                             .align(Alignment.CenterVertically)
-                            .clickable(enabled = isEditable) {
+                            .clickable(enabled = isEditable && isUserCreator) {
                                 onAction(
                                     SetEditMode(
                                         EditMode.ChooseDescriptionText(
@@ -399,7 +397,7 @@ fun AddEventScreenContent(
             }
 
             // • PHOTO PICKER / ADD & REMOVE PHOTOS
-            if(state.isEditable || !state.event?.photos.isNullOrEmpty()) {
+            if((isEditable && isUserCreator) || !state.event?.photos.isNullOrEmpty()) {
                 Spacer(modifier = Modifier.smallHeight())
 
                 Box(
@@ -411,7 +409,7 @@ fun AddEventScreenContent(
                         .wrapContentHeight()
                 ) {
 
-                    if (state.isEditable
+                    if ((isEditable && isUserCreator)
                         && state.event?.photos.isNullOrEmpty()
                     ) {
                         // • NO PHOTOS
@@ -448,7 +446,7 @@ fun AddEventScreenContent(
                             )
                         }
                     } else {
-                        if (state.isEditable
+                        if ( (isEditable && isUserCreator)
                             || state.event?.photos?.isNotEmpty() == true
                         ) {
                             // • LIST OF PHOTO IMAGES
@@ -481,7 +479,7 @@ fun AddEventScreenContent(
                                     var photoList = state.event?.photos
 
                                     // Add the "Add Photo" button if in edit mode
-                                    if (state.event?.isUserEventCreator == true && state.isEditable) {
+                                    if (isEditable && isUserCreator) {
                                         if (photoList.isNullOrEmpty()) {
                                             photoList = listOf(
                                                 Photo.Local(
@@ -526,7 +524,7 @@ fun AddEventScreenContent(
                                                     modifier = Modifier
                                                         .size(36.dp)
                                                         .align(Alignment.Center)
-                                                        .clickable(enabled = isEditable) {
+                                                        .clickable(isEditable && isUserCreator) {
                                                             onAction(
                                                                 SetEditMode(
                                                                     EditMode.ChooseAddPhoto()
@@ -585,7 +583,7 @@ fun AddEventScreenContent(
                 TimeDateRow(
                     title = stringResource(R.string.event_from),
                     date = state.event?.from ?: ZonedDateTime.now(),
-                    isEditable = isEditable,
+                    isEditable = isEditable && isUserCreator,
                     onEditDate = {
                         onAction(
                             SetEditMode(
@@ -607,7 +605,7 @@ fun AddEventScreenContent(
                 TimeDateRow(
                     title = stringResource(R.string.event_to),
                     date = state.event?.to ?: ZonedDateTime.now(),
-                    isEditable = isEditable,
+                    isEditable = isEditable && isUserCreator,
                     onEditDate = {
                         onAction(
                             SetEditMode(
@@ -664,21 +662,21 @@ fun AddEventScreenContent(
                     // • Add Attendee Button
                     Icon(
                         imageVector = Icons.Outlined.Add,
-                        tint = if (isEditable) MaterialTheme.colors.onSurface.copy(alpha = .3f) else Color.Transparent,
+                        tint = if (isEditable && isUserCreator) MaterialTheme.colors.onSurface.copy(alpha = .3f) else Color.Transparent,
                         contentDescription = stringResource(R.string.event_description_add_attendee_button),
                         modifier = Modifier
                             .offset(y = (-4).dp)
                             .size(38.dp)
                             .clip(shape = RoundedCornerShape(5.dp))
                             .background(
-                                if (isEditable)
+                                if (isEditable && isUserCreator)
                                     MaterialTheme.colors.onSurface.copy(alpha = .1f)
                                 else
                                     Color.Transparent
                             )
                             .padding(4.dp)
                             .align(Alignment.CenterVertically)
-                            .clickable(enabled = isEditable) {
+                            .clickable(enabled = isEditable && isUserCreator) {
                                 onAction(
                                     SetEditMode(EditMode.ChooseAddAttendee())
                                 )
