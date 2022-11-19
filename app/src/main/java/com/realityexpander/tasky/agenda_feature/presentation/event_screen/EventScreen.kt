@@ -3,6 +3,7 @@ package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 import android.content.res.Configuration
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
@@ -47,6 +48,7 @@ import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.util.UuidStr
+import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -109,6 +111,16 @@ fun AddEventScreenContent(
 
     fun popBack() {
         navigator.popBackStack()
+    }
+
+    BackHandler(true) {
+        if(state.editMode != null) {
+            scope.launch {
+                onAction(CancelEditMode)
+            }
+        } else {
+            popBack()
+        }
     }
 
     // • Stateful one-time events
@@ -810,20 +822,6 @@ fun AddEventScreenContent(
                             .fillMaxWidth()
                     )
                 }
-
-//                Text(
-//                    if (state.event?.isUserEventCreator == true)
-//                            stringResource(R.string.event_delete_event)
-//                        else if (state.event?.isGoing == true)
-//                            stringResource(R.string.event_leave_event)
-//                        else
-//                            stringResource(R.string.event_join_event),
-//                    style = MaterialTheme.typography.h4,
-//                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
-//                    textAlign = TextAlign.Center,
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                )
                 Spacer(modifier = Modifier.mediumHeight())
             }
         }
