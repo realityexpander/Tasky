@@ -39,16 +39,18 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.UserAcronymCircle
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.agenda_feature.presentation.components.AgendaCard
-import com.realityexpander.tasky.agenda_feature.presentation.common.components.UserAcronymCircle
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.DaySelected
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.realityexpander.tasky.destinations.EventScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -60,12 +62,6 @@ import java.util.*
 @Composable
 @Destination
 fun AgendaScreen(
-//    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-//    username: String?,//  = null,
-//    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-//    email: String? = null,
-//    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-//    password: String? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     selectedDayIndex: Int? = 0,
 
@@ -73,10 +69,12 @@ fun AgendaScreen(
     viewModel: AgendaViewModel = hiltViewModel(),
 ) {
     val state by viewModel.agendaState.collectAsState()
+    val oneTimeEvent by viewModel.oneTimeEvent.collectAsState(null)
 
     AgendaScreenContent(
         state = state,
         onAction = viewModel::sendEvent,
+        oneTimeEvent = oneTimeEvent,
         navigator = navigator,
     )
 
@@ -96,7 +94,8 @@ fun AgendaScreen(
 @Composable
 fun AgendaScreenContent(
     state: AgendaState,
-    onAction: (AgendaEvent) -> Unit,
+    onAction: (AgendaScreenEvent) -> Unit,
+    oneTimeEvent: AgendaScreenEvent.OneTimeEvent?,
     navigator: DestinationsNavigator,
 ) {
     val focusManager = LocalFocusManager.current
@@ -124,7 +123,7 @@ fun AgendaScreenContent(
     // Display month name
     val month = remember(LocalDate.now().month) { LocalDate.now().month.getDisplayName(TextStyle.FULL, Locale.getDefault()).uppercase() }
 
-    fun navigateToLogin() {
+    fun navigateToLoginScreen() {
         navigator.navigate(
             LoginScreenDestination(
                 username = null,
@@ -141,11 +140,23 @@ fun AgendaScreenContent(
         }
     }
 
+    fun navigateToEventScreen(eventId: EventId?, isEditable: Boolean = false) {
+        navigator.navigate(
+            EventScreenDestination(
+                eventId = eventId,  // create new event
+                isEditable = isEditable,
+            )
+        ) {
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     // Guard against invalid authentication state OR perform logout
     SideEffect {
         if (state.isLoaded && state.authInfo == null) {
-            onAction(AgendaEvent.SetIsLoaded(false))
-            navigateToLogin()
+            onAction(AgendaScreenEvent.SetIsLoaded(false))
+            navigateToLoginScreen()
         }
     }
 
@@ -163,23 +174,37 @@ fun AgendaScreenContent(
                     scrollState.animateScrollToItem(item)
                 }
             }
-            onAction(AgendaEvent.StatefulOneTimeEvent.ResetScrollTo)
+            onAction(AgendaScreenEvent.StatefulOneTimeEvent.ResetScrollTo)
         }
         if(state.scrollToTop) {
             scope.launch {
                 scrollState.animateScrollToItem(0)
             }
-            onAction(AgendaEvent.StatefulOneTimeEvent.ResetScrollTo)
+            onAction(AgendaScreenEvent.StatefulOneTimeEvent.ResetScrollTo)
         }
         if(state.scrollToBottom) {
             scope.launch {
                 scrollState.animateScrollToItem(agendaItems.size - 1)
             }
-            onAction(AgendaEvent.StatefulOneTimeEvent.ResetScrollTo)
+            onAction(AgendaScreenEvent.StatefulOneTimeEvent.ResetScrollTo)
         }
     }
 
-    // todo Handle "un-sequenced" one-time events (like Snackbar), will use a Channel or SharedFlow
+    // • One-time events (like Navigation, SnackBars, etc) are handled here
+    LaunchedEffect(oneTimeEvent) {
+        when (oneTimeEvent) {
+            AgendaScreenEvent.OneTimeEvent.NavigateToCreateEvent -> {
+                navigateToEventScreen(null, true)
+            }
+            is AgendaScreenEvent.OneTimeEvent.NavigateToOpenEvent -> {
+                navigateToEventScreen(oneTimeEvent.eventId)
+            }
+            is AgendaScreenEvent.OneTimeEvent.NavigateToEditEvent -> {
+                navigateToEventScreen(oneTimeEvent.eventId, true)
+            }
+            null -> {}
+        }
+    }
 
     // Check keyboard open/closed (how to make this a function?)
     val view = LocalView.current
@@ -196,7 +221,7 @@ fun AgendaScreenContent(
         }
     }
 
-    // • Main Container
+    // • MAIN CONTAINER
     Column(
         modifier = Modifier
             .background(color = MaterialTheme.colors.onSurface)
@@ -265,7 +290,7 @@ fun AgendaScreenContent(
                         vectorIcon = Icons.Filled.Logout,
                         onClick = {
                             isLogoutMenuExpanded = false
-                            onAction(AgendaEvent.Logout)
+                            onAction(AgendaScreenEvent.Logout)
                         },
                     )
                 }
@@ -310,7 +335,7 @@ fun AgendaScreenContent(
                                 }
                             }
                             .clickable {
-                                onAction(AgendaEvent.SetSelectedDayIndex(dayIndex))
+                                onAction(AgendaScreenEvent.SetSelectedDayIndex(dayIndex))
                             }
                     ) {
                         // Day of week (S, M, T, W, T, F, S)
@@ -399,7 +424,7 @@ fun AgendaScreenContent(
                         agendaItem = agendaItem,
                         onToggleCompleted = {
                             if (agendaItem is AgendaItem.Task) {
-                                onAction(AgendaEvent.TaskToggleCompleted(agendaItem.id))
+                                onAction(AgendaScreenEvent.ToggleTaskCompleted(agendaItem.id))
                             }
                         },
                         modifier = Modifier
@@ -460,6 +485,7 @@ fun AgendaScreenContent(
 
     }
 
+    // • FAB BUTTON
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -502,7 +528,7 @@ fun AgendaScreenContent(
                     painterIcon = painterResource(id = R.drawable.calendar_add_on),
                     onClick = {
                         isFabMenuExpanded = false
-                        onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Event))
+                        onAction(AgendaScreenEvent.CreateAgendaItem(AgendaItemType.Event))
                     },
                 )
                 MenuItem(
@@ -510,7 +536,7 @@ fun AgendaScreenContent(
                     vectorIcon = Icons.Filled.AddTask,
                     onClick = {
                         isFabMenuExpanded = false
-                        onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Task))
+                        onAction(AgendaScreenEvent.CreateAgendaItem(AgendaItemType.Task))
                     },
                 )
                 MenuItem(
@@ -518,7 +544,7 @@ fun AgendaScreenContent(
                     vectorIcon = Icons.Filled.NotificationAdd,
                     onClick = {
                         isFabMenuExpanded = false
-                        onAction(AgendaEvent.CreateAgendaItem(AgendaItemType.Reminder))
+                        onAction(AgendaScreenEvent.CreateAgendaItem(AgendaItemType.Reminder))
                     },
                 )
             }
@@ -529,25 +555,24 @@ fun AgendaScreenContent(
 fun performActionForAgendaItem(
     agendaItem: AgendaItem?,
     action: AgendaItemAction,
-    onAction: (AgendaEvent)-> Unit
+    onAction: (AgendaScreenEvent)-> Unit
 ) {
-
     agendaItem ?: return
 
     when (agendaItem) {
         is AgendaItem.Event -> {
             when (action) {
                 AgendaItemAction.OPEN_DETAILS -> {
-                    println("OPEN DETAILS FOR EVENT ${agendaItem.id}")
-//                    onAction(AgendaEvent.NavigateToOpenEvent(agendaItem))
+                    onAction(AgendaScreenEvent.OneTimeEvent.NavigateToOpenEvent(agendaItem.id))
                 }
                 AgendaItemAction.EDIT -> {
-                    println("EDIT EVENT ${agendaItem.id}")
-//                    onAction(AgendaEvent.NavigateToEditEvent(agendaItem))
+                    onAction(AgendaScreenEvent.OneTimeEvent.NavigateToEditEvent(agendaItem.id))
                 }
                 AgendaItemAction.DELETE -> {
                     println("DELETE EVENT ${agendaItem.id}")
-//                    onAction(AgendaEvent.DeleteEvent(agendaItem))
+
+                    // todo show confirmation dialog before sending delete `AgendaItem ID` to VM
+//                    onAction(AgendaEvent.ConfirmDeleteEvent(agendaItem))
                 }
                 else -> {}
             }
@@ -646,6 +671,7 @@ fun AgendaScreenPreview() {
             ),
             onAction = { println("ACTION: $it") },
             navigator = EmptyDestinationsNavigator,
+            oneTimeEvent = null,
         )
     }
 }

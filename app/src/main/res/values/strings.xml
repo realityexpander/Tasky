@@ -65,6 +65,7 @@
     <string name="error_invalid_confirm_password">Invalid confirm password</string>
     <string name="error_invalid_username">Invalid username, must be 4–50 characters</string>
     <string name="error_invalid_user_name">Invalid user name</string>
+    <string name="error_invalid_string_resource_id">Invalid String Resource id</string>
 
     <!-- ZonedDateTimeToString.kt -->
     <string name="zonedDateTimeToString_same_time">Same time</string>
@@ -113,6 +114,12 @@
     <string name="event_delete_event">DELETE EVENT</string>
     <string name="event_leave_event">LEAVE EVENT</string>
     <string name="event_join_event">JOIN EVENT</string>
+    <string name="event_error_save_event">Error saving Event</string>
+    <string name="event_error_delete_event">Error deleting Event</string>
+    <string name="event_error_leave_event">Error leaving Event</string>
+    <string name="event_error_join_event">Error joining Event</string>
+    <string name="event_message_event_saved">Event Saved</string>
+
 
     <!--    Event Screen Dialog Titles -->
     <string name="event_dialog_title_choose_title_text">EDIT TITLE</string>

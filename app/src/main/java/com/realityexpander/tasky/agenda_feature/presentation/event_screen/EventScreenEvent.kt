@@ -20,6 +20,9 @@ sealed interface EventScreenEvent {
     data class SetEditMode(val editMode: EditMode) : EventScreenEvent
     object CancelEditMode : EventScreenEvent
 
+    // • Save Updated Event
+    object SaveEvent : EventScreenEvent
+
     // • Add Attendee Dialog
     data class ValidateAttendeeEmailExistsThenAddAttendee(val email: Email) : EventScreenEvent
     object ClearErrorsForAddAttendeeDialog : EventScreenEvent
@@ -29,9 +32,16 @@ sealed interface EventScreenEvent {
     // • Errors
     data class Error(val message: UiText) : EventScreenEvent
 
-    // • One-time events  // todo setup one-time events
+    // • Stateful One-time events  // todo setup one-time events
     sealed interface StatefulOneTimeEvent {
 //        object ResetScrollTo                                        : StatefulOneTimeEvent, AddEventEvent
+    }
+
+    // • Non-state One Time Events
+    sealed interface OneTimeEvent {
+        // • Event - Navigate Back to Previous Screen
+        object NavigateBack : EventScreenEvent, OneTimeEvent
+        data class ShowToast(val message: UiText) : EventScreenEvent, OneTimeEvent
     }
 
     sealed interface EditMode {
@@ -117,7 +127,7 @@ sealed interface EventScreenEvent {
         }
 
 
-        // • (3) FINALLY "Update Data" Events - Delivers the edited/added/deleted data payload to the ViewModel
+        // • (3) FINALLY "Update/Add/Remove Data" Events - Delivers the updated/added/removed data payload to the ViewModel
         data class UpdateText(override val text: String) : EventScreenEvent, TextPayload
         data class UpdateDateTime(override val dateTime: ZonedDateTime) : EventScreenEvent, DateTimePayload
         data class AddLocalPhoto(override val photoLocal: Photo.Local) : EventScreenEvent, PhotoLocalPayload

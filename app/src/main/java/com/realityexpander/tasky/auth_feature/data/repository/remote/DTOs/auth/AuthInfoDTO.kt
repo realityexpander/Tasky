@@ -5,6 +5,7 @@ import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.Username
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.json.JsonNames
 
 // Authentication response from the server
@@ -16,4 +17,6 @@ data class AuthInfoDTO(
     val userId: UserId? = null,
     @JsonNames("fullName")
     val username: Username? = null,
+    @Transient
+    val email: String? = null,
 )
