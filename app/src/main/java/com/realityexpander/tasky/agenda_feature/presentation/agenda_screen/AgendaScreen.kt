@@ -564,7 +564,7 @@ fun AgendaScreenContent(
     // • Confirm `Delete Agenda Item` Dialog
     state.confirmDeleteAgendaItem?.let { agendaItem ->
 
-        val agendaItemType =
+        val agendaItemTypeName =
             when(agendaItem) {
                 is AgendaItem.Event -> {
                     stringResource(R.string.agenda_item_type_event)
@@ -580,10 +580,10 @@ fun AgendaScreenContent(
 
         AlertDialog(
             title = {
-                Text("Delete $agendaItemType?")
+                Text("Delete $agendaItemTypeName?")
             },
             text = {
-                Text("Are you sure you want to delete $agendaItemType: '${agendaItem.title}'?")
+                Text("Are you sure you want to delete $agendaItemTypeName: '${agendaItem.title}'?")
             },
             onDismissRequest = { onAction(DismissConfirmDeleteAgendaItemDialog) },
             confirmButton = {

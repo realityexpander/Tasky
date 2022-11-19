@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
+import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
@@ -342,7 +343,14 @@ class AgendaViewModel @Inject constructor(
                     host = "Jack",
                     isUserEventCreator = true,
                     isGoing = false,
-                    attendees = emptyList(),
+                    attendees = listOf(
+                        Attendee(
+                            id = authRepository.getAuthInfo()?.userId!!,
+                            fullName = authRepository.getAuthInfo()?.username ?: "",
+                            email = authRepository.getAuthInfo()?.email ?: "",
+                            isGoing = true,
+                        )
+                    ),
                     photos = emptyList(),
                 )
             )

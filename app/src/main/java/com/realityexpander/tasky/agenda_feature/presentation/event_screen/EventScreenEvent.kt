@@ -9,6 +9,17 @@ import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import java.time.ZonedDateTime
 
+enum class ConfirmActionDialogType(val title: UiText) {
+    DeleteEvent(UiText.Res(R.string.event_confirm_action_dialog_delete)),
+    LeaveEvent(UiText.Res(R.string.event_confirm_action_dialog_leave)),
+    JoinEvent(UiText.Res(R.string.event_confirm_action_dialog_join)),
+}
+
+class ConfirmActionDialog(
+    val actionType: ConfirmActionDialogType,
+    val onConfirm: () -> Unit,
+)
+
 sealed interface EventScreenEvent {
     data class SetIsLoaded(val isLoaded: Boolean) : EventScreenEvent
     data class ShowProgressIndicator(val isShowing: Boolean) : EventScreenEvent
@@ -19,6 +30,13 @@ sealed interface EventScreenEvent {
     // • The Current EditMode of Event (Title, Description, FromDateTime, ToDateTime, RemindAt, Photos)
     data class SetEditMode(val editMode: EditMode) : EventScreenEvent
     object CancelEditMode : EventScreenEvent
+
+    // • Confirm Action (Delete/Join/Leave) Event Dialog
+    data class ShowConfirmActionDialog(
+        val actionType: ConfirmActionDialogType,
+        val onConfirm: () -> Unit,
+    ) : EventScreenEvent
+    object DismissConfirmActionDialog : EventScreenEvent
 
     // • Update/Delete/Join/Leave Event
     object SaveEvent : EventScreenEvent
@@ -44,6 +62,7 @@ sealed interface EventScreenEvent {
     sealed interface OneTimeEvent {
         // • Event - Navigate Back to Previous Screen
         object NavigateBack : EventScreenEvent, OneTimeEvent
+
         data class ShowToast(val message: UiText) : EventScreenEvent, OneTimeEvent
     }
 

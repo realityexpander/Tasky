@@ -130,6 +130,11 @@
     <string name="event_error_join_event">Error joining Event</string>
     <string name="event_message_event_saved">Event Saved</string>
     <string name="event_message_event_deleted_success">Event successfully deleted</string>
+    <string name="event_confirm_action_dialog_delete">Delete</string>
+    <string name="event_confirm_action_dialog_leave">Leave</string>
+    <string name="event_confirm_action_dialog_join">Join</string>
+    <string name="event_confirm_action_dialog_title_phrase">%1$s this %2$s?</string>
+    <string name="event_confirm_action_dialog_text_phrase">Are you sure you want to %1$s this %2$s?</string>
 
 
     <!--    Event Screen Dialog Titles -->

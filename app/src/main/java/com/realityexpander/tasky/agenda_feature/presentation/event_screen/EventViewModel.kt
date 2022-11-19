@@ -22,8 +22,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.time.Duration
 import java.time.ZonedDateTime
-import java.util.*
 import javax.inject.Inject
+
+const val NEW_EVENT_ID = "NEW_EVENT_ID"
 
 @HiltViewModel
 class EventViewModel @Inject constructor(
@@ -84,30 +85,30 @@ class EventViewModel @Inject constructor(
                 username = authRepository.getAuthInfo()?.username ?: "",
                 authInfo = authRepository.getAuthInfo(),
 
-                // If eventId is null, then we are creating a new event
+                // If eventId is null, then creating a new event.
                 event = eventId?.let { eventId ->
-                    agendaRepository.getEvent(eventId)   // load event from repository
-                } ?: AgendaItem.Event(
-                    id = UUID.randomUUID().toString(),
-                    title = "Title of New Event",
-                    description = "Description of New Event",
-                    isUserEventCreator = true,
-                    from = ZonedDateTime.now(),
-                    to = ZonedDateTime.now().plusHours(1),
-                    remindAt = ZonedDateTime.now().plusMinutes(30),
-                    isGoing = true,
-                    photos = emptyList(),
-                    attendees = listOf(
-                        Attendee(
-                            id = authRepository.getAuthInfo()?.userId!!,
-                            fullName = authRepository.getAuthInfo()?.username ?: "",
-                            email = authRepository.getAuthInfo()?.email ?: "",
-                            isGoing = true,
+                    agendaRepository.getEvent(eventId)   // Load event from repository
+                } ?:
+                    // Create a new Event
+                    AgendaItem.Event(
+                        id = NEW_EVENT_ID,
+                        title = "Title of New Event",
+                        description = "Description of New Event",
+                        isUserEventCreator = true,
+                        from = ZonedDateTime.now(),
+                        to = ZonedDateTime.now().plusHours(1),
+                        remindAt = ZonedDateTime.now().plusMinutes(30),
+                        isGoing = true,
+                        photos = emptyList(),
+                        attendees = listOf(
+                            Attendee(
+                                id = authRepository.getAuthInfo()?.userId!!,
+                                fullName = authRepository.getAuthInfo()?.username ?: "",
+                                email = authRepository.getAuthInfo()?.email ?: "",
+                                isGoing = true,
+                            )
                         )
-                    )
-                ),
-
-
+                    ),
             )
         }
     }
@@ -394,7 +395,75 @@ class EventViewModel @Inject constructor(
                     }
                 }
             }
-            is DeleteEvent -> {}
+            is ShowConfirmActionDialog -> {
+                _state.update { _state ->
+                    _state.copy(
+                        showConfirmActionDialog =
+                            ConfirmActionDialog(
+                                actionType = uiEvent.actionType,
+                                onConfirm = uiEvent.onConfirm,
+                            )
+                    )
+                }
+            }
+            is DismissConfirmActionDialog -> {
+                _state.update { _state ->
+                    _state.copy(
+                        showConfirmActionDialog = null
+                    )
+                }
+            }
+            is DeleteEvent -> {
+                _state.value.event ?: return
+
+                _state.update { _state ->
+                    _state.copy(
+                        isProgressVisible = true,
+                        errorMessage = null
+                    )
+                }
+
+                if (_state.value.event?.id == NEW_EVENT_ID) {
+                    // Event is not saved yet, so just navigate back
+                    _state.update { _state ->
+                        _state.copy(
+                            isProgressVisible = false,
+                            errorMessage = null
+                        )
+                    }
+                    sendEvent(OneTimeEvent.NavigateBack)
+                    return
+                }
+
+                val result =
+                    agendaRepository.deleteEventId(_state.value.event?.id ?: return)
+
+                when (result) {
+                    is ResultUiText.Success -> {
+                        _state.update { _state ->
+                            _state.copy(
+                                isProgressVisible = false,
+                                errorMessage = null
+                            )
+                        }
+                        _oneTimeEvent.emit(
+                            OneTimeEvent.ShowToast(
+                                UiText.Res(R.string.event_message_event_deleted_success)
+                            )
+                        )
+                        sendEvent(CancelEditMode)
+                        sendEvent(OneTimeEvent.NavigateBack)
+                    }
+                    is ResultUiText.Error -> {
+                        _state.update { _state ->
+                            _state.copy(
+                                isProgressVisible = false,
+                                errorMessage = UiText.Res(R.string.event_error_delete_event)
+                            )
+                        }
+                    }
+                }
+            }
             is JoinEvent -> {}   // todo implement
             is LeaveEvent -> {}  // todo implement
 
