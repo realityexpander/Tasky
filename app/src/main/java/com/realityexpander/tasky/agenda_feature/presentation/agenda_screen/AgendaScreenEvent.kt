@@ -43,5 +43,4 @@ sealed interface AgendaScreenEvent {
         data class NavigateToOpenEvent(val eventId: EventId) : AgendaScreenEvent, OneTimeEvent
         data class NavigateToEditEvent(val eventId: EventId) : AgendaScreenEvent, OneTimeEvent
     }
-
 }

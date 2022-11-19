@@ -580,10 +580,10 @@ fun AgendaScreenContent(
 
         AlertDialog(
             title = {
-                Text("Delete $agendaItemTypeName?")
+                Text(stringResource(R.string.agenda_confirm_delete_item_dialog_title_phrase, agendaItemTypeName))
             },
             text = {
-                Text("Are you sure you want to delete $agendaItemTypeName: '${agendaItem.title}'?")
+                Text(stringResource(R.string.agenda_confirm_delete_item_dialog_text_phrase, agendaItem.title))
             },
             onDismissRequest = { onAction(DismissConfirmDeleteAgendaItemDialog) },
             confirmButton = {
