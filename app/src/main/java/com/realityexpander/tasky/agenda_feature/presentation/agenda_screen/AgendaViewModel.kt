@@ -363,6 +363,7 @@ class AgendaViewModel @Inject constructor(
 }
 
 
+// todo remove later - left for reference
 //    private fun createAgendaItem(agendaItemType: AgendaItemType) {
 //        viewModelScope.launch {
 //            val today = LocalDate.now()
