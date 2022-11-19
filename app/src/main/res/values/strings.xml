@@ -91,7 +91,7 @@
     <string name="agenda_add_agenda_item">Add Agenda Item</string>
 
     <!--    Event screen -->
-    <string name="event_description_close">Close Add Event</string>
+    <string name="event_description_close">Close Event screen</string>
     <string name="event_description_edit_event">Edit Event</string>
     <string name="event_description_meeting_title_marker">Meeting title marker</string>
     <string name="event_description_edit_event_description">Edit Event Description</string>
