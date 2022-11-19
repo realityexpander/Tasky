@@ -69,6 +69,7 @@
     <string name="error_invalid_username">Invalid username, must be 4–50 characters</string>
     <string name="error_invalid_user_name">Invalid user name</string>
     <string name="error_invalid_string_resource_id">Invalid String Resource id</string>
+    <string name="error_unknown_agenda_type">Unknown Agenda Type</string>
 
     <!-- ZonedDateTimeToString.kt -->
     <string name="zonedDateTimeToString_same_time">Same time</string>
@@ -128,6 +129,7 @@
     <string name="event_error_leave_event">Error leaving Event</string>
     <string name="event_error_join_event">Error joining Event</string>
     <string name="event_message_event_saved">Event Saved</string>
+    <string name="event_message_event_deleted_success">Event successfully deleted</string>
 
 
     <!--    Event Screen Dialog Titles -->

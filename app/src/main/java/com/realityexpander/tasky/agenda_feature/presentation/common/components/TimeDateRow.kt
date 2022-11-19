@@ -54,7 +54,7 @@ fun ColumnScope.TimeDateRow(
                     .align(Alignment.CenterVertically)
             )
             Text(
-                date.toTime12Hour() ?: "not set",
+                date.toTime12Hour(),
                 color = MaterialTheme.colors.onSurface,
                 textAlign = TextAlign.End,
                 modifier = Modifier
@@ -84,7 +84,7 @@ fun ColumnScope.TimeDateRow(
                 }
         ) {
             Text(
-                date.toShortMonthDayYear() ?: "not set",
+                date.toShortMonthDayYear(),
                 color = MaterialTheme.colors.onSurface,
                 textAlign = TextAlign.Center,
                 modifier = Modifier

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
+import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
@@ -182,13 +183,21 @@ class AgendaViewModel @Inject constructor(
                     }
                 }
             }
-            is Error -> {
+            is SetErrorMessage -> {
                 _agendaState.update {
                     it.copy(
                         errorMessage = if(event.message.isRes)
                             event.message
                         else
                             UiText.Res(R.string.error_unknown, "")
+                    )
+                }
+                sendEvent(ShowProgressIndicator(false))
+            }
+            is ClearErrorMessage -> {
+                _agendaState.update {
+                    it.copy(
+                        errorMessage = null
                     )
                 }
                 sendEvent(ShowProgressIndicator(false))
@@ -202,38 +211,53 @@ class AgendaViewModel @Inject constructor(
             is OneTimeEvent.NavigateToEditEvent -> {
                 _oneTimeEvent.emit(OneTimeEvent.NavigateToEditEvent(event.eventId))
             }
-            is ConfirmDeleteAgendaItem -> {
+            is ShowConfirmDeleteAgendaItemDialog -> {
                 _agendaState.update {
                     it.copy(
                         confirmDeleteAgendaItem = event.agendaItem
                     )
                 }
+                sendEvent(ClearErrorMessage)
             }
             is DeleteAgendaItem -> {
                 // Question: Is it necessary to do a search in UI items for the ID before deleting?
                 //   Or is it OK to simply delete the AgendaItem that was passed in?
                 _agendaState.value.agendaItems.collectLatest {
-                    it.find {
+
+                    val result: ResultUiText<out AgendaItem> = it.find {
                         item -> item.id == event.agendaItem.id
                     }?.let { agendaItem ->
                         when (agendaItem) {
                             is AgendaItem.Event -> {
-                                agendaRepository.deleteEventId(agendaItem.id) // todo check result errors
+                                agendaRepository.deleteEventId(agendaItem.id)
                             }
                             is AgendaItem.Task -> {
 //                                agendaRepository.deleteTaskId(agendaItem)  // todo implement
+                                ResultUiText.Error<AgendaItem.Task>(UiText.Str("unimplemented"))
                             }
                             is AgendaItem.Reminder -> {
 //                                agendaRepository.deleteReminderId(agendaItem) // todo implement
+                                ResultUiText.Error<AgendaItem.Task>(UiText.Str("unimplemented"))
                             }
-                            else -> throw IllegalArgumentException("Unknown AgendaItem type")
+                            else -> {
+                                ResultUiText.Error<AgendaItem>(UiText.Res(R.string.error_unknown_agenda_type))
+                            }
                         }
-                    } ?: sendEvent(Error(UiText.Res(R.string.agenda_error_agenda_item_not_found)))
+                    } ?: run {
+//                        sendEvent(SetErrorMessage(UiText.Res(R.string.agenda_error_agenda_item_not_found)))
+                        ResultUiText.Error<AgendaItem>(UiText.Res(R.string.error_unknown_agenda_type))
+                    }
 
-                    sendEvent(DismissDeleteAgendaItem)
+                    if(result is ResultUiText.Error) {
+                        sendEvent(SetErrorMessage(result.message))
+                    } else {
+                        _oneTimeEvent.emit(OneTimeEvent.ShowToast(UiText.Res(R.string.event_message_event_deleted_success)))
+                        sendEvent(ClearErrorMessage)
+                    }
+                    sendEvent(DismissConfirmDeleteAgendaItemDialog)
                 }
             }
-            is DismissDeleteAgendaItem -> {
+            is DismissConfirmDeleteAgendaItemDialog -> {
                 _agendaState.update {
                     it.copy(
                         confirmDeleteAgendaItem = null
