@@ -130,12 +130,6 @@
     <string name="event_error_join_event">Error joining Event</string>
     <string name="event_message_event_saved">Event Saved</string>
     <string name="event_message_event_deleted_success">Event successfully deleted</string>
-    <string name="event_confirm_action_dialog_delete">Delete</string>
-    <string name="event_confirm_action_dialog_leave">Leave</string>
-    <string name="event_confirm_action_dialog_join">Join</string>
-    <string name="event_confirm_action_dialog_title_phrase">%1$s this %2$s?</string>
-    <string name="event_confirm_action_dialog_text_phrase">Are you sure you want to %1$s this %2$s?</string>
-
 
     <!--    Event Screen Dialog Titles -->
     <string name="event_dialog_title_choose_title_text">EDIT TITLE</string>
@@ -151,6 +145,13 @@
     <string name="event_dialog_title_confirm_remove_attendee">CONFIRM REMOVE ATTENDEE</string>
     <string name="event_dialog_title_remove_attendee">Remove Attendee</string>
     <string name="remove_attendee_dialog_remove_button">REMOVE</string>
+
+    <!--    Event Screen Confirm Action Dialog Messages -->
+    <string name="event_confirm_action_dialog_delete">Delete</string>
+    <string name="event_confirm_action_dialog_leave">Leave</string>
+    <string name="event_confirm_action_dialog_join">Join</string>
+    <string name="event_confirm_action_dialog_title_phrase">%1$s this %2$s?</string>
+    <string name="event_confirm_action_dialog_text_phrase">Are you sure you want to %1$s this %2$s?</string>
 
     <!--    Add Attendee -->
     <string name="add_attendee_dialog_title">Add Attendee</string>
