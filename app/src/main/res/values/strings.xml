@@ -100,7 +100,7 @@
     <string name="agenda_error_agenda_item_not_found">Agenda item not found</string>
     <string name="agenda_add_agenda_item">Add Agenda Item</string>
     <string name="agenda_confirm_delete_item_dialog_title_phrase">Delete %s?</string>
-    <string name="agenda_confirm_delete_item_dialog_text_phrase">Are you sure you want to delete this %s?</string>
+    <string name="agenda_confirm_delete_item_dialog_text_phrase">Are you sure you want to delete this \'%s\'?</string>
 
     <!--    Event screen -->
     <string name="event_description_close">Close Event screen</string>
