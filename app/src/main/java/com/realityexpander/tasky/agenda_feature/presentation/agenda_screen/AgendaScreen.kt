@@ -434,7 +434,7 @@ fun AgendaScreenContent(
                         agendaItem = agendaItem,
                         onToggleCompleted = {
                             if (agendaItem is AgendaItem.Task) {
-                                onAction(ToggleTaskCompleted(agendaItem.id))
+                                onAction(ToggleTaskCompleted(agendaItem))
                             }
                         },
                         modifier = Modifier
