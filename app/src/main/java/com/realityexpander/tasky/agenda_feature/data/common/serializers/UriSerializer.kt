@@ -8,7 +8,6 @@ import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import java.net.URLDecoder
 
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -21,9 +20,9 @@ object UriSerializer : KSerializer<Uri> {
     }
 
     override fun serialize(encoder: Encoder, value: Uri) {
-        // encoder.encodeString(value.toString())
+         encoder.encodeString(value.toString())
         // URI.create(value.toString()).toASCIIString()
-        encoder.encodeString(URLDecoder.decode(value.toString(), "UTF-8"))
+//        encoder.encodeString(URLDecoder.decode(value.toString(), "UTF-8"))
     }
 }
 
