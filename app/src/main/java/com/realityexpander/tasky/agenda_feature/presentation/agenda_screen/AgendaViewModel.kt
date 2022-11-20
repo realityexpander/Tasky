@@ -47,8 +47,11 @@ class AgendaViewModel @Inject constructor(
         // save state for process death
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
         savedStateHandle[SAVED_STATE_selectedDayIndex] = state.selectedDayIndex
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),
-        AgendaState())
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        AgendaState()
+    )
 
     private val _oneTimeEvent = MutableSharedFlow<OneTimeEvent>()
     val oneTimeEvent = _oneTimeEvent.asSharedFlow()
@@ -97,31 +100,31 @@ class AgendaViewModel @Inject constructor(
         )
     }
 
-    private suspend fun onEvent(event: AgendaScreenEvent) {
+    private suspend fun onEvent(uiEvent: AgendaScreenEvent) {
 
-        when(event) {
+        when(uiEvent) {
             is ShowProgressIndicator -> {
                 _agendaState.update {
-                    it.copy(isProgressVisible = event.isShowing)
+                    it.copy(isProgressVisible = uiEvent.isShowing)
                 }
             }
             is SetIsLoaded -> {
                 _agendaState.update {
-                    it.copy(isProgressVisible = event.isLoaded)
+                    it.copy(isProgressVisible = uiEvent.isLoaded)
                 }
             }
             is SetSelectedDayIndex -> {
                 _agendaState.update {
                     it.copy(
-                        selectedDayIndex = event.dayIndex,
+                        selectedDayIndex = uiEvent.dayIndex,
                         agendaItems = agendaRepository.getAgendaForDayFlow(
-                            getDateForSelectedDayIndex(event.dayIndex)
+                            getDateForSelectedDayIndex(uiEvent.dayIndex)
                         )
                     )
                 }
             }
             is CreateAgendaItem -> {
-                when(event.agendaItemType) {
+                when(uiEvent.agendaItemType) {
                     AgendaItemType.Event -> {
                         _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateEvent)
                     }
@@ -136,7 +139,7 @@ class AgendaViewModel @Inject constructor(
             is ToggleTaskCompleted -> {
                 _agendaState.value.agendaItems.collectLatest {
                     it.find {
-                        item -> item.id == event.agendaItemId
+                        item -> item.id == uiEvent.agendaItemId
                     }?.let { task ->
                         if(task is AgendaItem.Task) {
 //                            agendaRepository.updateTask(task.copy(isCompleted = !task.isCompleted)) // todo implement update task - completed state
@@ -151,7 +154,7 @@ class AgendaViewModel @Inject constructor(
                 logout()
             }
             is StatefulOneTimeEvent -> {
-                when (event) {
+                when (uiEvent) {
 
                     // Because you can only scroll to one location at a time, we only
                     // need one reset event to reset all the scrolling events.
@@ -179,7 +182,7 @@ class AgendaViewModel @Inject constructor(
                     is StatefulOneTimeEvent.ScrollToItemId -> {
                         // • Send the one time event
                         _agendaState.update {
-                            it.copy(scrollToItemId = event.agendaItemId)
+                            it.copy(scrollToItemId = uiEvent.agendaItemId)
                         }
                     }
                 }
@@ -187,8 +190,8 @@ class AgendaViewModel @Inject constructor(
             is SetErrorMessage -> {
                 _agendaState.update {
                     it.copy(
-                        errorMessage = if(event.message.isRes)
-                            event.message
+                        errorMessage = if(uiEvent.message.isRes)
+                            uiEvent.message
                         else
                             UiText.Res(R.string.error_unknown, "")
                     )
@@ -207,56 +210,45 @@ class AgendaViewModel @Inject constructor(
                 _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateEvent)
             }
             is OneTimeEvent.NavigateToOpenEvent -> {
-                _oneTimeEvent.emit(OneTimeEvent.NavigateToOpenEvent(event.eventId))
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToOpenEvent(uiEvent.eventId))
             }
             is OneTimeEvent.NavigateToEditEvent -> {
-                _oneTimeEvent.emit(OneTimeEvent.NavigateToEditEvent(event.eventId))
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToEditEvent(uiEvent.eventId))
             }
             is ShowConfirmDeleteAgendaItemDialog -> {
                 _agendaState.update {
                     it.copy(
-                        confirmDeleteAgendaItem = event.agendaItem
+                        confirmDeleteAgendaItem = uiEvent.agendaItem
                     )
                 }
                 sendEvent(ClearErrorMessage)
             }
             is DeleteAgendaItem -> {
-                // Question: Is it necessary to do a search in UI items for the ID before deleting?
-                //   Or is it OK to simply delete the AgendaItem that was passed in?
-                _agendaState.value.agendaItems.collectLatest {
-
-                    val result: ResultUiText<out AgendaItem> = it.find {
-                        item -> item.id == event.agendaItem.id
-                    }?.let { agendaItem ->
-                        when (agendaItem) {
-                            is AgendaItem.Event -> {
-                                agendaRepository.deleteEventId(agendaItem.id)
-                            }
-                            is AgendaItem.Task -> {
-//                                agendaRepository.deleteTaskId(agendaItem)  // todo implement
-                                ResultUiText.Error<AgendaItem.Task>(UiText.Str("unimplemented"))
-                            }
-                            is AgendaItem.Reminder -> {
-//                                agendaRepository.deleteReminderId(agendaItem) // todo implement
-                                ResultUiText.Error<AgendaItem.Task>(UiText.Str("unimplemented"))
-                            }
-                            else -> {
-                                ResultUiText.Error<AgendaItem>(UiText.Res(R.string.error_unknown_agenda_type))
-                            }
+               val result =
+                   when (uiEvent.agendaItem) {
+                        is AgendaItem.Event -> {
+                            agendaRepository.deleteEventId(uiEvent.agendaItem.id)
                         }
-                    } ?: run {
-//                        sendEvent(SetErrorMessage(UiText.Res(R.string.agenda_error_agenda_item_not_found)))
-                        ResultUiText.Error<AgendaItem>(UiText.Res(R.string.error_unknown_agenda_type))
+                        is AgendaItem.Task -> {
+//                                agendaRepository.deleteTaskId(agendaItem)  // todo implement
+                            ResultUiText.Error<AgendaItem.Task>(UiText.Str("unimplemented"))
+                        }
+                        is AgendaItem.Reminder -> {
+//                                agendaRepository.deleteReminderId(agendaItem) // todo implement
+                            ResultUiText.Error<AgendaItem.Task>(UiText.Str("unimplemented"))
+                        }
+                        else -> {
+                            ResultUiText.Error<AgendaItem>(UiText.Res(R.string.error_unknown_agenda_type))
+                        }
                     }
 
-                    if(result is ResultUiText.Error) {
-                        sendEvent(SetErrorMessage(result.message))
-                    } else {
-                        _oneTimeEvent.emit(OneTimeEvent.ShowToast(UiText.Res(R.string.event_message_event_deleted_success)))
-                        sendEvent(ClearErrorMessage)
-                    }
-                    sendEvent(DismissConfirmDeleteAgendaItemDialog)
+                if(result is ResultUiText.Error) {
+                    sendEvent(SetErrorMessage(result.message))
+                } else {
+                    _oneTimeEvent.emit(OneTimeEvent.ShowToast(UiText.Res(R.string.event_message_event_deleted_success)))
+                    sendEvent(ClearErrorMessage)
                 }
+                sendEvent(DismissConfirmDeleteAgendaItemDialog)
             }
             is DismissConfirmDeleteAgendaItemDialog -> {
                 _agendaState.update {
