@@ -27,4 +27,6 @@ data class AgendaState(
 
     val agendaItems: Flow<List<AgendaItem>> = flow { emptyList<AgendaItem>() },
     val selectedDayIndex: Int? = null,
+
+    val confirmDeleteAgendaItem: AgendaItem? = null,
 )

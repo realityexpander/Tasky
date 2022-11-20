@@ -2,7 +2,6 @@ package com.realityexpander.tasky.agenda_feature.presentation.event_screen.compo
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -57,15 +56,18 @@ fun PhotoModal(
             ) {
 
                 // Close button
-                Icon(
-                    Icons.Outlined.Close,
-                    tint = MaterialTheme.colors.onSurface,
-                    contentDescription = stringResource(R.string.back_description),
+                IconButton(
+                    onClick = { onCancel() },
                     modifier = Modifier
                         .size(32.dp)
                         .align(Alignment.CenterVertically)
-                        .clickable { onCancel() }
-                )
+                ) {
+                    Icon(
+                        Icons.Outlined.Close,
+                        tint = MaterialTheme.colors.onSurface,
+                        contentDescription = stringResource(R.string.back_description)
+                    )
+                }
 
                 // Title
                 Text(
@@ -77,44 +79,38 @@ fun PhotoModal(
                 )
 
                 // Remove button
-                Icon(
-                    Icons.Outlined.Delete,
-                    tint = if (isRemoveEnabled) MaterialTheme.colors.onSurface else Color.Transparent,
-                    contentDescription = stringResource(R.string.remove_description),
-                    modifier = Modifier
-                        .size(32.dp)
-                        .align(Alignment.CenterVertically)
-                        .clickable(isRemoveEnabled) {
-                            isConfirmRemoveDialogVisible = true
-                        }
-                )
+                IconButton(
+                    onClick = { isConfirmRemoveDialogVisible = true },
+                    enabled = isRemoveEnabled
+                ) {
+                    Icon(
+                        Icons.Outlined.Delete,
+                        tint = if (isRemoveEnabled)
+                                MaterialTheme.colors.onSurface
+                            else
+                                Color.Transparent,
+                        contentDescription = stringResource(R.string.remove_description),
+                        modifier = Modifier
+                            .size(32.dp)
+                            .align(Alignment.CenterVertically)
+                    )
+                }
             }
 
             Divider()
 
             // Photo
-            when (photo) {
-                is Photo.Local -> {
-                    AsyncImage(
-                        model = photo.uri,
-                        contentDescription = stringResource(id = R.string.event_description_photo),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .weight(1f),
-                        contentScale = ContentScale.Fit
-                    )
-                }
-                is Photo.Remote -> {
-                    AsyncImage(
-                        model = photo.url,
-                        contentDescription = stringResource(id = R.string.event_description_photo),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .weight(1f),
-                        contentScale = ContentScale.Fit
-                    )
-                }
-            }
+            AsyncImage(
+                model = when(photo) {
+                    is Photo.Local -> photo.uri
+                    is Photo.Remote -> photo.url
+                },
+                    contentDescription = stringResource(id = R.string.event_description_photo),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f),
+                    contentScale = ContentScale.Fit
+            )
         }
     }
 

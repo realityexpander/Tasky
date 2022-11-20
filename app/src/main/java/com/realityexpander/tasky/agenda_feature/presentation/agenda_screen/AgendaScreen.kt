@@ -3,6 +3,7 @@ package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 import android.content.res.Configuration
 import android.graphics.Paint
 import android.view.ViewTreeObserver
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,6 +42,7 @@ import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
+import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.UserAcronymCircle
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
@@ -95,7 +97,7 @@ fun AgendaScreen(
 fun AgendaScreenContent(
     state: AgendaState,
     onAction: (AgendaScreenEvent) -> Unit,
-    oneTimeEvent: AgendaScreenEvent.OneTimeEvent?,
+    oneTimeEvent: OneTimeEvent?,
     navigator: DestinationsNavigator,
 ) {
     val focusManager = LocalFocusManager.current
@@ -155,7 +157,7 @@ fun AgendaScreenContent(
     // Guard against invalid authentication state OR perform logout
     SideEffect {
         if (state.isLoaded && state.authInfo == null) {
-            onAction(AgendaScreenEvent.SetIsLoaded(false))
+            onAction(SetIsLoaded(false))
             navigateToLoginScreen()
         }
     }
@@ -174,33 +176,41 @@ fun AgendaScreenContent(
                     scrollState.animateScrollToItem(item)
                 }
             }
-            onAction(AgendaScreenEvent.StatefulOneTimeEvent.ResetScrollTo)
+            onAction(StatefulOneTimeEvent.ResetScrollTo)
         }
         if(state.scrollToTop) {
             scope.launch {
                 scrollState.animateScrollToItem(0)
             }
-            onAction(AgendaScreenEvent.StatefulOneTimeEvent.ResetScrollTo)
+            onAction(StatefulOneTimeEvent.ResetScrollTo)
         }
         if(state.scrollToBottom) {
             scope.launch {
                 scrollState.animateScrollToItem(agendaItems.size - 1)
             }
-            onAction(AgendaScreenEvent.StatefulOneTimeEvent.ResetScrollTo)
+            onAction(StatefulOneTimeEvent.ResetScrollTo)
         }
     }
 
     // • One-time events (like Navigation, SnackBars, etc) are handled here
     LaunchedEffect(oneTimeEvent) {
         when (oneTimeEvent) {
-            AgendaScreenEvent.OneTimeEvent.NavigateToCreateEvent -> {
+            OneTimeEvent.NavigateToCreateEvent -> {
                 navigateToEventScreen(null, true)
             }
-            is AgendaScreenEvent.OneTimeEvent.NavigateToOpenEvent -> {
+            is OneTimeEvent.NavigateToOpenEvent -> {
                 navigateToEventScreen(oneTimeEvent.eventId)
             }
-            is AgendaScreenEvent.OneTimeEvent.NavigateToEditEvent -> {
+            is OneTimeEvent.NavigateToEditEvent -> {
                 navigateToEventScreen(oneTimeEvent.eventId, true)
+            }
+            is OneTimeEvent.ShowToast -> {
+                Toast.makeText(
+                    context,
+                    context.getString(
+                        oneTimeEvent.message.asResIdOrNull
+                            ?: R.string.error_invalid_string_resource_id
+                    ), Toast.LENGTH_SHORT).show()
             }
             null -> {}
         }
@@ -290,7 +300,7 @@ fun AgendaScreenContent(
                         vectorIcon = Icons.Filled.Logout,
                         onClick = {
                             isLogoutMenuExpanded = false
-                            onAction(AgendaScreenEvent.Logout)
+                            onAction(Logout)
                         },
                     )
                 }
@@ -335,7 +345,7 @@ fun AgendaScreenContent(
                                 }
                             }
                             .clickable {
-                                onAction(AgendaScreenEvent.SetSelectedDayIndex(dayIndex))
+                                onAction(SetSelectedDayIndex(dayIndex))
                             }
                     ) {
                         // Day of week (S, M, T, W, T, F, S)
@@ -424,7 +434,7 @@ fun AgendaScreenContent(
                         agendaItem = agendaItem,
                         onToggleCompleted = {
                             if (agendaItem is AgendaItem.Task) {
-                                onAction(AgendaScreenEvent.ToggleTaskCompleted(agendaItem.id))
+                                onAction(ToggleTaskCompleted(agendaItem))
                             }
                         },
                         modifier = Modifier
@@ -528,7 +538,7 @@ fun AgendaScreenContent(
                     painterIcon = painterResource(id = R.drawable.calendar_add_on),
                     onClick = {
                         isFabMenuExpanded = false
-                        onAction(AgendaScreenEvent.CreateAgendaItem(AgendaItemType.Event))
+                        onAction(CreateAgendaItem(AgendaItemType.Event))
                     },
                 )
                 MenuItem(
@@ -536,7 +546,7 @@ fun AgendaScreenContent(
                     vectorIcon = Icons.Filled.AddTask,
                     onClick = {
                         isFabMenuExpanded = false
-                        onAction(AgendaScreenEvent.CreateAgendaItem(AgendaItemType.Task))
+                        onAction(CreateAgendaItem(AgendaItemType.Task))
                     },
                 )
                 MenuItem(
@@ -544,12 +554,65 @@ fun AgendaScreenContent(
                     vectorIcon = Icons.Filled.NotificationAdd,
                     onClick = {
                         isFabMenuExpanded = false
-                        onAction(AgendaScreenEvent.CreateAgendaItem(AgendaItemType.Reminder))
+                        onAction(CreateAgendaItem(AgendaItemType.Reminder))
                     },
                 )
             }
         }
     }
+
+    // • Confirm `Delete Agenda Item` Dialog
+    state.confirmDeleteAgendaItem?.let { agendaItem ->
+
+        val agendaItemTypeName =
+            when(agendaItem) {
+                is AgendaItem.Event -> {
+                    stringResource(R.string.agenda_item_type_event)
+                }
+                is AgendaItem.Task -> {
+                    stringResource(R.string.agenda_item_type_task)
+                }
+                is AgendaItem.Reminder -> {
+                    stringResource(R.string.agenda_item_type_reminder)
+                }
+                else -> throw IllegalStateException("Unknown AgendaItem type")
+            }
+
+        AlertDialog(
+            title = {
+                Text(stringResource(R.string.agenda_confirm_delete_item_dialog_title_phrase, agendaItemTypeName))
+            },
+            text = {
+                Text(stringResource(R.string.agenda_confirm_delete_item_dialog_text_phrase, agendaItem.title))
+            },
+            onDismissRequest = { onAction(DismissConfirmDeleteAgendaItemDialog) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onAction(DeleteAgendaItem(agendaItem))
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = Color.Transparent
+                    )
+                ) {
+                    Text(stringResource(R.string.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        onAction(DismissConfirmDeleteAgendaItemDialog)
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = Color.Transparent
+                    )
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
 }
 
 fun performActionForAgendaItem(
@@ -563,16 +626,13 @@ fun performActionForAgendaItem(
         is AgendaItem.Event -> {
             when (action) {
                 AgendaItemAction.OPEN_DETAILS -> {
-                    onAction(AgendaScreenEvent.OneTimeEvent.NavigateToOpenEvent(agendaItem.id))
+                    onAction(OneTimeEvent.NavigateToOpenEvent(agendaItem.id))
                 }
                 AgendaItemAction.EDIT -> {
-                    onAction(AgendaScreenEvent.OneTimeEvent.NavigateToEditEvent(agendaItem.id))
+                    onAction(OneTimeEvent.NavigateToEditEvent(agendaItem.id))
                 }
                 AgendaItemAction.DELETE -> {
-                    println("DELETE EVENT ${agendaItem.id}")
-
-                    // todo show confirmation dialog before sending delete `AgendaItem ID` to VM
-//                    onAction(AgendaEvent.ConfirmDeleteEvent(agendaItem))
+                    onAction(ShowConfirmDeleteAgendaItemDialog(agendaItem))
                 }
                 else -> {}
             }

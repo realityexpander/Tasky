@@ -3,20 +3,15 @@ package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 import android.content.res.Configuration
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.runtime.*
@@ -43,6 +38,7 @@ import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.TimeDateRow
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.OneTimeEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.AttendeeList
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.PillButton
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.SmallHeightHorizontalDivider
@@ -52,6 +48,7 @@ import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.util.UuidStr
+import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -110,9 +107,20 @@ fun AddEventScreenContent(
 
     var attendeeListType by remember { mutableStateOf(AttendeeListType.ALL) }
     val isEditable = state.isEditable
+    val isUserEventCreator = state.event?.isUserEventCreator == true
 
     fun popBack() {
         navigator.popBackStack()
+    }
+
+    BackHandler(true) {
+        if(state.editMode != null) {
+            scope.launch {
+                onAction(CancelEditMode)
+            }
+        } else {
+            popBack()
+        }
     }
 
     // • Stateful one-time events
@@ -150,10 +158,10 @@ fun AddEventScreenContent(
     // • One-time events (like Navigation, Toasts, etc) are handled here
     LaunchedEffect(oneTimeEvent) {
         when (oneTimeEvent) {
-            is OneTimeEvent.NavigateBack -> {
+            is NavigateBack -> {
                 popBack()
             }
-            is OneTimeEvent.ShowToast -> {
+            is ShowToast -> {
                 Toast.makeText(
                     context,
                     context.getString(
@@ -182,18 +190,19 @@ fun AddEventScreenContent(
         ) {
 
             // • CLOSE BUTTON
-            Icon(
-                imageVector = Icons.Filled.Close,
-                tint = MaterialTheme.colors.surface,
-                contentDescription = stringResource(R.string.event_description_close),
-                modifier = Modifier
-                    .size(30.dp)
-                    .alignByBaseline()
-                    .align(Alignment.CenterVertically)
-                    .clickable {
-                        popBack()
-                    }
-            )
+            IconButton(
+                onClick = { popBack() },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    tint = MaterialTheme.colors.surface,
+                    contentDescription = stringResource(R.string.event_description_close),
+                    modifier = Modifier
+                        .size(30.dp)
+                        .alignByBaseline()
+                        .align(Alignment.CenterVertically)
+                )
+            }
 
             // • TODAY'S DATE
             Text(
@@ -207,38 +216,47 @@ fun AddEventScreenContent(
             )
 
             // • EDIT / SAVE BUTTON
-            if (state.event?.isUserEventCreator == true) {
                 if (isEditable) {
-                    Text(
-                        text = stringResource(R.string.event_save),
-                        color = MaterialTheme.colors.surface,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .alignByBaseline()
-                            .width(40.dp)
-                            .clickable {
-                                onAction(SetIsEditable(false))
-                                onAction(SaveEvent)
-                            }
-                    )
+                    TextButton(
+                        onClick = {
+                            onAction(SetIsEditable(false))
+                            onAction(SaveEvent)
+                        },
+                        modifier = Modifier.weight(.25f)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.event_save),
+                            color = MaterialTheme.colors.surface,
+                            textAlign = TextAlign.End,
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .alignByBaseline()
+                                .width(40.dp)
+                        )
+                    }
                 } else {
-                    Icon(
-                        imageVector = Icons.Filled.Edit,
-                        tint = MaterialTheme.colors.surface,
-                        contentDescription = stringResource(R.string.event_description_edit_event),
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .width(40.dp)
-                            .clickable {
-                                onAction(SetIsEditable(true))
-                            }
-                    )
+                    IconButton(
+                        onClick = {
+                            onAction(SetIsEditable(true))
+                        },
+                        modifier = Modifier.weight(.25f)
+                    ) {
+                        Row {
+                            Spacer(modifier = Modifier.smallWidth())
+                            Icon(
+                                imageVector = Icons.Filled.Edit,
+                                tint = MaterialTheme.colors.surface,
+                                contentDescription = stringResource(R.string.event_description_edit_event),
+                                modifier = Modifier
+                                    .align(Alignment.CenterVertically)
+                                    .width(40.dp)
+                            )
+                        }
+                    }
                 }
-            }
 
         }
-        Spacer(modifier = Modifier.smallHeight())
+        //Spacer(modifier = Modifier.smallHeight())
 
         // • ERROR MESSAGE
         if (state.errorMessage != null) {
@@ -326,13 +344,13 @@ fun AddEventScreenContent(
                         MaterialTheme.typography.h2  // can only access in Composable scope
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
-                        tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
+                        tint = if (isEditable && isUserEventCreator) MaterialTheme.colors.onSurface else Color.Transparent,
                         contentDescription = stringResource(R.string.event_edit_event_title),
                         modifier = Modifier
                             .size(28.dp)
                             .weight(.1f)
                             .align(Alignment.CenterVertically)
-                            .clickable(enabled = isEditable) {
+                            .clickable(isEditable && isUserEventCreator) {
                                 onAction(
                                     SetEditMode(
                                         EditMode.ChooseTitleText(
@@ -367,18 +385,17 @@ fun AddEventScreenContent(
                                 .wrapContentHeight()
                         )
                     }
-
                     val editTextStyle =
                         MaterialTheme.typography.body1  // can only access in Composable scope
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
-                        tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
+                        tint = if (isEditable && isUserEventCreator) MaterialTheme.colors.onSurface else Color.Transparent,
                         contentDescription = stringResource(R.string.event_description_edit_event_description),
                         modifier = Modifier
                             .size(28.dp, 28.dp)
                             .weight(.1f)
                             .align(Alignment.CenterVertically)
-                            .clickable(enabled = isEditable) {
+                            .clickable(enabled = isEditable && isUserEventCreator) {
                                 onAction(
                                     SetEditMode(
                                         EditMode.ChooseDescriptionText(
@@ -393,7 +410,7 @@ fun AddEventScreenContent(
             }
 
             // • PHOTO PICKER / ADD & REMOVE PHOTOS
-            if(state.isEditable || !state.event?.photos.isNullOrEmpty()) {
+            if((isEditable && isUserEventCreator) || !state.event?.photos.isNullOrEmpty()) {
                 Spacer(modifier = Modifier.smallHeight())
 
                 Box(
@@ -405,7 +422,7 @@ fun AddEventScreenContent(
                         .wrapContentHeight()
                 ) {
 
-                    if (state.isEditable
+                    if ((isEditable && isUserEventCreator)
                         && state.event?.photos.isNullOrEmpty()
                     ) {
                         // • NO PHOTOS
@@ -442,7 +459,9 @@ fun AddEventScreenContent(
                             )
                         }
                     } else {
-                        if (state.isEditable || state.event?.photos?.isNotEmpty() == true) {
+                        if ( (isEditable && isUserEventCreator)
+                            || state.event?.photos?.isNotEmpty() == true
+                        ) {
                             // • LIST OF PHOTO IMAGES
                             Column(
                                 modifier = Modifier
@@ -473,7 +492,7 @@ fun AddEventScreenContent(
                                     var photoList = state.event?.photos
 
                                     // Add the "Add Photo" button if in edit mode
-                                    if (state.event?.isUserEventCreator == true && state.isEditable) {
+                                    if (isEditable && isUserEventCreator) {
                                         if (photoList.isNullOrEmpty()) {
                                             photoList = listOf(
                                                 Photo.Local(
@@ -518,7 +537,7 @@ fun AddEventScreenContent(
                                                     modifier = Modifier
                                                         .size(36.dp)
                                                         .align(Alignment.Center)
-                                                        .clickable(enabled = isEditable) {
+                                                        .clickable(isEditable && isUserEventCreator) {
                                                             onAction(
                                                                 SetEditMode(
                                                                     EditMode.ChooseAddPhoto()
@@ -563,7 +582,7 @@ fun AddEventScreenContent(
             }
 
 
-            // • EVENT TIMES & DATES (FROM, TO, REMIND AT)
+            // • EVENT TIMES & DATES & JOIN/DELETE/LEAVE (FROM, TO, REMIND AT)
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -577,7 +596,7 @@ fun AddEventScreenContent(
                 TimeDateRow(
                     title = stringResource(R.string.event_from),
                     date = state.event?.from ?: ZonedDateTime.now(),
-                    isEditable = isEditable,
+                    isEditable = isEditable && isUserEventCreator,
                     onEditDate = {
                         onAction(
                             SetEditMode(
@@ -599,7 +618,7 @@ fun AddEventScreenContent(
                 TimeDateRow(
                     title = stringResource(R.string.event_to),
                     date = state.event?.to ?: ZonedDateTime.now(),
-                    isEditable = isEditable,
+                    isEditable = isEditable && isUserEventCreator,
                     onEditDate = {
                         onAction(
                             SetEditMode(
@@ -656,21 +675,21 @@ fun AddEventScreenContent(
                     // • Add Attendee Button
                     Icon(
                         imageVector = Icons.Outlined.Add,
-                        tint = if (isEditable) MaterialTheme.colors.onSurface.copy(alpha = .3f) else Color.Transparent,
+                        tint = if (isEditable && isUserEventCreator) MaterialTheme.colors.onSurface.copy(alpha = .3f) else Color.Transparent,
                         contentDescription = stringResource(R.string.event_description_add_attendee_button),
                         modifier = Modifier
                             .offset(y = (-4).dp)
                             .size(38.dp)
                             .clip(shape = RoundedCornerShape(5.dp))
                             .background(
-                                if (isEditable)
+                                if (isEditable && isUserEventCreator)
                                     MaterialTheme.colors.onSurface.copy(alpha = .1f)
                                 else
                                     Color.Transparent
                             )
                             .padding(4.dp)
                             .align(Alignment.CenterVertically)
-                            .clickable(enabled = isEditable) {
+                            .clickable(enabled = isEditable && isUserEventCreator) {
                                 onAction(
                                     SetEditMode(EditMode.ChooseAddAttendee())
                                 )
@@ -762,19 +781,47 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.largeHeight())
 
                 // • JOIN/LEAVE/DELETE EVENT BUTTON
-                Text(
-                    if (state.event?.isUserEventCreator == true)
+                TextButton(
+                    onClick = {
+                        if (isUserEventCreator)
+                            onAction(ShowConfirmActionDialog(
+                                ConfirmActionDialogType.DeleteEvent,
+                                onConfirm = {
+                                    onAction(DeleteEvent)
+                                }
+                            ))
+                        else if (state.event?.isGoing == true)
+                            onAction(ShowConfirmActionDialog(
+                                ConfirmActionDialogType.LeaveEvent,
+                                onConfirm = {
+                                    onAction(LeaveEvent)
+                                }
+                            ))
+                        else
+                            onAction(ShowConfirmActionDialog(
+                                ConfirmActionDialogType.JoinEvent,
+                                onConfirm = {
+                                    onAction(JoinEvent)
+                                }
+                            ))
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        if (state.event?.isUserEventCreator == true)
                             stringResource(R.string.event_delete_event)
                         else if (state.event?.isGoing == true)
                             stringResource(R.string.event_leave_event)
                         else
                             stringResource(R.string.event_join_event),
-                    style = MaterialTheme.typography.h4,
-                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
+                        style = MaterialTheme.typography.h4,
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
                 Spacer(modifier = Modifier.mediumHeight())
             }
         }
@@ -787,6 +834,49 @@ fun AddEventScreenContent(
             state = state,
             onAction = onAction,
             singlePhotoPickerLauncher = singlePhotoPickerLauncher
+        )
+    }
+
+    state.showConfirmActionDialog?.let { dialogInfo ->
+
+        AlertDialog(
+            title = {
+                Text(stringResource(R.string.event_confirm_action_dialog_title_phrase,
+                    dialogInfo.actionType.title.get,
+                    stringResource(R.string.agenda_item_type_event))
+                )
+            },
+            text = {
+                Text(stringResource(R.string.event_confirm_action_dialog_text_phrase,
+                    dialogInfo.actionType.title.get.lowercase(),
+                    stringResource(R.string.agenda_item_type_event))
+                )
+            },
+            onDismissRequest = { onAction(DismissConfirmActionDialog) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        dialogInfo.onConfirm()
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = Color.Transparent
+                    )
+                ) {
+                    Text(dialogInfo.actionType.title.get.uppercase())
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        onAction(DismissConfirmActionDialog)
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = Color.Transparent
+                    )
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
         )
     }
 }

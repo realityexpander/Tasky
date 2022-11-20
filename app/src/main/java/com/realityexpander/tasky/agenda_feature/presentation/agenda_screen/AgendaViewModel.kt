@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
+import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
+import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
@@ -13,7 +15,6 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -46,8 +47,11 @@ class AgendaViewModel @Inject constructor(
         // save state for process death
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
         savedStateHandle[SAVED_STATE_selectedDayIndex] = state.selectedDayIndex
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),
-        AgendaState())
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        AgendaState()
+    )
 
     private val _oneTimeEvent = MutableSharedFlow<OneTimeEvent>()
     val oneTimeEvent = _oneTimeEvent.asSharedFlow()
@@ -96,32 +100,31 @@ class AgendaViewModel @Inject constructor(
         )
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)  // for .mapLatest
-    private suspend fun onEvent(event: AgendaScreenEvent) {
+    private suspend fun onEvent(uiEvent: AgendaScreenEvent) {
 
-        when(event) {
+        when(uiEvent) {
             is ShowProgressIndicator -> {
                 _agendaState.update {
-                    it.copy(isProgressVisible = event.isShowing)
+                    it.copy(isProgressVisible = uiEvent.isShowing)
                 }
             }
             is SetIsLoaded -> {
                 _agendaState.update {
-                    it.copy(isProgressVisible = event.isLoaded)
+                    it.copy(isProgressVisible = uiEvent.isLoaded)
                 }
             }
             is SetSelectedDayIndex -> {
                 _agendaState.update {
                     it.copy(
-                        selectedDayIndex = event.dayIndex,
+                        selectedDayIndex = uiEvent.dayIndex,
                         agendaItems = agendaRepository.getAgendaForDayFlow(
-                            getDateForSelectedDayIndex(event.dayIndex)
+                            getDateForSelectedDayIndex(uiEvent.dayIndex)
                         )
                     )
                 }
             }
             is CreateAgendaItem -> {
-                when(event.agendaItemType) {
+                when(uiEvent.agendaItemType) {
                     AgendaItemType.Event -> {
                         _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateEvent)
                     }
@@ -134,13 +137,7 @@ class AgendaViewModel @Inject constructor(
                 }
             }
             is ToggleTaskCompleted -> {
-                _agendaState.value.agendaItems.mapLatest {
-                    it.find { item -> item.id == event.agendaItemId }?.let { task ->
-                        if(task is AgendaItem.Task) {
-//                            agendaRepository.updateTask(task.copy(isCompleted = !task.isCompleted)) // todo implement update task - completed state
-                        }
-                    }
-                }
+                //agendaRepository.updateTask(uiEvent.agendaItem.copy(isCompleted = !uiEvent.agendaItem.isCompleted)) // todo implement update task - completed state
             }
             is Logout -> {
                 _agendaState.update {
@@ -149,7 +146,7 @@ class AgendaViewModel @Inject constructor(
                 logout()
             }
             is StatefulOneTimeEvent -> {
-                when (event) {
+                when (uiEvent) {
 
                     // Because you can only scroll to one location at a time, we only
                     // need one reset event to reset all the scrolling events.
@@ -177,30 +174,80 @@ class AgendaViewModel @Inject constructor(
                     is StatefulOneTimeEvent.ScrollToItemId -> {
                         // • Send the one time event
                         _agendaState.update {
-                            it.copy(scrollToItemId = event.agendaItemId)
+                            it.copy(scrollToItemId = uiEvent.agendaItemId)
                         }
                     }
                 }
             }
-            is Error -> {
+            is SetErrorMessage -> {
                 _agendaState.update {
                     it.copy(
-                        errorMessage = if(event.message.isRes)
-                            event.message
+                        errorMessage = if(uiEvent.message.isRes)
+                            uiEvent.message
                         else
-                            UiText.Res(R.string.error_unknown, "")
+                            UiText.Res(R.string.error_unknown, ""),
+                        isProgressVisible = false
                     )
                 }
-                sendEvent(ShowProgressIndicator(false))
+            }
+            is ClearErrorMessage -> {
+                _agendaState.update {
+                    it.copy(
+                        errorMessage = null,
+                        isProgressVisible = false
+                    )
+                }
             }
             is OneTimeEvent.NavigateToCreateEvent -> {
                 _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateEvent)
             }
             is OneTimeEvent.NavigateToOpenEvent -> {
-                _oneTimeEvent.emit(OneTimeEvent.NavigateToOpenEvent(event.eventId))
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToOpenEvent(uiEvent.eventId))
             }
             is OneTimeEvent.NavigateToEditEvent -> {
-                _oneTimeEvent.emit(OneTimeEvent.NavigateToEditEvent(event.eventId))
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToEditEvent(uiEvent.eventId))
+            }
+            is ShowConfirmDeleteAgendaItemDialog -> {
+                _agendaState.update {
+                    it.copy(
+                        confirmDeleteAgendaItem = uiEvent.agendaItem
+                    )
+                }
+                sendEvent(ClearErrorMessage)
+            }
+            is DeleteAgendaItem -> {
+               val result =
+                   when (uiEvent.agendaItem) {
+                        is AgendaItem.Event -> {
+                            agendaRepository.deleteEventId(uiEvent.agendaItem.id)
+                        }
+                        is AgendaItem.Task -> {
+//                                agendaRepository.deleteTaskId(agendaItem)  // todo implement
+                            ResultUiText.Error<AgendaItem.Task>(UiText.Str("unimplemented"))
+                        }
+                        is AgendaItem.Reminder -> {
+//                                agendaRepository.deleteReminderId(agendaItem) // todo implement
+                            ResultUiText.Error<AgendaItem.Task>(UiText.Str("unimplemented"))
+                        }
+                        else -> {
+                            ResultUiText.Error<AgendaItem>(UiText.Res(R.string.error_unknown_agenda_type))
+                        }
+                    }
+
+                if(result is ResultUiText.Error) {
+                    sendEvent(SetErrorMessage(result.message))
+                } else {
+                    _oneTimeEvent.emit(OneTimeEvent.ShowToast(UiText.Res(R.string.event_message_event_deleted_success)))
+                    sendEvent(ClearErrorMessage)
+                }
+                sendEvent(DismissConfirmDeleteAgendaItemDialog)
+            }
+            is DismissConfirmDeleteAgendaItemDialog -> {
+                _agendaState.update {
+                    it.copy(
+                        confirmDeleteAgendaItem = null
+                    )
+                }
             }
         }
     }
@@ -220,8 +267,8 @@ class AgendaViewModel @Inject constructor(
                 AgendaItem.Event(
                     id = UUID.randomUUID().toString(),
                     title = "Meeting with John",
-                    from = ZonedDateTime.of(todayDate, today.toLocalTime().minusHours(1), zoneId),
-                    to = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(1), zoneId),
+                    from = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(1), zoneId),
+                    to = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(2), zoneId),
                     remindAt = ZonedDateTime.of(
                         todayDate,
                         today.toLocalTime().minusMinutes(30),
@@ -261,18 +308,33 @@ class AgendaViewModel @Inject constructor(
                 AgendaItem.Event(
                     id = UUID.randomUUID().toString(),
                     title = "Meeting with Jack",
-                    from = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(5), zoneId),
-                    to = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(6), zoneId),
-                    remindAt = ZonedDateTime.of(
+                    from = ZonedDateTime.of(
+                        todayDate,
+                        today.toLocalTime().plusHours(3),
+                        zoneId
+                    ),
+                    to = ZonedDateTime.of(
                         todayDate,
                         today.toLocalTime().plusHours(4),
+                        zoneId
+                    ),
+                    remindAt = ZonedDateTime.of(
+                        todayDate,
+                        today.toLocalTime().plusHours(2),
                         zoneId
                     ),
                     description = "Discuss the yet another project",
                     host = "Jack",
                     isUserEventCreator = true,
                     isGoing = false,
-                    attendees = emptyList(),
+                    attendees = listOf(
+                        Attendee(
+                            id = authRepository.getAuthInfo()?.userId!!,
+                            fullName = authRepository.getAuthInfo()?.username ?: "",
+                            email = authRepository.getAuthInfo()?.email ?: "",
+                            isGoing = true,
+                        )
+                    ),
                     photos = emptyList(),
                 )
             )
@@ -287,11 +349,11 @@ class AgendaViewModel @Inject constructor(
                 AgendaItem.Event(
                     id = UUID.randomUUID().toString(),
                     title = "Meeting with Jeremy",
-                    from = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(8), zoneId),
-                    to = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(9), zoneId),
+                    from = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(4), zoneId),
+                    to = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(5), zoneId),
                     remindAt = ZonedDateTime.of(
                         todayDate,
-                        today.toLocalTime().plusHours(7),
+                        today.toLocalTime().plusHours(3),
                         zoneId
                     ),
                     description = "Discuss the worse project",
@@ -314,7 +376,11 @@ class AgendaViewModel @Inject constructor(
         }
     }
 
-    //    private fun createAgendaItem(agendaItemType: AgendaItemType) {
+}
+
+
+// todo remove later - left for reference
+//    private fun createAgendaItem(agendaItemType: AgendaItemType) {
 //        viewModelScope.launch {
 //            val today = LocalDate.now()
 //            val todayDayOfWeek = today.dayOfWeek.name
@@ -351,7 +417,6 @@ class AgendaViewModel @Inject constructor(
 ////                           photos = emptyList()
 ////                       ))
 ////                    uuidStr(uuid)
-////                    // todo add error checking
 //                    sendEvent(OneTimeEvent.NavigateToCreateEvent)
 //               }
 //                AgendaItemType.Task -> { null } // todo replace with actual type
@@ -394,4 +459,3 @@ class AgendaViewModel @Inject constructor(
 //            id?.let { sendEvent(StatefulOneTimeEvent.ScrollToItemId(id)) }
 //        }
 //    }
-}

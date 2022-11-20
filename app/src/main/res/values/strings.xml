@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">Tasky</string>
 
-    <!-- general -->
+    <!-- general dialogs -->
     <string name="ok">OK</string>
     <string name="cancel">CANCEL</string>
+    <string name="delete">DELETE</string>
+
+    <!-- general descriptions -->
     <string name="back_description">Back</string>
     <string name="remove_description">Remove</string>
 
@@ -66,6 +69,7 @@
     <string name="error_invalid_username">Invalid username, must be 4–50 characters</string>
     <string name="error_invalid_user_name">Invalid user name</string>
     <string name="error_invalid_string_resource_id">Invalid String Resource id</string>
+    <string name="error_unknown_agenda_type">Unknown Agenda Type</string>
 
     <!-- ZonedDateTimeToString.kt -->
     <string name="zonedDateTimeToString_same_time">Same time</string>
@@ -82,16 +86,24 @@
     <string name="splash_logged_in">Logged in!</string>
     <string name="splash_not_logged_in">Not logged in…</string>
 
+    <!-- Agenda Item types -->
+    <string name="agenda_item_type_task">Task</string>
+    <string name="agenda_item_type_event">Event</string>
+    <string name="agenda_item_type_reminder">Reminder</string>
+
     <!--    Agenda screen -->
     <string name="agenda_title">Agenda Screen</string>
     <string name="agenda_description">Agenda Screen</string>
     <string name="agenda_error">Agenda error - %s</string>
     <string name="agenda_error_network">Agenda network error - %s</string>
     <string name="agenda_error_unknown">Agenda unknown error - %s</string>
+    <string name="agenda_error_agenda_item_not_found">Agenda item not found</string>
     <string name="agenda_add_agenda_item">Add Agenda Item</string>
+    <string name="agenda_confirm_delete_item_dialog_title_phrase">Delete %s?</string>
+    <string name="agenda_confirm_delete_item_dialog_text_phrase">Are you sure you want to delete this \'%s\'?</string>
 
     <!--    Event screen -->
-    <string name="event_description_close">Close Add Event</string>
+    <string name="event_description_close">Close Event screen</string>
     <string name="event_description_edit_event">Edit Event</string>
     <string name="event_description_meeting_title_marker">Meeting title marker</string>
     <string name="event_description_edit_event_description">Edit Event Description</string>
@@ -119,7 +131,7 @@
     <string name="event_error_leave_event">Error leaving Event</string>
     <string name="event_error_join_event">Error joining Event</string>
     <string name="event_message_event_saved">Event Saved</string>
-
+    <string name="event_message_event_deleted_success">Event successfully deleted</string>
 
     <!--    Event Screen Dialog Titles -->
     <string name="event_dialog_title_choose_title_text">EDIT TITLE</string>
@@ -135,6 +147,13 @@
     <string name="event_dialog_title_confirm_remove_attendee">CONFIRM REMOVE ATTENDEE</string>
     <string name="event_dialog_title_remove_attendee">Remove Attendee</string>
     <string name="remove_attendee_dialog_remove_button">REMOVE</string>
+
+    <!--    Event Screen Confirm Action Dialog Messages -->
+    <string name="event_confirm_action_dialog_delete">Delete</string>
+    <string name="event_confirm_action_dialog_leave">Leave</string>
+    <string name="event_confirm_action_dialog_join">Join</string>
+    <string name="event_confirm_action_dialog_title_phrase">%1$s this %2$s?</string>
+    <string name="event_confirm_action_dialog_text_phrase">Are you sure you want to %1$s this %2$s?</string>
 
     <!--    Add Attendee -->
     <string name="add_attendee_dialog_title">Add Attendee</string>
