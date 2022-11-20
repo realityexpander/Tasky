@@ -20,7 +20,7 @@ sealed interface AgendaScreenEvent {
     object DismissConfirmDeleteAgendaItemDialog : AgendaScreenEvent
     data class DeleteAgendaItem(val agendaItem: AgendaItem) : AgendaScreenEvent
 
-    data class ToggleTaskCompleted(val agendaItemId: UuidStr) : AgendaScreenEvent
+    data class ToggleTaskCompleted(val agendaItem: AgendaItem.Task) : AgendaScreenEvent
 
     // • Errors
     data class SetErrorMessage(val message: UiText) : AgendaScreenEvent

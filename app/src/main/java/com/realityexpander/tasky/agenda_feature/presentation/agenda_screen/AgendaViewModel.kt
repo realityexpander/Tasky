@@ -137,15 +137,7 @@ class AgendaViewModel @Inject constructor(
                 }
             }
             is ToggleTaskCompleted -> {
-                _agendaState.value.agendaItems.collectLatest {
-                    it.find {
-                        item -> item.id == uiEvent.agendaItemId
-                    }?.let { task ->
-                        if(task is AgendaItem.Task) {
-//                            agendaRepository.updateTask(task.copy(isCompleted = !task.isCompleted)) // todo implement update task - completed state
-                        }
-                    }
-                }
+                //agendaRepository.updateTask(uiEvent.agendaItem.copy(isCompleted = !uiEvent.agendaItem.isCompleted)) // todo implement update task - completed state
             }
             is Logout -> {
                 _agendaState.update {
