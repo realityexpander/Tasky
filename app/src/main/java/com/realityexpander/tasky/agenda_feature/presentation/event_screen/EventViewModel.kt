@@ -192,14 +192,16 @@ class EventViewModel @Inject constructor(
                         }
                     }
                     is ResultUiText.Error -> {
-                        sendEvent(ShowProgressIndicator(false))
                         sendEvent(SetErrorMessageForAddAttendeeDialog(result.message))
                     }
                 }
             }
             is SetErrorMessageForAddAttendeeDialog -> {
                 _state.update { _state ->
-                    _state.copy(addAttendeeDialogErrorMessage = uiEvent.message)
+                    _state.copy(
+                        isProgressVisible = false,
+                        addAttendeeDialogErrorMessage = uiEvent.message
+                    )
                 }
             }
             is ClearErrorsForAddAttendeeDialog -> {
@@ -470,13 +472,13 @@ class EventViewModel @Inject constructor(
             is Error -> {
                 _state.update { _state ->
                     _state.copy(
+                        isProgressVisible = false,
                         errorMessage = if (uiEvent.message.isRes)
                             uiEvent.message
                         else
                             UiText.Res(R.string.error_unknown, "")
                     )
                 }
-                sendEvent(ShowProgressIndicator(false))
             }
             else -> {}
         }

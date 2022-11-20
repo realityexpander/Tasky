@@ -185,18 +185,18 @@ class AgendaViewModel @Inject constructor(
                         errorMessage = if(uiEvent.message.isRes)
                             uiEvent.message
                         else
-                            UiText.Res(R.string.error_unknown, "")
+                            UiText.Res(R.string.error_unknown, ""),
+                        isProgressVisible = false
                     )
                 }
-                sendEvent(ShowProgressIndicator(false))
             }
             is ClearErrorMessage -> {
                 _agendaState.update {
                     it.copy(
-                        errorMessage = null
+                        errorMessage = null,
+                        isProgressVisible = false
                     )
                 }
-                sendEvent(ShowProgressIndicator(false))
             }
             is OneTimeEvent.NavigateToCreateEvent -> {
                 _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateEvent)
