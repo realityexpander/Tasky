@@ -39,7 +39,6 @@ class EventApiImpl @Inject constructor(
                         .createFormData(
                             "photos",
                             "photo$index",
-//                                body = photoFile.toRequestBody() // todo convert URI to ByteArray
                             body = InputStreamRequestBody(
                                 context,
                                 photo.uri
