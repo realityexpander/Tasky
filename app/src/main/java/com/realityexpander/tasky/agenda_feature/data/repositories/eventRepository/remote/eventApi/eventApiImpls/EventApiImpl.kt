@@ -16,7 +16,7 @@ import javax.inject.Inject
 val jsonPrettyPrint = Json {
     prettyPrint = true
     ignoreUnknownKeys = true
-    prettyPrintIndent = "     "
+    prettyPrintIndent = "   "
     encodeDefaults = true
 }
 
@@ -82,6 +82,7 @@ class EventApiImpl @Inject constructor(
     }
 
     override suspend fun updateEvent(event: EventDTO.Update): EventDTO.Response {
+
         return try {
             val response = taskyApi.updateEvent(
                 updateEventRequest =
