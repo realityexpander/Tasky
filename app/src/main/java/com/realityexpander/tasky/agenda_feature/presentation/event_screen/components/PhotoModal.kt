@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
@@ -99,18 +99,40 @@ fun PhotoModal(
 
             Divider()
 
-            // Photo
-            AsyncImage(
+//            // Photo
+//            AsyncImage(
+//                model = when(photo) {
+//                    is Photo.Local -> photo.uri
+//                    is Photo.Remote -> photo.url
+//                },
+//                    contentDescription = stringResource(id = R.string.event_description_photo),
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .weight(1f),
+//                    contentScale = ContentScale.Fit
+//            )
+
+            // • PHOTO IMAGE
+            SubcomposeAsyncImage(
                 model = when(photo) {
                     is Photo.Local -> photo.uri
                     is Photo.Remote -> photo.url
                 },
-                    contentDescription = stringResource(id = R.string.event_description_photo),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f),
-                    contentScale = ContentScale.Fit
+                contentDescription = stringResource(id = R.string.event_description_photo),
+                contentScale = ContentScale.Fit,
+                loading = {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colors.primary,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(60.dp)
+                        )
+                },
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
             )
+
         }
     }
 
