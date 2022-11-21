@@ -17,24 +17,8 @@ import java.util.*
 
 class InputStreamRequestBody(
     val context: Context,
-//    val contentType: MediaType?,
-//    private val contentResolver: ContentResolver,
     val uri: Uri
 ): RequestBody() {
-//    private val contentType: MediaType?
-//    private val contentResolver: ContentResolver
-//    private val uri: Uri
-//
-//    init {
-//        if (uri == null) throw NullPointerException("uri == null")
-//        this.contentType = contentType
-//        this.contentResolver = contentResolver
-//        this.uri = uri
-//    }
-
-//    override fun contentType(): MediaType? {
-//        return contentType
-//    }
 
     override fun contentType(): MediaType? {
         return getMimeType(context, uri)?.toMediaTypeOrNull()
