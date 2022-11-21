@@ -4,11 +4,13 @@ import android.accounts.NetworkErrorException
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import com.realityexpander.tasky.core.data.remote.utils.getErrorBodyMessage
+import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MultipartBody
@@ -26,6 +28,8 @@ val jsonPrettyPrint = Json {
     prettyPrintIndent = "   "
     encodeDefaults = true
 }
+
+const val MAX_IMAGE_SIZE = 1000000 // 1 MB
 
 class EventApiImpl @Inject constructor(
     private val taskyApi: TaskyApi,
@@ -51,7 +55,6 @@ class EventApiImpl @Inject constructor(
                                 photo.uri
                             )
                         )
-                    }.also {
                     }
             )
             if (response.isSuccessful) {
@@ -100,40 +103,38 @@ class EventApiImpl @Inject constructor(
                         ),
                 photos = event.photos.mapIndexed { index, photo ->
 
-                    val filenameForServer = "photo$index-" +
-                            photo.id +
-                            ".${InputStreamRequestBody
-                                .getFileName(context, photo.uri)
-                                ?.split(".")
-                                ?.last()
-                                ?: "jpg"
-                            }"
+//                    var bytes = context.contentResolver
+//                        .openInputStream(photo.uri)
+//                        .use {
+//                            it?.readBytes()
+//                        }
+//                    val size = context.contentResolver.openFileDescriptor(photo.uri, "r")
+//                        .use {
+//                            it?.statSize
+//                        }
+//                    size?.also { imageSize ->
+//                        if (imageSize > 1000000) {
+//                            //throw NetworkErrorException("Photo too large")
+//
+//                            // recompress the photo
+//                            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes?.size ?: 0)
+//                            val stream = ByteArrayOutputStream()
+//                            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
+//                            bytes = stream.toByteArray()
+//                        }
+//                    }
 
-                    var bytes = context.contentResolver
-                        .openInputStream(photo.uri)
-                        .use {
-                            it?.readBytes()
-                        }
-                    val size = context.contentResolver.openFileDescriptor(photo.uri, "r")
-                        .use {
-                            it?.statSize
-                        }
-                    size?.also { imageSize ->
-                        if (imageSize > 1000000) {
-                            //throw NetworkErrorException("Photo too large")
-
-                            // recompress the photo
-                            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes?.size ?: 0)
-                            val stream = ByteArrayOutputStream()
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
-                            bytes = stream.toByteArray()
+                    val bytes = getBytesFromUri(context, photo.uri)?.also { bytes ->
+                        val size = bytes.size
+                        if (size > MAX_IMAGE_SIZE) {
+                            throw NetworkErrorException("Photo too large")
                         }
                     }
 
                     MultipartBody.Part
                         .createFormData(
                             "photo$index",
-                            filenameForServer,
+                            getImageFilenameForServer(context, index, photo.uri, photo.id),
                             body = bytes?.toRequestBody() ?: throw Exception("Photo is null")
                         )
 
@@ -159,5 +160,46 @@ class EventApiImpl @Inject constructor(
         } catch (e: Exception) {
             throw Exception("${e.message}")
         }
+    }
+
+    private fun getImageFilenameForServer(
+        context: Context,
+        index: Int,
+        uri: Uri,
+        id: UuidStr
+    ): String {
+        return "photo$index-$id." +
+                (InputStreamRequestBody
+                    .getFileName(context, uri)
+                    ?.split(".")
+                    ?.last()
+                    ?: "jpg")
+    }
+
+    private fun getBytesFromUri(context: Context, uri: Uri): ByteArray?  {
+        var bytes = context.contentResolver
+            .openInputStream(uri)
+            .use {
+                it?.readBytes()
+            }
+
+        val size = context.contentResolver.openFileDescriptor(uri, "r")
+            .use {
+                it?.statSize
+            }
+
+        size?.also { imageSize ->
+            if (imageSize > 1000000) {
+                //throw NetworkErrorException("Photo too large")
+
+                // recompress the photo
+                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes?.size ?: 0)
+                val stream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
+                bytes = stream.toByteArray()
+            }
+        }
+
+        return bytes
     }
 }
