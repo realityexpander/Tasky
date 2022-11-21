@@ -118,8 +118,8 @@ class EventApiImpl @Inject constructor(
                         .use {
                             it?.statSize
                         }
-                    size?.also {
-                        if (it > 1000000) {
+                    size?.also { imageSize ->
+                        if (imageSize > 1000000) {
                             //throw NetworkErrorException("Photo too large")
 
                             // recompress the photo
