@@ -42,8 +42,6 @@ class EventApiImpl @Inject constructor(
 //                                body = photoFile.toRequestBody() // todo convert URI to ByteArray
                             body = InputStreamRequestBody(
                                 context,
-//                                "image/*".toMediaTypeOrNull(),
-//                                context.contentResolver,
                                 photo.uri
                             )
                         )
@@ -100,9 +98,6 @@ class EventApiImpl @Inject constructor(
                             "photo$index",
                             body = InputStreamRequestBody(
                                 context,
-//                                "image/jpeg".toMediaTypeOrNull(),
-//                                "application/octet-stream".toMediaTypeOrNull(),
-//                                context.contentResolver,
                                 photo.uri
                             )
                         )
