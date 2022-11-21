@@ -51,6 +51,7 @@ import org.json.JSONObject
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.create
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Qualifier
 import javax.inject.Singleton
@@ -136,10 +137,18 @@ object AppModule {
             OkHttpClient.Builder()
                 .addInterceptor(addHeadersInterceptor)
                 .addInterceptor(logging)
+                .connectTimeout(1, TimeUnit.MINUTES)
+                .callTimeout(1, TimeUnit.MINUTES)
+                .readTimeout(1, TimeUnit.MINUTES)
+                .writeTimeout(1, TimeUnit.MINUTES)
                 .build()
         } else {
             OkHttpClient.Builder()
                 .addInterceptor(addHeadersInterceptor)
+                .connectTimeout(1, TimeUnit.MINUTES)
+                .callTimeout(1, TimeUnit.MINUTES)
+                .readTimeout(1, TimeUnit.MINUTES)
+                .writeTimeout(1, TimeUnit.MINUTES)
                 .build()
         }
 
