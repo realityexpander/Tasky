@@ -99,47 +99,24 @@ class EventApiImpl @Inject constructor(
                         .createFormData(
                             "photo$index",
                             "photo$index-" +
-                                    photo.id +
-                                    ".${InputStreamRequestBody
-                                        .getFileName(context, photo.uri)
-                                        ?.split(".")
-                                        ?.last()
-                                        ?: "jpg"
-                                    }",
+                                photo.id +
+                                ".${InputStreamRequestBody
+                                    .getFileName(context, photo.uri)
+                                    ?.split(".")
+                                    ?.last()
+                                    ?: "jpg"
+                                }",
                             body = InputStreamRequestBody(
                                 context,
                                 photo.uri
                             )
                         )
                     }
-
-//                    // get bytes from uri
-//                    val bytes = context.contentResolver
-//                        .openInputStream(photo.uri)
-//                        .use {
-//                            it?.readBytes()
-//                        }
-//                    val extension = InputStreamRequestBody
-//                        .getFileName(context, photo.uri)
-//                        ?.split(".")
-//                        ?.last()
-//                        ?: "jpg"
-//
-//                    MultipartBody.Part
-//                        .createFormData(
-//                            "photo$index",
-//                            photo.id + ".$extension",
-//                            body = bytes?.toRequestBody() ?: ByteArray(0).toRequestBody()
-//                        )
-//                    }
             )
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 responseBody ?: throw Exception("Response body is null")
             } else {
-//                Response.error<EventDTO.Response>(
-//                    response.errorBody()
-//                )
                 throw Exception("Error updating event: ${getErrorBodyMessage(response.errorBody()?.string())}")
             }
         } catch (e: NetworkErrorException) {
