@@ -15,6 +15,8 @@ import okio.source
 import java.io.File
 import java.util.*
 
+// from: https://github.com/Dhaval2404/ImagePicker/issues/205
+
 class InputStreamRequestBody(
     val context: Context,
     val uri: Uri
@@ -30,7 +32,7 @@ class InputStreamRequestBody(
     }
 
     @SuppressLint("Recycle")  // for openInputStream, its being closed with the use() function
-    //@Throws(IOException::class)
+    @Throws(IOException::class)
     override fun writeTo(sink: BufferedSink) {
 
         val source = context.contentResolver.openInputStream(uri)?.source()
@@ -42,10 +44,12 @@ class InputStreamRequestBody(
     companion object {
         fun getMimeType(context: Context, uri: Uri): String? {
             return when (uri.scheme) {
-                ContentResolver.SCHEME_CONTENT -> context.contentResolver.getType(uri)
-                ContentResolver.SCHEME_FILE -> MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                    MimeTypeMap.getFileExtensionFromUrl(uri.toString()).lowercase(Locale.US)
-                )
+                ContentResolver.SCHEME_CONTENT ->
+                    context.contentResolver.getType(uri)
+                ContentResolver.SCHEME_FILE ->
+                    MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                        MimeTypeMap.getFileExtensionFromUrl(uri.toString()).lowercase(Locale.US)
+                    )
                 else -> null
             }
         }
