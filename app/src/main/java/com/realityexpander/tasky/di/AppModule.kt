@@ -82,7 +82,6 @@ object AppModule {
     ): TaskyApi {
 
         val addHeadersInterceptor = Interceptor { chain ->
-
             runBlocking(Dispatchers.IO) {
 
                 val requestBuilder = chain.request().newBuilder()

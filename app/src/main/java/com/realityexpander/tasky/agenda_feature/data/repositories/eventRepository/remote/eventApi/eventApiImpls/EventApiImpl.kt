@@ -1,62 +1,23 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.eventApiImpls
 
-import android.annotation.SuppressLint
-import android.content.ContentResolver
 import android.content.Context
-import android.net.Uri
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
 import com.realityexpander.tasky.core.data.remote.TaskyApi
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okio.*
 import javax.inject.Inject
 
+
+@OptIn(ExperimentalSerializationApi::class)
 val jsonPrettyPrint = Json {
     prettyPrint = true
     ignoreUnknownKeys = true
     prettyPrintIndent = "     "
     encodeDefaults = true
-}
-
-class InputStreamRequestBody(
-    contentType: MediaType?,
-    contentResolver: ContentResolver,
-    uri: Uri?
-): RequestBody() {
-    private val contentType: MediaType?
-    private val contentResolver: ContentResolver
-    private val uri: Uri
-
-    init {
-        if (uri == null) throw NullPointerException("uri == null")
-        this.contentType = contentType
-        this.contentResolver = contentResolver
-        this.uri = uri
-    }
-
-    override fun contentType(): MediaType? {
-        return contentType
-    }
-
-    @Throws(IOException::class)
-    override fun contentLength(): Long {
-        return -1
-    }
-
-    @SuppressLint("Recycle")  // for openInputStream, its being closed with the use() function
-    @Throws(IOException::class)
-    override fun writeTo(sink: BufferedSink) {
-
-        val source = contentResolver.openInputStream(uri)?.source()
-        source.use { source ->
-            source?.let { sink.writeAll(it) }
-        }
-    }
 }
 
 class EventApiImpl @Inject constructor(
@@ -80,8 +41,9 @@ class EventApiImpl @Inject constructor(
                             "photo$index",
 //                                body = photoFile.toRequestBody() // todo convert URI to ByteArray
                             body = InputStreamRequestBody(
-                                "image/*".toMediaTypeOrNull(),
-                                context.contentResolver,
+                                context,
+//                                "image/*".toMediaTypeOrNull(),
+//                                context.contentResolver,
                                 photo.uri
                             )
                         )
@@ -137,9 +99,10 @@ class EventApiImpl @Inject constructor(
                             "photos",
                             "photo$index",
                             body = InputStreamRequestBody(
-                                "image/jpeg".toMediaTypeOrNull(),
+                                context,
+//                                "image/jpeg".toMediaTypeOrNull(),
 //                                "application/octet-stream".toMediaTypeOrNull(),
-                                context.contentResolver,
+//                                context.contentResolver,
                                 photo.uri
                             )
                         )
