@@ -390,7 +390,7 @@ class EventViewModel @Inject constructor(
                         _state.update { _state ->
                             _state.copy(
                                 isProgressVisible = false,
-                                errorMessage = UiText.Res(R.string.event_error_save_event)
+                                errorMessage = result.message
                             )
                         }
                     }

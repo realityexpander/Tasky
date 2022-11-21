@@ -68,20 +68,16 @@ class EventRepositoryImpl(
 
     override suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
         return try {
-            try {
-                eventDao.updateEvent(event.toEntity())  // optimistic update
+            eventDao.updateEvent(event.toEntity())  // optimistic update
 
-                val response = eventApi.updateEvent(event.toEventDTOUpdate())
-                eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
-            } catch (e: Exception) {
-                throw e
-            }
+            val response = eventApi.updateEvent(event.toEventDTOUpdate())
+            eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
 
             ResultUiText.Success() // todo return the updated event
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            ResultUiText.Error(UiText.Str(e.message ?: "updateEvent error"))
+            ResultUiText.Error(UiText.Str(e.localizedMessage ?: "updateEvent error"))
         }
     }
 

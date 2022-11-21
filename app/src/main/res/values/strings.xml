@@ -126,7 +126,7 @@
     <string name="event_delete_event">DELETE EVENT</string>
     <string name="event_leave_event">LEAVE EVENT</string>
     <string name="event_join_event">JOIN EVENT</string>
-    <string name="event_error_save_event">Error saving Event</string>
+    <string name="event_error_save_event">Error saving Event: %s</string>
     <string name="event_error_delete_event">Error deleting Event</string>
     <string name="event_error_leave_event">Error leaving Event</string>
     <string name="event_error_join_event">Error joining Event</string>

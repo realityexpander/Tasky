@@ -1,14 +1,17 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.eventApiImpls
 
+import android.accounts.NetworkErrorException
 import android.content.Context
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
 import com.realityexpander.tasky.core.data.remote.TaskyApi
+import com.realityexpander.tasky.core.data.remote.utils.getErrorBodyMessage
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MultipartBody
 import okio.*
+import java.util.*
 import javax.inject.Inject
 
 
@@ -94,24 +97,55 @@ class EventApiImpl @Inject constructor(
                 photos = event.photos.mapIndexed { index, photo ->
                     MultipartBody.Part
                         .createFormData(
-                            "photos",
                             "photo$index",
+                            "photo$index-" +
+                                    photo.id +
+                                    ".${InputStreamRequestBody
+                                        .getFileName(context, photo.uri)
+                                        ?.split(".")
+                                        ?.last()
+                                        ?: "jpg"
+                                    }",
                             body = InputStreamRequestBody(
                                 context,
                                 photo.uri
                             )
                         )
-                    }.also {
                     }
+
+//                    // get bytes from uri
+//                    val bytes = context.contentResolver
+//                        .openInputStream(photo.uri)
+//                        .use {
+//                            it?.readBytes()
+//                        }
+//                    val extension = InputStreamRequestBody
+//                        .getFileName(context, photo.uri)
+//                        ?.split(".")
+//                        ?.last()
+//                        ?: "jpg"
+//
+//                    MultipartBody.Part
+//                        .createFormData(
+//                            "photo$index",
+//                            photo.id + ".$extension",
+//                            body = bytes?.toRequestBody() ?: ByteArray(0).toRequestBody()
+//                        )
+//                    }
             )
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 responseBody ?: throw Exception("Response body is null")
             } else {
-                throw Exception("Error updating event: ${response.errorBody()}")
+//                Response.error<EventDTO.Response>(
+//                    response.errorBody()
+//                )
+                throw Exception("Error updating event: ${getErrorBodyMessage(response.errorBody()?.string())}")
             }
+        } catch (e: NetworkErrorException) {
+            throw Exception("Network Error updating event: ${e.localizedMessage}")
         } catch (e: Exception) {
-            throw Exception("Error updating event: ${e.message}")
+            throw Exception("${e.message}")
         }
     }
 }
