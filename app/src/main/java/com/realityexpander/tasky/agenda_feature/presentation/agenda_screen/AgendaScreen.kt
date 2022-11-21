@@ -145,7 +145,7 @@ fun AgendaScreenContent(
     fun navigateToEventScreen(eventId: EventId?, isEditable: Boolean = false) {
         navigator.navigate(
             EventScreenDestination(
-                eventId = eventId,  // create new event
+                initialEventId = eventId,  // create new event
                 isEditable = isEditable,
             )
         ) {

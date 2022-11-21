@@ -5,11 +5,15 @@ import androidx.room.TypeConverter
 class StringListTypeConverter {
     @TypeConverter
     fun fromList(value: List<String>?): String? {
+        if(value?.size == 0) return ""
+
         return value?.joinToString(",")
     }
 
     @TypeConverter
     fun toList(value: String?): List<String>? {
+        if(value=="") return emptyList()
+
         return value?.split(",")?.map { it }
     }
 }
@@ -25,4 +29,7 @@ fun main() {
     println(stringList2)
 
     println(stringList == stringList2)
+
+    println(stringListTypeConverter.toList(null))
+    println(stringListTypeConverter.fromList(null))
 }

@@ -7,7 +7,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class PhotoListTypeConverter {
+class PhotoEntityListTypeConverter {
     @TypeConverter
     fun fromPhotoList(value: List<PhotoEntity>?): String? {
         return value?.let {
@@ -24,9 +24,9 @@ class PhotoListTypeConverter {
 }
 
 
- // Local testing
+// Local testing
 fun main() {
-    val photoListConverter = PhotoListTypeConverter()
+    val photoListConverter = PhotoEntityListTypeConverter()
 
     val photoList = listOf(
         PhotoEntity(
@@ -54,5 +54,9 @@ fun main() {
 
     println()
     println("photoList == photoList2: ${photoList2 == photoList}")
+
+    println()
+    println(photoListConverter.fromPhotoList(null))
+    println(photoListConverter.toPhotoList(null))
 
 }

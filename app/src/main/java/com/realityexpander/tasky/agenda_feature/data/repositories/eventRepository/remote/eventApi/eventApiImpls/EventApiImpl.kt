@@ -1,16 +1,69 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.eventApiImpls
 
+import android.annotation.SuppressLint
+import android.content.ContentResolver
+import android.content.Context
+import android.net.Uri
+import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
-import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okio.*
 import javax.inject.Inject
 
+val jsonPrettyPrint = Json {
+    prettyPrint = true
+    ignoreUnknownKeys = true
+    prettyPrintIndent = "     "
+    encodeDefaults = true
+}
+
+class InputStreamRequestBody(
+    contentType: MediaType?,
+    contentResolver: ContentResolver,
+    uri: Uri?
+): RequestBody() {
+    private val contentType: MediaType?
+    private val contentResolver: ContentResolver
+    private val uri: Uri
+
+    init {
+        if (uri == null) throw NullPointerException("uri == null")
+        this.contentType = contentType
+        this.contentResolver = contentResolver
+        this.uri = uri
+    }
+
+    override fun contentType(): MediaType? {
+        return contentType
+    }
+
+    @Throws(IOException::class)
+    override fun contentLength(): Long {
+        return -1
+    }
+
+    @SuppressLint("Recycle")  // for openInputStream, its being closed with the use() function
+    @Throws(IOException::class)
+    override fun writeTo(sink: BufferedSink) {
+
+        val source = contentResolver.openInputStream(uri)?.source()
+        source.use { source ->
+            source?.let { sink.writeAll(it) }
+        }
+    }
+}
+
 class EventApiImpl @Inject constructor(
-    private val taskyApi: TaskyApi
+    private val taskyApi: TaskyApi,
+    private val context: Context
 ) : IEventApi {
+
     override suspend fun createEvent(event: EventDTO.Create): EventDTO.Response {
         try {
             val response = taskyApi.createEvent(
@@ -18,28 +71,22 @@ class EventApiImpl @Inject constructor(
                     MultipartBody.Part
                         .createFormData(
                             "create_event_request",
-                            Json.encodeToString(EventDTO.Create.serializer(), event),
+                            jsonPrettyPrint.encodeToString(EventDTO.Create.serializer(), event),
                         ),
-                photos = event.photos.map {  // todo - add photo handling
-                    MultipartBody.Part.createFormData("photos", "")
-                },
-//                photos = event.photos.mapIndexed { index, photo -> // todo - add photo handling
-//
-//                val photoFile = Uri.fromFile(  // todo possible solution
-//                    File(
-//                        context.cacheDir,
-//                        context.contentResolver.getFileName(event.photos[0].uri!!)
-//                    )
-//                    ).toFile()
-//
-//                    MultipartBody.Part
-//                        .createFormData(
-//                            "photos",
-//                            "photo$index",
-//                            body = photoFile.toRequestBody() // todo convert URI to ByteArray
-//                        )
-//                }.also {
-//                }
+                photos = event.photos.mapIndexed { index, photo -> // todo - add photo handling
+                    MultipartBody.Part
+                        .createFormData(
+                            "photos",
+                            "photo$index",
+//                                body = photoFile.toRequestBody() // todo convert URI to ByteArray
+                            body = InputStreamRequestBody(
+                                "image/*".toMediaTypeOrNull(),
+                                context.contentResolver,
+                                photo.uri
+                            )
+                        )
+                    }.also {
+                    }
             )
             if (response.isSuccessful) {
                 val responseBody = response.body()
@@ -82,18 +129,22 @@ class EventApiImpl @Inject constructor(
                     MultipartBody.Part
                         .createFormData(
                             "update_event_request",
-                            Json.encodeToString(EventDTO.Update.serializer(), event)
+                            jsonPrettyPrint.encodeToString(EventDTO.Update.serializer(), event)
                         ),
-                photos = emptyList(),
-//                    photos = event.photos.mapIndexed { index, photo -> // todo - add photo handling
-//                        MultipartBody.Part
-//                            .createFormData(
-//                                "photos",
-//                                "photo$index",
-//                                body = event.photos[0].toRequestBody()  // todo Convert URI to ByteArray
-//                        )
-//                }.also {
-//                }
+                photos = event.photos.mapIndexed { index, photo ->
+                    MultipartBody.Part
+                        .createFormData(
+                            "photos",
+                            "photo$index",
+                            body = InputStreamRequestBody(
+                                "image/jpeg".toMediaTypeOrNull(),
+//                                "application/octet-stream".toMediaTypeOrNull(),
+                                context.contentResolver,
+                                photo.uri
+                            )
+                        )
+                    }.also {
+                    }
             )
             if (response.isSuccessful) {
                 val responseBody = response.body()

@@ -297,8 +297,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideEventApiProd(taskyApi: TaskyApi): IEventApi =
-        EventApiImpl(taskyApi)
+    fun provideEventApiProd(
+        taskyApi: TaskyApi,
+        @ApplicationContext context: Context
+    ): IEventApi =
+        EventApiImpl(taskyApi, context)
 
     @Provides
     @Singleton

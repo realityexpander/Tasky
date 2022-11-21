@@ -56,7 +56,7 @@ import java.util.*
 @Destination
 fun EventScreen(
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    eventId: UuidStr? = null,
+    initialEventId: UuidStr? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     isEditable: Boolean = false,
     navigator: DestinationsNavigator,
@@ -140,9 +140,8 @@ fun AddEventScreenContent(
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
             onResult = { uri ->
-                //selectedImageUri = uri
-
                 uri?.let {
+
                     onAction(
                         EditMode.AddLocalPhoto(
                             Photo.Local(

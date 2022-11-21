@@ -25,8 +25,12 @@ fun AgendaItem.Event.toEntity(): EventEntity {
         isUserEventCreator = isUserEventCreator,
         isGoing = isGoing,
         attendees = attendees.map { it.toEntity() },
-        photos = photos.map { it.toEntity() },
-        deletedPhotoKeys = deletedPhotoKeys,
+        photos = photos
+            .filterIsInstance<Photo.Remote>()  // don't save local photos (uri's are not valid after app restart)
+            .map {
+                it.toEntity()
+            },
+        deletedPhotoIds = deletedPhotoIds,
         isDeleted = isDeleted,
     )
 }
@@ -45,7 +49,7 @@ fun EventEntity.toDomain(): AgendaItem.Event {
         isGoing = isGoing,
         attendees = attendees.map { it.toDomain() },
         photos = photos.map { it.toDomain() },
-        deletedPhotoKeys = deletedPhotoKeys,
+        deletedPhotoIds = deletedPhotoIds,
     )
 }
 
@@ -72,6 +76,7 @@ fun EventDTO.toDomain(): AgendaItem.Event {
                 isGoing = isGoing,
                 attendees = attendees.map { it.toDomain() },
                 photos = photos.map { it.toDomain() },
+                deletedPhotoIds = emptyList()
             )
         }
         else -> {
@@ -107,7 +112,10 @@ fun AgendaItem.Event.toEventDTOUpdate(): EventDTO.Update {
         remindAt = remindAt.toUtcMillis(),
         isGoing = isGoing ?: false,
         attendeeIds = attendees.map { it.id },
-        deletedPhotoIds = deletedPhotoKeys,
+        photos = photos
+            .filterIsInstance<Photo.Local>()        // only upload Local photos
+            .map { it.toDTO() },
+        deletedPhotoIds = deletedPhotoIds,
     )
 }
 
@@ -124,8 +132,7 @@ fun AgendaItem.Event.toEventDTOResponse(): EventDTO.Response {
         isGoing = isGoing ?: false,
         photos = photos
             .map { it.toDTO() }
-            .filterIsInstance<PhotoDTO.Remote>()        // ensure only respond with Remote photos
-        ,
+            .filterIsInstance<PhotoDTO.Remote>(),        // ensure only respond with Remote photos
         attendees = attendees.map { it.toDTO() },
         isUserEventCreator = isUserEventCreator ?: false,
         host = host ?: "",

@@ -43,7 +43,8 @@ abstract class EventDTO {
         override val from: UtcMillis,
         override val to: UtcMillis,
 
-        val isGoing : Boolean = true,
+        @Required
+        val isGoing : Boolean,
 
         @Required  // forces write of empty list -> []   (instead of no field written)
         val attendeeIds: List<AttendeeId> = emptyList(),
@@ -67,7 +68,7 @@ abstract class EventDTO {
 
         val host: UserId,
         val isUserEventCreator: Boolean,
-        val isGoing: Boolean? = null,
+        val isGoing: Boolean? = true,
 
         // Note: Returns complete Attendee objects (not Ids)
         val attendees: List<AttendeeDTO> = emptyList(),
