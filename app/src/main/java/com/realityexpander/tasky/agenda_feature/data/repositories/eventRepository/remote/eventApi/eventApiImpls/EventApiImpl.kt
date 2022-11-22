@@ -46,22 +46,27 @@ class EventApiImpl @Inject constructor(
                             jsonPrettyPrint.encodeToString(EventDTO.Create.serializer(), event),
                         ),
                 photos = event.photos.mapIndexed { index, photo -> // todo - add photo handling
+
+                    val bytes = getBytesFromUri(context, photo.uri)?.also { bytes ->
+                        val size = bytes.size
+                        if (size > MAX_IMAGE_SIZE) {
+                            throw NetworkErrorException("Photo too large")
+                        }
+                    } ?: throw Exception("Photo not found")
+
                     MultipartBody.Part
                         .createFormData(
-                            "photos",
                             "photo$index",
-                            body = InputStreamRequestBody(
-                                context,
-                                photo.uri
-                            )
+                            getImageFilenameForServer(context, index, photo.uri, photo.id),
+                            body = bytes.toRequestBody()
                         )
-                    }
+                }
             )
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 return responseBody ?: throw Exception("Response body is null")
             } else {
-                throw Exception("Error creating event: ${response.errorBody()}")
+                throw Exception("Error updating event: ${getErrorBodyMessage(response.errorBody()?.string())}")
             }
         } catch (e: Exception) {
             throw Exception("Error creating event: ${e.message}")
@@ -82,15 +87,6 @@ class EventApiImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteEvent(eventId: EventId): Boolean {
-        return try {
-            val response = taskyApi.deleteEvent(eventId)
-            response.isSuccessful
-        } catch (e: Exception) {
-            false
-        }
-    }
-
     override suspend fun updateEvent(event: EventDTO.Update): EventDTO.Response {
 
         return try {
@@ -103,50 +99,19 @@ class EventApiImpl @Inject constructor(
                         ),
                 photos = event.photos.mapIndexed { index, photo ->
 
-//                    var bytes = context.contentResolver
-//                        .openInputStream(photo.uri)
-//                        .use {
-//                            it?.readBytes()
-//                        }
-//                    val size = context.contentResolver.openFileDescriptor(photo.uri, "r")
-//                        .use {
-//                            it?.statSize
-//                        }
-//                    size?.also { imageSize ->
-//                        if (imageSize > 1000000) {
-//                            //throw NetworkErrorException("Photo too large")
-//
-//                            // recompress the photo
-//                            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes?.size ?: 0)
-//                            val stream = ByteArrayOutputStream()
-//                            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
-//                            bytes = stream.toByteArray()
-//                        }
-//                    }
-
                     val bytes = getBytesFromUri(context, photo.uri)?.also { bytes ->
                         val size = bytes.size
                         if (size > MAX_IMAGE_SIZE) {
                             throw NetworkErrorException("Photo too large")
                         }
-                    }
+                    } ?: throw Exception("Photo not found")
 
                     MultipartBody.Part
                         .createFormData(
                             "photo$index",
                             getImageFilenameForServer(context, index, photo.uri, photo.id),
-                            body = bytes?.toRequestBody() ?: throw Exception("Photo is null")
+                            body = bytes.toRequestBody()
                         )
-
-//                    MultipartBody.Part
-//                        .createFormData(
-//                            "photo$index",
-//                            filenameForServer,
-//                            body = InputStreamRequestBody(
-//                                context,
-//                                photo.uri
-//                            )
-//                        )
                 }
             )
             if (response.isSuccessful) {
@@ -159,6 +124,15 @@ class EventApiImpl @Inject constructor(
             throw Exception("Network Error updating event: ${e.localizedMessage}")
         } catch (e: Exception) {
             throw Exception("${e.message}")
+        }
+    }
+
+    override suspend fun deleteEvent(eventId: EventId): Boolean {
+        return try {
+            val response = taskyApi.deleteEvent(eventId)
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
         }
     }
 
@@ -176,6 +150,7 @@ class EventApiImpl @Inject constructor(
                     ?: "jpg")
     }
 
+    // Will automatically recompress to lower quality if the image is too large
     private fun getBytesFromUri(context: Context, uri: Uri): ByteArray?  {
         var bytes = context.contentResolver
             .openInputStream(uri)
@@ -183,13 +158,13 @@ class EventApiImpl @Inject constructor(
                 it?.readBytes()
             }
 
-        val size = context.contentResolver.openFileDescriptor(uri, "r")
+        val imageSize = context.contentResolver.openFileDescriptor(uri, "r")
             .use {
                 it?.statSize
             }
 
-        size?.also { imageSize ->
-            if (imageSize > 1000000) {
+        imageSize?.also { size ->
+            if (size > 1000000) {
                 //throw NetworkErrorException("Photo too large")
 
                 // recompress the photo
