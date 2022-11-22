@@ -89,7 +89,7 @@ class EventApiImpl @Inject constructor(
 
     override suspend fun updateEvent(event: EventDTO.Update): EventDTO.Response {
 
-        return try {
+        try {
             val response = taskyApi.updateEvent(
                 updateEventRequest =
                     MultipartBody.Part
@@ -116,7 +116,7 @@ class EventApiImpl @Inject constructor(
             )
             if (response.isSuccessful) {
                 val responseBody = response.body()
-                responseBody ?: throw Exception("Response body is null")
+                return responseBody ?: throw Exception("Response body is null")
             } else {
                 throw Exception("Error updating event: ${getErrorBodyMessage(response.errorBody()?.string())}")
             }
