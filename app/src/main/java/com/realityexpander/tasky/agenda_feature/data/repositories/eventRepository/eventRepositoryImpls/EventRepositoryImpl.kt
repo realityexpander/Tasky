@@ -3,6 +3,8 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.eventReposito
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEntity
+import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEventDTOCreate
+import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEventDTOUpdate
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
@@ -22,7 +24,7 @@ class EventRepositoryImpl(
     override suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
         return try {
             eventDao.createEvent(event.toEntity())
-            //eventApi.createEvent(event.toEventDTOCreate())
+            eventApi.createEvent(event.toEventDTOCreate())
 
             ResultUiText.Success()  // todo return the created event
         } catch (e: CancellationException) {
@@ -66,13 +68,16 @@ class EventRepositoryImpl(
 
     override suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
         return try {
-            eventDao.updateEvent(event.toEntity())
+            eventDao.updateEvent(event.toEntity())  // optimistic update
+
+            val response = eventApi.updateEvent(event.toEventDTOUpdate())
+            eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
 
             ResultUiText.Success() // todo return the updated event
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            ResultUiText.Error(UiText.Str(e.message ?: "updateEvent error"))
+            ResultUiText.Error(UiText.Str(e.localizedMessage ?: "updateEvent error"))
         }
     }
 

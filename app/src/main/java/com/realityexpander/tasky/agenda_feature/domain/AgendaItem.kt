@@ -24,12 +24,12 @@ abstract class AgendaItem {
 
         val host: UserId? = null,
         val isUserEventCreator: Boolean? = null,    // todo does this need to be null or false?
-        val isGoing: Boolean? = null,               // todo does this need to be null or false?
+        val isGoing: Boolean? = true,
 
         val attendees: List<Attendee> = emptyList(),
 
         val photos: List<Photo> = emptyList(),
-        val deletedPhotoKeys: List<PhotoId> = emptyList(),  // only used for EventDTO.Update
+        val deletedPhotoIds: List<PhotoId> = emptyList(),  // only used for EventDTO.Update
 
         val isDeleted: Boolean = false,
     ) : AgendaItem(), Parcelable

@@ -305,7 +305,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
     )
@@ -337,7 +337,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
     )
@@ -367,7 +367,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
     )
@@ -397,7 +397,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
     )
@@ -438,7 +438,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
     )
@@ -470,7 +470,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
     )
@@ -500,7 +500,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
     )
@@ -532,7 +532,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
     )
@@ -566,7 +566,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
     )

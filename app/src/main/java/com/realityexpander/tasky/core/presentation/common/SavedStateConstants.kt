@@ -31,6 +31,6 @@ object SavedStateConstants {
     // Event screen
     const val SAVED_STATE_addAttendeeDialogErrorMessage          = "addAttendeeDialogErrorMessage"
     const val SAVED_STATE_isAttendeeEmailValid                   = "isAttendeeEmailValid"
-    const val SAVED_STATE_eventId                                = "eventId"
+    const val SAVED_STATE_initialEventId                         = "initialEventId"
 
 }

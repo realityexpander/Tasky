@@ -67,7 +67,7 @@ open class EventDaoTest {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = emptyList(),
+            deletedPhotoIds = emptyList(),
             isDeleted = false,
         )
 
@@ -112,7 +112,7 @@ open class EventDaoTest {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
 
@@ -160,7 +160,7 @@ open class EventDaoTest {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
 
@@ -206,7 +206,7 @@ open class EventDaoTest {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
         val event2 = EventEntity(
@@ -233,7 +233,7 @@ open class EventDaoTest {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
 
@@ -280,7 +280,7 @@ open class EventDaoTest {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
         val event2 = EventEntity(
@@ -307,7 +307,7 @@ open class EventDaoTest {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
 
@@ -360,7 +360,7 @@ open class EventDaoTest {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
         val event2 = EventEntity(
@@ -387,7 +387,7 @@ open class EventDaoTest {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
 
@@ -439,7 +439,7 @@ open class EventDaoTest {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
         val event2 = EventEntity(
@@ -466,7 +466,7 @@ open class EventDaoTest {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
 
@@ -525,7 +525,7 @@ open class EventDaoTest {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
         val event2 = EventEntity( // This event is not for today
@@ -552,7 +552,7 @@ open class EventDaoTest {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
         val event3 = EventEntity(  // This event is not for today
@@ -579,7 +579,7 @@ open class EventDaoTest {
             photos = listOf(
                 PhotoEntity("1", "https://www.google.com")
             ),
-            deletedPhotoKeys = listOf(),
+            deletedPhotoIds = listOf(),
             isDeleted = false,
         )
 

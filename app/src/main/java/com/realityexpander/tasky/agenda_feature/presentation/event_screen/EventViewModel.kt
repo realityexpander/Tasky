@@ -22,9 +22,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.time.Duration
 import java.time.ZonedDateTime
+import java.util.*
 import javax.inject.Inject
-
-const val NEW_EVENT_ID = "NEW_EVENT_ID"
 
 @HiltViewModel
 class EventViewModel @Inject constructor(
@@ -47,8 +46,8 @@ class EventViewModel @Inject constructor(
         savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid]
 
     // Get params from savedStateHandle (from another screen)
-    private val eventId: EventId? =
-        savedStateHandle[SavedStateConstants.SAVED_STATE_eventId]
+    private val initialEventId: EventId? =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_initialEventId]
 
     private val _state = MutableStateFlow(
         EventScreenState(
@@ -71,8 +70,7 @@ class EventViewModel @Inject constructor(
                 state.addAttendeeDialogErrorMessage
             savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid] =
                 state.isAttendeeEmailValid
-        }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventScreenState())
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventScreenState())
 
     private val _oneTimeEvent = MutableSharedFlow<OneTimeEvent>()
     val oneTimeEvent = _oneTimeEvent.asSharedFlow()
@@ -86,18 +84,19 @@ class EventViewModel @Inject constructor(
                 authInfo = authRepository.getAuthInfo(),
 
                 // If eventId is null, then creating a new event.
-                event = eventId?.let { eventId ->
+                event = initialEventId?.let { eventId ->
                     agendaRepository.getEvent(eventId)   // Load event from repository
                 } ?:
                     // Create a new Event
                     AgendaItem.Event(
-                        id = NEW_EVENT_ID,
+                        id = UUID.randomUUID().toString(),
                         title = "Title of New Event",
                         description = "Description of New Event",
-                        isUserEventCreator = true,
                         from = ZonedDateTime.now(),
                         to = ZonedDateTime.now().plusHours(1),
                         remindAt = ZonedDateTime.now().plusMinutes(30),
+                        host = authRepository.getAuthInfo()?.userId,
+                        isUserEventCreator = true,
                         isGoing = true,
                         photos = emptyList(),
                         attendees = listOf(
@@ -360,7 +359,7 @@ class EventViewModel @Inject constructor(
                 }
 
                 val result =
-                    when (eventId) {
+                    when (initialEventId) {
                         null -> {
                             // Create new event
                             agendaRepository.createEvent(event)
@@ -391,7 +390,7 @@ class EventViewModel @Inject constructor(
                         _state.update { _state ->
                             _state.copy(
                                 isProgressVisible = false,
-                                errorMessage = UiText.Res(R.string.event_error_save_event)
+                                errorMessage = result.message
                             )
                         }
                     }
@@ -425,7 +424,7 @@ class EventViewModel @Inject constructor(
                     )
                 }
 
-                if (_state.value.event?.id == NEW_EVENT_ID) {
+                if (initialEventId == null) {
                     // Event is not saved yet, so just navigate back
                     _state.update { _state ->
                         _state.copy(

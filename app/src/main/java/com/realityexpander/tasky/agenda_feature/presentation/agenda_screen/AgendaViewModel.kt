@@ -275,13 +275,96 @@ class AgendaViewModel @Inject constructor(
                         zoneId
                     ),
                     description = "Discuss the new project",
-                    host = "John",
+                    host = "635dc7880806b27dc8ab81ae",
                     isUserEventCreator = false,
                     isGoing = true,
-                    attendees = emptyList(),
+                    attendees = listOf(
+                        Attendee(
+                            id = authRepository.getAuthInfo()?.userId!!,
+                            fullName = authRepository.getAuthInfo()?.username ?: "",
+                            email = authRepository.getAuthInfo()?.email ?: "",
+                            isGoing = true,
+                        )
+                    ),
                     photos = emptyList(),
                 )
             )
+            agendaRepository.createEvent(
+                AgendaItem.Event(
+                    id = UUID.randomUUID().toString(),
+                    title = "Meeting with Jack",
+                    from = ZonedDateTime.of(
+                        todayDate,
+                        today.toLocalTime().plusHours(3),
+                        zoneId
+                    ),
+                    to = ZonedDateTime.of(
+                        todayDate,
+                        today.toLocalTime().plusHours(4),
+                        zoneId
+                    ),
+                    remindAt = ZonedDateTime.of(
+                        todayDate,
+                        today.toLocalTime().plusHours(2),
+                        zoneId
+                    ),
+                    description = "Discuss the yet another project",
+                    host = "635dc7880806b27dc8ab81ae",
+                    isUserEventCreator = true,
+                    isGoing = true,
+                    attendees = listOf(
+                        Attendee(
+                            id = authRepository.getAuthInfo()?.userId!!,
+                            fullName = authRepository.getAuthInfo()?.username ?: "",
+                            email = authRepository.getAuthInfo()?.email ?: "",
+                            isGoing = true,
+                        )
+                    ),
+                    photos = emptyList(),
+                )
+            )
+            agendaRepository.createEvent(
+                AgendaItem.Event(
+                    id = UUID.randomUUID().toString(),
+                    title = "Meeting with Jeremy",
+                    from = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(4), zoneId),
+                    to = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(5), zoneId),
+                    remindAt = ZonedDateTime.of(
+                        todayDate,
+                        today.toLocalTime().plusHours(3),
+                        zoneId
+                    ),
+                    description = "Discuss the worse project",
+                    host = "635dc7880806b27dc8ab81ae",
+                    isUserEventCreator = true,
+                    isGoing = true,
+                    attendees = listOf(
+                        Attendee(
+                            id = authRepository.getAuthInfo()?.userId!!,
+                            fullName = authRepository.getAuthInfo()?.username ?: "",
+                            email = authRepository.getAuthInfo()?.email ?: "",
+                            isGoing = true,
+                        )
+                    ),
+                    photos = emptyList(),
+                )
+            )
+//                    AgendaItem.Reminder(  // todo add reminder
+//                        id = "0006",
+//                        title = "Reminder with Jill",
+//                        time = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(7), zoneId),
+//                        remindAt = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(6), zoneId),
+//                        description = "Make the similar project"
+//                    ),
+//                    AgendaItem.Task(  // todo add task
+//                        id = "0008",
+//                        title = "Chore with Jason",
+//                        time = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(10), zoneId),
+//                        remindAt = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(9), zoneId),
+//                        description = "Kill the better project",
+//                        isDone = true
+//                    ),
+//                )
 //                    AgendaItem.Task(  // todo add task
 //                        id = "0002",
 //                        title = "Task with Jim",
@@ -304,75 +387,6 @@ class AgendaViewModel @Inject constructor(
 //                        description = "Do the the other project",
 //                        isDone = true
 //                    ),
-            agendaRepository.createEvent(
-                AgendaItem.Event(
-                    id = UUID.randomUUID().toString(),
-                    title = "Meeting with Jack",
-                    from = ZonedDateTime.of(
-                        todayDate,
-                        today.toLocalTime().plusHours(3),
-                        zoneId
-                    ),
-                    to = ZonedDateTime.of(
-                        todayDate,
-                        today.toLocalTime().plusHours(4),
-                        zoneId
-                    ),
-                    remindAt = ZonedDateTime.of(
-                        todayDate,
-                        today.toLocalTime().plusHours(2),
-                        zoneId
-                    ),
-                    description = "Discuss the yet another project",
-                    host = "Jack",
-                    isUserEventCreator = true,
-                    isGoing = false,
-                    attendees = listOf(
-                        Attendee(
-                            id = authRepository.getAuthInfo()?.userId!!,
-                            fullName = authRepository.getAuthInfo()?.username ?: "",
-                            email = authRepository.getAuthInfo()?.email ?: "",
-                            isGoing = true,
-                        )
-                    ),
-                    photos = emptyList(),
-                )
-            )
-//                    AgendaItem.Reminder(  // todo add reminder
-//                        id = "0006",
-//                        title = "Reminder with Jill",
-//                        time = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(7), zoneId),
-//                        remindAt = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(6), zoneId),
-//                        description = "Make the similar project"
-//                    ),
-            agendaRepository.createEvent(
-                AgendaItem.Event(
-                    id = UUID.randomUUID().toString(),
-                    title = "Meeting with Jeremy",
-                    from = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(4), zoneId),
-                    to = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(5), zoneId),
-                    remindAt = ZonedDateTime.of(
-                        todayDate,
-                        today.toLocalTime().plusHours(3),
-                        zoneId
-                    ),
-                    description = "Discuss the worse project",
-                    host = "Jeremy",
-                    isUserEventCreator = true,
-                    isGoing = true,
-                    attendees = emptyList(),
-                    photos = emptyList(),
-                )
-            )
-//                    AgendaItem.Task(  // todo add task
-//                        id = "0008",
-//                        title = "Chore with Jason",
-//                        time = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(10), zoneId),
-//                        remindAt = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(9), zoneId),
-//                        description = "Kill the better project",
-//                        isDone = true
-//                    ),
-//                )
         }
     }
 

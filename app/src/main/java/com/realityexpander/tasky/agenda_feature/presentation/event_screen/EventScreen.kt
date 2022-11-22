@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
@@ -56,7 +56,7 @@ import java.util.*
 @Destination
 fun EventScreen(
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    eventId: UuidStr? = null,
+    initialEventId: UuidStr? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     isEditable: Boolean = false,
     navigator: DestinationsNavigator,
@@ -140,9 +140,8 @@ fun AddEventScreenContent(
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
             onResult = { uri ->
-                //selectedImageUri = uri
-
                 uri?.let {
+
                     onAction(
                         EditMode.AddLocalPhoto(
                             Photo.Local(
@@ -410,7 +409,9 @@ fun AddEventScreenContent(
             }
 
             // • PHOTO PICKER / ADD & REMOVE PHOTOS
-            if((isEditable && isUserEventCreator) || !state.event?.photos.isNullOrEmpty()) {
+            if((isEditable && isUserEventCreator)
+                || !state.event?.photos.isNullOrEmpty()
+            ) {
                 Spacer(modifier = Modifier.smallHeight())
 
                 Box(
@@ -547,13 +548,19 @@ fun AddEventScreenContent(
                                                 )
                                             } else {
                                                 // • PHOTO IMAGE
-                                                AsyncImage(
+                                                SubcomposeAsyncImage(
                                                     model = when(photo) {
                                                         is Photo.Local -> photo.uri
                                                         is Photo.Remote -> photo.url
                                                     },
                                                     contentDescription = stringResource(id = R.string.event_description_photo),
                                                     contentScale = ContentScale.Crop,
+                                                    loading = { CircularProgressIndicator(
+                                                        color = MaterialTheme.colors.primary,
+                                                        modifier = Modifier
+                                                            .align(Alignment.Center)
+                                                            .padding(10.dp)
+                                                    ) },
                                                     modifier = Modifier
                                                         .fillMaxWidth()
                                                         .clickable {
