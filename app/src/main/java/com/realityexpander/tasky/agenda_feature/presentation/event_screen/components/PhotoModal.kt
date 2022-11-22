@@ -99,19 +99,6 @@ fun PhotoModal(
 
             Divider()
 
-//            // Photo
-//            AsyncImage(
-//                model = when(photo) {
-//                    is Photo.Local -> photo.uri
-//                    is Photo.Remote -> photo.url
-//                },
-//                    contentDescription = stringResource(id = R.string.event_description_photo),
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .weight(1f),
-//                    contentScale = ContentScale.Fit
-//            )
-
             // • PHOTO IMAGE
             SubcomposeAsyncImage(
                 model = when(photo) {
@@ -125,7 +112,7 @@ fun PhotoModal(
                         color = MaterialTheme.colors.primary,
                         modifier = Modifier
                             .align(Alignment.Center)
-                            .padding(60.dp)
+                            .padding(160.dp)
                         )
                 },
                 modifier = Modifier
