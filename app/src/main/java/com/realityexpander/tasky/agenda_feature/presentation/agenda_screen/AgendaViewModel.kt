@@ -39,23 +39,6 @@ class AgendaViewModel @Inject constructor(
     private val selectedDayIndex: Int? =
         savedStateHandle[SAVED_STATE_selectedDayIndex]
 
-    // old way, not using two flows
-//    private val _agendaState_old = MutableStateFlow(
-//        AgendaState(
-//            errorMessage = errorMessage,
-//            selectedDayIndex = selectedDayIndex,
-//    ))
-//    val agendaState_old = _agendaState_old.onEach { state ->
-//        // save state for process death
-//        savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
-//        savedStateHandle[SAVED_STATE_selectedDayIndex] = state.selectedDayIndex
-//    }.stateIn(
-//        viewModelScope,
-//        SharingStarted.WhileSubscribed(5000),
-//        AgendaState()
-//    )
-
-    // Using multiple state flows chained together
     private val _selectedDayIndex = MutableStateFlow(selectedDayIndex)
 
     @OptIn(ExperimentalCoroutinesApi::class) // for .flatMapLatest
@@ -103,16 +86,12 @@ class AgendaViewModel @Inject constructor(
                     isLoaded = true, // only after init occurs
                     username = authRepository.getAuthInfo()?.username ?: "",
                     authInfo = authRepository.getAuthInfo(),
-//                    agendaItems = agendaRepository.getAgendaForDayFlow(
-//                        getDateForSelectedDayIndex(_agendaState.value.selectedDayIndex)
-//                    ),
                     agendaItems = _agendaItems.value,
                 )
             }
 
             yield() // wait for database to load
-//            if(_agendaState.value.agendaItems.first().isEmpty()) {
-            if(agendaState.value.agendaItems.isEmpty()) {
+            if(agendaState.value.agendaItems.isEmpty()) { // if no items, make some fake ones
                 createFakeAgendaItems(agendaRepository)
             }
         }
@@ -154,17 +133,6 @@ class AgendaViewModel @Inject constructor(
                 }
             }
             is SetSelectedDayIndex -> {
-//                _agendaState.update {
-//                    it.copy(
-//                        selectedDayIndex = uiEvent.dayIndex,
-//                        agendaItems = agendaRepository.getAgendaForDayFlow(
-//                            getDateForSelectedDayIndex(uiEvent.dayIndex)
-//                        )
-//                    )
-//                }
-//                _selectedDayIndex.update {
-//                    uiEvent.dayIndex
-//                }
                 _selectedDayIndex.value = uiEvent.dayIndex
             }
             is CreateAgendaItem -> {
