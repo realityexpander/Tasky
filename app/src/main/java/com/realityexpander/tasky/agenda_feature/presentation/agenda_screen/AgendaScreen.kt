@@ -54,7 +54,6 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.EventScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZonedDateTime
@@ -70,6 +69,7 @@ fun AgendaScreen(
     navigator: DestinationsNavigator,
     viewModel: AgendaViewModel = hiltViewModel(),
 ) {
+//    val state by viewModel.agendaState.collectAsState()
     val state by viewModel.agendaState.collectAsState()
     val oneTimeEvent by viewModel.oneTimeEvent.collectAsState(null)
 
@@ -105,7 +105,8 @@ fun AgendaScreenContent(
     val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
 
-    val agendaItems by state.agendaItems.collectAsState(initial = emptyList())
+//    val agendaItems by state.agendaItems.collectAsState(initial = emptyList())
+    val agendaItems = state.agendaItems
     val selectedDayIndex = state.selectedDayIndex
 
     // create days of the week for top of screen
@@ -699,7 +700,8 @@ fun AgendaScreenPreview() {
                 authInfo = AuthInfo(
                     username = "Chris Athanas",
                 ),
-                agendaItems = flow {
+//                agendaItems = flow {
+                agendaItems =
                     listOf(
                         AgendaItem.Event(
                             id = "1",
@@ -725,8 +727,7 @@ fun AgendaScreenPreview() {
                             time = ZonedDateTime.now(),
                             remindAt = ZonedDateTime.now().plusDays(1),
                         ),
-                    )
-                },
+                    ),
                 isLoaded = true,
             ),
             onAction = { println("ACTION: $it") },
