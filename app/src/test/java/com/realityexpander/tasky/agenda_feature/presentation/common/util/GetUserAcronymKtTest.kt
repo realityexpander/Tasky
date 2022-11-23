@@ -59,4 +59,5 @@ class GetUserAcronymKtTest {
         // ARRANGE / ACT / ASSERT
         assertTrue(getUserAcronym("John Doe Smith Jr. III IV V") == "JV")
     }
+
 }

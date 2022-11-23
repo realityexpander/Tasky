@@ -129,7 +129,7 @@ fun AgendaItem.Event.toEventDTOResponse(): EventDTO.Response {
         from = from.toUtcMillis(),
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
-        isGoing = isGoing ?: false,
+        isGoing = isGoing,
         photos = photos
             .map { it.toDTO() }
             .filterIsInstance<PhotoDTO.Remote>(),        // ensure only respond with Remote photos

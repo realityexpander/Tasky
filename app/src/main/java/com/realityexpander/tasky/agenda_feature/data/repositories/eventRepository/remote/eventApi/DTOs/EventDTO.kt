@@ -68,7 +68,7 @@ abstract class EventDTO {
 
         val host: UserId,
         val isUserEventCreator: Boolean,
-        val isGoing: Boolean? = true,
+        val isGoing: Boolean = true,
 
         // Note: Returns complete Attendee objects (not Ids)
         val attendees: List<AttendeeDTO> = emptyList(),
