@@ -1,9 +1,9 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.eventDaoImpls
 
 import androidx.room.*
+import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
-import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.core.util.DAY_IN_SECONDS
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -66,11 +66,16 @@ interface EventDaoImpl : IEventDao {
 
     companion object {
         const val getEventsForDayQuery =
-        """
+            """
             SELECT * FROM events WHERE isDeleted = 0 
                 AND (
-                        (`from` >= :zonedDateTime AND (`from` < (:zonedDateTime + ${DAY_IN_SECONDS})))
-                     OR (`to`   >= :zonedDateTime AND (`to`   < (:zonedDateTime + ${DAY_IN_SECONDS})))
+                        ( ( `from` >= :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event fits within a day
+                      OR
+                        ( ( `from` >  :zonedDateTime) AND (`from` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `from` starts today
+                      OR
+                        ( ( `to`   >  :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `to` ends today
+                      OR
+                        ( ( `from` <= :zonedDateTime) AND (`to`   > :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event straddles today     
                 )
         """
     }

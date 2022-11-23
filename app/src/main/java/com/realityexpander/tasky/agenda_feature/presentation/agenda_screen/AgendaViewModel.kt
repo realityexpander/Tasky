@@ -15,6 +15,7 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -38,26 +39,46 @@ class AgendaViewModel @Inject constructor(
     private val selectedDayIndex: Int? =
         savedStateHandle[SAVED_STATE_selectedDayIndex]
 
-    private val _agendaState = MutableStateFlow(
-        AgendaState(
-            errorMessage = errorMessage,
-            selectedDayIndex = selectedDayIndex,
-    ))
-    val agendaState = _agendaState.onEach { state ->
-        // save state for process death
+    private val _selectedDayIndex = MutableStateFlow(selectedDayIndex)
+
+    @OptIn(ExperimentalCoroutinesApi::class) // for .flatMapLatest
+    private val _agendaItems =
+        _selectedDayIndex.flatMapLatest { dayIndex ->
+            agendaRepository.getAgendaForDayFlow(
+                getDateForSelectedDayIndex(dayIndex)
+            )
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    private val _agendaState =
+        MutableStateFlow(
+            AgendaState(
+                // restore state from savedStateHandle after process death
+                errorMessage = errorMessage,
+                selectedDayIndex = selectedDayIndex,
+            ))
+
+    val agendaState = combine(
+        _agendaState,
+        _selectedDayIndex,
+        _agendaItems
+    ) { state, dayIndex, items ->
+
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
         savedStateHandle[SAVED_STATE_selectedDayIndex] = state.selectedDayIndex
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
-        AgendaState()
-    )
+
+        state.copy(
+            agendaItems = items,
+            selectedDayIndex = dayIndex,
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AgendaState())
 
     private val _oneTimeEvent = MutableSharedFlow<OneTimeEvent>()
     val oneTimeEvent = _oneTimeEvent.asSharedFlow()
 
     init {
         viewModelScope.launch {
+            yield() // wait for other init code to run
 
             // restore state after process death
             _agendaState.update {
@@ -65,14 +86,12 @@ class AgendaViewModel @Inject constructor(
                     isLoaded = true, // only after init occurs
                     username = authRepository.getAuthInfo()?.username ?: "",
                     authInfo = authRepository.getAuthInfo(),
-                    agendaItems = agendaRepository.getAgendaForDayFlow(
-                        getDateForSelectedDayIndex(_agendaState.value.selectedDayIndex)
-                    ),
+                    agendaItems = _agendaItems.value,
                 )
             }
 
             yield() // wait for database to load
-            if(_agendaState.value.agendaItems.first().isEmpty()) {
+            if(agendaState.value.agendaItems.isEmpty()) { // if no items for today, make some fake ones
                 createFakeAgendaItems(agendaRepository)
             }
         }
@@ -114,14 +133,7 @@ class AgendaViewModel @Inject constructor(
                 }
             }
             is SetSelectedDayIndex -> {
-                _agendaState.update {
-                    it.copy(
-                        selectedDayIndex = uiEvent.dayIndex,
-                        agendaItems = agendaRepository.getAgendaForDayFlow(
-                            getDateForSelectedDayIndex(uiEvent.dayIndex)
-                        )
-                    )
-                }
+                _selectedDayIndex.value = uiEvent.dayIndex
             }
             is CreateAgendaItem -> {
                 when(uiEvent.agendaItemType) {

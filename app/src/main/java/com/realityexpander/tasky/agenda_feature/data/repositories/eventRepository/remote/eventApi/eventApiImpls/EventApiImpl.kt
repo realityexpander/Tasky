@@ -164,7 +164,7 @@ class EventApiImpl @Inject constructor(
             }
 
         imageSize?.also { size ->
-            if (size > 1000000) {
+            if (size > MAX_IMAGE_SIZE) {
                 //throw NetworkErrorException("Photo too large")
 
                 // recompress the photo

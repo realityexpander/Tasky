@@ -1,10 +1,10 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.eventDaoImpls
 
+import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.AttendeeEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.PhotoEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
-import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -122,31 +122,34 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
     // • READ
 
     private suspend fun getEventsForDayInFakeDatabase(zonedDateTime: ZonedDateTime): List<EventEntity> {
-        return eventsDBTable.filter {
-            (
-                ( it.from.toLocalDate() >= zonedDateTime.toLocalDate()
-                  && it.from.toLocalDate() < zonedDateTime.toLocalDate().plusDays(1)
-                )
-             || ( it.to.toLocalDate() >= zonedDateTime.toLocalDate()
-                  && it.to.toLocalDate() < zonedDateTime.toLocalDate().plusDays(1)
-                )
-            ) && !it.isDeleted
+        return eventsDBTable.filter { entity ->
+            isEventVisibleForDay(entity, zonedDateTime)
         }
     }
 
     private fun getEventsForDayFlowInFakeDatabase(zonedDateTime: ZonedDateTime): Flow<List<EventEntity>> {
         return eventsDBTableFlow.map { events ->
-            events.filter {
-                (
-                    ( it.from.toLocalDate() >= zonedDateTime.toLocalDate()
-                      && it.from.toLocalDate() < zonedDateTime.toLocalDate().plusDays(1)
-                    )
-                 || ( it.to.toLocalDate() >= zonedDateTime.toLocalDate()
-                      && it.to.toLocalDate() < zonedDateTime.toLocalDate().plusDays(1)
-                    )
-                ) && !it.isDeleted
+            events.filter { entity ->
+                isEventVisibleForDay(entity, zonedDateTime)
+
             }
         }
+    }
+
+    private fun isEventVisibleForDay(entity: EventEntity, zonedDateTime: ZonedDateTime): Boolean {
+        return (
+            !entity.isDeleted
+             &&
+            (
+                ( (entity.from >= zonedDateTime) && (entity.to   < zonedDateTime.plusDays(1) )) // -- event fits within a day
+                ||
+                ( (entity.from >  zonedDateTime) && (entity.from < zonedDateTime.plusDays(1) )) // -- `from` starts today
+                ||
+                ( (entity.to   >  zonedDateTime) && (entity.to   < zonedDateTime.plusDays(1) )) // -- `to` ends today
+                ||
+                ( (entity.from <= zonedDateTime) && (entity.to   > zonedDateTime.plusDays(1) )) // -- event straddles today
+            )
+        )
     }
 
     private fun getAllEventsFlowInFakeDatabase(): Flow<List<EventEntity>> {
