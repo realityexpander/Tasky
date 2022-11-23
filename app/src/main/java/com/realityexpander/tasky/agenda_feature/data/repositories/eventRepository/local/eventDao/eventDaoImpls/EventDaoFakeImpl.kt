@@ -123,14 +123,6 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
 
     private suspend fun getEventsForDayInFakeDatabase(zonedDateTime: ZonedDateTime): List<EventEntity> {
         return eventsDBTable.filter { entity ->
-//            (
-//                ( zonedDateTime.toLocalDate() >= entity.from.toLocalDate()
-//                        && zonedDateTime.toLocalDate() < entity.to.toLocalDate().plusDays(1)
-//                )
-//             || ( it.to.toLocalDate() >= zonedDateTime.toLocalDate()
-//                  && it.to.toLocalDate() < zonedDateTime.toLocalDate().plusDays(1)
-//                )
-//            ) && !entity.isDeleted
             isEventVisibleForDay(entity, zonedDateTime)
         }
     }
@@ -138,22 +130,6 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
     private fun getEventsForDayFlowInFakeDatabase(zonedDateTime: ZonedDateTime): Flow<List<EventEntity>> {
         return eventsDBTableFlow.map { events ->
             events.filter { entity ->
-//                (
-//                    ( zonedDateTime.toLocalDate() >= entity.from.toLocalDate()
-//                      && zonedDateTime.toLocalDate() < entity.to.toLocalDate().plusDays(1)
-//                    )
-//                    !entity.isDeleted
-//                      &&
-//                    (
-//                      ( (entity.from >= zonedDateTime) && (entity.to   < zonedDateTime.plusDays(1) )) // -- event fits within a day
-//                       ||
-//                      ( (entity.from >  zonedDateTime) && (entity.from < zonedDateTime.plusDays(1) )) // -- `from` starts today
-//                       ||
-//                      ( (entity.to   >  zonedDateTime) && (entity.to   < zonedDateTime.plusDays(1) )) // -- `to` ends today
-//                       ||
-//                      ( (entity.from <= zonedDateTime) && (entity.to   > zonedDateTime.plusDays(1) )) // -- event straddles today
-//                    )
-//                )
                 isEventVisibleForDay(entity, zonedDateTime)
 
             }

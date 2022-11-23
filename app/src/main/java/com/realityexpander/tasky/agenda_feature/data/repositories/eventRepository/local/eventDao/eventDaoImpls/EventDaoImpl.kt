@@ -66,17 +66,6 @@ interface EventDaoImpl : IEventDao {
 
     companion object {
         const val getEventsForDayQuery =
-//        """
-//            SELECT * FROM events WHERE isDeleted = 0
-//                AND (
-//                        (:zonedDateTime >= `from`
-//                            AND :zonedDateTime <= `to`
-//                        )
-//                    AND  ((:zonedDateTime + ${DAY_IN_SECONDS}) > `from`
-//                            AND (:zonedDateTime + ${DAY_IN_SECONDS}) < `to`
-//                        )
-//                )
-//        """
             """
             SELECT * FROM events WHERE isDeleted = 0 
                 AND (
@@ -91,4 +80,3 @@ interface EventDaoImpl : IEventDao {
         """
     }
 }
-//--   todo remove     OR (`to`   >= :zonedDateTime AND (`to`   < (:zonedDateTime + ${DAY_IN_SECONDS})))
