@@ -266,6 +266,13 @@ class AgendaViewModel @Inject constructor(
                 }
                 sendEvent(ClearErrorMessage)
             }
+            is DismissConfirmDeleteAgendaItemDialog -> {
+                _agendaState.update {
+                    it.copy(
+                        confirmDeleteAgendaItem = null
+                    )
+                }
+            }
             is DeleteAgendaItem -> {
                val result =
                    when (uiEvent.agendaItem) {
@@ -292,13 +299,6 @@ class AgendaViewModel @Inject constructor(
                     sendEvent(ClearErrorMessage)
                 }
                 sendEvent(DismissConfirmDeleteAgendaItemDialog)
-            }
-            is DismissConfirmDeleteAgendaItemDialog -> {
-                _agendaState.update {
-                    it.copy(
-                        confirmDeleteAgendaItem = null
-                    )
-                }
             }
         }
     }
