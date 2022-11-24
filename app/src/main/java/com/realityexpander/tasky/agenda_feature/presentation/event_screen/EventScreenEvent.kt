@@ -51,7 +51,8 @@ sealed interface EventScreenEvent {
     data class ValidateAttendeeEmail(val email: Email) : EventScreenEvent
 
     // • Errors
-    data class Error(val message: UiText) : EventScreenEvent
+    data class ShowErrorMessage(val message: UiText) : EventScreenEvent
+    object ClearErrorMessage : EventScreenEvent
 
     // • Stateful One-time events  // todo setup one-time events
     sealed interface StatefulOneTimeEvent {
