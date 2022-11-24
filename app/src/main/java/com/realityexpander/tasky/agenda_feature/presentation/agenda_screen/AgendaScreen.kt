@@ -72,7 +72,6 @@ fun AgendaScreen(
     navigator: DestinationsNavigator,
     viewModel: AgendaViewModel = hiltViewModel(),
 ) {
-//    val state by viewModel.agendaState.collectAsState()
     val state by viewModel.agendaState.collectAsState()
     val oneTimeEvent by viewModel.oneTimeEvent.collectAsState(null)
 
