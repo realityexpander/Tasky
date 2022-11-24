@@ -152,31 +152,4 @@ class EventApiImpl @Inject constructor(
                     ?: "jpg")
     }
 
-//    // Will automatically recompress to lower quality if the image is too large
-//    private fun getBytesFromUri(context: Context, uri: Uri): ByteArray?  {
-//        var bytes = context.contentResolver
-//            .openInputStream(uri)
-//            .use {
-//                it?.readBytes()
-//            }
-//
-//        val imageSize = context.contentResolver.openFileDescriptor(uri, "r")
-//            .use {
-//                it?.statSize
-//            }
-//
-//        imageSize?.also { size ->
-//            if (size > MAX_IMAGE_SIZE) {
-//                //throw NetworkErrorException("Photo too large")
-//
-//                // recompress the photo
-//                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes?.size ?: 0)
-//                val stream = ByteArrayOutputStream()
-//                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
-//                bytes = stream.toByteArray()
-//            }
-//        }
-//
-//        return bytes
-//    }
 }
