@@ -2,9 +2,9 @@
     <string name="app_name">Tasky</string>
 
     <!-- general dialogs -->
-    <string name="ok">OK</string>
-    <string name="cancel">CANCEL</string>
-    <string name="delete">DELETE</string>
+    <!--    <string name="ok">OK</string>          Note: use android.R.string.ok instead-->
+    <!--    <string name="cancel">Cancel</string>  Note: use android.R.string.cancel instead-->
+    <string name="delete">Delete</string>
 
     <!-- general descriptions -->
     <string name="back_description">Back</string>
