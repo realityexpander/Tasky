@@ -101,6 +101,9 @@
     <string name="agenda_add_agenda_item">Add Agenda Item</string>
     <string name="agenda_confirm_delete_item_dialog_title_phrase">Delete %s?</string>
     <string name="agenda_confirm_delete_item_dialog_text_phrase">Are you sure you want to delete this \'%s\'?</string>
+    <string name="agenda_today">Today</string>
+    <string name="agenda_yesterday">Yesterday</string>
+    <string name="agenda_tomorrow">Tomorrow</string>
 
     <!--    Event screen -->
     <string name="event_description_close">Close Event screen</string>
@@ -165,5 +168,6 @@
     <!--    Agenda Sync -->
     <string name="agenda_sync_error">Failed to sync agenda</string>
     <string name="event_error_image_too_big">Image size too large to upload</string>
+    <string name="agenda_select_current_date_dialog_title">Select current Date</string>
 
 </resources>
