@@ -168,6 +168,6 @@
     <!--    Agenda Sync -->
     <string name="agenda_sync_error">Failed to sync agenda</string>
     <string name="event_error_image_too_big">Image size too large to upload</string>
-    <string name="agenda_select_current_date_dialog_title">Select current Date</string>
+    <string name="agenda_select_current_date_dialog_title">Select Start Date for Agenda</string>
 
 </resources>
