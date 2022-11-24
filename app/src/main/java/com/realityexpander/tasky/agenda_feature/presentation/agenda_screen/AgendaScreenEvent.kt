@@ -5,6 +5,7 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.UuidStr
+import java.time.ZonedDateTime
 
 sealed interface AgendaScreenEvent {
     data class SetIsLoaded(val isLoaded: Boolean) : AgendaScreenEvent
@@ -12,6 +13,10 @@ sealed interface AgendaScreenEvent {
 
     object Logout : AgendaScreenEvent
 
+    // • Current Date Selected for Agenda
+    data class ShowChooseCurrentDateDialog(val currentDate: ZonedDateTime) : AgendaScreenEvent
+    object CancelChooseCurrentDateDialog : AgendaScreenEvent
+    data class SetCurrentDate(val date: ZonedDateTime) : AgendaScreenEvent
     data class SetSelectedDayIndex(val dayIndex: Int) : AgendaScreenEvent
 
     // • Agenda Item

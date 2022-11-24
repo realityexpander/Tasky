@@ -11,6 +11,7 @@ import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
+import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_currentDate
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
 import com.realityexpander.tasky.core.presentation.common.util.UiText
@@ -38,15 +39,20 @@ class AgendaViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_errorMessage]
     private val selectedDayIndex: Int? =
         savedStateHandle[SAVED_STATE_selectedDayIndex]
+    private val selectedDate: ZonedDateTime? =
+        savedStateHandle[SAVED_STATE_currentDate]
 
+    private val _currentDate = MutableStateFlow(selectedDate)
     private val _selectedDayIndex = MutableStateFlow(selectedDayIndex)
 
     @OptIn(ExperimentalCoroutinesApi::class) // for .flatMapLatest
     private val _agendaItems =
-        _selectedDayIndex.flatMapLatest { dayIndex ->
+        _selectedDayIndex.combine(_currentDate) { dayIndex, date ->
             agendaRepository.getAgendaForDayFlow(
-                getDateForSelectedDayIndex(dayIndex)
+                getDateForSelectedDayIndex2(date, dayIndex)
             )
+        }.flatMapLatest {
+            it
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -60,16 +66,22 @@ class AgendaViewModel @Inject constructor(
 
     val agendaState = combine(
         _agendaState,
+        _currentDate,
         _selectedDayIndex,
-        _agendaItems
-    ) { state, dayIndex, items ->
+        _agendaItems,
+    ) { state,
+        currentDate,
+        selectedDayIndex,
+        items  ->
 
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
-        savedStateHandle[SAVED_STATE_selectedDayIndex] = state.selectedDayIndex
+        savedStateHandle[SAVED_STATE_selectedDayIndex] = selectedDayIndex
+        savedStateHandle[SAVED_STATE_currentDate] = currentDate
 
         state.copy(
             agendaItems = items,
-            selectedDayIndex = dayIndex,
+            selectedDayIndex = selectedDayIndex,
+            currentDate = currentDate ?: ZonedDateTime.now(),
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AgendaState())
 
@@ -119,6 +131,14 @@ class AgendaViewModel @Inject constructor(
         )
     }
 
+    private fun getDateForSelectedDayIndex2(
+        startDate: ZonedDateTime?,
+        selectedDayIndex: Int?
+    ): ZonedDateTime {
+        return (startDate ?: ZonedDateTime.now(ZoneId.systemDefault()))
+                .plusDays(selectedDayIndex?.toLong() ?: 0)
+    }
+
     private suspend fun onEvent(uiEvent: AgendaScreenEvent) {
 
         when(uiEvent) {
@@ -131,6 +151,25 @@ class AgendaViewModel @Inject constructor(
                 _agendaState.update {
                     it.copy(isProgressVisible = uiEvent.isLoaded)
                 }
+            }
+            is ShowChooseCurrentDateDialog -> {
+                _agendaState.update {
+                    it.copy(
+                        chooseCurrentDateDialog = uiEvent.currentDate,
+                    )
+                }
+            }
+            is CancelChooseCurrentDateDialog -> {
+                _agendaState.update {
+                    it.copy(
+                        chooseCurrentDateDialog = null,
+                    )
+                }
+            }
+            is SetCurrentDate -> {
+                _currentDate.value = uiEvent.date
+                sendEvent(CancelChooseCurrentDateDialog)
+                sendEvent(SetSelectedDayIndex(0))
             }
             is SetSelectedDayIndex -> {
                 _selectedDayIndex.value = uiEvent.dayIndex
@@ -227,6 +266,13 @@ class AgendaViewModel @Inject constructor(
                 }
                 sendEvent(ClearErrorMessage)
             }
+            is DismissConfirmDeleteAgendaItemDialog -> {
+                _agendaState.update {
+                    it.copy(
+                        confirmDeleteAgendaItem = null
+                    )
+                }
+            }
             is DeleteAgendaItem -> {
                val result =
                    when (uiEvent.agendaItem) {
@@ -253,13 +299,6 @@ class AgendaViewModel @Inject constructor(
                     sendEvent(ClearErrorMessage)
                 }
                 sendEvent(DismissConfirmDeleteAgendaItemDialog)
-            }
-            is DismissConfirmDeleteAgendaItemDialog -> {
-                _agendaState.update {
-                    it.copy(
-                        confirmDeleteAgendaItem = null
-                    )
-                }
             }
         }
     }

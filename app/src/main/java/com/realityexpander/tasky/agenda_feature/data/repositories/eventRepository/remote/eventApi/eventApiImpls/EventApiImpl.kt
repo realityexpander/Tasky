@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.PhotoDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
 import com.realityexpander.tasky.core.data.getBytesFromUri
 import com.realityexpander.tasky.core.data.remote.TaskyApi
@@ -43,24 +44,7 @@ class EventApiImpl @Inject constructor(
                             "create_event_request",
                             jsonPrettyPrint.encodeToString(EventDTO.Create.serializer(), event),
                         ),
-                photos = event.photos.mapIndexed { index, photo -> // todo - add photo handling
-
-                    val bytes = photo.uri.getBytesFromUri(context, UPLOAD_IMAGE_MAX_SIZE)
-//                        ?.also { bytes ->
-//                        val size = bytes.size
-//                        if (size > MAX_IMAGE_SIZE) {
-//                            throw NetworkErrorException("Photo too large")
-//                        }
-//                    }
-                    ?: throw Exception("Photo not found")
-
-                    MultipartBody.Part
-                        .createFormData(
-                            "photo$index",
-                            getImageFilenameForServer(context, index, photo.uri, photo.id),
-                            body = bytes.toRequestBody()
-                        )
-                }
+                photos = getMultipartBodyPartsForLocalPhotos(event.photos),
             )
             if (response.isSuccessful) {
                 val responseBody = response.body()
@@ -88,7 +72,6 @@ class EventApiImpl @Inject constructor(
     }
 
     override suspend fun updateEvent(event: EventDTO.Update): EventDTO.Response {
-
         try {
             val response = taskyApi.updateEvent(
                 updateEventRequest =
@@ -97,24 +80,7 @@ class EventApiImpl @Inject constructor(
                             "update_event_request",
                             jsonPrettyPrint.encodeToString(EventDTO.Update.serializer(), event)
                         ),
-                photos = event.photos.mapIndexed { index, photo ->
-
-                    val bytes = photo.uri.getBytesFromUri(context, UPLOAD_IMAGE_MAX_SIZE)
-//                         ?.also { bytes ->
-//                        val size = bytes.size
-//                        if (size > MAX_IMAGE_SIZE) {
-//                            throw NetworkErrorException("Photo too large")
-//                        }
-//                    }
-                    ?: throw Exception("Photo not found")
-
-                    MultipartBody.Part
-                        .createFormData(
-                            "photo$index",
-                            getImageFilenameForServer(context, index, photo.uri, photo.id),
-                            body = bytes.toRequestBody()
-                        )
-                }
+                photos = getMultipartBodyPartsForLocalPhotos(event.photos),
             )
             if (response.isSuccessful) {
                 val responseBody = response.body()
@@ -138,6 +104,24 @@ class EventApiImpl @Inject constructor(
         }
     }
 
+    ////////////////// HELPER FUNCTIONS //////////////////
+
+    private fun getMultipartBodyPartsForLocalPhotos(
+        photos: List<PhotoDTO.Local>
+    ): List<MultipartBody.Part> {
+        return photos.mapIndexed { index, photo ->
+            val bytes = photo.uri.getBytesFromUri(context, UPLOAD_IMAGE_MAX_SIZE)
+                ?: throw Exception("Photo not found")
+
+            MultipartBody.Part
+                .createFormData(
+                    "photo$index",
+                    getImageFilenameForServer(context, index, photo.uri, photo.id),
+                    body = bytes.toRequestBody()
+                )
+        }
+    }
+
     private fun getImageFilenameForServer(
         context: Context,
         index: Int,
@@ -152,31 +136,4 @@ class EventApiImpl @Inject constructor(
                     ?: "jpg")
     }
 
-//    // Will automatically recompress to lower quality if the image is too large
-//    private fun getBytesFromUri(context: Context, uri: Uri): ByteArray?  {
-//        var bytes = context.contentResolver
-//            .openInputStream(uri)
-//            .use {
-//                it?.readBytes()
-//            }
-//
-//        val imageSize = context.contentResolver.openFileDescriptor(uri, "r")
-//            .use {
-//                it?.statSize
-//            }
-//
-//        imageSize?.also { size ->
-//            if (size > MAX_IMAGE_SIZE) {
-//                //throw NetworkErrorException("Photo too large")
-//
-//                // recompress the photo
-//                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes?.size ?: 0)
-//                val stream = ByteArrayOutputStream()
-//                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
-//                bytes = stream.toByteArray()
-//            }
-//        }
-//
-//        return bytes
-//    }
 }
