@@ -279,6 +279,7 @@ class AgendaViewModel @Inject constructor(
                 AgendaItem.Event(
                     id = UUID.randomUUID().toString(),
                     title = "Meeting with John",
+                    description = "Discuss the new project",
                     from = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(1), zoneId),
                     to = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(2), zoneId),
                     remindAt = ZonedDateTime.of(
@@ -286,7 +287,6 @@ class AgendaViewModel @Inject constructor(
                         today.toLocalTime().minusMinutes(30),
                         zoneId
                     ),
-                    description = "Discuss the new project",
                     host = "635dc7880806b27dc8ab81ae",
                     isUserEventCreator = false,
                     isGoing = true,
