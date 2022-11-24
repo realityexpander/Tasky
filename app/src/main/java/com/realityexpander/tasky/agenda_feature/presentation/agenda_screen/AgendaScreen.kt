@@ -108,7 +108,6 @@ fun AgendaScreenContent(
     val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
 
-//    val agendaItems by state.agendaItems.collectAsState(initial = emptyList())  // todo remove
     val agendaItems = state.agendaItems
     val currentDate = state.currentDate
     val selectedDayIndex = state.selectedDayIndex
