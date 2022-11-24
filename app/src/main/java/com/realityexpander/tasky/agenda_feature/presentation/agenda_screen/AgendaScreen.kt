@@ -399,15 +399,15 @@ fun AgendaScreenContent(
         }
 
         // • SHOW TODAY'S DATE
-        val dayOfYearForSelectedIndex = state.currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear
-        val currentDayOfYear = ZonedDateTime.now().dayOfYear
+        val dayOfYearForSelectedDayIndex = state.currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear
+        val nowDayOfYear = ZonedDateTime.now().dayOfYear
         Text(
             text =
-                if (dayOfYearForSelectedIndex == currentDayOfYear)
+                if (dayOfYearForSelectedDayIndex == nowDayOfYear)
                     stringResource(R.string.agenda_today)
-                else if (dayOfYearForSelectedIndex == currentDayOfYear + 1)
+                else if (dayOfYearForSelectedDayIndex == nowDayOfYear + 1)
                     stringResource(R.string.agenda_tomorrow)
-                else if (dayOfYearForSelectedIndex == currentDayOfYear - 1)
+                else if (dayOfYearForSelectedDayIndex == nowDayOfYear - 1)
                     stringResource(R.string.agenda_yesterday)
                 else {
                     val date = currentDate.plusDays((selectedDayIndex ?: 0).toLong())
