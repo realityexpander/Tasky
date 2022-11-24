@@ -164,5 +164,6 @@
 
     <!--    Agenda Sync -->
     <string name="agenda_sync_error">Failed to sync agenda</string>
+    <string name="event_error_image_too_big">Image size too large to upload</string>
 
 </resources>

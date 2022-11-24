@@ -468,14 +468,23 @@ class EventViewModel @Inject constructor(
             is JoinEvent -> {}   // todo implement
             is LeaveEvent -> {}  // todo implement
 
-            is Error -> {
+            is ShowErrorMessage -> {
                 _state.update { _state ->
                     _state.copy(
+                        editMode = null,
                         isProgressVisible = false,
                         errorMessage = if (uiEvent.message.isRes)
                             uiEvent.message
                         else
-                            UiText.Res(R.string.error_unknown, "")
+                            UiText.Res(R.string.error_unknown, ""),
+                    )
+                }
+            }
+            is ClearErrorMessage -> {
+                _state.update { _state ->
+                    _state.copy(
+                        isProgressVisible = false,
+                        errorMessage = null,
                     )
                 }
             }

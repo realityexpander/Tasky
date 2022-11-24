@@ -13,7 +13,8 @@ import java.time.ZonedDateTime
 @OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = ZonedDateTime::class)
 object ZonedDateTimeSerializer : KSerializer<ZonedDateTime> {
-    override val descriptor = PrimitiveSerialDescriptor("ZonedDateTime", PrimitiveKind.STRING)
+    override val descriptor =
+        PrimitiveSerialDescriptor("ZonedDateTime", PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): ZonedDateTime {
         return ZonedDateTime.parse((decoder.decodeString()))

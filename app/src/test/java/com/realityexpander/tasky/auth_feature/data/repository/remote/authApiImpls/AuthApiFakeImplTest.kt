@@ -129,4 +129,5 @@ class AuthApiFakeImplTest {
             assertFalse(authenticated)
         }
     }
+
 }

@@ -44,9 +44,12 @@ import com.realityexpander.tasky.agenda_feature.presentation.event_screen.compon
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.SmallHeightHorizontalDivider
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
+import com.realityexpander.tasky.core.data.isImageSizeTooLargeToUpload
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
+import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.realityexpander.tasky.core.util.UPLOAD_IMAGE_MAX_SIZE
 import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
@@ -139,8 +142,15 @@ fun AddEventScreenContent(
     val singlePhotoPickerLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri ->
-                uri?.let {
+            onResult = { uriNullable ->
+
+                uriNullable?.let { uri ->
+
+                    if(uri.isImageSizeTooLargeToUpload(context, UPLOAD_IMAGE_MAX_SIZE)) {
+                        // Should this be a Alert Dialog?
+                        onAction(ShowErrorMessage(UiText.Res(R.string.event_error_image_too_big)))
+                        return@let
+                    }
 
                     onAction(
                         EditMode.AddLocalPhoto(

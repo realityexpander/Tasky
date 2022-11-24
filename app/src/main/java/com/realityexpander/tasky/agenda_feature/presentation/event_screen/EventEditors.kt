@@ -42,6 +42,8 @@ fun EventPropertyEditors(
     onAction: (EventScreenEvent) -> Unit,
     singlePhotoPickerLauncher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
 ) {
+    onAction(ClearErrorMessage)
+
     when (editMode) {
         is EditMode.ChooseTitleText,
         is EditMode.ChooseDescriptionText -> {
@@ -120,6 +122,7 @@ fun EventPropertyEditors(
             singlePhotoPickerLauncher.launch(
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             )
+            onAction(CancelEditMode)
         }
         is EditMode.ViewOrRemovePhoto -> {
             PhotoModal(

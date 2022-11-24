@@ -23,8 +23,8 @@ abstract class AgendaItem {
         val to: ZonedDateTime,
 
         val host: UserId? = null,
-        val isUserEventCreator: Boolean? = null,    // todo does this need to be null or false?
-        val isGoing: Boolean? = true,
+        val isUserEventCreator: Boolean = false,
+        val isGoing: Boolean = false,
 
         val attendees: List<Attendee> = emptyList(),
 

@@ -9,6 +9,9 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import java.io.File
 
+
+// Left here for reference
+// - this is the original code from the Retrofit repo from our lord and savior Jake Wharton
 fun getRealPathFromURI(context: Context, uri: Uri): String? {
     when {
         // DocumentProvider
