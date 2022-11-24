@@ -17,7 +17,7 @@ fun PhotoEntity.toDomain() =
             uri = uri,
         )
 
-// From DTO to Domain (only allows Remote bc Local is not sent from server)
+// From DTO to Domain (only allows Remote bc Local is never sent from server)
 fun PhotoDTO.Remote.toDomain() =
     Photo.Remote(
         id = id,

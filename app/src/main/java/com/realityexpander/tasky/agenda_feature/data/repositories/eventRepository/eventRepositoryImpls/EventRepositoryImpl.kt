@@ -23,8 +23,10 @@ class EventRepositoryImpl(
 
     override suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
         return try {
-            eventDao.createEvent(event.toEntity())
-            eventApi.createEvent(event.toEventDTOCreate())
+            eventDao.createEvent(event.toEntity())  // save to local DB first
+
+            val response = eventApi.createEvent(event.toEventDTOCreate())
+            eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
 
             ResultUiText.Success()  // todo return the created event
         } catch (e: CancellationException) {
