@@ -237,12 +237,12 @@ fun EventPropertyEditors(
         }
         is EditMode.ConfirmRemoveAttendee -> {
             val attendee = editMode.attendee
-            val deleteAttendeeDialogState = rememberMaterialDialogState()
+            val removeAttendeeDialogState = rememberMaterialDialogState()
             onAction(SetIsEditable(true)) // turn on edit mode when removing attendee
 
-            deleteAttendeeDialogState.show()
+            removeAttendeeDialogState.show()
             MaterialDialog(
-                dialogState = deleteAttendeeDialogState,
+                dialogState = removeAttendeeDialogState,
                 properties = DialogProperties(
                     dismissOnBackPress = true,
                     dismissOnClickOutside = true
@@ -252,12 +252,12 @@ fun EventPropertyEditors(
                         onAction(EditMode.RemoveAttendee(attendee.id))
                     }
                     negativeButton(text = stringResource(android.R.string.cancel)) {
-                        deleteAttendeeDialogState.hide()
+                        removeAttendeeDialogState.hide()
                         onAction(CancelEditMode)
                     }
                 },
                 onCloseRequest = {
-                    deleteAttendeeDialogState.hide()
+                    removeAttendeeDialogState.hide()
                     onAction(CancelEditMode)
                 }
             ) {
