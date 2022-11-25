@@ -881,21 +881,14 @@ fun AddEventScreenContent(
 
     state.showAlertDialog?.let { dialogInfo ->
         AlertDialog(
-            title = {
-                Text(dialogInfo.title.get)
-            },
-            text = {
-                Text(dialogInfo.message.get)
-            },
+            title = { Text(dialogInfo.title.get) },
+            text = { Text(dialogInfo.message.get) },
             onDismissRequest = { onAction(DismissAlertDialog) },
             confirmButton = {
                 TextButton(
-                    onClick = {
-                        dialogInfo.onConfirm()
-                    },
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Transparent
-                    )
+                    onClick = { dialogInfo.onConfirm() },
+                    colors = ButtonDefaults
+                        .textButtonColors(backgroundColor = Color.Transparent)
                 ) {
                     Text(dialogInfo.confirmButtonLabel.get.uppercase())
                 }
@@ -903,12 +896,9 @@ fun AddEventScreenContent(
             dismissButton = {
                 if(dialogInfo.isDismissButtonVisible) {
                     TextButton(
-                        onClick = {
-                            onAction(DismissAlertDialog)
-                        },
-                        colors = ButtonDefaults.textButtonColors(
-                            backgroundColor = Color.Transparent
-                        )
+                        onClick = { onAction(DismissAlertDialog) },
+                        colors = ButtonDefaults
+                            .textButtonColors(backgroundColor = Color.Transparent)
                     ) {
                         Text(stringResource(android.R.string.cancel).uppercase())
                     }
