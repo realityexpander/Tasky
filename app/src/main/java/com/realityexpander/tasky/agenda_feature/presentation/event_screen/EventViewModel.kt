@@ -137,19 +137,6 @@ class EventViewModel @Inject constructor(
                     _state.copy(isEditable = uiEvent.isEditable)
                 }
             }
-            is SetEditMode -> {
-                _state.update { _state ->
-                    _state.copy(editMode = uiEvent.editMode)
-                }
-            }
-            is CancelEditMode -> {
-                _state.update { _state ->
-                    _state.copy(
-                        editMode = null,
-                    )
-                }
-                sendEvent(ClearErrorsForAddAttendeeDialog)
-            }
             is ValidateAttendeeEmail -> {
                 _state.update { _state ->
                     _state.copy(
@@ -210,6 +197,19 @@ class EventViewModel @Inject constructor(
                         isAttendeeEmailValid = null
                     )
                 }
+            }
+            is SetEditMode -> {
+                _state.update { _state ->
+                    _state.copy(editMode = uiEvent.editMode)
+                }
+            }
+            is CancelEditMode -> {
+                _state.update { _state ->
+                    _state.copy(
+                        editMode = null,
+                    )
+                }
+                sendEvent(ClearErrorsForAddAttendeeDialog)
             }
             is EditMode.UpdateText -> {
                 when (_state.value.editMode) {
@@ -349,6 +349,27 @@ class EventViewModel @Inject constructor(
                     OneTimeEvent.NavigateBack
                 )
             }
+            is ShowAlertDialog -> {
+                _state.update { _state ->
+                    _state.copy(
+                        showAlertDialog =
+                            ShowAlertDialog(
+                                title = uiEvent.title,
+                                message = uiEvent.message,
+                                confirmButtonLabel = uiEvent.confirmButtonLabel,
+                                onConfirm = uiEvent.onConfirm,
+                                isDismissButtonVisible = uiEvent.isDismissButtonVisible,
+                            )
+                    )
+                }
+            }
+            is DismissAlertDialog -> {
+                _state.update { _state ->
+                    _state.copy(
+                        showAlertDialog = null
+                    )
+                }
+            }
             is SaveEvent -> {
                 val event = _state.value.event ?: return
                 _state.update { _state ->
@@ -394,27 +415,6 @@ class EventViewModel @Inject constructor(
                             )
                         }
                     }
-                }
-            }
-            is ShowAlertDialog -> {
-                _state.update { _state ->
-                    _state.copy(
-                        showAlertDialog =
-                            ShowAlertDialog(
-                                title = uiEvent.title,
-                                message = uiEvent.message,
-                                confirmButtonLabel = uiEvent.confirmButtonLabel,
-                                onConfirm = uiEvent.onConfirm,
-                                isDismissButtonVisible = uiEvent.isDismissButtonVisible,
-                            )
-                    )
-                }
-            }
-            is DismissAlertDialog -> {
-                _state.update { _state ->
-                    _state.copy(
-                        showAlertDialog = null
-                    )
                 }
             }
             is DeleteEvent -> {
