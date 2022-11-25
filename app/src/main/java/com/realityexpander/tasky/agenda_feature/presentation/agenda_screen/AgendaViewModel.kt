@@ -17,13 +17,14 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
 import javax.inject.Inject
 
@@ -40,20 +41,19 @@ class AgendaViewModel @Inject constructor(
     private val selectedDayIndex: Int? =
         savedStateHandle[SAVED_STATE_selectedDayIndex]
     private val selectedDate: ZonedDateTime? =
-        savedStateHandle[SAVED_STATE_currentDate]
+        savedStateHandle[SAVED_STATE_currentDate] ?: ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
 
     private val _currentDate = MutableStateFlow(selectedDate)
     private val _selectedDayIndex = MutableStateFlow(selectedDayIndex)
 
-    @OptIn(ExperimentalCoroutinesApi::class) // for .flatMapLatest
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class) // for .flatMapLatest, .flattenMerge
     private val _agendaItems =
         _selectedDayIndex.combine(_currentDate) { dayIndex, date ->
             agendaRepository.getAgendaForDayFlow(
-                getDateForSelectedDayIndex2(date, dayIndex)
+                getDateForSelectedDayIndex(date, dayIndex)
             )
-        }.flatMapLatest {
-            it
         }
+        .flattenMerge()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _agendaState =
@@ -81,7 +81,7 @@ class AgendaViewModel @Inject constructor(
         state.copy(
             agendaItems = items,
             selectedDayIndex = selectedDayIndex,
-            currentDate = currentDate ?: ZonedDateTime.now(),
+            currentDate = currentDate ?: ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS),
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AgendaState())
 
@@ -122,16 +122,7 @@ class AgendaViewModel @Inject constructor(
         }
     }
 
-    private fun getDateForSelectedDayIndex(selectedDayIndex: Int?): ZonedDateTime {
-        return ZonedDateTime.of(
-            LocalDate.now(ZoneId.systemDefault())
-                .plusDays(selectedDayIndex?.toLong() ?: 0),
-            LocalTime.of(0,0),
-            ZoneId.systemDefault()
-        )
-    }
-
-    private fun getDateForSelectedDayIndex2(
+    private fun getDateForSelectedDayIndex(
         startDate: ZonedDateTime?,
         selectedDayIndex: Int?
     ): ZonedDateTime {
@@ -144,12 +135,12 @@ class AgendaViewModel @Inject constructor(
         when(uiEvent) {
             is ShowProgressIndicator -> {
                 _agendaState.update {
-                    it.copy(isProgressVisible = uiEvent.isShowing)
+                    it.copy(isProgressVisible = uiEvent.isVisible)
                 }
             }
             is SetIsLoaded -> {
                 _agendaState.update {
-                    it.copy(isProgressVisible = uiEvent.isLoaded)
+                    it.copy(isLoaded = uiEvent.isLoaded)
                 }
             }
             is ShowChooseCurrentDateDialog -> {

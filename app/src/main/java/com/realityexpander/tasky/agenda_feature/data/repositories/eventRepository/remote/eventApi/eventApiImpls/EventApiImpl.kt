@@ -50,7 +50,7 @@ class EventApiImpl @Inject constructor(
                 val responseBody = response.body()
                 return responseBody ?: throw Exception("Response body is null")
             } else {
-                throw Exception("Error updating event: ${getErrorBodyMessage(response.errorBody()?.string())}")
+                throw Exception(getErrorBodyMessage(response.errorBody()?.string()))
             }
         } catch (e: Exception) {
             throw Exception("Error creating event: ${e.message}")

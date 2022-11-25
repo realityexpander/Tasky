@@ -152,24 +152,36 @@ fun EventPropertyEditors(
                     positiveButton(
                         text = stringResource(android.R.string.ok),
                         textStyle = MaterialTheme.typography.button.copy(
-                            if (state.isAttendeeEmailValid == true)
+                            if (state.isAttendeeEmailValid == true && !state.isProgressVisible)
                                 MaterialTheme.colors.onSurface
                             else
                                 MaterialTheme.colors.onSurface.copy(alpha = 0.3f)
                         )
                     ) {
-                        if (state.isAttendeeEmailValid == true) {
+                        if (state.isAttendeeEmailValid == true && !state.isProgressVisible) {
                             onAction(ValidateAttendeeEmailExistsThenAddAttendee(attendeeEmail))
                         }
                     }
-                    negativeButton(text = stringResource(android.R.string.cancel)) {
-                        addAttendeeDialogState.hide()
-                        onAction(CancelEditMode)
+                    negativeButton(
+                        text = stringResource(android.R.string.cancel),
+                        textStyle = MaterialTheme.typography.button.copy(
+                            if (!state.isProgressVisible)
+                                MaterialTheme.colors.onSurface
+                            else
+                                MaterialTheme.colors.onSurface.copy(alpha = 0.3f)
+                        )
+                    ) {
+                        if (!state.isProgressVisible) {
+                            addAttendeeDialogState.hide()
+                            onAction(CancelEditMode)
+                        }
                     }
                 },
                 onCloseRequest = {
-                    addAttendeeDialogState.hide()
-                    onAction(CancelEditMode)
+                    if (!state.isProgressVisible) {
+                        addAttendeeDialogState.hide()
+                        onAction(CancelEditMode)
+                    }
                 }
             ) {
                 Spacer(modifier = Modifier.tinyHeight())
@@ -196,7 +208,7 @@ fun EventPropertyEditors(
                     trailingIcon = {
                         if (state.isProgressVisible) {
                             CircularProgressIndicator(
-                                color = MaterialTheme.colors.primary,
+                                color = MaterialTheme.colors.primary, //.copy(alpha = if(state.isProgressVisible) 1f else 0f),
                                 modifier = Modifier.size(24.dp)
                             )
                         } else {
@@ -216,6 +228,7 @@ fun EventPropertyEditors(
                                 }
                             }
                         }
+
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -237,12 +250,12 @@ fun EventPropertyEditors(
         }
         is EditMode.ConfirmRemoveAttendee -> {
             val attendee = editMode.attendee
-            val deleteAttendeeDialogState = rememberMaterialDialogState()
+            val removeAttendeeDialogState = rememberMaterialDialogState()
             onAction(SetIsEditable(true)) // turn on edit mode when removing attendee
 
-            deleteAttendeeDialogState.show()
+            removeAttendeeDialogState.show()
             MaterialDialog(
-                dialogState = deleteAttendeeDialogState,
+                dialogState = removeAttendeeDialogState,
                 properties = DialogProperties(
                     dismissOnBackPress = true,
                     dismissOnClickOutside = true
@@ -252,12 +265,12 @@ fun EventPropertyEditors(
                         onAction(EditMode.RemoveAttendee(attendee.id))
                     }
                     negativeButton(text = stringResource(android.R.string.cancel)) {
-                        deleteAttendeeDialogState.hide()
+                        removeAttendeeDialogState.hide()
                         onAction(CancelEditMode)
                     }
                 },
                 onCloseRequest = {
-                    deleteAttendeeDialogState.hide()
+                    removeAttendeeDialogState.hide()
                     onAction(CancelEditMode)
                 }
             ) {

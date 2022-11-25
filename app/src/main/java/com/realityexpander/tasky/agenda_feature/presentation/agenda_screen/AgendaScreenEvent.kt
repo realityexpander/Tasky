@@ -9,7 +9,7 @@ import java.time.ZonedDateTime
 
 sealed interface AgendaScreenEvent {
     data class SetIsLoaded(val isLoaded: Boolean) : AgendaScreenEvent
-    data class ShowProgressIndicator(val isShowing: Boolean) : AgendaScreenEvent
+    data class ShowProgressIndicator(val isVisible: Boolean) : AgendaScreenEvent
 
     object Logout : AgendaScreenEvent
 

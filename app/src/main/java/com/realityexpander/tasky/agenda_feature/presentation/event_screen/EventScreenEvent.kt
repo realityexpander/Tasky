@@ -16,17 +16,9 @@ enum class ShowAlertDialogActionType(val title: UiText) {
     ConfirmOK(UiText.Res(android.R.string.ok)),
 }
 
-//class EventAlertDialog(
-//    val title: UiText,
-//    val message: UiText,
-//    val confirmButtonLabel: UiText,
-//    val onConfirm: () -> Unit,
-//    val isCancelVisible: Boolean = true,
-//)
-
 sealed interface EventScreenEvent {
     data class SetIsLoaded(val isLoaded: Boolean) : EventScreenEvent
-    data class ShowProgressIndicator(val isShowing: Boolean) : EventScreenEvent
+    data class ShowProgressIndicator(val isVisible: Boolean) : EventScreenEvent
 
     // • Is Event Editable?
     data class SetIsEditable(val isEditable: Boolean) : EventScreenEvent

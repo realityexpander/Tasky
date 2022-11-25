@@ -11,14 +11,14 @@ import java.io.ByteArrayOutputStream
 
 // Will automatically recompress to lower quality if the image byte size exceeds the recompressThreshold
 fun Uri.getBytesRecompressed(context: Context, recompressThreshold: Int = UPLOAD_IMAGE_MAX_SIZE): ByteArray?  {
-    var bytes = this.getBytes(context) ?: return null
     val imageSize = this.getSize(context) ?: return null
+    var bytes = this.getBytes(context) ?: return null
 
     // Recompress if the image exceeds the recompressThreshold
     imageSize.also { size ->
         if (size > recompressThreshold) {
             // recompress the photo
-            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes?.size ?: 0)
+            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size ?: 0)
             val stream = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
             bytes = stream.toByteArray()

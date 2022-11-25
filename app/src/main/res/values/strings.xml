@@ -166,6 +166,7 @@
     <string name="attendee_add_attendee_dialog_email_title">Attendee email</string>
     <string name="attendee_add_attendee_dialog_error_email_not_found">Attendee email not found</string>
     <string name="attendee_add_attendee_dialog_error_email_already_added">Attendee email is already added</string>
+    <string name="attendee_add_attendee_dialog_success">Attendee added</string>
     <string name="attendee_add_attendee_api_error">Api Error - Attendee object expected and not found</string>
     <string name="attendee_remove_attendee_dialog_remove_button">REMOVE</string>
 
