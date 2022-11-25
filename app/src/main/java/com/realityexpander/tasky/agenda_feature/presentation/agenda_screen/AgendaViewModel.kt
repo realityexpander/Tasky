@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
@@ -49,7 +48,7 @@ class AgendaViewModel @Inject constructor(
     private val _agendaItems =
         _selectedDayIndex.combine(_currentDate) { dayIndex, date ->
             agendaRepository.getAgendaForDayFlow(
-                getDateForSelectedDayIndex2(date, dayIndex)
+                getDateForSelectedDayIndex(date, dayIndex)
             )
         }.flatMapLatest {
             it
@@ -122,16 +121,7 @@ class AgendaViewModel @Inject constructor(
         }
     }
 
-    private fun getDateForSelectedDayIndex(selectedDayIndex: Int?): ZonedDateTime {
-        return ZonedDateTime.of(
-            LocalDate.now(ZoneId.systemDefault())
-                .plusDays(selectedDayIndex?.toLong() ?: 0),
-            LocalTime.of(0,0),
-            ZoneId.systemDefault()
-        )
-    }
-
-    private fun getDateForSelectedDayIndex2(
+    private fun getDateForSelectedDayIndex(
         startDate: ZonedDateTime?,
         selectedDayIndex: Int?
     ): ZonedDateTime {
@@ -144,12 +134,12 @@ class AgendaViewModel @Inject constructor(
         when(uiEvent) {
             is ShowProgressIndicator -> {
                 _agendaState.update {
-                    it.copy(isProgressVisible = uiEvent.isShowing)
+                    it.copy(isProgressVisible = uiEvent.isVisible)
                 }
             }
             is SetIsLoaded -> {
                 _agendaState.update {
-                    it.copy(isProgressVisible = uiEvent.isLoaded)
+                    it.copy(isLoaded = uiEvent.isLoaded)
                 }
             }
             is ShowChooseCurrentDateDialog -> {

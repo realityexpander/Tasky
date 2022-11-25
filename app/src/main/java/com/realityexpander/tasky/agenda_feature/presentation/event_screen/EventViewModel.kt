@@ -124,8 +124,9 @@ class EventViewModel @Inject constructor(
         when (uiEvent) {
             is ShowProgressIndicator -> {
                 _state.update { _state ->
-                    _state.copy(isProgressVisible = uiEvent.isShowing)
+                    _state.copy(isProgressVisible = uiEvent.isVisible)
                 }
+                yield()
             }
             is SetIsLoaded -> {
                 _state.update { _state ->
@@ -141,10 +142,10 @@ class EventViewModel @Inject constructor(
                 _state.update { _state ->
                     _state.copy(
                         isAttendeeEmailValid =
-                        if (uiEvent.email.isBlank())
-                            null
-                        else
-                            validateEmail.validate(uiEvent.email)
+                            if (uiEvent.email.isBlank())
+                                null
+                            else
+                                validateEmail.validate(uiEvent.email)
                     )
                 }
             }
@@ -163,21 +164,25 @@ class EventViewModel @Inject constructor(
                         attendeeInfo?.let { attendee ->
 
                             // Check if attendee is already in the list
-                            val attendeeAlreadyInList =
+                            val isAttendeeAlreadyInList =
                                 _state.value.event?.attendees?.any { attendee.id == it.id }
-                            if (attendeeAlreadyInList == true) {
-                                sendEvent(SetErrorMessageForAddAttendeeDialog(UiText.Res(R.string.attendee_add_attendee_dialog_error_email_already_added)))
+                            if (isAttendeeAlreadyInList == true) {
+                                sendEvent(SetErrorMessageForAddAttendeeDialog(
+                                    UiText.Res(R.string.attendee_add_attendee_dialog_error_email_already_added))
+                                )
                                 return
                             }
 
                             // Add attendee to event
                             sendEvent(EditMode.AddAttendee(attendee))
                             sendEvent(CancelEditMode)
+                            sendEvent(OneTimeEvent.ShowToast(UiText.Res(R.string.attendee_add_attendee_dialog_success)))
                         } ?: run {
                             sendEvent(SetErrorMessageForAddAttendeeDialog(UiText.Res(R.string.attendee_add_attendee_dialog_error_email_not_found)))
                         }
                     }
                     is ResultUiText.Error -> {
+                        sendEvent(ShowProgressIndicator(false))
                         sendEvent(SetErrorMessageForAddAttendeeDialog(result.message))
                     }
                 }
@@ -185,7 +190,6 @@ class EventViewModel @Inject constructor(
             is SetErrorMessageForAddAttendeeDialog -> {
                 _state.update { _state ->
                     _state.copy(
-                        isProgressVisible = false,
                         addAttendeeDialogErrorMessage = uiEvent.message
                     )
                 }
@@ -486,7 +490,6 @@ class EventViewModel @Inject constructor(
             is ClearErrorMessage -> {
                 _state.update { _state ->
                     _state.copy(
-                        isProgressVisible = false,
                         errorMessage = null,
                     )
                 }

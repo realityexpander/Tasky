@@ -18,7 +18,7 @@ enum class ShowAlertDialogActionType(val title: UiText) {
 
 sealed interface EventScreenEvent {
     data class SetIsLoaded(val isLoaded: Boolean) : EventScreenEvent
-    data class ShowProgressIndicator(val isShowing: Boolean) : EventScreenEvent
+    data class ShowProgressIndicator(val isVisible: Boolean) : EventScreenEvent
 
     // • Is Event Editable?
     data class SetIsEditable(val isEditable: Boolean) : EventScreenEvent

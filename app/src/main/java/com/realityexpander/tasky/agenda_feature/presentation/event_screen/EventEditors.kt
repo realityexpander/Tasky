@@ -4,10 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -152,24 +149,36 @@ fun EventPropertyEditors(
                     positiveButton(
                         text = stringResource(android.R.string.ok),
                         textStyle = MaterialTheme.typography.button.copy(
-                            if (state.isAttendeeEmailValid == true)
+                            if (state.isAttendeeEmailValid == true && !state.isProgressVisible)
                                 MaterialTheme.colors.onSurface
                             else
                                 MaterialTheme.colors.onSurface.copy(alpha = 0.3f)
                         )
                     ) {
-                        if (state.isAttendeeEmailValid == true) {
+                        if (state.isAttendeeEmailValid == true && !state.isProgressVisible) {
                             onAction(ValidateAttendeeEmailExistsThenAddAttendee(attendeeEmail))
                         }
                     }
-                    negativeButton(text = stringResource(android.R.string.cancel)) {
-                        addAttendeeDialogState.hide()
-                        onAction(CancelEditMode)
+                    negativeButton(
+                        text = stringResource(android.R.string.cancel),
+                        textStyle = MaterialTheme.typography.button.copy(
+                            if (!state.isProgressVisible)
+                                MaterialTheme.colors.onSurface
+                            else
+                                MaterialTheme.colors.onSurface.copy(alpha = 0.3f)
+                        )
+                    ) {
+                        if (!state.isProgressVisible) {
+                            addAttendeeDialogState.hide()
+                            onAction(CancelEditMode)
+                        }
                     }
                 },
                 onCloseRequest = {
-                    addAttendeeDialogState.hide()
-                    onAction(CancelEditMode)
+                    if (!state.isProgressVisible) {
+                        addAttendeeDialogState.hide()
+                        onAction(CancelEditMode)
+                    }
                 }
             ) {
                 Spacer(modifier = Modifier.tinyHeight())
@@ -194,28 +203,31 @@ fun EventPropertyEditors(
                     label = { Text(stringResource(R.string.attendee_add_attendee_dialog_email_title)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     trailingIcon = {
-                        if (state.isProgressVisible) {
-                            CircularProgressIndicator(
-                                color = MaterialTheme.colors.primary,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        } else {
-                            state.isAttendeeEmailValid?.let { emailValid ->
-                                if (emailValid) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Check,
-                                        contentDescription = stringResource(R.string.emailField_description_isValid),
-                                        tint = MaterialTheme.colors.primary
-                                    )
-                                } else {
-                                    Icon(
-                                        imageVector = Icons.Default.Error,
-                                        contentDescription = stringResource(R.string.error_invalid_email),
-                                        tint = MaterialTheme.colors.error
-                                    )
+                        Row {
+                            if (state.isProgressVisible) {
+                                CircularProgressIndicator(
+                                    color = MaterialTheme.colors.primary, //.copy(alpha = if(state.isProgressVisible) 1f else 0f),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            } else {
+                                state.isAttendeeEmailValid?.let { emailValid ->
+                                    if (emailValid) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Check,
+                                            contentDescription = stringResource(R.string.emailField_description_isValid),
+                                            tint = MaterialTheme.colors.primary
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.Default.Error,
+                                            contentDescription = stringResource(R.string.error_invalid_email),
+                                            tint = MaterialTheme.colors.error
+                                        )
+                                    }
                                 }
                             }
                         }
+
                     },
                     modifier = Modifier
                         .fillMaxWidth()
