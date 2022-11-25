@@ -17,6 +17,7 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -44,15 +45,14 @@ class AgendaViewModel @Inject constructor(
     private val _currentDate = MutableStateFlow(selectedDate)
     private val _selectedDayIndex = MutableStateFlow(selectedDayIndex)
 
-    @OptIn(ExperimentalCoroutinesApi::class) // for .flatMapLatest
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class) // for .flatMapLatest, .flattenMerge
     private val _agendaItems =
         _selectedDayIndex.combine(_currentDate) { dayIndex, date ->
             agendaRepository.getAgendaForDayFlow(
                 getDateForSelectedDayIndex(date, dayIndex)
             )
-        }.flatMapLatest {
-            it
         }
+        .flattenMerge()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _agendaState =
