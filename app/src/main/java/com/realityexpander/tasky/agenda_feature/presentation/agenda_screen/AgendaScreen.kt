@@ -619,7 +619,7 @@ fun AgendaScreenContent(
                         backgroundColor = Color.Transparent
                     )
                 ) {
-                    Text(stringResource(R.string.cancel))
+                    Text(stringResource(android.R.string.cancel))
                 }
             }
         )
@@ -639,11 +639,11 @@ fun AgendaScreenContent(
                 onAction(CancelChooseCurrentDateDialog)
             },
             buttons = {
-                positiveButton(text = stringResource(R.string.ok)) {
+                positiveButton(text = stringResource(android.R.string.ok)) {
                     dateDialogState.hide()
                     onAction(SetCurrentDate(pickedDate))
                 }
-                negativeButton(text = stringResource(R.string.cancel)) {
+                negativeButton(text = stringResource(android.R.string.cancel)) {
                     dateDialogState.hide()
                     onAction(CancelChooseCurrentDateDialog)
                 }
