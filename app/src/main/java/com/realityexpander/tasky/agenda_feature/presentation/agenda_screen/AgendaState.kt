@@ -7,6 +7,7 @@ import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.Username
 import com.realityexpander.tasky.core.util.UuidStr
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 data class AgendaState(
     val username: Username = "",
@@ -17,7 +18,7 @@ data class AgendaState(
     val isProgressVisible: Boolean = false,
     val errorMessage: UiText? = null,
 
-    val currentDate: ZonedDateTime = ZonedDateTime.now(),
+    val currentDate: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS),
     val chooseCurrentDateDialog: ZonedDateTime? = null,
     val selectedDayIndex: Int? = null,
 

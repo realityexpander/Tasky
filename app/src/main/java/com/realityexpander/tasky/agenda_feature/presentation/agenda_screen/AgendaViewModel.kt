@@ -24,6 +24,7 @@ import kotlinx.coroutines.yield
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
 import javax.inject.Inject
 
@@ -40,7 +41,7 @@ class AgendaViewModel @Inject constructor(
     private val selectedDayIndex: Int? =
         savedStateHandle[SAVED_STATE_selectedDayIndex]
     private val selectedDate: ZonedDateTime? =
-        savedStateHandle[SAVED_STATE_currentDate]
+        savedStateHandle[SAVED_STATE_currentDate] ?: ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
 
     private val _currentDate = MutableStateFlow(selectedDate)
     private val _selectedDayIndex = MutableStateFlow(selectedDayIndex)
@@ -80,7 +81,7 @@ class AgendaViewModel @Inject constructor(
         state.copy(
             agendaItems = items,
             selectedDayIndex = selectedDayIndex,
-            currentDate = currentDate ?: ZonedDateTime.now(),
+            currentDate = currentDate ?: ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS),
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AgendaState())
 

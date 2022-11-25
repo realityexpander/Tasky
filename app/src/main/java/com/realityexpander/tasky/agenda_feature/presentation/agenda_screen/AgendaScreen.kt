@@ -398,7 +398,10 @@ fun AgendaScreenContent(
         }
 
         // • SHOW TODAY'S DATE
-        val selectedDayIndexDayOfYear = state.currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear
+        val selectedDayIndexDayOfYear =
+            state.currentDate
+                .plusDays(selectedDayIndex?.toLong() ?: 0)
+                .dayOfYear
         val nowDayOfYear = ZonedDateTime.now().dayOfYear
         Text(
             text =
@@ -627,12 +630,17 @@ fun AgendaScreenContent(
     }
 
     // • Select current date for agenda
-    state.chooseCurrentDateDialog ?.let { currentDate ->
+    var pickedDate by remember(currentDate) { mutableStateOf(currentDate) }
+    val dateDialogState = rememberMaterialDialogState()
+    LaunchedEffect(state.chooseCurrentDateDialog) {
+        state.chooseCurrentDateDialog?.let {
+            dateDialogState.show()
+        }
+    }
 
-        var pickedDate by remember(currentDate) { mutableStateOf(currentDate) }
-        val dateDialogState = rememberMaterialDialogState()
-
-        dateDialogState.show()
+    // • Select current date for agenda
+//    state.chooseCurrentDateDialog ?.let { currentDate ->
+//        dateDialogState.show()
         MaterialDialog(
             dialogState = dateDialogState,
             onCloseRequest = {
@@ -664,7 +672,7 @@ fun AgendaScreenContent(
                 pickedDate = it.atTime(0,0,0, 0).toZonedDateTime()
             }
         }
-    }
+//    }
 
 }
 
