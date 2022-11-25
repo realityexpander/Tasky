@@ -94,9 +94,11 @@ fun AgendaItem.Event.toEventDTOCreate(): EventDTO.Create {
         from = from.toUtcMillis(),
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
-        attendeeIds = attendees.map { attendee -> attendee.id },
+        attendeeIds = attendees.map { attendee ->
+            attendee.id
+        },
         photos = photos
-            .filterIsInstance<Photo.Local>()        // only upload Local photos
+            .filterIsInstance<Photo.Local>()        // guarantee only upload Local photos
             .map { it.toDTO() },
     )
 }
@@ -110,10 +112,12 @@ fun AgendaItem.Event.toEventDTOUpdate(): EventDTO.Update {
         from = from.toUtcMillis(),
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
-        isGoing = isGoing ?: false,
-        attendeeIds = attendees.map { attendee -> attendee.id },
+        isGoing = isGoing,
+        attendeeIds = attendees.map { attendee ->
+            attendee.id
+        },
         photos = photos
-            .filterIsInstance<Photo.Local>()        // only upload Local photos
+            .filterIsInstance<Photo.Local>()        // guarantee only upload Local photos
             .map { it.toDTO() },
         deletedPhotoIds = deletedPhotoIds,
     )
