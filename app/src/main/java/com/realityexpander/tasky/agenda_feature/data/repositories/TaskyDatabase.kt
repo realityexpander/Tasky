@@ -11,8 +11,6 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.eventDaoImpls.EventDaoImpl
 
 
-// todo: implement database fully
-
 @Database(
     entities = [
         EventEntity::class,

@@ -28,7 +28,7 @@ class EventRepositoryImpl(
             val response = eventApi.createEvent(event.toEventDTOCreate())
             eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
 
-            ResultUiText.Success()  // todo return the created event
+            ResultUiText.Success(response.toDomain())
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -75,7 +75,7 @@ class EventRepositoryImpl(
             val response = eventApi.updateEvent(event.toEventDTOUpdate())
             eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
 
-            ResultUiText.Success() // todo return the updated event
+            ResultUiText.Success(response.toDomain())
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -87,7 +87,7 @@ class EventRepositoryImpl(
         return try {
             eventDao.markEventDeletedById(eventId)
 
-            ResultUiText.Success() // todo return the deleted event?
+            ResultUiText.Success() // todo return the deleted event, yes for undo
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -109,7 +109,7 @@ class EventRepositoryImpl(
         return try {
             eventDao.deleteFinallyByEventIds(eventIds)
 
-            ResultUiText.Success() // todo return the deleted events?
+            ResultUiText.Success() // todo return the deleted events, yes for undo
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -121,7 +121,7 @@ class EventRepositoryImpl(
         return try {
             eventDao.clearAllEvents()
 
-            ResultUiText.Success() // todo return the cleared event?
+            ResultUiText.Success() // todo return the cleared event, yes for undo
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

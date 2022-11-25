@@ -71,10 +71,10 @@ fun EventPropertyEditors(
             MaterialDialog(
                 dialogState = dateDialogState,
                 buttons = {
-                    positiveButton(text = stringResource(R.string.ok)) {
+                    positiveButton(text = stringResource(android.R.string.ok)) {
                         onAction(EditMode.UpdateDateTime(pickedDate?.toZonedDateTime()!!))
                     }
-                    negativeButton(text = stringResource(R.string.cancel)) {
+                    negativeButton(text = stringResource(android.R.string.cancel)) {
                         dateDialogState.hide()
                         onAction(CancelEditMode)
                     }
@@ -98,10 +98,10 @@ fun EventPropertyEditors(
             MaterialDialog(
                 dialogState = dateDialogState,
                 buttons = {
-                    positiveButton(text = stringResource(R.string.ok)) {
+                    positiveButton(text = stringResource(android.R.string.ok)) {
                         onAction(EditMode.UpdateDateTime(pickedTime?.toZonedDateTime()!!))
                     }
-                    negativeButton(text = stringResource(R.string.cancel)) {
+                    negativeButton(text = stringResource(android.R.string.cancel)) {
                         dateDialogState.hide()
                         onAction(CancelEditMode)
                     }
@@ -150,7 +150,7 @@ fun EventPropertyEditors(
                 ),
                 buttons = {
                     positiveButton(
-                        text = stringResource(R.string.ok),
+                        text = stringResource(android.R.string.ok),
                         textStyle = MaterialTheme.typography.button.copy(
                             if (state.isAttendeeEmailValid == true)
                                 MaterialTheme.colors.onSurface
@@ -162,7 +162,7 @@ fun EventPropertyEditors(
                             onAction(ValidateAttendeeEmailExistsThenAddAttendee(attendeeEmail))
                         }
                     }
-                    negativeButton(text = stringResource(R.string.cancel)) {
+                    negativeButton(text = stringResource(android.R.string.cancel)) {
                         addAttendeeDialogState.hide()
                         onAction(CancelEditMode)
                     }
@@ -175,7 +175,7 @@ fun EventPropertyEditors(
                 Spacer(modifier = Modifier.tinyHeight())
 
                 Text(
-                    text = stringResource(R.string.add_attendee_dialog_title),
+                    text = stringResource(R.string.attendee_add_attendee_dialog_title),
                     style = MaterialTheme.typography.h4,
                     color = MaterialTheme.colors.onSurface,
                     textAlign = TextAlign.Center,
@@ -191,7 +191,7 @@ fun EventPropertyEditors(
                         onAction(ClearErrorsForAddAttendeeDialog)
                         onAction(ValidateAttendeeEmail(email))
                     },
-                    label = { Text(stringResource(R.string.add_attendee_dialog_email_title)) },
+                    label = { Text(stringResource(R.string.attendee_add_attendee_dialog_email_title)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     trailingIcon = {
                         if (state.isProgressVisible) {
@@ -248,10 +248,10 @@ fun EventPropertyEditors(
                     dismissOnClickOutside = true
                 ),
                 buttons = {
-                    positiveButton(text = stringResource(R.string.remove_attendee_dialog_remove_button)) {
+                    positiveButton(text = stringResource(R.string.attendee_remove_attendee_dialog_remove_button)) {
                         onAction(EditMode.RemoveAttendee(attendee.id))
                     }
-                    negativeButton(text = stringResource(R.string.cancel)) {
+                    negativeButton(text = stringResource(android.R.string.cancel)) {
                         deleteAttendeeDialogState.hide()
                         onAction(CancelEditMode)
                     }

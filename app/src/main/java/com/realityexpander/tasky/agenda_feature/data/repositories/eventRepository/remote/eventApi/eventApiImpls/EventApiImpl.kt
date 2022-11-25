@@ -7,7 +7,7 @@ import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.PhotoDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
-import com.realityexpander.tasky.core.data.getBytesFromUri
+import com.realityexpander.tasky.core.data.getBytesRecompressed
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import com.realityexpander.tasky.core.data.remote.utils.getErrorBodyMessage
 import com.realityexpander.tasky.core.util.UPLOAD_IMAGE_MAX_SIZE
@@ -110,7 +110,7 @@ class EventApiImpl @Inject constructor(
         photos: List<PhotoDTO.Local>
     ): List<MultipartBody.Part> {
         return photos.mapIndexed { index, photo ->
-            val bytes = photo.uri.getBytesFromUri(context, UPLOAD_IMAGE_MAX_SIZE)
+            val bytes = photo.uri.getBytesRecompressed(context, UPLOAD_IMAGE_MAX_SIZE)
                 ?: throw Exception("Photo not found")
 
             MultipartBody.Part

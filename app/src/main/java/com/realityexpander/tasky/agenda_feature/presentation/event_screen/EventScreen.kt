@@ -37,6 +37,7 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.TimeDateRow
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.isImageSizeTooLargeToUpload
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.OneTimeEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.AttendeeList
@@ -44,9 +45,9 @@ import com.realityexpander.tasky.agenda_feature.presentation.event_screen.compon
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.SmallHeightHorizontalDivider
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
-import com.realityexpander.tasky.core.data.isImageSizeTooLargeToUpload
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.presentation.common.util.getStringSafe
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.util.UPLOAD_IMAGE_MAX_SIZE
@@ -142,13 +143,21 @@ fun AddEventScreenContent(
     val singlePhotoPickerLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uriNullable ->
+            onResult = { photoUri ->
 
-                uriNullable?.let { uri ->
+                photoUri?.let { uri ->
 
                     if(uri.isImageSizeTooLargeToUpload(context, UPLOAD_IMAGE_MAX_SIZE)) {
-                        // Should this be a Alert Dialog?
-                        onAction(ShowErrorMessage(UiText.Res(R.string.event_error_image_too_big)))
+                        onAction(ShowAlertDialog(
+                            title = UiText.Res(R.string.event_error_image_too_big_title),
+                            message = UiText.Res(R.string.event_error_image_too_big_message),
+                            confirmButtonLabel =  ShowAlertDialogActionType.ConfirmOK.title,
+                            onConfirm = {
+                                onAction(DismissAlertDialog)
+                            },
+                            isDismissButtonVisible = false,
+                        ))
+
                         return@let
                     }
 
@@ -798,25 +807,41 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.largeHeight())
 
                 // • JOIN/LEAVE/DELETE EVENT BUTTON
+                fun ShowAlertDialogActionType.getTitle() = UiText.Res(
+                        R.string.event_confirm_action_dialog_title_phrase,
+                        context.getStringSafe(title.asResIdOrNull),
+                        context.getString(R.string.agenda_item_type_event)
+                    )
+                fun ShowAlertDialogActionType.getMessage() = UiText.Res(
+                        R.string.event_confirm_action_dialog_text_phrase,
+                        context.getStringSafe(title.asResIdOrNull).lowercase(),
+                        context.getString(R.string.agenda_item_type_event).lowercase()
+                    )
                 TextButton(
                     onClick = {
                         if (isUserEventCreator)
-                            onAction(ShowConfirmActionDialog(
-                                ConfirmActionDialogType.DeleteEvent,
+                            onAction(ShowAlertDialog(
+                                title = ShowAlertDialogActionType.DeleteEvent.getTitle(),
+                                message = ShowAlertDialogActionType.DeleteEvent.getMessage(),
+                                confirmButtonLabel =  ShowAlertDialogActionType.DeleteEvent.title,
                                 onConfirm = {
                                     onAction(DeleteEvent)
                                 }
                             ))
                         else if (state.event?.isGoing == true)
-                            onAction(ShowConfirmActionDialog(
-                                ConfirmActionDialogType.LeaveEvent,
+                            onAction(ShowAlertDialog(
+                                title = ShowAlertDialogActionType.LeaveEvent.getTitle(),
+                                message = ShowAlertDialogActionType.LeaveEvent.getMessage(),
+                                confirmButtonLabel = ShowAlertDialogActionType.LeaveEvent.title,
                                 onConfirm = {
                                     onAction(LeaveEvent)
                                 }
                             ))
                         else
-                            onAction(ShowConfirmActionDialog(
-                                ConfirmActionDialogType.JoinEvent,
+                            onAction(ShowAlertDialog(
+                                title = ShowAlertDialogActionType.JoinEvent.getTitle(),
+                                message = ShowAlertDialogActionType.JoinEvent.getMessage(),
+                                confirmButtonLabel = ShowAlertDialogActionType.JoinEvent.title,
                                 onConfirm = {
                                     onAction(JoinEvent)
                                 }
@@ -854,44 +879,29 @@ fun AddEventScreenContent(
         )
     }
 
-    state.showConfirmActionDialog?.let { dialogInfo ->
-
+    state.showAlertDialog?.let { dialogInfo ->
         AlertDialog(
-            title = {
-                Text(stringResource(R.string.event_confirm_action_dialog_title_phrase,
-                    dialogInfo.actionType.title.get,
-                    stringResource(R.string.agenda_item_type_event))
-                )
-            },
-            text = {
-                Text(stringResource(R.string.event_confirm_action_dialog_text_phrase,
-                    dialogInfo.actionType.title.get.lowercase(),
-                    stringResource(R.string.agenda_item_type_event))
-                )
-            },
-            onDismissRequest = { onAction(DismissConfirmActionDialog) },
+            title = { Text(dialogInfo.title.get) },
+            text = { Text(dialogInfo.message.get) },
+            onDismissRequest = { onAction(DismissAlertDialog) },
             confirmButton = {
                 TextButton(
-                    onClick = {
-                        dialogInfo.onConfirm()
-                    },
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Transparent
-                    )
+                    onClick = { dialogInfo.onConfirm() },
+                    colors = ButtonDefaults
+                        .textButtonColors(backgroundColor = Color.Transparent)
                 ) {
-                    Text(dialogInfo.actionType.title.get.uppercase())
+                    Text(dialogInfo.confirmButtonLabel.get.uppercase())
                 }
             },
             dismissButton = {
-                TextButton(
-                    onClick = {
-                        onAction(DismissConfirmActionDialog)
-                    },
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Transparent
-                    )
-                ) {
-                    Text(stringResource(R.string.cancel))
+                if(dialogInfo.isDismissButtonVisible) {
+                    TextButton(
+                        onClick = { onAction(DismissAlertDialog) },
+                        colors = ButtonDefaults
+                            .textButtonColors(backgroundColor = Color.Transparent)
+                    ) {
+                        Text(stringResource(android.R.string.cancel).uppercase())
+                    }
                 }
             }
         )

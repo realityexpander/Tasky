@@ -30,5 +30,5 @@ data class EventScreenState(
     val event: AgendaItem.Event? = null,
 
     // Confirm Action Dialog (Delete/Join/Leave)
-    val showConfirmActionDialog: ConfirmActionDialog? = null,
+    val showAlertDialog: EventScreenEvent.ShowAlertDialog? = null,
 )

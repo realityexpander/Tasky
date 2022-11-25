@@ -27,16 +27,23 @@ open class UiText : Parcelable {
     ): UiText()
 
 
-    // Example:
-    // resId = "Hello, %s!"
-    // args = "World!"
-    // UiText.Res(resId, args) -> .get = "Hello, World!"
-    //
-    // resId = "Goodbye."
-    // UiText.Res(resId) -> .get = "Goodbye."
-    //
-    // resId = null
-    // UiText.Res(resId) -> compiler error (not allowed)
+    /** Example:  // todo propagate documentation to other subclasses
+     ```
+    resId = "Hello, %s!"
+     args = "World!"
+     UiText.Res(resId, args) --> .get = "Hello, World!"
+    ```
+
+    ```
+     resId = "Goodbye."
+     UiText.Res(resId) --> .get = "Goodbye."
+    ```
+
+    ```
+     resId = null
+     UiText.Res(resId) --> compiler error (not allowed)
+     ```
+    **/
     @Parcelize
     class Res(
         @StringRes val resId: Int,
@@ -223,17 +230,6 @@ open class UiText : Parcelable {
     /////////////////////// HELPERS //////////////////////////
 
 
-    // Safely returns a resource string that may not have been passed correct parameters at construction time.
-    // Only works in Context/Fragment/Activity/View scope.
-    private fun Context.getStringSafe(@StringRes resId: Int, vararg args: Any): String {
-        return try {
-            getString(resId, *args)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            getString(resId)
-        }
-    }
-
     // Useful for plain kotlin classes that don't have access to @Composable functions.
     // Returns null if Str is `None` or `Str` is null value. Ignores the Resource value
     // (good for testing)
@@ -271,6 +267,19 @@ open class UiText : Parcelable {
         }
     }
 
+}
+
+// Safely returns a resource string that may not have been passed correct parameters at construction time.
+// Only works in Context/Fragment/Activity/View scope.
+fun Context.getStringSafe(@StringRes resId: Int?, vararg args: Any): String {
+    resId ?: return ""
+
+    return try {
+        getString(resId, *args)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        getString(resId)
+    }
 }
 
 // Local test

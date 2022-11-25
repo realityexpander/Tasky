@@ -61,6 +61,7 @@ import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 import java.time.format.TextStyle
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Composable
@@ -397,15 +398,15 @@ fun AgendaScreenContent(
         }
 
         // • SHOW TODAY'S DATE
-        val dayOfYearForSelectedDayIndex = state.currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear
+        val selectedDayIndexDayOfYear = state.currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear
         val nowDayOfYear = ZonedDateTime.now().dayOfYear
         Text(
             text =
-                if (dayOfYearForSelectedDayIndex == nowDayOfYear)
+                if (selectedDayIndexDayOfYear == nowDayOfYear)
                     stringResource(R.string.agenda_today)
-                else if (dayOfYearForSelectedDayIndex == nowDayOfYear + 1)
+                else if (selectedDayIndexDayOfYear == nowDayOfYear + 1)
                     stringResource(R.string.agenda_tomorrow)
-                else if (dayOfYearForSelectedDayIndex == nowDayOfYear - 1)
+                else if (selectedDayIndexDayOfYear == nowDayOfYear - 1)
                     stringResource(R.string.agenda_yesterday)
                 else {
                     val date = currentDate.plusDays((selectedDayIndex ?: 0).toLong())
@@ -452,30 +453,30 @@ fun AgendaScreenContent(
                         modifier = Modifier
                             .padding(start = DP.tiny, end = DP.tiny)
                             .clickable {
-                                performActionForAgendaItem(
-                                    agendaItem,
+                                onActionForAgendaItem(
                                     AgendaItemAction.OPEN_DETAILS,
+                                    agendaItem,
                                     onAction
                                 )
                             },
                         onEdit = {
-                            performActionForAgendaItem(
-                                agendaItem,
+                            onActionForAgendaItem(
                                 AgendaItemAction.EDIT,
+                                agendaItem,
                                 onAction
                             )
                         },
                         onDelete = {
-                            performActionForAgendaItem(
-                                agendaItem,
+                            onActionForAgendaItem(
                                 AgendaItemAction.DELETE,
+                                agendaItem,
                                 onAction
                             )
                         },
                         onViewDetails = {
-                            performActionForAgendaItem(
-                                agendaItem,
+                            onActionForAgendaItem(
                                 AgendaItemAction.OPEN_DETAILS,
+                                agendaItem,
                                 onAction
                             )
                         }
@@ -619,7 +620,7 @@ fun AgendaScreenContent(
                         backgroundColor = Color.Transparent
                     )
                 ) {
-                    Text(stringResource(R.string.cancel))
+                    Text(stringResource(android.R.string.cancel))
                 }
             }
         )
@@ -639,19 +640,26 @@ fun AgendaScreenContent(
                 onAction(CancelChooseCurrentDateDialog)
             },
             buttons = {
-                positiveButton(text = stringResource(R.string.ok)) {
+                positiveButton(text = stringResource(android.R.string.ok)) {
                     dateDialogState.hide()
                     onAction(SetCurrentDate(pickedDate))
                 }
-                negativeButton(text = stringResource(R.string.cancel)) {
+                negativeButton(text = stringResource(android.R.string.cancel)) {
                     dateDialogState.hide()
                     onAction(CancelChooseCurrentDateDialog)
                 }
+                button(text = stringResource(R.string.agenda_choose_current_date_dialog_today_button_text)) {
+                    dateDialogState.hide()
+                    onAction(SetCurrentDate(
+                        ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+                    ))
+                }
+
             }
         ) {
             datepicker(
                 initialDate = currentDate.toLocalDate(),
-                title = stringResource(id = R.string.agenda_select_current_date_dialog_title),
+                title = stringResource(id = R.string.agenda_choose_current_date_dialog_title),
             ) {
                 pickedDate = it.atTime(0,0,0, 0).toZonedDateTime()
             }
@@ -660,10 +668,10 @@ fun AgendaScreenContent(
 
 }
 
-fun performActionForAgendaItem(
-    agendaItem: AgendaItem?,
+fun onActionForAgendaItem(
     action: AgendaItemAction,
-    onAction: (AgendaScreenEvent)-> Unit
+    agendaItem: AgendaItem?,
+    onAction: (AgendaScreenEvent) -> Unit
 ) {
     agendaItem ?: return
 

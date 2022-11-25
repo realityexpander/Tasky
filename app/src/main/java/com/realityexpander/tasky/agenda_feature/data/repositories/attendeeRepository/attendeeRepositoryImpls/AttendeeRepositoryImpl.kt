@@ -37,7 +37,7 @@ class AttendeeRepositoryImpl @Inject constructor(
             }
             ?: ResultUiText.Error(
                 UiText.ResOrStr(
-                    R.string.add_attendee_api_error,
+                    R.string.attendee_add_attendee_api_error,
                     "Api Error"
                 ),
                 exceptionMessage = result.exceptionOrNull()?.message

@@ -10,19 +10,12 @@ import java.io.ByteArrayOutputStream
 
 
 // Will automatically recompress to lower quality if the image byte size exceeds the recompressThreshold
-fun Uri.getBytesFromUri(context: Context, recompressThreshold: Int = UPLOAD_IMAGE_MAX_SIZE): ByteArray?  {
-    var bytes = context.contentResolver
-        .openInputStream(this)
-        .use {
-            it?.readBytes()
-        }
+fun Uri.getBytesRecompressed(context: Context, recompressThreshold: Int = UPLOAD_IMAGE_MAX_SIZE): ByteArray?  {
+    var bytes = this.getBytes(context) ?: return null
+    val imageSize = this.getSize(context) ?: return null
 
-    val imageSize = context.contentResolver.openFileDescriptor(this, "r")
-        .use {
-            it?.statSize
-        }
-
-    imageSize?.also { size ->
+    // Recompress if the image exceeds the recompressThreshold
+    imageSize.also { size ->
         if (size > recompressThreshold) {
             // recompress the photo
             val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes?.size ?: 0)
@@ -35,10 +28,17 @@ fun Uri.getBytesFromUri(context: Context, recompressThreshold: Int = UPLOAD_IMAG
     return bytes
 }
 
-fun Uri.isImageSizeTooLargeToUpload(context: Context, maxUploadSize: Int = UPLOAD_IMAGE_MAX_SIZE): Boolean {
-    this.getBytesFromUri(context, maxUploadSize)?.size?.let { size ->
-        return size > maxUploadSize
-    }
+fun Uri.getBytes(context: Context): ByteArray?  {
+    return context.contentResolver
+        .openInputStream(this)
+        .use {
+            it?.readBytes()
+        }
+}
 
-    return true // if we can't get the size, assume it's too big
+fun Uri.getSize(context: Context): Long?  {
+    return context.contentResolver.openFileDescriptor(this, "r")
+        .use {
+            it?.statSize
+        }
 }
