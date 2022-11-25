@@ -104,7 +104,8 @@
     <string name="agenda_today">Today</string>
     <string name="agenda_yesterday">Yesterday</string>
     <string name="agenda_tomorrow">Tomorrow</string>
-    <string name="agenda_select_current_date_dialog_title">Select Start Date for Agenda Week</string>
+    <string name="agenda_choose_current_date_dialog_title">Select Start Date for Agenda Week</string>
+    <string name="agenda_choose_current_date_dialog_today_button_text">Today</string>
 
     <!--    Event screen -->
     <string name="event_description_close">Close Event screen</string>

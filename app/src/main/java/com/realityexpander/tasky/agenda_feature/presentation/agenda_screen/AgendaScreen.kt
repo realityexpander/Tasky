@@ -647,11 +647,16 @@ fun AgendaScreenContent(
                     dateDialogState.hide()
                     onAction(CancelChooseCurrentDateDialog)
                 }
+                button(text = stringResource(R.string.agenda_choose_current_date_dialog_today_button_text)) {
+                    dateDialogState.hide()
+                    onAction(SetCurrentDate(ZonedDateTime.now()))
+                }
+
             }
         ) {
             datepicker(
                 initialDate = currentDate.toLocalDate(),
-                title = stringResource(id = R.string.agenda_select_current_date_dialog_title),
+                title = stringResource(id = R.string.agenda_choose_current_date_dialog_title),
             ) {
                 pickedDate = it.atTime(0,0,0, 0).toZonedDateTime()
             }
