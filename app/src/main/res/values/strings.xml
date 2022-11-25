@@ -104,6 +104,7 @@
     <string name="agenda_today">Today</string>
     <string name="agenda_yesterday">Yesterday</string>
     <string name="agenda_tomorrow">Tomorrow</string>
+    <string name="agenda_select_current_date_dialog_title">Select Start Date for Agenda Week</string>
 
     <!--    Event screen -->
     <string name="event_description_close">Close Event screen</string>
@@ -149,7 +150,8 @@
     <string name="event_dialog_title_choose_add_attendee">ADD ATTENDEE</string>
     <string name="event_dialog_title_confirm_remove_attendee">CONFIRM REMOVE ATTENDEE</string>
     <string name="event_dialog_title_remove_attendee">Remove Attendee</string>
-    <string name="remove_attendee_dialog_remove_button">REMOVE</string>
+    <string name="event_error_image_too_big_title">Image size too big</string>
+    <string name="event_error_image_too_big_message">Image size of picked image is too large to upload to server. Please choose a smaller image.</string>
 
     <!--    Event Screen Confirm Action Dialog Messages -->
     <string name="event_confirm_action_dialog_delete">Delete</string>
@@ -158,16 +160,15 @@
     <string name="event_confirm_action_dialog_title_phrase">%1$s this %2$s?</string>
     <string name="event_confirm_action_dialog_text_phrase">Are you sure you want to %1$s this %2$s?</string>
 
-    <!--    Add Attendee -->
-    <string name="add_attendee_dialog_title">Add Attendee</string>
-    <string name="add_attendee_dialog_email_title">Attendee email</string>
-    <string name="add_attendee_dialog_error_email_not_found">Attendee email not found</string>
-    <string name="add_attendee_dialog_error_email_already_added">Attendee email is already added</string>
-    <string name="add_attendee_api_error">Api Error - Attendee object expected and not found</string>
+    <!--    Attendee - Add & Remove -->
+    <string name="attendee_add_attendee_dialog_title">Add Attendee</string>
+    <string name="attendee_add_attendee_dialog_email_title">Attendee email</string>
+    <string name="attendee_add_attendee_dialog_error_email_not_found">Attendee email not found</string>
+    <string name="attendee_add_attendee_dialog_error_email_already_added">Attendee email is already added</string>
+    <string name="attendee_add_attendee_api_error">Api Error - Attendee object expected and not found</string>
+    <string name="attendee_remove_attendee_dialog_remove_button">REMOVE</string>
 
     <!--    Agenda Sync -->
     <string name="agenda_sync_error">Failed to sync agenda</string>
-    <string name="event_error_image_too_big">Image size too large to upload</string>
-    <string name="agenda_select_current_date_dialog_title">Select Start Date for Agenda</string>
 
 </resources>

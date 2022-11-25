@@ -9,16 +9,20 @@ import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import java.time.ZonedDateTime
 
-enum class ConfirmActionDialogType(val title: UiText) {
+enum class ShowAlertDialogActionType(val title: UiText) {
     DeleteEvent(UiText.Res(R.string.event_confirm_action_dialog_delete)),
     LeaveEvent(UiText.Res(R.string.event_confirm_action_dialog_leave)),
     JoinEvent(UiText.Res(R.string.event_confirm_action_dialog_join)),
+    ConfirmOK(UiText.Res(android.R.string.ok)),
 }
 
-class ConfirmActionDialog(
-    val actionType: ConfirmActionDialogType,
-    val onConfirm: () -> Unit,
-)
+//class EventAlertDialog(
+//    val title: UiText,
+//    val message: UiText,
+//    val confirmButtonLabel: UiText,
+//    val onConfirm: () -> Unit,
+//    val isCancelVisible: Boolean = true,
+//)
 
 sealed interface EventScreenEvent {
     data class SetIsLoaded(val isLoaded: Boolean) : EventScreenEvent
@@ -31,12 +35,15 @@ sealed interface EventScreenEvent {
     data class SetEditMode(val editMode: EditMode) : EventScreenEvent
     object CancelEditMode : EventScreenEvent
 
-    // • Confirm Action (Delete/Join/Leave) Event Dialog
-    data class ShowConfirmActionDialog(
-        val actionType: ConfirmActionDialogType,
+    // • Alert Dialog - Confirm Action (Delete/Join/Leave) & General-error-alerts
+    data class ShowAlertDialog(
+        val title: UiText,
+        val message: UiText,
+        val confirmButtonLabel: UiText = UiText.Res(android.R.string.ok),
         val onConfirm: () -> Unit,
+        val isDismissButtonVisible: Boolean = true,
     ) : EventScreenEvent
-    object DismissConfirmActionDialog : EventScreenEvent
+    object DismissAlertDialog : EventScreenEvent
 
     // • Update/Delete/Join/Leave Event
     object SaveEvent : EventScreenEvent

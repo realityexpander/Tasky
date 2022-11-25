@@ -47,6 +47,7 @@ import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.presentation.common.util.getStringSafe
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.util.UPLOAD_IMAGE_MAX_SIZE
@@ -147,8 +148,16 @@ fun AddEventScreenContent(
                 photoUri?.let { uri ->
 
                     if(uri.isImageSizeTooLargeToUpload(context, UPLOAD_IMAGE_MAX_SIZE)) {
-                        // Should this be a Alert Dialog?
-                        onAction(ShowErrorMessage(UiText.Res(R.string.event_error_image_too_big)))
+                        onAction(ShowAlertDialog(
+                            title = UiText.Res(R.string.event_error_image_too_big_title),
+                            message = UiText.Res(R.string.event_error_image_too_big_message),
+                            confirmButtonLabel =  ShowAlertDialogActionType.ConfirmOK.title,
+                            onConfirm = {
+                                onAction(DismissAlertDialog)
+                            },
+                            isDismissButtonVisible = false,
+                        ))
+
                         return@let
                     }
 
@@ -798,25 +807,43 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.largeHeight())
 
                 // • JOIN/LEAVE/DELETE EVENT BUTTON
+                fun getTitle(dialogActionType: ShowAlertDialogActionType) = UiText.Res(
+                        R.string.event_confirm_action_dialog_title_phrase,
+                        context.getStringSafe(dialogActionType.title.asResIdOrNull),
+                        context.getString(R.string.agenda_item_type_event)
+                    )
+                fun getMessage(dialogActionType: ShowAlertDialogActionType) = UiText.Res(
+                        R.string.event_confirm_action_dialog_text_phrase,
+                        context.getStringSafe(dialogActionType.title.asResIdOrNull)
+                            .lowercase(),
+                        context.getString(R.string.agenda_item_type_event)
+                            .lowercase()
+                    )
                 TextButton(
                     onClick = {
                         if (isUserEventCreator)
-                            onAction(ShowConfirmActionDialog(
-                                ConfirmActionDialogType.DeleteEvent,
+                            onAction(ShowAlertDialog(
+                                title = getTitle(ShowAlertDialogActionType.DeleteEvent),
+                                message = getMessage(ShowAlertDialogActionType.DeleteEvent),
+                                confirmButtonLabel =  ShowAlertDialogActionType.DeleteEvent.title,
                                 onConfirm = {
                                     onAction(DeleteEvent)
                                 }
                             ))
                         else if (state.event?.isGoing == true)
-                            onAction(ShowConfirmActionDialog(
-                                ConfirmActionDialogType.LeaveEvent,
+                            onAction(ShowAlertDialog(
+                                title = getTitle(ShowAlertDialogActionType.LeaveEvent),
+                                message = getMessage(ShowAlertDialogActionType.LeaveEvent),
+                                confirmButtonLabel = ShowAlertDialogActionType.LeaveEvent.title,
                                 onConfirm = {
                                     onAction(LeaveEvent)
                                 }
                             ))
                         else
-                            onAction(ShowConfirmActionDialog(
-                                ConfirmActionDialogType.JoinEvent,
+                            onAction(ShowAlertDialog(
+                                title = getTitle(ShowAlertDialogActionType.JoinEvent),
+                                message = getMessage(ShowAlertDialogActionType.JoinEvent),
+                                confirmButtonLabel = ShowAlertDialogActionType.JoinEvent.title,
                                 onConfirm = {
                                     onAction(JoinEvent)
                                 }
@@ -854,22 +881,15 @@ fun AddEventScreenContent(
         )
     }
 
-    state.showConfirmActionDialog?.let { dialogInfo ->
-
+    state.showAlertDialog?.let { dialogInfo ->
         AlertDialog(
             title = {
-                Text(stringResource(R.string.event_confirm_action_dialog_title_phrase,
-                    dialogInfo.actionType.title.get,
-                    stringResource(R.string.agenda_item_type_event))
-                )
+                Text(dialogInfo.title.get)
             },
             text = {
-                Text(stringResource(R.string.event_confirm_action_dialog_text_phrase,
-                    dialogInfo.actionType.title.get.lowercase(),
-                    stringResource(R.string.agenda_item_type_event))
-                )
+                Text(dialogInfo.message.get)
             },
-            onDismissRequest = { onAction(DismissConfirmActionDialog) },
+            onDismissRequest = { onAction(DismissAlertDialog) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -879,19 +899,21 @@ fun AddEventScreenContent(
                         backgroundColor = Color.Transparent
                     )
                 ) {
-                    Text(dialogInfo.actionType.title.get.uppercase())
+                    Text(dialogInfo.confirmButtonLabel.get.uppercase())
                 }
             },
             dismissButton = {
-                TextButton(
-                    onClick = {
-                        onAction(DismissConfirmActionDialog)
-                    },
-                    colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Transparent
-                    )
-                ) {
-                    Text(stringResource(android.R.string.cancel))
+                if(dialogInfo.isDismissButtonVisible) {
+                    TextButton(
+                        onClick = {
+                            onAction(DismissAlertDialog)
+                        },
+                        colors = ButtonDefaults.textButtonColors(
+                            backgroundColor = Color.Transparent
+                        )
+                    ) {
+                        Text(stringResource(android.R.string.cancel).uppercase())
+                    }
                 }
             }
         )

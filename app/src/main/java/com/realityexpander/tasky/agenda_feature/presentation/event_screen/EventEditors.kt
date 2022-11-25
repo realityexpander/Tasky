@@ -175,7 +175,7 @@ fun EventPropertyEditors(
                 Spacer(modifier = Modifier.tinyHeight())
 
                 Text(
-                    text = stringResource(R.string.add_attendee_dialog_title),
+                    text = stringResource(R.string.attendee_add_attendee_dialog_title),
                     style = MaterialTheme.typography.h4,
                     color = MaterialTheme.colors.onSurface,
                     textAlign = TextAlign.Center,
@@ -191,7 +191,7 @@ fun EventPropertyEditors(
                         onAction(ClearErrorsForAddAttendeeDialog)
                         onAction(ValidateAttendeeEmail(email))
                     },
-                    label = { Text(stringResource(R.string.add_attendee_dialog_email_title)) },
+                    label = { Text(stringResource(R.string.attendee_add_attendee_dialog_email_title)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     trailingIcon = {
                         if (state.isProgressVisible) {
@@ -248,7 +248,7 @@ fun EventPropertyEditors(
                     dismissOnClickOutside = true
                 ),
                 buttons = {
-                    positiveButton(text = stringResource(R.string.remove_attendee_dialog_remove_button)) {
+                    positiveButton(text = stringResource(R.string.attendee_remove_attendee_dialog_remove_button)) {
                         onAction(EditMode.RemoveAttendee(attendee.id))
                     }
                     negativeButton(text = stringResource(android.R.string.cancel)) {
