@@ -61,6 +61,7 @@ import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 import java.time.format.TextStyle
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Composable
@@ -649,7 +650,9 @@ fun AgendaScreenContent(
                 }
                 button(text = stringResource(R.string.agenda_choose_current_date_dialog_today_button_text)) {
                     dateDialogState.hide()
-                    onAction(SetCurrentDate(ZonedDateTime.now()))
+                    onAction(SetCurrentDate(
+                        ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+                    ))
                 }
 
             }
