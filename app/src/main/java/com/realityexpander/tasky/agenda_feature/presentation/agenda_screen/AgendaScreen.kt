@@ -453,30 +453,30 @@ fun AgendaScreenContent(
                         modifier = Modifier
                             .padding(start = DP.tiny, end = DP.tiny)
                             .clickable {
-                                performActionForAgendaItem(
-                                    agendaItem,
+                                onActionForAgendaItem(
                                     AgendaItemAction.OPEN_DETAILS,
+                                    agendaItem,
                                     onAction
                                 )
                             },
                         onEdit = {
-                            performActionForAgendaItem(
-                                agendaItem,
+                            onActionForAgendaItem(
                                 AgendaItemAction.EDIT,
+                                agendaItem,
                                 onAction
                             )
                         },
                         onDelete = {
-                            performActionForAgendaItem(
-                                agendaItem,
+                            onActionForAgendaItem(
                                 AgendaItemAction.DELETE,
+                                agendaItem,
                                 onAction
                             )
                         },
                         onViewDetails = {
-                            performActionForAgendaItem(
-                                agendaItem,
+                            onActionForAgendaItem(
                                 AgendaItemAction.OPEN_DETAILS,
+                                agendaItem,
                                 onAction
                             )
                         }
@@ -668,10 +668,10 @@ fun AgendaScreenContent(
 
 }
 
-fun performActionForAgendaItem(
-    agendaItem: AgendaItem?,
+fun onActionForAgendaItem(
     action: AgendaItemAction,
-    onAction: (AgendaScreenEvent)-> Unit
+    agendaItem: AgendaItem?,
+    onAction: (AgendaScreenEvent) -> Unit
 ) {
     agendaItem ?: return
 
