@@ -173,7 +173,7 @@ class EventViewModel @Inject constructor(
                                 return
                             }
 
-                            // Add attendee to event
+                            // Add Attendee to Event
                             sendEvent(EditMode.AddAttendee(attendee))
                             sendEvent(CancelEditMode)
                             sendEvent(OneTimeEvent.ShowToast(UiText.Res(R.string.attendee_add_attendee_dialog_success)))
