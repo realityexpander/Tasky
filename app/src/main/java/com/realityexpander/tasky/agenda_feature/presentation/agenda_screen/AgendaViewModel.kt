@@ -447,35 +447,7 @@ class AgendaViewModel @Inject constructor(
 //
 //            // todo create Dummy data for now - replace with actual data soon
 //            val id = when(agendaItemType) {
-//                AgendaItemType.Event -> {
-////                    val uuid = UUID.randomUUID().toString()
-////                    agendaRepository.createEvent(
-////                       AgendaItem.Event(
-////                           id = uuid,
-////                           title = "New Event for ** $todayDate",
-////                           description = "New Event Description - $uuid",
-////                           from = ZonedDateTime.of(
-////                               todayDate.plusDays(1),
-////                               LocalTime.now(),
-////                               ZoneId.systemDefault()
-////                           ),
-////                           to = ZonedDateTime.of(
-////                               todayDate.plusDays(1),
-////                               LocalTime.now().plusHours(1),
-////                               ZoneId.systemDefault()
-////                           ),
-////                           remindAt = ZonedDateTime.of(
-////                               todayDate.plusDays(1),
-////                               LocalTime.now().minusMinutes(30),
-////                               ZoneId.systemDefault()
-////                           ),
-////                           attendees =  emptyList(), //listOf(attendeeId("634e5c33628cc62b5ec50b37")),
-////                           photos = emptyList()
-////                       ))
-////                    uuidStr(uuid)
-//                    sendEvent(OneTimeEvent.NavigateToCreateEvent)
-//               }
-//                AgendaItemType.Task -> { null } // todo replace with actual type
+////                AgendaItemType.Task -> { null } // todo replace with actual type
 ////                     AgendaItem.Task(
 ////                          id = UUID.randomUUID().toString(),
 ////                          title = "New Task for $todayDate",
@@ -492,7 +464,7 @@ class AgendaViewModel @Inject constructor(
 ////                          description = "New Task Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
 ////                     )
 ////                }
-//                AgendaItemType.Reminder -> { null } // todo replace with actual type
+////                AgendaItemType.Reminder -> { null } // todo replace with actual type
 ////                     AgendaItem.Reminder(
 ////                          id = UUID.randomUUID().toString(),
 ////                          title = "New Reminder for $todayDate",
@@ -508,7 +480,6 @@ class AgendaViewModel @Inject constructor(
 ////                          ),
 ////                          description = "New Reminder Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
 ////                     )
-////
 ////                }
 //            }
 //
