@@ -24,6 +24,9 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         createEventInFakeDatabase(event)
     }
 
+    override fun upsertEvent(event: EventEntity) {
+//        createEventInFakeDatabase(event)  // todo implement
+    }
 
     // • READ
 
@@ -100,6 +103,15 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
     override suspend fun clearAllEvents(): Int {
         return try {
             return clearAllEventsInFakeDatabase()
+        } catch (e: Exception) {
+            0
+        }
+    }
+
+    override suspend fun clearAllEventsForDay(zonedDateTime: ZonedDateTime): Int {
+        return try {
+            0
+//            clearAllEventsForDayInFakeDatabase(zonedDateTime)  // todo implement
         } catch (e: Exception) {
             0
         }

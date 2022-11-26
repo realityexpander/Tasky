@@ -914,7 +914,10 @@ fun AddEventScreenContent(
             onDismissRequest = { onAction(DismissAlertDialog) },
             confirmButton = {
                 TextButton(
-                    onClick = { dialogInfo.onConfirm() },
+                    onClick = {
+                        onAction(DismissAlertDialog)
+                        dialogInfo.onConfirm()
+                    },
                     colors = ButtonDefaults
                         .textButtonColors(backgroundColor = Color.Transparent)
                 ) {

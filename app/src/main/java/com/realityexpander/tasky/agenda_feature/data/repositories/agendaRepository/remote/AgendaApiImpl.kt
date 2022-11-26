@@ -15,7 +15,7 @@ class AgendaApiImpl @Inject constructor(
     override suspend fun getAgenda(zonedDateTime: ZonedDateTime): AgendaDayDTO {
         return try {
             val response = taskyApi.getAgenda(
-                ZonedDateTime.now().zone.id,
+                ZonedDateTime.now().zone.id.toString(),
                 zonedDateTime.toUtcMillis()
             )
 
