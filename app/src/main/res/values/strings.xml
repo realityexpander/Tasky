@@ -153,6 +153,8 @@
     <string name="event_dialog_title_remove_attendee">Remove Attendee</string>
     <string name="event_error_image_too_big_title">Image size too big</string>
     <string name="event_error_image_too_big_message">Image size of picked image is too large to upload to server. Please choose a smaller image.</string>
+    <string name="event_error_image_file_missing_title">Photo(s) Missing</string>
+    <string name="event_error_image_file_missing_message">One or more of photo files are missing. The missing photos have been removed from the photos for this Event. Please try again.</string>
 
     <!--    Event Screen Confirm Action Dialog Messages -->
     <string name="event_confirm_action_dialog_delete">Delete</string>
