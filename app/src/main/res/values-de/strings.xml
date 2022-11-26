@@ -1,0 +1,178 @@
+<resources>
+    <string name="app_name">Aufgaben</string>
+
+    <!-- general dialogs -->
+    <!--    <string name="ok">OK</string>          Note: use android.R.string.ok instead-->
+    <!--    <string name="cancel">Cancel</string>  Note: use android.R.string.cancel instead-->
+    <string name="delete">Löschen</string>
+
+    <!-- general descriptions -->
+    <string name="back_description">Der Rücken</string>
+    <string name="remove_description">Entfernen</string>
+
+    <!--    Login Screen -->
+    <string name="login_title">Willkommen zurück!</string>
+    <string name="login_not_a_member_sign_up">HABEN SIE KEIN KONTO\? ANMELDEN</string>
+    <string name="login_success">Anmeldung erfolgreich: authInfo = %s</string>
+    <string name="login_logged_in">Eingeloggt!</string>
+    <string name="login_button">EINLOGGEN</string>
+    <string name="error_login_error">Anmeldefehler - %s</string>
+
+    <!--    Register Screen -->
+    <string name="register_title">Erstelle deinen Account</string>
+    <string name="register_already_a_member_sign_in">Sie haben bereits ein Konto\? Hier anmelden</string>
+    <string name="register_success">Anmelden Erfolg! Du darfst dich jetzt einloggen.</string>
+    <string name="register_registered">Eingetragen!</string>
+    <string name="register_register_error">Registrierungsfehler - %s</string>
+    <string name="register_error_email_exists">E-Mail existiert bereits - versuchen Sie sich anzumelden!</string>
+    <string name="register_error_passwords_do_not_match">Passwörter stimmen nicht überein.</string>
+    <string name="register_password_requirements">Das Passwort muss zwischen 9 und 30 Zeichen lang sein
+         lang, enthalten mindestens eine Zahl, einen Großbuchstaben und einen Kleinbuchstaben.</string>
+    <string name="register_label_confirm_password">Passwort bestätigen</string>
+    <string name="register_placeholder_confirm_password">Bestätigen Sie Ihr Passwort</string>
+    <string name="register_button">LOSLEGEN</string>
+    <string name="register_description_back">Gehen Sie zurück zum Login</string>
+
+    <!--    NameField Compose Component -->
+    <string name="nameField_label">Name</string>
+    <string name="nameField_placeholder">Name</string>
+    <string name="nameField_description_isValid">Name ist gültig</string>
+    <string name="nameField_description_isInvalid">Name ist ungültig</string>
+    <string name="nameField_description_name">Namenseingabefeld</string>
+
+    <!--    EmailField Compose Component -->
+    <string name="emailField_label">E-Mail-Addresse</string>
+    <string name="emailField_placeholder">E-Mail-Addresse</string>
+    <string name="emailField_description_isValid">Email Adresse ist gültig</string>
+    <string name="emailField_description_isInvalid">Email Adresse ist nicht gültig</string>
+    <string name="emailField_description_email">E-Mail-Eingabefeld</string>
+
+    <!--    PasswordField Compose Component -->
+    <string name="passwordField_label">Passwort</string>
+    <string name="passwordField_placeholder">Passwort</string>
+    <string name="passwordField_description_hide">Passwort verbergen</string>
+    <string name="passwordField_description_show">Passwort anzeigen</string>
+    <string name="passwordField_description_lock">Passwort-Eingabefeld</string>
+
+    <!--    TextEntryField Compose Component -->
+    <string name="textEntryField_description_isValid">Die Texteingabe ist gültig</string>
+    <string name="textEntryField_description_isInvalid">Die Texteingabe ist ungültig</string>
+    <string name="textEntryField_label">Texteingabe</string>
+    <string name="textEntryField_placeholder">Text eingeben</string>
+    <string name="register_network_error">Netzwerkfehler registrieren - %s</string>
+
+    <!--    Error Messages (general)-->
+    <string name="error_unknown">Unbekannter Fehler - %s</string>
+    <string name="error_invalid_email">Ungültige E-Mail-Adresse</string>
+    <string name="error_invalid_password">Ungültiges Passwort</string>
+    <string name="error_invalid_confirm_password">Ungültiges Bestätigungspasswort</string>
+    <string name="error_invalid_username">Ungültiger Benutzername, muss 4–50 Zeichen lang sein</string>
+    <string name="error_invalid_user_name">Ungültiger Benutzername</string>
+    <string name="error_invalid_string_resource_id">Ungültige String-Ressourcen-ID</string>
+    <string name="error_unknown_agenda_type">Unbekannter Agendatyp</string>
+
+    <!-- ZonedDateTimeToString.kt -->
+    <string name="zonedDateTimeToString_same_time">Gleiche Zeit</string>
+    <string name="zonedDateTimeToString_number_day_string">%1$d Tag %2$s</string>
+    <string name="zonedDateTimeToString_number_days_string">%1$d Tage %2$s</string>
+    <string name="zonedDateTimeToString_number_hour_string">%1$d Stunde %2$s</string>
+    <string name="zonedDateTimeToString_number_hours_string">%1$d Stunden %2$s</string>
+    <string name="zonedDateTimeToString_number_minute_string">%1$d Minute %2$s</string>
+    <string name="zonedDateTimeToString_number_minutes_string">%1$d Minuten %2$s</string>
+    <string name="zonedDateTimeToString_number_second_string">%1$d Sekunde %2$s</string>
+    <string name="zonedDateTimeToString_number_seconds_string">%1$d Sekunden %2$s</string>
+
+    <!--    Splash screen -->
+    <string name="splash_logged_in">Eingeloggt!</string>
+    <string name="splash_not_logged_in">Nicht eingeloggt…</string>
+
+    <!-- Agenda Item types -->
+    <string name="agenda_item_type_task">Aufgabe</string>
+    <string name="agenda_item_type_event">Vorfall</string>
+    <string name="agenda_item_type_reminder">Erinnerung</string>
+
+    <!--    Agenda screen -->
+    <string name="agenda_title">Agenda-Bildschirm</string>
+    <string name="agenda_description">Agenda-Bildschirm</string>
+    <string name="agenda_error">Agendafehler - %s</string>
+    <string name="agenda_error_network">Agenda-Netzwerkfehler - %s</string>
+    <string name="agenda_error_unknown">Agenda unbekannter Fehler - %s</string>
+    <string name="agenda_error_agenda_item_not_found">Tagesordnungspunkt nicht gefunden</string>
+    <string name="agenda_add_agenda_item">Tagesordnungspunkt hinzufügen</string>
+    <string name="agenda_confirm_delete_item_dialog_title_phrase">%s löschen\?</string>
+    <string name="agenda_confirm_delete_item_dialog_text_phrase">Möchten Sie dieses \'%s\' wirklich löschen\?</string>
+    <string name="agenda_today">Heute</string>
+    <string name="agenda_yesterday">Gestern</string>
+    <string name="agenda_tomorrow">Morgen</string>
+    <string name="agenda_choose_current_date_dialog_title">Wählen Sie das Startdatum für die Agendawoche aus</string>
+    <string name="agenda_choose_current_date_dialog_today_button_text">Heute</string>
+
+    <!--    Event screen -->
+    <string name="event_description_close">Ereignisbildschirm schließen</string>
+    <string name="event_description_edit_event">Ereignis bearbeiten</string>
+    <string name="event_description_meeting_title_marker">Titelmarkierung für Meetings</string>
+    <string name="event_description_edit_event_description">Ereignisbeschreibung bearbeiten</string>
+    <string name="event_description_add_photo">Foto hinzufügen</string>
+    <string name="event_description_add_attendee_button">Schaltfläche Teilnehmer hinzufügen</string>
+    <string name="event_description_photo">Foto</string>
+    <string name="event_save">Speichern</string>
+    <string name="event_event_title">Vorfall</string>
+    <string name="event_no_title_set">Kein Titel festgelegt</string>
+    <string name="event_edit_event_title">Veranstaltungstitel bearbeiten</string>
+    <string name="event_no_description_set">Keine Beschreibung festgelegt</string>
+    <string name="event_add_photos">Fotos hinzufügen</string>
+    <string name="event_photos">Fotos</string>
+    <string name="event_from">Aus</string>
+    <string name="event_to">Zu</string>
+    <string name="event_visitors">Besucher</string>
+    <string name="event_all">Alle</string>
+    <string name="event_going">Gehen</string>
+    <string name="event_not_going">Geht nicht</string>
+    <string name="event_delete_event">EREIGNIS LÖSCHEN</string>
+    <string name="event_leave_event">EREIGNIS VERLASSEN</string>
+    <string name="event_join_event">VERANSTALTUNG TEILNEHMEN</string>
+    <string name="event_error_save_event">Fehler beim Speichern des Ereignisses: %s</string>
+    <string name="event_error_delete_event">Fehler beim Löschen des Ereignisses</string>
+    <string name="event_error_leave_event">Fehler beim Verlassen des Ereignisses</string>
+    <string name="event_error_join_event">Fehler beim Beitritt zum Event</string>
+    <string name="event_message_event_saved">Ereignis gespeichert</string>
+    <string name="event_message_event_deleted_success">Veranstaltung erfolgreich gelöscht</string>
+
+    <!--    Event Screen Dialog Titles -->
+    <string name="event_dialog_title_choose_title_text">TITEL BEARBEITEN</string>
+    <string name="event_dialog_title_choose_description_text">BESCHREIBUNG BEARBEITEN</string>
+    <string name="event_dialog_title_choose_from_time">VON ZEIT EINSTELLEN</string>
+    <string name="event_dialog_title_choose_to_time">AUF ZEIT EINSTELLEN</string>
+    <string name="event_dialog_title_choose_from_date">AB DATUM EINSTELLEN</string>
+    <string name="event_dialog_title_choose_to_date">AUF DATUM EINSTELLEN</string>
+    <string name="event_dialog_title_choose_remind_at_date_time">ERINNERUNG UM ZEIT EINSTELLEN</string>
+    <string name="event_dialog_title_choose_add_photo">FOTO HINZUFÜGEN</string>
+    <string name="event_dialog_title_view_or_delete_photo">FOTO</string>
+    <string name="event_dialog_title_choose_add_attendee">TEILNEHMER HINZUFÜGEN</string>
+    <string name="event_dialog_title_confirm_remove_attendee">TEILNEHMER ENTFERNEN BESTÄTIGEN</string>
+    <string name="event_dialog_title_remove_attendee">Teilnehmer entfernen</string>
+    <string name="event_error_image_too_big_title">Bildgröße zu groß</string>
+    <string name="event_error_image_too_big_message">Die Bildgröße des ausgewählten Bildes ist zu groß, um es auf den Server hochzuladen. Bitte wählen Sie ein kleineres Bild.</string>
+    <string name="event_error_image_file_missing_title">Foto(s) fehlen</string>
+    <string name="event_error_image_file_missing_message">Eine oder mehrere Fotodateien fehlen. Die fehlenden Fotos wurden aus den Fotos für diese Veranstaltung entfernt. Bitte versuche es erneut.</string>
+
+    <!--    Event Screen Confirm Action Dialog Messages -->
+    <string name="event_confirm_action_dialog_delete">Löschen</string>
+    <string name="event_confirm_action_dialog_leave">Verlassen</string>
+    <string name="event_confirm_action_dialog_join">Verbinden</string>
+    <string name="event_confirm_action_dialog_title_phrase">%1$s ist das %2$s\?</string>
+    <string name="event_confirm_action_dialog_text_phrase">Bist du sicher, dass du diesen %2$s %1$s möchtest\?</string>
+
+    <!--    Attendee - Add & Remove -->
+    <string name="attendee_add_attendee_dialog_title">Teilnehmer hinzufügen</string>
+    <string name="attendee_add_attendee_dialog_email_title">Teilnehmer-E-Mail</string>
+    <string name="attendee_add_attendee_dialog_error_email_not_found">Teilnehmer-E-Mail nicht gefunden</string>
+    <string name="attendee_add_attendee_dialog_error_email_already_added">Teilnehmer-E-Mail wurde bereits hinzugefügt</string>
+    <string name="attendee_add_attendee_dialog_success">Teilnehmer hinzugefügt</string>
+    <string name="attendee_add_attendee_api_error">API-Fehler – Teilnehmerobjekt erwartet und nicht gefunden</string>
+    <string name="attendee_remove_attendee_dialog_remove_button">LÖSCHEN</string>
+
+    <!--    Agenda Sync -->
+    <string name="agenda_sync_error">Agenda konnte nicht synchronisiert werden</string>
+
+</resources>

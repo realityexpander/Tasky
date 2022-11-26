@@ -100,7 +100,7 @@ interface TaskyApi {
         @Query("email") email: Email,
     ): Response<GetAttendeeResponseDTO>
 
-    @DELETE("attendee/{eventId}")
+    @DELETE("attendee/{eventId}")  // remove the logged-in user from the eventId
     suspend fun deleteAttendee(
         @Path("eventId") eventId: UuidStr,
     ): Response<Void>

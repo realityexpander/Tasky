@@ -45,6 +45,7 @@ import com.realityexpander.tasky.agenda_feature.presentation.event_screen.compon
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.SmallHeightHorizontalDivider
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
+import com.realityexpander.tasky.core.data.isAvailable
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.presentation.common.util.getStringSafe
@@ -237,6 +238,33 @@ fun AddEventScreenContent(
                 if (isEditable) {
                     TextButton(
                         onClick = {
+                            // Check Uri's of local photos are still available (they may have been deleted before the user pressed Save)
+                            val unavailableLocalPhotos =
+                                state.event?.photos
+                                    ?.filterIsInstance<Photo.Local>()
+                                    ?.filterNot { photoLocal ->
+                                        photoLocal.uri.isAvailable(context)
+                                    }
+                            if(unavailableLocalPhotos?.isNotEmpty() == true) {
+                                // Remove the missing photos
+                                unavailableLocalPhotos.forEach { photoLocal ->
+                                    onAction(EditMode.RemovePhoto(photoLocal))
+                                }
+
+                                // Tell user that some photos were removed
+                                onAction(ShowAlertDialog(
+                                    title = UiText.Res(R.string.event_error_image_file_missing_title),
+                                    message = UiText.Res(R.string.event_error_image_file_missing_message),
+                                    confirmButtonLabel =  ShowAlertDialogActionType.ConfirmOK.title,
+                                    onConfirm = {
+                                        onAction(DismissAlertDialog)
+                                    },
+                                    isDismissButtonVisible = false,
+                                ))
+
+                                return@TextButton
+                            }
+
                             onAction(SetIsEditable(false))
                             onAction(SaveEvent)
                         },
