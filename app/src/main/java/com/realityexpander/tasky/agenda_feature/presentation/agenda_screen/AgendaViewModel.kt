@@ -102,7 +102,7 @@ class AgendaViewModel @Inject constructor(
                 )
             }
 
-//            yield() // wait for database to load  // leave for testing
+//            yield() // wait for database to load  // leave for testing for now // todo remove
 //            if(agendaState.value.agendaItems.isEmpty()) { // if no items for today, make some fake ones
 //                createFakeAgendaItems(agendaRepository)
 //            }
