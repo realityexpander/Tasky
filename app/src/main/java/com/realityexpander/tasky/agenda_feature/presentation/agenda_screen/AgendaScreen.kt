@@ -639,40 +639,37 @@ fun AgendaScreenContent(
     }
 
     // • Select current date for agenda
-//    state.chooseCurrentDateDialog ?.let { currentDate ->
-//        dateDialogState.show()
-        MaterialDialog(
-            dialogState = dateDialogState,
-            onCloseRequest = {
+    MaterialDialog(
+        dialogState = dateDialogState,
+        onCloseRequest = {
+            dateDialogState.hide()
+            onAction(CancelChooseCurrentDateDialog)
+        },
+        buttons = {
+            positiveButton(text = stringResource(android.R.string.ok)) {
+                dateDialogState.hide()
+                onAction(SetCurrentDate(pickedDate))
+            }
+            negativeButton(text = stringResource(android.R.string.cancel)) {
                 dateDialogState.hide()
                 onAction(CancelChooseCurrentDateDialog)
-            },
-            buttons = {
-                positiveButton(text = stringResource(android.R.string.ok)) {
-                    dateDialogState.hide()
-                    onAction(SetCurrentDate(pickedDate))
-                }
-                negativeButton(text = stringResource(android.R.string.cancel)) {
-                    dateDialogState.hide()
-                    onAction(CancelChooseCurrentDateDialog)
-                }
-                button(text = stringResource(R.string.agenda_choose_current_date_dialog_today_button_text)) {
-                    dateDialogState.hide()
-                    onAction(SetCurrentDate(
-                        ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
-                    ))
-                }
+            }
+            button(text = stringResource(R.string.agenda_choose_current_date_dialog_today_button_text)) {
+                dateDialogState.hide()
+                onAction(SetCurrentDate(
+                    ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+                ))
+            }
 
-            }
-        ) {
-            datepicker(
-                initialDate = currentDate.toLocalDate(),
-                title = stringResource(id = R.string.agenda_choose_current_date_dialog_title),
-            ) {
-                pickedDate = it.atTime(0,0,0, 0).toZonedDateTime()
-            }
         }
-//    }
+    ) {
+        datepicker(
+            initialDate = currentDate.toLocalDate(),
+            title = stringResource(id = R.string.agenda_choose_current_date_dialog_title),
+        ) {
+            pickedDate = it.atTime(0,0,0, 0).toZonedDateTime()
+        }
+    }
 
 }
 
