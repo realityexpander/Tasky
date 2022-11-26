@@ -158,7 +158,9 @@ fun EventPropertyEditors(
                                 MaterialTheme.colors.onSurface.copy(alpha = 0.3f)
                         )
                     ) {
-                        if (state.isAttendeeEmailValid == true && !state.isProgressVisible) {
+                        if (state.isAttendeeEmailValid == true
+                            && !state.isProgressVisible
+                        ) {
                             onAction(ValidateAttendeeEmailExistsThenAddAttendee(attendeeEmail))
                         }
                     }
