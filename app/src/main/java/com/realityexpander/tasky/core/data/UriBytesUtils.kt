@@ -10,7 +10,10 @@ import java.io.ByteArrayOutputStream
 
 
 // Will automatically recompress to lower quality if the image byte size exceeds the recompressThreshold
-fun Uri.getBytesRecompressed(context: Context, recompressThreshold: Int = UPLOAD_IMAGE_MAX_SIZE): ByteArray?  {
+fun Uri.getBytesRecompressed(
+    context: Context,
+    recompressThreshold: Int = UPLOAD_IMAGE_MAX_SIZE
+): ByteArray?  {
     val imageSize = this.getSize(context) ?: return null
     var bytes = this.getBytes(context) ?: return null
 
@@ -41,4 +44,15 @@ fun Uri.getSize(context: Context): Long?  {
         .use {
             it?.statSize
         }
+}
+
+fun Uri.isAvailable(context: Context): Boolean {
+    return try {
+        context.contentResolver.openFileDescriptor(this, "r")
+            .use {
+                it != null
+            }
+    } catch (e: Exception) {
+        false
+    }
 }
