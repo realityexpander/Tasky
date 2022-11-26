@@ -137,6 +137,8 @@
     <string name="event_error_join_event">Error al unirse al evento</string>
     <string name="event_message_event_saved">Evento guardado</string>
     <string name="event_message_event_deleted_success">Evento eliminado con éxito</string>
+    <string name="event_message_event_left_success">Evento finalizado con éxito</string>
+    <string name="event_message_event_joined_success">Evento unido con éxito</string>
 
     <!--    Event Screen Dialog Titles -->
     <string name="event_dialog_title_choose_title_text">EDITAR TÍTULO</string>
