@@ -7,6 +7,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
 import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.toUtcMillis
 import com.realityexpander.tasky.core.util.toZonedDateTime
@@ -110,8 +111,9 @@ fun AgendaItem.Event.toEventDTOUpdate(loggedInUserId: UserId): EventDTO.Update {
         from = from.toUtcMillis(),
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
-        isGoing = // set `isGoing` to true just before transfer to server
-            isUserEventCreator || attendees.any { it.id == loggedInUserId && it.isGoing },
+        isGoing = // set `isGoing` to true just before transfer, based on SSOT of `attendees`
+            isUserEventCreator
+            || isUserIdGoingAsAttendee(loggedInUserId, attendees),
         attendeeIds = attendees.map { attendee ->
             attendee.id
         },
