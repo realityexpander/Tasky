@@ -405,7 +405,7 @@ class EventViewModel @Inject constructor(
                         }
                         else -> {
                             // Update existing event
-                            agendaRepository.updateEvent(event)
+                            agendaRepository.updateEvent(event, state.value.authInfo ?: return)
                         }
                     }
 
@@ -530,8 +530,7 @@ class EventViewModel @Inject constructor(
 //                    )
 //                }
 //
-//                // todo leave should just toggle isGoing on the Event screen and
-//                //   only send the update to the server when the user saves the event.
+//
 //
 //                // todo only do this when on Agenda screen
 //                var result =
