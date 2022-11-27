@@ -267,7 +267,15 @@ class AgendaViewModel @Inject constructor(
                val result =
                    when (uiEvent.agendaItem) {
                         is AgendaItem.Event -> {
-                            agendaRepository.deleteEventId(uiEvent.agendaItem.id)
+                            // If the logged-in user owns the Event, they are allowed to delete it.
+                            if (uiEvent.agendaItem.isUserEventCreator) {
+                                agendaRepository.deleteEventId(uiEvent.agendaItem.id)
+                            } else {
+                                // Otherwise, the user is removed from the Event.
+                                agendaRepository.removeLoggedInUserFromEventId(
+                                    eventId = uiEvent.agendaItem.id,
+                                )
+                            }
                         }
                         is AgendaItem.Task -> {
 //                                agendaRepository.deleteTaskId(agendaItem)  // todo implement
