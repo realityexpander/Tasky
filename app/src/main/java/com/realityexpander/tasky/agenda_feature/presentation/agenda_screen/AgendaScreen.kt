@@ -448,12 +448,6 @@ fun AgendaScreenContent(
             itemsIndexed(items = agendaItems) { index, agendaItem ->
                 Box {
                     AgendaCard(
-                        agendaItem = agendaItem,
-                        onToggleCompleted = {
-                            if (agendaItem is AgendaItem.Task) {
-                                onAction(ToggleTaskCompleted(agendaItem))
-                            }
-                        },
                         modifier = Modifier
                             .padding(start = DP.tiny, end = DP.tiny)
                             .clickable {
@@ -463,6 +457,13 @@ fun AgendaScreenContent(
                                     onAction
                                 )
                             },
+                        agendaItem = agendaItem,
+                        authInfo = state.authInfo ?: return@Box,
+                        onToggleCompleted = {
+                            if (agendaItem is AgendaItem.Task) {
+                                onAction(ToggleTaskCompleted(agendaItem))
+                            }
+                        },
                         onEdit = {
                             onActionForAgendaItem(
                                 AgendaItemAction.EDIT,
@@ -476,15 +477,14 @@ fun AgendaScreenContent(
                                 agendaItem,
                                 onAction
                             )
-                        },
-                        onViewDetails = {
-                            onActionForAgendaItem(
-                                AgendaItemAction.OPEN_DETAILS,
-                                agendaItem,
-                                onAction
-                            )
                         }
-                    )
+                    ) {
+                        onActionForAgendaItem(
+                            AgendaItemAction.OPEN_DETAILS,
+                            agendaItem,
+                            onAction
+                        )
+                    }
                 }
 
                 if (index < agendaItems.size - 1) {
