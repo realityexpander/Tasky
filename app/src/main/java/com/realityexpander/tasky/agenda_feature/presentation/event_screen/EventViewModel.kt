@@ -398,11 +398,9 @@ class EventViewModel @Inject constructor(
                 val result =
                     when (initialEventId) {
                         null -> {
-                            // Create new event
                             agendaRepository.createEvent(event)
                         }
                         else -> {
-                            // Update existing event
                             agendaRepository.updateEvent(event)
                         }
                     }
