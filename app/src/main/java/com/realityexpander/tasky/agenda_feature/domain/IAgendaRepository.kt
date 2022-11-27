@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.domain
 
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
@@ -13,7 +14,7 @@ interface IAgendaRepository {
 
     suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event>
     suspend fun getEvent(eventId: EventId): AgendaItem.Event?
-    suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event>
+    suspend fun updateEvent(event: AgendaItem.Event, authInfo: AuthInfo): ResultUiText<AgendaItem.Event>
     suspend fun deleteEventId(eventId: EventId): ResultUiText<Void>
     suspend fun clearAllEvents(): ResultUiText<Void>
 
