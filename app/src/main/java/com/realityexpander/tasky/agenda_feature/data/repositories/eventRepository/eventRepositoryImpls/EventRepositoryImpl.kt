@@ -11,6 +11,7 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.util.UserId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.ZonedDateTime
@@ -41,7 +42,7 @@ class EventRepositoryImpl(
 
     // • UPSERT
 
-    override suspend fun upsertEventLocallyOnly(event: AgendaItem.Event): ResultUiText<Void> {
+    override suspend fun upsertEventLocally(event: AgendaItem.Event): ResultUiText<Void> {
         return try {
             eventDao.upsertEvent(event.toEntity())  // save to local DB ONLY
 
@@ -78,7 +79,7 @@ class EventRepositoryImpl(
         }
     }
 
-    suspend fun getAllEvents(): List<AgendaItem.Event> {
+    suspend fun getAllEventsLocally(): List<AgendaItem.Event> {
         return try {
             eventDao.getEvents().map { it.toDomain() }
         } catch (e: CancellationException) {
@@ -88,11 +89,11 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
+    override suspend fun updateEvent(event: AgendaItem.Event, loggedInUserId: UserId): ResultUiText<AgendaItem.Event> {
         return try {
             eventDao.updateEvent(event.toEntity())  // optimistic update
 
-            val response = eventApi.updateEvent(event.toEventDTOUpdate())
+            val response = eventApi.updateEvent(event.toEventDTOUpdate(loggedInUserId))
             eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
 
             ResultUiText.Success(response.toDomain())
@@ -103,7 +104,9 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun deleteEventId(eventId: EventId): ResultUiText<Void> {
+    // • DELETE
+
+    override suspend fun deleteEvent(eventId: EventId): ResultUiText<Void> {
         return try {
             // Optimistic delete
             eventDao.markEventDeletedById(eventId)
@@ -124,7 +127,7 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun getDeletedEventIds(): List<EventId> {
+    override suspend fun getDeletedEventIdsLocally(): List<EventId> {
         return try {
             eventDao.getMarkedDeletedEventIds()
         } catch (e: CancellationException) {
@@ -134,7 +137,7 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun deleteFinallyEventIds(eventIds: List<EventId>): ResultUiText<Void> {
+    override suspend fun deleteEventsFinallyLocally(eventIds: List<EventId>): ResultUiText<Void> {
         return try {
             eventDao.deleteFinallyByEventIds(eventIds)
 
@@ -145,6 +148,8 @@ class EventRepositoryImpl(
             ResultUiText.Error(UiText.Str(e.message ?: "deleteFinallyEventIds error"))
         }
     }
+
+    // • CLEAR / CLEANUP
 
     override suspend fun clearAllEventsLocally(): ResultUiText<Void> {
         return try {
