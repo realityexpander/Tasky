@@ -53,7 +53,7 @@ class AgendaViewModel @Inject constructor(
                 getDateForSelectedDayIndex(date, dayIndex)
             )
         }
-//        .flattenMerge()
+//        .flattenMerge()  // was not working for some reason...
         .flatMapLatest { it }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
