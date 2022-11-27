@@ -163,10 +163,11 @@ fun AgendaScreenContent(
     // Guard against invalid authentication state OR perform logout
     SideEffect {
         if (state.isLoaded && state.authInfo == null) {
-            onAction(SetIsLoaded(false))
             navigateToLoginScreen()
         }
     }
+
+    state.authInfo ?: return
 
     BackHandler(true) {
         // todo: should we ask the user to quit?
