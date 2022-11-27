@@ -75,9 +75,9 @@ interface TaskyApi {
         @Part photos: List<MultipartBody.Part>          // List<PhotoDTO>
     ): Response<EventDTO.Response>
 
-    @GET("event/{eventId}")
+    @GET("event")
     suspend fun getEvent(
-        @Path("eventId") eventId: UuidStr,
+        @Query("eventId") eventId: UuidStr,
     ): Response<EventDTO.Response>
 
     @Multipart
@@ -100,8 +100,8 @@ interface TaskyApi {
         @Query("email") email: Email,
     ): Response<GetAttendeeResponseDTO>
 
-    @DELETE("attendee/{eventId}")  // remove the logged-in user from the eventId
+    @DELETE("attendee")  // remove the logged-in user from the eventId
     suspend fun deleteAttendee(
-        @Path("eventId") eventId: UuidStr,
+        @Query("eventId") eventId: UuidStr,
     ): Response<Void>
 }
