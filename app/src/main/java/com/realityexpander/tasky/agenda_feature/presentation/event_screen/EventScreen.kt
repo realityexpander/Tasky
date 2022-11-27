@@ -848,13 +848,6 @@ fun AddEventScreenContent(
                         context.getStringSafe(title.asResIdOrNull).lowercase(),
                         context.getString(R.string.agenda_item_type_event).lowercase()
                     )
-//                fun isUserIdGoing(userId: UserId, attendees: List<Attendee>?): Boolean {
-//                    attendees ?: return false
-//
-//                    return attendees.any { attendee ->
-//                        attendee.id == userId && attendee.isGoing
-//                    }
-//                }
                 TextButton(
                     onClick = {
                         if (isUserEventCreator)
