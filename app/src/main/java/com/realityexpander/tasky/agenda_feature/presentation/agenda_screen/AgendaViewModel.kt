@@ -110,12 +110,6 @@ class AgendaViewModel @Inject constructor(
         }
     }
 
-    private fun logout() {
-        viewModelScope.launch {
-            authRepository.logout()
-        }
-    }
-
     fun sendEvent(event: AgendaScreenEvent) {
         viewModelScope.launch {
             onEvent(event)
@@ -183,10 +177,15 @@ class AgendaViewModel @Inject constructor(
                 //agendaRepository.updateTask(uiEvent.agendaItem.copy(isCompleted = !uiEvent.agendaItem.isCompleted)) // todo implement update task - completed state
             }
             is Logout -> {
-                _agendaState.update {
-                    it.copy(authInfo = null)
+
+//                logout()
+                viewModelScope.launch {
+                    authRepository.logout()
+
+                    _agendaState.update {
+                        it.copy(authInfo = null)
+                    }
                 }
-                logout()
             }
             is StatefulOneTimeEvent -> {
                 when (uiEvent) {
