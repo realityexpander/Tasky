@@ -31,6 +31,7 @@ fun AttendeeList(
     attendees: List<Attendee>,
     onAttendeeClick: (Attendee) -> Unit,
     onAttendeeRemoveClick: (Attendee) -> Unit,
+    hostUserId: UserId,
 ) {
     // • Header
     Text(
@@ -86,12 +87,15 @@ fun AttendeeList(
                         .align(Alignment.CenterVertically)
                 ) {
 
-                    if(attendee.id == loggedInUserId && isUserEventCreator) {
+                    // • Creator cant remove himself, only other attendees.
+                    if( (attendee.id == loggedInUserId && isUserEventCreator)
+                        || attendee.id == hostUserId
+                    ) {
                         Text(
                             "creator",
                             color = MaterialTheme.colors.onSurface.copy(alpha = .3f)
                         )
-                    } else {
+                    } else if (isUserEventCreator) {  // • Creator can remove other attendees.
                         Icon(
                             imageVector = Icons.Outlined.Delete,
                             tint = MaterialTheme.colors.onSurface,
