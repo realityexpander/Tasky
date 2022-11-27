@@ -52,6 +52,7 @@ import com.realityexpander.tasky.core.presentation.common.util.getStringSafe
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.util.UPLOAD_IMAGE_MAX_SIZE
+import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
@@ -796,9 +797,10 @@ fun AddEventScreenContent(
                     AttendeeList(
                         loggedInUserId = state.authInfo?.userId
                             ?: throw IllegalStateException("user not logged in"),
-                        isUserEventCreator = true,
+                        isUserEventCreator = state.event?.isUserEventCreator ?: false,
                         header = stringResource(R.string.event_going),
                         attendees = state.event?.attendees?.filter { it.isGoing } ?: emptyList(),
+                        hostUserId = state.event?.host ?: throw IllegalStateException("event host not found"),
                         onAttendeeClick = {},
                         onAttendeeRemoveClick = { attendee ->
                             onAction(
@@ -806,7 +808,7 @@ fun AddEventScreenContent(
                                     EditMode.ConfirmRemoveAttendee(attendee)
                                 )
                             )
-                        }
+                        },
                     )
                     Spacer(modifier = Modifier.mediumHeight())
                 }
@@ -818,9 +820,10 @@ fun AddEventScreenContent(
                     AttendeeList(
                         loggedInUserId = state.authInfo?.userId
                             ?: throw IllegalStateException("user not logged in"),
-                        isUserEventCreator = true,
+                        isUserEventCreator = state.event?.isUserEventCreator ?: false,
                         header = stringResource(R.string.event_not_going),
-                        attendees = state.event?.attendees?.filter { !it.isGoing } ?: emptyList(),
+                        attendees = state.event?.attendees?.filterNot { it.isGoing } ?: emptyList(),
+                        hostUserId = state.event?.host ?: throw IllegalStateException("event host not found"),
                         onAttendeeClick = {},
                         onAttendeeRemoveClick = { attendee ->
                             onAction(
@@ -828,7 +831,7 @@ fun AddEventScreenContent(
                                     EditMode.ConfirmRemoveAttendee(attendee)
                                 )
                             )
-                        }
+                        },
                     )
                 }
 
@@ -845,6 +848,13 @@ fun AddEventScreenContent(
                         context.getStringSafe(title.asResIdOrNull).lowercase(),
                         context.getString(R.string.agenda_item_type_event).lowercase()
                     )
+                fun isUserIdGoing(userId: UserId, attendees: List<Attendee>?): Boolean {
+                    attendees ?: return false
+
+                    return attendees.any { attendee ->
+                        attendee.id == userId && attendee.isGoing
+                    }
+                }
                 TextButton(
                     onClick = {
                         if (isUserEventCreator)
@@ -856,24 +866,18 @@ fun AddEventScreenContent(
                                     onAction(DeleteEvent)
                                 }
                             ))
-                        else if (state.event?.isGoing == true)
-                            onAction(ShowAlertDialog(
-                                title = ShowAlertDialogActionType.LeaveEvent.getTitle(),
-                                message = ShowAlertDialogActionType.LeaveEvent.getMessage(),
-                                confirmButtonLabel = ShowAlertDialogActionType.LeaveEvent.title,
-                                onConfirm = {
+                            if(isUserIdGoing(
+                                    state.authInfo?.userId
+                                        ?: throw IllegalStateException("user not logged in"),
+                                    state.event?.attendees)
+                            ) {
+                                    onAction(SetIsEditable(true))
                                     onAction(LeaveEvent)
-                                }
-                            ))
-                        else
-                            onAction(ShowAlertDialog(
-                                title = ShowAlertDialogActionType.JoinEvent.getTitle(),
-                                message = ShowAlertDialogActionType.JoinEvent.getMessage(),
-                                confirmButtonLabel = ShowAlertDialogActionType.JoinEvent.title,
-                                onConfirm = {
-                                    onAction(JoinEvent)
-                                }
-                            ))
+                        }
+                        else {
+                                onAction(SetIsEditable(true))
+                                onAction(JoinEvent)
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -881,12 +885,15 @@ fun AddEventScreenContent(
                     Text(
                         if (state.event?.isUserEventCreator == true)
                             stringResource(R.string.event_delete_event)
-                        else if (state.event?.isGoing == true)
-                            stringResource(R.string.event_leave_event)
-                        else
-                            stringResource(R.string.event_join_event),
+                        else if(isUserIdGoing(
+                                state.authInfo?.userId ?: throw IllegalStateException("user not logged in"),
+                                state.event?.attendees)
+                            )
+                                stringResource(R.string.event_leave_event)
+                            else
+                                stringResource(R.string.event_join_event),
                         style = MaterialTheme.typography.h4,
-                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
