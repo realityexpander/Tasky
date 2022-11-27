@@ -177,9 +177,8 @@ class AgendaViewModel @Inject constructor(
                 //agendaRepository.updateTask(uiEvent.agendaItem.copy(isCompleted = !uiEvent.agendaItem.isCompleted)) // todo implement update task - completed state
             }
             is Logout -> {
-
-//                logout()
                 viewModelScope.launch {
+                    agendaRepository.clearAllEvents()
                     authRepository.logout()
 
                     _agendaState.update {

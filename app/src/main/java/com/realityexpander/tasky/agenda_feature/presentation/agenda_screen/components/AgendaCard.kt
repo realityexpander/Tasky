@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.common.modifiers.smallHeight
@@ -191,9 +192,10 @@ fun AgendaCard(
                 fromDateTime = agendaItem.from,
                 toDateTime = agendaItem.to,
 //                isTitleCrossedOut = !agendaItem.isGoing,
-                isTitleCrossedOut = agendaItem.attendees.any { attendee ->
-                    attendee.id == authInfo.userId && !attendee.isGoing
-                },
+                isTitleCrossedOut = !isUserIdGoingAsAttendee(authInfo.userId, agendaItem.attendees),
+//                isTitleCrossedOut = agendaItem.attendees.any { attendee ->
+//                    attendee.id == authInfo.userId && !attendee.isGoing
+//                },
                 setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
                 onEdit = onEdit,

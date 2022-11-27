@@ -77,38 +77,52 @@ class EventViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _state.value = _state.value.copy(
-                isLoaded = true, // only after state is initialized
-                isProgressVisible = false,
-                username = authRepository.getAuthInfo()?.username ?: "",
-                authInfo = authRepository.getAuthInfo(),
+            _state.update { _state ->
+                val authInfo = authRepository.getAuthInfo()
+                _state.copy(
+                    isLoaded = true, // only after state is initialized
+                    isProgressVisible = false,
+                    username = authInfo?.username ?: "",
+                    authInfo = authInfo,
 
-                // If eventId is null, then creating a new event.
-                event = initialEventId?.let { eventId ->
-                    agendaRepository.getEvent(eventId)   // Load event from repository
-                } ?:
-                    // Create a new Event
-                    AgendaItem.Event(
-                        id = UUID.randomUUID().toString(),
-                        title = "Title of New Event",
-                        description = "Description of New Event",
-                        from = ZonedDateTime.now(),
-                        to = ZonedDateTime.now().plusHours(1),
-                        remindAt = ZonedDateTime.now().plusMinutes(30),
-                        host = authRepository.getAuthInfo()?.userId,
-                        isUserEventCreator = true,
-                        isGoing = true,
-                        photos = emptyList(),
-                        attendees = listOf(
-                            Attendee(
-                                id = authRepository.getAuthInfo()?.userId!!,
-                                fullName = authRepository.getAuthInfo()?.username ?: "",
-                                email = authRepository.getAuthInfo()?.email ?: "",
-                                isGoing = true,
+                    event = initialEventId?.let { eventId ->
+                        // Load event from repository
+                        agendaRepository.getEvent(eventId)
+
+//                        // Set the `isGoing` flag for the current user based on the attendees list
+//                        val result2 = result?.copy(
+//                            isGoing = isUserIdGoingAsAttendee(
+//                                userId = authRepository.getAuthInfo()?.userId,
+//                                attendees = result.attendees
+//                            )
+//                        )
+//                        println(result2)
+//                        result2
+                    } ?:
+                        // If `initialEventId` is null, then create a new event.
+                        // • CREATE A NEW EVENT
+                        AgendaItem.Event(
+                            id = UUID.randomUUID().toString(),
+                            title = "Title of New Event",
+                            description = "Description of New Event",
+                            from = ZonedDateTime.now(),
+                            to = ZonedDateTime.now().plusHours(1),
+                            remindAt = ZonedDateTime.now().plusMinutes(30),
+                            host = authInfo?.userId,
+                            isUserEventCreator = true,
+                            isGoing = true,
+                            photos = emptyList(),
+                            attendees = listOf(
+                                Attendee(
+                                    id = authInfo?.userId!!,
+                                    fullName = authInfo.username ?: "",
+                                    email = authInfo.email ?: "",
+                                    isGoing = true,
+                                )
                             )
-                        )
-                    ),
-            )
+                        ),
+                )
+            }
         }
     }
 

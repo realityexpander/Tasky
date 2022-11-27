@@ -23,7 +23,6 @@ fun AgendaItem.Event.toEntity(): EventEntity {
         to = to,
         host = host,
         isUserEventCreator = isUserEventCreator,
-        isGoing = isGoing,
         attendees = attendees.map { it.toEntity() },
         photos = photos
             .filterIsInstance<Photo.Remote>()  // don't save local photos (uri's are not valid after app restart)
@@ -46,7 +45,6 @@ fun EventEntity.toDomain(): AgendaItem.Event {
         remindAt = remindAt,
         host = host,
         isUserEventCreator = isUserEventCreator,
-        isGoing = isGoing,
         attendees = attendees.map { it.toDomain() },
         photos = photos.map { it.toDomain() },
         deletedPhotoIds = deletedPhotoIds,
@@ -73,7 +71,6 @@ fun EventDTO.toDomain(): AgendaItem.Event {
 
                 host = host,
                 isUserEventCreator = isUserEventCreator,
-                isGoing = isGoing,
                 attendees = attendees.map { it.toDomain() },
                 photos = photos.map { it.toDomain() },
                 deletedPhotoIds = emptyList()
@@ -133,12 +130,12 @@ fun AgendaItem.Event.toEventDTOResponse(): EventDTO.Response {
         from = from.toUtcMillis(),
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
-        isGoing = isGoing,
+//        isGoing = isGoing, // todo not sent from server // todo remove
         photos = photos
             .map { it.toDTO() }
             .filterIsInstance<PhotoDTO.Remote>(),        // guarantee only respond with Remote photos
         attendees = attendees.map { it.toDTO() },
-        isUserEventCreator = isUserEventCreator ?: false,
+        isUserEventCreator = isUserEventCreator,
         host = host ?: "",
     )
 }

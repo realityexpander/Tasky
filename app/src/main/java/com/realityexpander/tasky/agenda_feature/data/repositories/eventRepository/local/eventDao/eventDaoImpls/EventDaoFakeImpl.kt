@@ -305,7 +305,6 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             remindAt = today.plusMinutes(30),
             host = "Host 1",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -337,7 +336,6 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             remindAt = today.plusDays(1),
             host = "Host 2",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -367,7 +365,6 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             remindAt = today.minusDays(1).plusHours(1),
             host = "Host 2",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -397,7 +394,6 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
             remindAt = today.plusMinutes(30),
             host = "Host 1",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -438,7 +434,6 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             remindAt = ZonedDateTime.now(),
             host = "Host 1",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -470,7 +465,6 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             remindAt = ZonedDateTime.now(),
             host = "Host 2",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -500,7 +494,6 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             remindAt = ZonedDateTime.now(),
             host = "Host 3",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -532,7 +525,6 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             remindAt = ZonedDateTime.now(),
             host = "Host 4",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -566,7 +558,6 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
             remindAt = ZonedDateTime.now(),
             host = "Host 4",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",

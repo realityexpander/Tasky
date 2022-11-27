@@ -38,6 +38,7 @@ import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.TimeDateRow
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.isImageSizeTooLargeToUpload
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.OneTimeEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.AttendeeList
@@ -52,7 +53,6 @@ import com.realityexpander.tasky.core.presentation.common.util.getStringSafe
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.util.UPLOAD_IMAGE_MAX_SIZE
-import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
@@ -848,13 +848,13 @@ fun AddEventScreenContent(
                         context.getStringSafe(title.asResIdOrNull).lowercase(),
                         context.getString(R.string.agenda_item_type_event).lowercase()
                     )
-                fun isUserIdGoing(userId: UserId, attendees: List<Attendee>?): Boolean {
-                    attendees ?: return false
-
-                    return attendees.any { attendee ->
-                        attendee.id == userId && attendee.isGoing
-                    }
-                }
+//                fun isUserIdGoing(userId: UserId, attendees: List<Attendee>?): Boolean {
+//                    attendees ?: return false
+//
+//                    return attendees.any { attendee ->
+//                        attendee.id == userId && attendee.isGoing
+//                    }
+//                }
                 TextButton(
                     onClick = {
                         if (isUserEventCreator)
@@ -866,13 +866,13 @@ fun AddEventScreenContent(
                                     onAction(DeleteEvent)
                                 }
                             ))
-                            if(isUserIdGoing(
-                                    state.authInfo?.userId
-                                        ?: throw IllegalStateException("user not logged in"),
-                                    state.event?.attendees)
+                       else if(isUserIdGoingAsAttendee(
+                                state.authInfo?.userId
+                                    ?: throw IllegalStateException("user not logged in"),
+                                state.event?.attendees)
                             ) {
-                                    onAction(SetIsEditable(true))
-                                    onAction(LeaveEvent)
+                                onAction(SetIsEditable(true))
+                                onAction(LeaveEvent)
                         }
                         else {
                                 onAction(SetIsEditable(true))
@@ -885,7 +885,7 @@ fun AddEventScreenContent(
                     Text(
                         if (state.event?.isUserEventCreator == true)
                             stringResource(R.string.event_delete_event)
-                        else if(isUserIdGoing(
+                        else if(isUserIdGoingAsAttendee(
                                 state.authInfo?.userId ?: throw IllegalStateException("user not logged in"),
                                 state.event?.attendees)
                             )

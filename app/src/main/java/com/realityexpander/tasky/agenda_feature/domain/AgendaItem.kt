@@ -24,7 +24,7 @@ abstract class AgendaItem {
 
         val host: UserId? = null,
         val isUserEventCreator: Boolean = false,
-        val isGoing: Boolean = false,
+        val isGoing: Boolean = false,                      // output only - to change isGoing status for UpdateEvent
 
         val attendees: List<Attendee> = emptyList(),
 
