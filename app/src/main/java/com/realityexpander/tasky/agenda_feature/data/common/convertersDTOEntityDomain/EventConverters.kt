@@ -7,8 +7,6 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
-import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
-import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.toUtcMillis
 import com.realityexpander.tasky.core.util.toZonedDateTime
 import java.time.ZonedDateTime
@@ -103,7 +101,7 @@ fun AgendaItem.Event.toEventDTOCreate(): EventDTO.Create {
 }
 
 // from Domain to EventDTO.Update (also converts local ZonedDateTime to UTC time millis)
-fun AgendaItem.Event.toEventDTOUpdate(loggedInUserId: UserId): EventDTO.Update {
+fun AgendaItem.Event.toEventDTOUpdate(): EventDTO.Update {
     return EventDTO.Update(
         id = id,
         title = title,
@@ -111,9 +109,7 @@ fun AgendaItem.Event.toEventDTOUpdate(loggedInUserId: UserId): EventDTO.Update {
         from = from.toUtcMillis(),
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
-        isGoing = // set `isGoing` to true just before transfer, based on SSOT of `attendees`
-            isUserEventCreator
-            || isUserIdGoingAsAttendee(loggedInUserId, attendees),
+        isGoing = isGoing,
         attendeeIds = attendees.map { attendee ->
             attendee.id
         },
@@ -207,7 +203,7 @@ fun main() {
     }
 
     // Simulate EventDTO.Update
-    val eventDTO3 = event.toEventDTOUpdate("123")
+    val eventDTO3 = event.toEventDTOUpdate()
     try {
         val eventDTO3toDomain = eventDTO3.toDomain()
         println("eventDTO3toDomain: $eventDTO3toDomain") // should never get here

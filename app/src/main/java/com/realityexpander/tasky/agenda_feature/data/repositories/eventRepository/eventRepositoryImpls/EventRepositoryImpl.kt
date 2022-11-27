@@ -11,7 +11,6 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.core.presentation.common.util.UiText
-import com.realityexpander.tasky.core.util.UserId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.ZonedDateTime
@@ -89,11 +88,11 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun updateEvent(event: AgendaItem.Event, loggedInUserId: UserId): ResultUiText<AgendaItem.Event> {
+    override suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
         return try {
             eventDao.updateEvent(event.toEntity())  // optimistic update
 
-            val response = eventApi.updateEvent(event.toEventDTOUpdate(loggedInUserId))
+            val response = eventApi.updateEvent(event.toEventDTOUpdate())
             eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
 
             ResultUiText.Success(response.toDomain())

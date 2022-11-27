@@ -1,7 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.domain
 
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
-import com.realityexpander.tasky.core.util.UserId
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
 
@@ -13,7 +12,7 @@ interface IEventRepository {
     fun getEventsForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<AgendaItem.Event>>
     suspend fun getEvent(eventId: EventId): AgendaItem.Event?
 
-    suspend fun updateEvent(event: AgendaItem.Event, loggedInUserId: UserId): ResultUiText<AgendaItem.Event>
+    suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event>
 
     // only marks the event as deleted
     suspend fun deleteEvent(eventId: EventId): ResultUiText<Void>

@@ -7,7 +7,6 @@ import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityD
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.IAttendeeRepository
 import com.realityexpander.tasky.agenda_feature.domain.*
-import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.CancellationException
@@ -86,8 +85,8 @@ class AgendaRepositoryImpl @Inject constructor(
         return eventRepository.getEvent(eventId)
     }
 
-    override suspend fun updateEvent(event: AgendaItem.Event, authInfo: AuthInfo): ResultUiText<AgendaItem.Event> {
-        return eventRepository.updateEvent(event, authInfo.userId ?: throw java.lang.IllegalStateException("User id is null"))
+    override suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
+        return eventRepository.updateEvent(event)
     }
 
     override suspend fun deleteEventId(eventId: EventId): ResultUiText<Void> {

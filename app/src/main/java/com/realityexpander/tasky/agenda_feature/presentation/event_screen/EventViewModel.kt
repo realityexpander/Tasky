@@ -9,6 +9,7 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.max
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.min
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
@@ -389,13 +390,20 @@ class EventViewModel @Inject constructor(
                 }
             }
             is SaveEvent -> {
-                val event = _state.value.event ?: return
+                var event = _state.value.event ?: return
                 _state.update { _state ->
                     _state.copy(
                         isProgressVisible = true,
                         errorMessage = null
                     )
                 }
+
+                // set `isGoing` to right before api/dao call, based on SSOT of `attendees`
+                event = event.copy(
+                    isGoing =
+                        event.isUserEventCreator
+                        || isUserIdGoingAsAttendee(_state.value.authInfo?.userId, event.attendees),
+                )
 
                 val result =
                     when (initialEventId) {
@@ -405,7 +413,7 @@ class EventViewModel @Inject constructor(
                         }
                         else -> {
                             // Update existing event
-                            agendaRepository.updateEvent(event, state.value.authInfo ?: return)
+                            agendaRepository.updateEvent(event)
                         }
                     }
 
