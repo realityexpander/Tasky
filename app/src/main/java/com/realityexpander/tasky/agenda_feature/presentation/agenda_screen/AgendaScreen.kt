@@ -434,9 +434,6 @@ fun AgendaScreenContent(
             .smallHeight()
         )
 
-        //val todayTasks = state.tasks.filter { it.date == todayDate }
-        //val todayTasksCount = todayTasks.size
-
         // • SHOW AGENDA ITEMS LIST
         LazyColumn(
             state = scrollState,
