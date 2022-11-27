@@ -7,6 +7,7 @@ import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityD
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.IAttendeeRepository
 import com.realityexpander.tasky.agenda_feature.domain.*
+import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.CancellationException
@@ -40,7 +41,7 @@ class AgendaRepositoryImpl @Inject constructor(
 
                 //eventRepository.clearEventsForDay(dateTime)
                 result.events.forEach { event ->
-                    eventRepository.upsertEventLocallyOnly(event.toDomain())
+                    eventRepository.upsertEventLocally(event.toDomain())
                 }
             } catch (e: CancellationException) {
                 throw e
@@ -57,7 +58,7 @@ class AgendaRepositoryImpl @Inject constructor(
     }
 
     override suspend fun syncAgenda(): ResultUiText<Void> {
-        val deletedEventIds = eventRepository.getDeletedEventIds()
+        val deletedEventIds = eventRepository.getDeletedEventIdsLocally()
 //        val deletedTaskIds = taskRepository.getDeletedTaskIds()                   // todo implement tasks repo
 //        val deletedReminderIds = reminderRepository.getDeletedReminderIds()       // todo implement reminders repo
 
@@ -71,7 +72,7 @@ class AgendaRepositoryImpl @Inject constructor(
             )
 
         if (deletedSuccessfully) {
-            return eventRepository.deleteFinallyEventIds(deletedEventIds)
+            return eventRepository.deleteEventsFinallyLocally(deletedEventIds)
         } else {
             return ResultUiText.Error(UiText.ResOrStr(R.string.agenda_sync_error, "Failed to sync agenda - deleteFinallyEventIds"))
         }
@@ -85,12 +86,12 @@ class AgendaRepositoryImpl @Inject constructor(
         return eventRepository.getEvent(eventId)
     }
 
-    override suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
-        return eventRepository.updateEvent(event)
+    override suspend fun updateEvent(event: AgendaItem.Event, authInfo: AuthInfo): ResultUiText<AgendaItem.Event> {
+        return eventRepository.updateEvent(event, authInfo.userId ?: throw java.lang.IllegalStateException("User id is null"))
     }
 
     override suspend fun deleteEventId(eventId: EventId): ResultUiText<Void> {
-        return eventRepository.deleteEventId(eventId)
+        return eventRepository.deleteEvent(eventId)
     }
 
     override suspend fun clearAllEvents(): ResultUiText<Void> {
@@ -102,6 +103,7 @@ class AgendaRepositoryImpl @Inject constructor(
     }
 
     override suspend fun removeLoggedInUserFromEventId(eventId: EventId): ResultUiText<Void> {
+        eventRepository.deleteEventsFinallyLocally(listOf(eventId))
         return attendeeRepository.removeLoggedInUserFromEventId(eventId)
     }
 }
