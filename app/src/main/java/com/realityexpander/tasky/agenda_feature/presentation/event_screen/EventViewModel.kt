@@ -89,16 +89,6 @@ class EventViewModel @Inject constructor(
                     event = initialEventId?.let { eventId ->
                         // Load event from repository
                         agendaRepository.getEvent(eventId)
-
-//                        // Set the `isGoing` flag for the current user based on the attendees list
-//                        val result2 = result?.copy(
-//                            isGoing = isUserIdGoingAsAttendee(
-//                                userId = authRepository.getAuthInfo()?.userId,
-//                                attendees = result.attendees
-//                            )
-//                        )
-//                        println(result2)
-//                        result2
                     } ?:
                         // If `initialEventId` is null, then create a new event.
                         // • CREATE A NEW EVENT
