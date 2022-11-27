@@ -528,67 +528,6 @@ class EventViewModel @Inject constructor(
                 }
             }
 
-//                _state.value.event ?: return
-//                initialEventId ?: return
-//
-//                _state.update { _state ->
-//                    _state.copy(
-//                        isProgressVisible = true,
-//                        errorMessage = null
-//                    )
-//                }
-//
-//
-//
-//                // todo only do this when on Agenda screen
-//                var result =
-//                    agendaRepository.removeLoggedInUserFromEventId(_state.value.event?.id ?: return)
-//                when (result) {
-//                    is ResultUiText.Success -> {
-//                        // Do nothing
-//                    }
-//                    is ResultUiText.Error -> {
-//                        _state.update { _state ->
-//                            _state.copy(
-//                                isProgressVisible = false,
-//                                errorMessage = UiText.Res(R.string.event_error_leave_event)
-//                            )
-//                        }
-//                        return
-//                    }
-//                }
-//
-//                // todo dont delete the event, just remove the user from the attendees list & do updateEvent
-//
-//                // Todo - would a sync from the backend be better than deleting the event?
-//                result = agendaRepository.deleteEventId(_state.value.event?.id ?: return)
-//                when (result) {
-//                    is ResultUiText.Success -> {
-//                        _state.update { _state ->
-//                            _state.copy(
-//                                isProgressVisible = false,
-//                                errorMessage = null
-//                            )
-//                        }
-//                        _oneTimeEvent.emit(
-//                            OneTimeEvent.ShowToast(
-//                                UiText.Res(R.string.event_message_event_left_success)
-//                            )
-//                        )
-//                        sendEvent(CancelEditMode)
-//                        sendEvent(OneTimeEvent.NavigateBack)
-//                    }
-//                    is ResultUiText.Error -> {
-//                        _state.update { _state ->
-//                            _state.copy(
-//                                isProgressVisible = false,
-//                                errorMessage = UiText.Res(R.string.event_error_delete_event)
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-
             is ShowErrorMessage -> {
                 _state.update { _state ->
                     _state.copy(
