@@ -578,7 +578,7 @@ fun AgendaScreenContent(
         }
     }
 
-    // • Confirm `Delete Agenda Item` Dialog
+    // • CONFIRM `DELETE AGENDA ITEM` DIALOG
     state.confirmDeleteAgendaItem?.let { agendaItem ->
 
         val agendaItemTypeName =
@@ -630,7 +630,7 @@ fun AgendaScreenContent(
         )
     }
 
-    // • Select current date for agenda
+    // • SELECT CURRENT DATE FOR AGENDA
     var pickedDate by remember(currentDate) { mutableStateOf(currentDate) }
     val dateDialogState = rememberMaterialDialogState()
     LaunchedEffect(state.chooseCurrentDateDialog) {
@@ -639,7 +639,7 @@ fun AgendaScreenContent(
         }
     }
 
-    // • Select current date for agenda
+    // • SELECT CURRENT DATE FOR AGENDA
     MaterialDialog(
         dialogState = dateDialogState,
         onCloseRequest = {
