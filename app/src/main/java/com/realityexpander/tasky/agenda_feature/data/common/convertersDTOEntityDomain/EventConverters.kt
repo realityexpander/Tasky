@@ -110,7 +110,8 @@ fun AgendaItem.Event.toEventDTOUpdate(loggedInUserId: UserId): EventDTO.Update {
         from = from.toUtcMillis(),
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
-        isGoing = isUserEventCreator || attendees.any { it.id == loggedInUserId && it.isGoing },
+        isGoing = // set `isGoing` to true just before transfer to server
+            isUserEventCreator || attendees.any { it.id == loggedInUserId && it.isGoing },
         attendeeIds = attendees.map { attendee ->
             attendee.id
         },
