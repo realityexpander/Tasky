@@ -7,6 +7,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
+import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.toUtcMillis
 import com.realityexpander.tasky.core.util.toZonedDateTime
 import java.time.ZonedDateTime
@@ -101,7 +102,7 @@ fun AgendaItem.Event.toEventDTOCreate(): EventDTO.Create {
 }
 
 // from Domain to EventDTO.Update (also converts local ZonedDateTime to UTC time millis)
-fun AgendaItem.Event.toEventDTOUpdate(): EventDTO.Update {
+fun AgendaItem.Event.toEventDTOUpdate(loggedInUserId: UserId): EventDTO.Update {
     return EventDTO.Update(
         id = id,
         title = title,
@@ -109,7 +110,7 @@ fun AgendaItem.Event.toEventDTOUpdate(): EventDTO.Update {
         from = from.toUtcMillis(),
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
-        isGoing = isGoing,
+        isGoing = isUserEventCreator || attendees.any { it.id == loggedInUserId && it.isGoing },
         attendeeIds = attendees.map { attendee ->
             attendee.id
         },
@@ -130,7 +131,6 @@ fun AgendaItem.Event.toEventDTOResponse(): EventDTO.Response {
         from = from.toUtcMillis(),
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
-//        isGoing = isGoing, // todo not sent from server // todo remove
         photos = photos
             .map { it.toDTO() }
             .filterIsInstance<PhotoDTO.Remote>(),        // guarantee only respond with Remote photos
@@ -204,7 +204,7 @@ fun main() {
     }
 
     // Simulate EventDTO.Update
-    val eventDTO3 = event.toEventDTOUpdate()
+    val eventDTO3 = event.toEventDTOUpdate("123")
     try {
         val eventDTO3toDomain = eventDTO3.toDomain()
         println("eventDTO3toDomain: $eventDTO3toDomain") // should never get here
