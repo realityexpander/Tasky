@@ -500,7 +500,7 @@ fun AgendaScreenContent(
                 }
             }
 
-            // • Image Needle
+            // • TIME NEEDLE
             item(true) {
                 Box(
                     modifier = Modifier
