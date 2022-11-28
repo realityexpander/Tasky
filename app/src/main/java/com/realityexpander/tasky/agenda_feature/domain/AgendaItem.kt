@@ -12,15 +12,18 @@ abstract class AgendaItem {
     abstract val id: UuidStr
     abstract val title: String
     abstract val description: String
+    abstract val startTime: ZonedDateTime
 
     @Parcelize
     data class Event(
         override val id: UuidStr,
         override val title: String,
         override val description: String,
+
         val remindAt: ZonedDateTime,
         val from: ZonedDateTime,
         val to: ZonedDateTime,
+        override var startTime: ZonedDateTime = from, // for sorting in Agenda
 
         val host: UserId? = null,
         val isUserEventCreator: Boolean = false,
@@ -32,6 +35,7 @@ abstract class AgendaItem {
         val deletedPhotoIds: List<PhotoId> = emptyList(),  // only used for EventDTO.Update
 
         val isDeleted: Boolean = false,
+
     ) : AgendaItem(), Parcelable
 
     @Parcelize
@@ -41,6 +45,7 @@ abstract class AgendaItem {
         override val description: String,
         val remindAt: ZonedDateTime,
         val time: ZonedDateTime,
+        override var startTime: ZonedDateTime = time, // for sorting in Agenda
         val isDone: Boolean = false,
 
         val isDeleted: Boolean = false,
@@ -53,6 +58,7 @@ abstract class AgendaItem {
         override val description: String,
         val remindAt: ZonedDateTime,
         val time: ZonedDateTime,
+        override var startTime: ZonedDateTime = time, // for sorting in Agenda
 
         val isDeleted: Boolean = false,
     ) : AgendaItem(), Parcelable
