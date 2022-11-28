@@ -500,8 +500,31 @@ fun AgendaScreenContent(
                 }
             }
 
+            // • Image Needle
             item(true) {
-                Text("Now ------------------------------------------")
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp)
+                        .height(14.dp)
+                ) {
+                    Box(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .background(color = MaterialTheme.colors.onSurface.copy(alpha = 0.9f))
+                        .align(Alignment.Center)
+                    )
+                    Icon(
+                        imageVector = Icons.Filled.Circle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.onSurface,
+                        modifier = Modifier
+                            .size(14.dp)
+                            .offset(x=(-2).dp)
+                            .align(Alignment.CenterStart)
+                    )
+
+                }
             }
 
             itemsIndexed(items = agendaItemsAfterNow) { index, agendaItem ->
