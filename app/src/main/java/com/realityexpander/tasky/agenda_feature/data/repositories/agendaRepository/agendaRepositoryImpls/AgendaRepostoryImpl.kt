@@ -43,9 +43,8 @@ class AgendaRepositoryImpl @Inject constructor(
 
                         // Get fresh data
                         val result = agendaApi.getAgenda(dateTime)
+//                        eventRepository.clearEventsForDayLocally(dateTime) // clear local data
                         result.events.forEach { event ->
-                            eventRepository.clearEventsForDayLocally(dateTime) // clear local data
-
                             // Insert fresh data into db
                             val result2 =
                                 eventRepository.upsertEventLocally(event.toDomain())
