@@ -442,8 +442,19 @@ fun AgendaScreenContent(
                 .fillMaxSize()
                 .padding(start = DP.tiny, end = DP.tiny)
         ) {
-            itemsIndexed(items = agendaItems) { index, agendaItem ->
+            val sortedAgendaItems = agendaItems.sortedBy { agendaItem ->
+                agendaItem.startTime
+            }
+            val agendaItemsBeforeNow = sortedAgendaItems.filter { agendaItem ->
+                agendaItem.startTime.isBefore(ZonedDateTime.now())
+            }
+            val agendaItemsAfterNow = sortedAgendaItems.filter { agendaItem ->
+                agendaItem.startTime.isAfter(ZonedDateTime.now())
+            }
+
+            itemsIndexed(items = agendaItemsBeforeNow) { index, agendaItem ->
                 Box {
+
                     AgendaCard(
                         modifier = Modifier
                             .padding(start = DP.tiny, end = DP.tiny)
@@ -484,7 +495,81 @@ fun AgendaScreenContent(
                     }
                 }
 
-                if (index < agendaItems.size - 1) {
+                if (index < agendaItemsBeforeNow.size - 1) {
+                    Spacer(modifier = Modifier.smallHeight())
+                }
+            }
+
+            // • TIME NEEDLE
+            item(true) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp)
+                        .height(14.dp)
+                ) {
+                    Box(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .background(color = MaterialTheme.colors.onSurface.copy(alpha = 0.9f))
+                        .align(Alignment.Center)
+                    )
+                    Icon(
+                        imageVector = Icons.Filled.Circle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.onSurface,
+                        modifier = Modifier
+                            .size(14.dp)
+                            .offset(x=(-4).dp)
+                            .align(Alignment.CenterStart)
+                    )
+
+                }
+            }
+
+            itemsIndexed(items = agendaItemsAfterNow) { index, agendaItem ->
+                Box {
+
+                    AgendaCard(
+                        modifier = Modifier
+                            .padding(start = DP.tiny, end = DP.tiny)
+                            .clickable {
+                                onActionForAgendaItem(
+                                    AgendaItemAction.OPEN_DETAILS,
+                                    agendaItem,
+                                    onAction
+                                )
+                            },
+                        agendaItem = agendaItem,
+                        authInfo = state.authInfo ?: return@Box,
+                        onToggleCompleted = {
+                            if (agendaItem is AgendaItem.Task) {
+                                onAction(ToggleTaskCompleted(agendaItem))
+                            }
+                        },
+                        onEdit = {
+                            onActionForAgendaItem(
+                                AgendaItemAction.EDIT,
+                                agendaItem,
+                                onAction
+                            )
+                        },
+                        onDelete = {
+                            onActionForAgendaItem(
+                                AgendaItemAction.DELETE,
+                                agendaItem,
+                                onAction
+                            )
+                        }
+                    ) {
+                        onActionForAgendaItem(
+                            AgendaItemAction.OPEN_DETAILS,
+                            agendaItem,
+                            onAction
+                        )
+                    }
+                }
+                if (index < agendaItemsAfterNow.size - 1) {
                     Spacer(modifier = Modifier.smallHeight())
                 }
             }
