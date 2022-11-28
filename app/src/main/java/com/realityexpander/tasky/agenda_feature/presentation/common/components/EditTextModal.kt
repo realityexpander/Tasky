@@ -15,9 +15,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
@@ -37,7 +39,9 @@ fun EditTextModal(
     onCancel: () -> Unit,
 ) {
 
-    var editingText by remember { mutableStateOf(text) }
+    var editingText by remember {
+        mutableStateOf( TextFieldValue(text, TextRange(start = 0, text.length)) )
+    }
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(true) {
@@ -94,7 +98,7 @@ fun EditTextModal(
                     textAlign = TextAlign.Start,
                     modifier = Modifier
                         .clickable {
-                            onSave(editingText)
+                            onSave(editingText.text)
                         }
                 )
             }
@@ -124,7 +128,6 @@ fun EditTextModal(
                     .padding(top = DP.small, bottom = DP.large, start = 0.dp, end = 0.dp)
                     .background(Color.Transparent)
                     .focusRequester(focusRequester)
-
             )
         }
 

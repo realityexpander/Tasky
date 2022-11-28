@@ -112,7 +112,7 @@ fun AgendaScreenContent(
     val currentDate = state.currentDate
     val selectedDayIndex = state.selectedDayIndex
 
-    // create days of the week for top of screen
+    // Create days of the week for top of screen
     val daysInitialsAndDayOfWeek = remember(currentDate.dayOfYear) {   // initial of day of week, day of month
         val days = mutableListOf<Pair<String, Int>>() // initial of day of week, day of month
 

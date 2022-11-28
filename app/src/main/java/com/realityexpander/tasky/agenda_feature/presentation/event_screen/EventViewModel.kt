@@ -5,10 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
-import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
-import com.realityexpander.tasky.agenda_feature.domain.Attendee
-import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
-import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
+import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.max
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.min
@@ -328,7 +325,13 @@ class EventViewModel @Inject constructor(
                     _state.copy(
                         editMode = null,
                         event = _state.event?.copy(
-                            photos = _state.event.photos - uiEvent.photo
+                            photos = _state.event.photos - uiEvent.photo,
+
+                            // only add Remote Photos to list of deleted photo Ids
+                            deletedPhotoIds = if(uiEvent.photo is Photo.Remote)
+                                    _state.event.deletedPhotoIds + uiEvent.photo.id
+                                else
+                                    _state.event.deletedPhotoIds
                         ),
                     )
                 }

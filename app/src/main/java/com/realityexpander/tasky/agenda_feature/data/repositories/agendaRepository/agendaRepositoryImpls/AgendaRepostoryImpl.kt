@@ -10,9 +10,9 @@ import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import java.time.ZonedDateTime
@@ -35,24 +35,38 @@ class AgendaRepositoryImpl @Inject constructor(
 
     override fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>> {
 
-        return flow {
+        return channelFlow {
             supervisorScope {
-                launch {
+                launch(Dispatchers.IO) {
                     try {
+                        send(eventRepository.getEventsForDay(dateTime)) // send stale local data
+
+                        // Get fresh data
                         val result = agendaApi.getAgenda(dateTime)
 
-                        //eventRepository.clearEventsForDay(dateTime)
+//                        eventRepository.clearEventsForDayLocally(dateTime) // clear local data // todo add this
                         result.events.forEach { event ->
-                            eventRepository.upsertEventLocally(event.toDomain())
+                            // Insert fresh data into db
+                            val result2 =
+                                eventRepository.upsertEventLocally(event.toDomain())
+                            if(result2 is ResultUiText.Error) {
+                                throw IllegalStateException(result2.message.asStrOrNull())
+                            }
                         }
-                    } catch (e: CancellationException) {
-                        throw e
-                    } catch (e: Exception) {
+
+                        // Emit the current state from DB
+                        eventRepository.getEventsForDayFlow(dateTime).collect { events ->
+                            send(events)
+                        }
+                    }
+                    catch (e: CancellationException) {
+                        /* intentionally eat this exception */
+                    }
+                    catch (e: Exception) {
                         e.printStackTrace()
                         // don't send error to user, just log it (silent fail is ok here)
                     }
-                }
-                    emitAll(eventRepository.getEventsForDayFlow(dateTime))
+
                 }
 
 //                launch {
@@ -65,6 +79,7 @@ class AgendaRepositoryImpl @Inject constructor(
 ////                    emitAll(eventRepository.getReminderForDayFlow(dateTime))
 //                }
             }
+        }
     }
 
     override suspend fun syncAgenda(): ResultUiText<Void> {
