@@ -36,7 +36,6 @@ class AgendaRepositoryImpl @Inject constructor(
     override fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>> {
 
         return channelFlow {
-//        return flow<List<AgendaItem>> {
             supervisorScope {
                 launch(Dispatchers.IO) {
                     try {
@@ -67,7 +66,6 @@ class AgendaRepositoryImpl @Inject constructor(
                         // don't send error to user, just log it (silent fail is ok here)
                     }
 
-                    //emitAll(eventRepository.getEventsForDayFlow(dateTime))
                 }
 
 //                launch {
