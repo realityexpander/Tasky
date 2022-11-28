@@ -34,12 +34,13 @@ class AttendeeApiImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteAttendeeFromEvent(eventId: EventId): Boolean {
+    // Removes the logged-in user from an Event. It does not delete the actual Attendee.
+    override suspend fun deleteAttendee(eventId: EventId): Result<Unit> {
         return try {
             taskyApi.deleteAttendee(eventId)
-            true
+            Result.success(Unit)
         } catch (e: Exception) {
-            false
+            Result.failure(e)
         }
     }
 }

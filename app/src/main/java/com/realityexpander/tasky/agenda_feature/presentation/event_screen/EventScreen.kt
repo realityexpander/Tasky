@@ -38,6 +38,7 @@ import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.TimeDateRow
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.isImageSizeTooLargeToUpload
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.OneTimeEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.AttendeeList
@@ -796,9 +797,10 @@ fun AddEventScreenContent(
                     AttendeeList(
                         loggedInUserId = state.authInfo?.userId
                             ?: throw IllegalStateException("user not logged in"),
-                        isUserEventCreator = true,
+                        isUserEventCreator = state.event?.isUserEventCreator ?: false,
                         header = stringResource(R.string.event_going),
                         attendees = state.event?.attendees?.filter { it.isGoing } ?: emptyList(),
+                        hostUserId = state.event?.host ?: throw IllegalStateException("event host not found"),
                         onAttendeeClick = {},
                         onAttendeeRemoveClick = { attendee ->
                             onAction(
@@ -806,7 +808,7 @@ fun AddEventScreenContent(
                                     EditMode.ConfirmRemoveAttendee(attendee)
                                 )
                             )
-                        }
+                        },
                     )
                     Spacer(modifier = Modifier.mediumHeight())
                 }
@@ -818,9 +820,10 @@ fun AddEventScreenContent(
                     AttendeeList(
                         loggedInUserId = state.authInfo?.userId
                             ?: throw IllegalStateException("user not logged in"),
-                        isUserEventCreator = true,
+                        isUserEventCreator = state.event?.isUserEventCreator ?: false,
                         header = stringResource(R.string.event_not_going),
-                        attendees = state.event?.attendees?.filter { !it.isGoing } ?: emptyList(),
+                        attendees = state.event?.attendees?.filterNot { it.isGoing } ?: emptyList(),
+                        hostUserId = state.event?.host ?: throw IllegalStateException("event host not found"),
                         onAttendeeClick = {},
                         onAttendeeRemoveClick = { attendee ->
                             onAction(
@@ -828,7 +831,7 @@ fun AddEventScreenContent(
                                     EditMode.ConfirmRemoveAttendee(attendee)
                                 )
                             )
-                        }
+                        },
                     )
                 }
 
@@ -856,24 +859,18 @@ fun AddEventScreenContent(
                                     onAction(DeleteEvent)
                                 }
                             ))
-                        else if (state.event?.isGoing == true)
-                            onAction(ShowAlertDialog(
-                                title = ShowAlertDialogActionType.LeaveEvent.getTitle(),
-                                message = ShowAlertDialogActionType.LeaveEvent.getMessage(),
-                                confirmButtonLabel = ShowAlertDialogActionType.LeaveEvent.title,
-                                onConfirm = {
-                                    onAction(LeaveEvent)
-                                }
-                            ))
-                        else
-                            onAction(ShowAlertDialog(
-                                title = ShowAlertDialogActionType.JoinEvent.getTitle(),
-                                message = ShowAlertDialogActionType.JoinEvent.getMessage(),
-                                confirmButtonLabel = ShowAlertDialogActionType.JoinEvent.title,
-                                onConfirm = {
-                                    onAction(JoinEvent)
-                                }
-                            ))
+                       else if(isUserIdGoingAsAttendee(
+                                state.authInfo?.userId
+                                    ?: throw IllegalStateException("user not logged in"),
+                                state.event?.attendees)
+                            ) {
+                                onAction(SetIsEditable(true))
+                                onAction(LeaveEvent)
+                        }
+                        else {
+                                onAction(SetIsEditable(true))
+                                onAction(JoinEvent)
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -881,12 +878,15 @@ fun AddEventScreenContent(
                     Text(
                         if (state.event?.isUserEventCreator == true)
                             stringResource(R.string.event_delete_event)
-                        else if (state.event?.isGoing == true)
-                            stringResource(R.string.event_leave_event)
-                        else
-                            stringResource(R.string.event_join_event),
+                        else if(isUserIdGoingAsAttendee(
+                                state.authInfo?.userId ?: throw IllegalStateException("user not logged in"),
+                                state.event?.attendees)
+                            )
+                                stringResource(R.string.event_leave_event)
+                            else
+                                stringResource(R.string.event_join_event),
                         style = MaterialTheme.typography.h4,
-                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -914,7 +914,10 @@ fun AddEventScreenContent(
             onDismissRequest = { onAction(DismissAlertDialog) },
             confirmButton = {
                 TextButton(
-                    onClick = { dialogInfo.onConfirm() },
+                    onClick = {
+                        onAction(DismissAlertDialog)
+                        dialogInfo.onConfirm()
+                    },
                     colors = ButtonDefaults
                         .textButtonColors(backgroundColor = Color.Transparent)
                 ) {

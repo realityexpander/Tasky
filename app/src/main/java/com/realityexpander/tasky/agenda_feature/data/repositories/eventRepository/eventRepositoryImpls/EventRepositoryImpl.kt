@@ -21,6 +21,8 @@ class EventRepositoryImpl(
     private val eventApi: IEventApi, // = EventApiFakeImpl(),
 ) : IEventRepository {
 
+    // • CREATE
+
     override suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
         return try {
             eventDao.createEvent(event.toEntity())  // save to local DB first
@@ -35,6 +37,24 @@ class EventRepositoryImpl(
             ResultUiText.Error(UiText.Str(e.message ?: "createEvent error"))
         }
     }
+
+
+    // • UPSERT
+
+    override suspend fun upsertEventLocally(event: AgendaItem.Event): ResultUiText<Void> {
+        return try {
+            eventDao.upsertEvent(event.toEntity())  // save to local DB ONLY
+
+            ResultUiText.Success()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            ResultUiText.Error(UiText.Str(e.message ?: "upsertEvent error"))
+        }
+    }
+
+
+    // • READ
 
     override suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<AgendaItem.Event> {
         return eventDao.getEventsForDay(zonedDateTime).map { it.toDomain() }
@@ -58,7 +78,7 @@ class EventRepositoryImpl(
         }
     }
 
-    suspend fun getAllEvents(): List<AgendaItem.Event> {
+    suspend fun getAllEventsLocally(): List<AgendaItem.Event> {
         return try {
             eventDao.getEvents().map { it.toDomain() }
         } catch (e: CancellationException) {
@@ -83,11 +103,22 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun deleteEventId(eventId: EventId): ResultUiText<AgendaItem.Event> {
+    // • DELETE
+
+    override suspend fun deleteEvent(eventId: EventId): ResultUiText<Void> {
         return try {
+            // Optimistic delete
             eventDao.markEventDeletedById(eventId)
 
-            ResultUiText.Success() // todo return the deleted event, yes for undo
+            // Attempt to delete on server
+            val response = eventApi.deleteEvent(eventId)
+            if (response.isSuccess) {
+                // Success, delete fully from local DB
+                eventDao.deleteFinallyByEventIds(listOf(eventId))  // just one event
+                ResultUiText.Success()
+            } else {
+                ResultUiText.Error(UiText.Str(response.exceptionOrNull()?.localizedMessage ?: "deleteEvent error"))
+            }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -95,7 +126,7 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun getDeletedEventIds(): List<EventId> {
+    override suspend fun getDeletedEventIdsLocally(): List<EventId> {
         return try {
             eventDao.getMarkedDeletedEventIds()
         } catch (e: CancellationException) {
@@ -105,11 +136,11 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun deleteFinallyEventIds(eventIds: List<EventId>): ResultUiText<Void> {
+    override suspend fun deleteEventsFinallyLocally(eventIds: List<EventId>): ResultUiText<Void> {
         return try {
             eventDao.deleteFinallyByEventIds(eventIds)
 
-            ResultUiText.Success() // todo return the deleted events, yes for undo
+            ResultUiText.Success() // todo return the deleted events, for undo
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -117,7 +148,9 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun clearAllEvents(): ResultUiText<Void> {
+    // • CLEAR / CLEANUP
+
+    override suspend fun clearAllEventsLocally(): ResultUiText<Void> {
         return try {
             eventDao.clearAllEvents()
 
@@ -126,6 +159,18 @@ class EventRepositoryImpl(
             throw e
         } catch (e: Exception) {
             ResultUiText.Error(UiText.Str(e.message ?: "clearAllEvents error"))
+        }
+    }
+
+    override suspend fun clearEventsForDayLocally(zonedDateTime: ZonedDateTime): ResultUiText<Void> {
+        return try {
+            eventDao.clearAllEventsForDay(zonedDateTime)
+
+            ResultUiText.Success() // todo return the cleared event, for undo
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            ResultUiText.Error(UiText.Str(e.message ?: "clearEventsForDay error"))
         }
     }
 }

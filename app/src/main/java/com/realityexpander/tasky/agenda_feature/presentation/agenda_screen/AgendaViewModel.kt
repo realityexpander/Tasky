@@ -53,7 +53,8 @@ class AgendaViewModel @Inject constructor(
                 getDateForSelectedDayIndex(date, dayIndex)
             )
         }
-        .flattenMerge()
+//        .flattenMerge()  // was not working for some reason...
+        .flatMapLatest { it }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _agendaState =
@@ -106,12 +107,6 @@ class AgendaViewModel @Inject constructor(
 //            if(agendaState.value.agendaItems.isEmpty()) { // if no items for today, make some fake ones
 //                createFakeAgendaItems(agendaRepository)
 //            }
-        }
-    }
-
-    private fun logout() {
-        viewModelScope.launch {
-            authRepository.logout()
         }
     }
 
@@ -182,10 +177,14 @@ class AgendaViewModel @Inject constructor(
                 //agendaRepository.updateTask(uiEvent.agendaItem.copy(isCompleted = !uiEvent.agendaItem.isCompleted)) // todo implement update task - completed state
             }
             is Logout -> {
-                _agendaState.update {
-                    it.copy(authInfo = null)
+                viewModelScope.launch {
+                    agendaRepository.clearAllEvents()
+                    authRepository.logout()
+
+                    _agendaState.update {
+                        it.copy(authInfo = null)
+                    }
                 }
-                logout()
             }
             is StatefulOneTimeEvent -> {
                 when (uiEvent) {
@@ -268,7 +267,15 @@ class AgendaViewModel @Inject constructor(
                val result =
                    when (uiEvent.agendaItem) {
                         is AgendaItem.Event -> {
-                            agendaRepository.deleteEventId(uiEvent.agendaItem.id)
+                            // If the logged-in user owns the Event, they are allowed to delete it.
+                            if (uiEvent.agendaItem.isUserEventCreator) {
+                                agendaRepository.deleteEventId(uiEvent.agendaItem.id)
+                            } else {
+                                // Otherwise, the user is removed from the Event.
+                                agendaRepository.removeLoggedInUserFromEventId(
+                                    eventId = uiEvent.agendaItem.id,
+                                )
+                            }
                         }
                         is AgendaItem.Task -> {
 //                                agendaRepository.deleteTaskId(agendaItem)  // todo implement
@@ -447,7 +454,7 @@ class AgendaViewModel @Inject constructor(
 //
 //            // todo create Dummy data for now - replace with actual data soon
 //            val id = when(agendaItemType) {
-////                AgendaItemType.Task -> { null } // todo replace with actual type
+////                AgendaItemType.Task ->
 ////                     AgendaItem.Task(
 ////                          id = UUID.randomUUID().toString(),
 ////                          title = "New Task for $todayDate",
@@ -464,7 +471,7 @@ class AgendaViewModel @Inject constructor(
 ////                          description = "New Task Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
 ////                     )
 ////                }
-////                AgendaItemType.Reminder -> { null } // todo replace with actual type
+////                AgendaItemType.Reminder ->
 ////                     AgendaItem.Reminder(
 ////                          id = UUID.randomUUID().toString(),
 ////                          title = "New Reminder for $todayDate",

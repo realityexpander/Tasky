@@ -95,12 +95,16 @@ class EventApiImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteEvent(eventId: EventId): Boolean {
+    override suspend fun deleteEvent(eventId: EventId): Result<Unit> {
         return try {
             val response = taskyApi.deleteEvent(eventId)
-            response.isSuccessful
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Error deleting event: ${response.message()}"))
+            }
         } catch (e: Exception) {
-            false
+            Result.failure(e)
         }
     }
 

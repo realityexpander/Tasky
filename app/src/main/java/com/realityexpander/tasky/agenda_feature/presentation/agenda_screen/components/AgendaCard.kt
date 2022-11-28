@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
+import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.common.modifiers.smallHeight
 import com.realityexpander.tasky.core.presentation.common.modifiers.tinyHeight
@@ -30,6 +32,7 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyLightBlue
 import com.realityexpander.tasky.core.presentation.theme.TaskyPurple
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.realityexpander.tasky.core.util.authToken
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -43,9 +46,10 @@ fun AgendaCard(
     description: String? = "",
     fromDateTime: ZonedDateTime = ZonedDateTime.now(),
     toDateTime: ZonedDateTime? = null,
-    completed: Boolean? = null,
+    isTitleCrossedOut: Boolean = false,
+    isCompleted: Boolean = false,
     onToggleCompleted: () -> Unit = {},
-    setMenuPositionCallback : (LayoutCoordinates) -> Unit = {},
+    setMenuPositionCallback: (LayoutCoordinates) -> Unit = {},
     itemTypeName: String? = "",
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
@@ -71,10 +75,10 @@ fun AgendaCard(
                         .alignByBaseline()
                 ) {
                     Icon(
-                        imageVector = if (completed == null || !completed)
-                            Icons.Filled.RadioButtonUnchecked
-                        else
-                            Icons.Filled.TaskAlt, // CheckCircleOutline
+                        imageVector = if (isCompleted)
+                                Icons.Filled.TaskAlt // √ with CircleOutline
+                            else
+                                Icons.Filled.RadioButtonUnchecked,  // Circle outline
                         contentDescription = "Event",
                         tint = textColor,
                         modifier = Modifier
@@ -97,10 +101,11 @@ fun AgendaCard(
                     Text(
                         text = title,
                         style = MaterialTheme.typography.h3.copy(
-                            textDecoration = if (completed == null || !completed)
-                                TextDecoration.None
-                            else
-                                TextDecoration.LineThrough,
+                            textDecoration =
+                                if (isTitleCrossedOut || isCompleted)
+                                    TextDecoration.LineThrough
+                                else
+                                    TextDecoration.None,
                         ),
                         color = textColor
                     )
@@ -171,7 +176,8 @@ fun AgendaCard(
 fun AgendaCard(
     modifier: Modifier = Modifier,
     agendaItem: AgendaItem,
-    setMenuPositionCallback : (LayoutCoordinates) -> Unit = {},
+    authInfo: AuthInfo,
+    setMenuPositionCallback: (LayoutCoordinates) -> Unit = {},
     onToggleCompleted: () -> Unit = {},
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
@@ -185,7 +191,11 @@ fun AgendaCard(
                 description = agendaItem.description,
                 fromDateTime = agendaItem.from,
                 toDateTime = agendaItem.to,
-                completed = null,
+//                isTitleCrossedOut = !agendaItem.isGoing,
+                isTitleCrossedOut = !isUserIdGoingAsAttendee(authInfo.userId, agendaItem.attendees),
+//                isTitleCrossedOut = agendaItem.attendees.any { attendee ->
+//                    attendee.id == authInfo.userId && !attendee.isGoing
+//                },
                 setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
                 onEdit = onEdit,
@@ -200,10 +210,10 @@ fun AgendaCard(
                 title = agendaItem.title,
                 description = agendaItem.description,
                 fromDateTime = agendaItem.time,
-                completed = agendaItem.isDone,
+                isCompleted = agendaItem.isDone,
+                onToggleCompleted = onToggleCompleted,
                 setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
-                onToggleCompleted = onToggleCompleted,
                 onEdit = onEdit,
                 onDelete = onDelete,
                 onViewDetails = onViewDetails,
@@ -274,6 +284,12 @@ fun AgendaItemActionDropdown(
 fun AgendaCardPreview() {
     TaskyTheme {
         AgendaCard(
+            authInfo = AuthInfo(
+                userId = "123",
+                email = "chris@demo.com",
+                username = "Chris",
+                authToken = authToken("123"),
+            ),
             agendaItem = AgendaItem.Event(
                 id = UUID.randomUUID().toString(),
                 title = "Event Title",
@@ -284,7 +300,6 @@ fun AgendaCardPreview() {
             ),
             onEdit = {},
             onDelete = {},
-            onViewDetails = {},
-        )
+        ) {}
     }
 }

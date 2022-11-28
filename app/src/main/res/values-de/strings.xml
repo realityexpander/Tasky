@@ -137,6 +137,8 @@
     <string name="event_error_join_event">Fehler beim Beitritt zum Event</string>
     <string name="event_message_event_saved">Ereignis gespeichert</string>
     <string name="event_message_event_deleted_success">Veranstaltung erfolgreich gelöscht</string>
+    <string name="event_message_event_left_success">Veranstaltung erfolgreich verlassen</string>
+    <string name="event_message_event_joined_success">Veranstaltung erfolgreich beigetreten</string>
 
     <!--    Event Screen Dialog Titles -->
     <string name="event_dialog_title_choose_title_text">TITEL BEARBEITEN</string>

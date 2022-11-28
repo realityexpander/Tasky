@@ -9,6 +9,7 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.max
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.min
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
@@ -77,38 +78,42 @@ class EventViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _state.value = _state.value.copy(
-                isLoaded = true, // only after state is initialized
-                isProgressVisible = false,
-                username = authRepository.getAuthInfo()?.username ?: "",
-                authInfo = authRepository.getAuthInfo(),
+            _state.update { _state ->
+                val authInfo = authRepository.getAuthInfo()
+                _state.copy(
+                    isLoaded = true, // only after state is initialized
+                    isProgressVisible = false,
+                    username = authInfo?.username ?: "",
+                    authInfo = authInfo,
 
-                // If eventId is null, then creating a new event.
-                event = initialEventId?.let { eventId ->
-                    agendaRepository.getEvent(eventId)   // Load event from repository
-                } ?:
-                    // Create a new Event
-                    AgendaItem.Event(
-                        id = UUID.randomUUID().toString(),
-                        title = "Title of New Event",
-                        description = "Description of New Event",
-                        from = ZonedDateTime.now(),
-                        to = ZonedDateTime.now().plusHours(1),
-                        remindAt = ZonedDateTime.now().plusMinutes(30),
-                        host = authRepository.getAuthInfo()?.userId,
-                        isUserEventCreator = true,
-                        isGoing = true,
-                        photos = emptyList(),
-                        attendees = listOf(
-                            Attendee(
-                                id = authRepository.getAuthInfo()?.userId!!,
-                                fullName = authRepository.getAuthInfo()?.username ?: "",
-                                email = authRepository.getAuthInfo()?.email ?: "",
-                                isGoing = true,
+                    event = initialEventId?.let { eventId ->
+                        // Load event from repository
+                        agendaRepository.getEvent(eventId)
+                    } ?:
+                        // If `initialEventId` is null, then create a new event.
+                        // • CREATE A NEW EVENT
+                        AgendaItem.Event(
+                            id = UUID.randomUUID().toString(),
+                            title = "Title of New Event",
+                            description = "Description of New Event",
+                            from = ZonedDateTime.now(),
+                            to = ZonedDateTime.now().plusHours(1),
+                            remindAt = ZonedDateTime.now().plusMinutes(30),
+                            host = authInfo?.userId,
+                            isUserEventCreator = true,
+                            isGoing = true,
+                            photos = emptyList(),
+                            attendees = listOf(
+                                Attendee(
+                                    id = authInfo?.userId!!,
+                                    fullName = authInfo.username ?: "",
+                                    email = authInfo.email ?: "",
+                                    isGoing = true,
+                                )
                             )
-                        )
-                    ),
-            )
+                        ),
+                )
+            }
         }
     }
 
@@ -375,7 +380,7 @@ class EventViewModel @Inject constructor(
                 }
             }
             is SaveEvent -> {
-                val event = _state.value.event ?: return
+                var event = _state.value.event ?: return
                 _state.update { _state ->
                     _state.copy(
                         isProgressVisible = true,
@@ -383,14 +388,19 @@ class EventViewModel @Inject constructor(
                     )
                 }
 
+                // set `isGoing` to right before api/dao call, based on SSOT of `attendees`
+                event = event.copy(
+                    isGoing =
+                        event.isUserEventCreator
+                        || isUserIdGoingAsAttendee(_state.value.authInfo?.userId, event.attendees),
+                )
+
                 val result =
                     when (initialEventId) {
                         null -> {
-                            // Create new event
                             agendaRepository.createEvent(event)
                         }
                         else -> {
-                            // Update existing event
                             agendaRepository.updateEvent(event)
                         }
                     }
@@ -472,8 +482,39 @@ class EventViewModel @Inject constructor(
                     }
                 }
             }
-            is JoinEvent -> {}   // todo implement
-            is LeaveEvent -> {}  // todo implement
+            is LeaveEvent -> {
+                _state.update { _state ->
+                    _state.copy(
+                        event = _state.event?.copy(
+                            attendees = _state.event.attendees.map {
+                                if (it.id == state.value.authInfo?.userId) {
+                                    it.copy(isGoing = false)
+                                } else {
+                                    it
+                                }
+                            },
+                            isGoing = false
+                        )
+                    )
+                }
+            }
+            is JoinEvent -> {
+                _state.update { _state ->
+                    _state.copy(
+                        event = _state.event?.copy(
+                            attendees = _state.event.attendees.map {
+                                if (it.id == state.value.authInfo?.userId) {
+                                    it.copy(isGoing = true)
+                                } else {
+                                    it
+                                }
+                            },
+                            isGoing = true
+                        )
+
+                    )
+                }
+            }
 
             is ShowErrorMessage -> {
                 _state.update { _state ->

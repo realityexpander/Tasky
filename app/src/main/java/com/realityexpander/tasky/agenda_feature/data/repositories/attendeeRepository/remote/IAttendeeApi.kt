@@ -6,5 +6,5 @@ import com.realityexpander.tasky.core.util.Email
 
 interface IAttendeeApi {
     suspend fun getAttendee(email: Email): Result<GetAttendeeResponseDTO>
-    suspend fun deleteAttendeeFromEvent(eventId: EventId): Boolean
+    suspend fun deleteAttendee(eventId: EventId): Result<Unit>
 }

@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.attendeeRepositoryImpls
 
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.IAttendeeRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.remote.IAttendeeApi
@@ -47,6 +48,20 @@ class AttendeeRepositoryImpl @Inject constructor(
                     result.exceptionOrNull()?.message ?: "Api Unknown Error"
                 ),
                 exceptionMessage = result.exceptionOrNull()?.message
+            )
+        }
+    }
+
+    override suspend fun removeLoggedInUserFromEventId(eventId: EventId): ResultUiText<Void> {
+        val result = attendeeApi.deleteAttendee(eventId)
+
+        return if(result.isSuccess) {
+            ResultUiText.Success<Void>()
+        } else {
+            ResultUiText.Error(
+                UiText.Str(
+                    "Api Error"
+                )
             )
         }
     }

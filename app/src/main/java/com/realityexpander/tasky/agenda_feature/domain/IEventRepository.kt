@@ -6,6 +6,7 @@ import java.time.ZonedDateTime
 
 interface IEventRepository {
     suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event>
+    suspend fun upsertEventLocally(event: AgendaItem.Event): ResultUiText<Void>
 
     suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<AgendaItem.Event>
     fun getEventsForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<AgendaItem.Event>>
@@ -14,10 +15,12 @@ interface IEventRepository {
     suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event>
 
     // only marks the event as deleted
-    suspend fun deleteEventId(eventId: EventId): ResultUiText<AgendaItem.Event>
-    // gets only the "marked as deleted" events
-    suspend fun getDeletedEventIds(): List<EventId>
-    suspend fun deleteFinallyEventIds(eventIds: List<EventId>): ResultUiText<Void>
+    suspend fun deleteEvent(eventId: EventId): ResultUiText<Void>
 
-    suspend fun clearAllEvents(): ResultUiText<Void>
+    // gets only the "marked as deleted" events
+    suspend fun getDeletedEventIdsLocally(): List<EventId>
+    suspend fun deleteEventsFinallyLocally(eventIds: List<EventId>): ResultUiText<Void>
+
+    suspend fun clearAllEventsLocally(): ResultUiText<Void>
+    suspend fun clearEventsForDayLocally(zonedDateTime: ZonedDateTime): ResultUiText<Void>
 }

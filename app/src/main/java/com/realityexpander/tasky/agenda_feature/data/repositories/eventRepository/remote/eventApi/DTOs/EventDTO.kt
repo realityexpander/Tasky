@@ -19,7 +19,7 @@ abstract class EventDTO {
     abstract val to: UtcMillis
 
     @Serializable
-    data class Create(
+    data class Create(  // output only
         override val id: UuidStr,
         override val title: String,
         override val description: String,
@@ -35,7 +35,7 @@ abstract class EventDTO {
     ) : EventDTO()
 
     @Serializable
-    data class Update(
+    data class Update(  // output only
         override val id: UuidStr,
         override val title: String,
         override val description: String,
@@ -58,7 +58,7 @@ abstract class EventDTO {
     ) : EventDTO()
 
     @Serializable
-    data class Response(
+    data class Response(  // input only
         override val id: UuidStr,
         override val title: String,
         override val description: String,
@@ -68,7 +68,6 @@ abstract class EventDTO {
 
         val host: UserId,
         val isUserEventCreator: Boolean,
-        val isGoing: Boolean = true,
 
         // Note: Returns complete Attendee objects (not Ids)
         val attendees: List<AttendeeDTO> = emptyList(),

@@ -9,6 +9,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
 
+
 @Dao
 interface EventDaoImpl : IEventDao {
 
@@ -16,6 +17,23 @@ interface EventDaoImpl : IEventDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     override suspend fun createEvent(event: EventEntity)
+
+
+    // • UPSERT
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertEvent(event: EventEntity): Long
+
+    @Update(onConflict = OnConflictStrategy.IGNORE)
+    fun update2Event(event: EventEntity)
+
+    @Transaction
+    override fun upsertEvent(event: EventEntity) {
+        val id = insertEvent(event)
+        if (id == -1L) {
+            update2Event(event)
+        }
+    }
 
 
     // • READ
@@ -62,9 +80,11 @@ interface EventDaoImpl : IEventDao {
     @Query("DELETE FROM events")
     override suspend fun clearAllEvents(): Int  // completely deletes all events.
 
-
+    @Query(deleteEventsForDayQuery)
+    override suspend fun clearAllEventsForDay(zonedDateTime: ZonedDateTime): Int // completely deletes all UNDELETED events for the given day.
 
     companion object {
+
         const val getEventsForDayQuery =
             """
             SELECT * FROM events WHERE isDeleted = 0 
@@ -77,6 +97,20 @@ interface EventDaoImpl : IEventDao {
                       OR
                         ( ( `from` <= :zonedDateTime) AND (`to`   > :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event straddles today     
                 )
-        """
+            """
+
+        const val deleteEventsForDayQuery =
+            """
+            DELETE FROM events WHERE isDeleted = 0 
+                AND (
+                        ( ( `from` >= :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event fits within a day
+                      OR
+                        ( ( `from` >  :zonedDateTime) AND (`from` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `from` starts today
+                      OR
+                        ( ( `to`   >  :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `to` ends today
+                      OR
+                        ( ( `from` <= :zonedDateTime) AND (`to`   > :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event straddles today     
+                )
+            """
     }
 }

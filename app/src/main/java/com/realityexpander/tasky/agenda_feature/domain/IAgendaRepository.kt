@@ -14,11 +14,12 @@ interface IAgendaRepository {
     suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event>
     suspend fun getEvent(eventId: EventId): AgendaItem.Event?
     suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event>
-    suspend fun deleteEventId(eventId: EventId): ResultUiText<AgendaItem.Event>
+    suspend fun deleteEventId(eventId: EventId): ResultUiText<Void>
     suspend fun clearAllEvents(): ResultUiText<Void>
 
     // Attendee Repository
     suspend fun validateAttendeeExists(attendeeEmail: Email): ResultUiText<Attendee>
+    suspend fun removeLoggedInUserFromEventId(eventId: EventId): ResultUiText<Void>
 
     // todo implement repository
 //    suspend fun createTask(task: AgendaItem.Task): Boolean

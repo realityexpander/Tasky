@@ -1,7 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi
 
-import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 
 interface IEventApi {
 
@@ -9,7 +9,7 @@ interface IEventApi {
 
     suspend fun getEvent(eventId: EventId): EventDTO.Response
 
-    suspend fun deleteEvent(eventId: EventId): Boolean
+    suspend fun deleteEvent(eventId: EventId): Result<Unit>
 
     suspend fun updateEvent(event: EventDTO.Update): EventDTO.Response
 }

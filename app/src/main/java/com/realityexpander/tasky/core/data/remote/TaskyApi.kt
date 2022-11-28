@@ -56,8 +56,8 @@ interface TaskyApi {
 
     @GET("agenda")
     suspend fun getAgenda(
-        timezone: TimeZoneStr,  // ex: "Europe/Berlin"
-        time: UtcMillis,        // epoch millis in UTC timeZone
+        @Query("timezone") timezone: TimeZoneStr,  // ex: "Europe/Berlin"
+        @Query("time") time: UtcMillis,            // epoch millis in UTC timeZone
     ): Response<AgendaDayDTO>
 
     @POST("syncAgenda")
@@ -75,9 +75,9 @@ interface TaskyApi {
         @Part photos: List<MultipartBody.Part>          // List<PhotoDTO>
     ): Response<EventDTO.Response>
 
-    @GET("event/{eventId}")
+    @GET("event")
     suspend fun getEvent(
-        @Path("eventId") eventId: UuidStr,
+        @Query("eventId") eventId: UuidStr,
     ): Response<EventDTO.Response>
 
     @Multipart
@@ -87,9 +87,9 @@ interface TaskyApi {
         @Part photos: List<MultipartBody.Part>          // List<PhotoDTO>
     ): Response<EventDTO.Response>
 
-    @DELETE("event/{eventId}")
+    @DELETE("event")
     suspend fun deleteEvent(
-        @Path("eventId") eventId: UuidStr,
+        @Query("eventId") eventId: UuidStr,
     ): Response<Void>
 
 
@@ -100,8 +100,8 @@ interface TaskyApi {
         @Query("email") email: Email,
     ): Response<GetAttendeeResponseDTO>
 
-    @DELETE("attendee/{eventId}")  // remove the logged-in user from the eventId
+    @DELETE("attendee")  // remove the logged-in user from the eventId
     suspend fun deleteAttendee(
-        @Path("eventId") eventId: UuidStr,
+        @Query("eventId") eventId: UuidStr,
     ): Response<Void>
 }

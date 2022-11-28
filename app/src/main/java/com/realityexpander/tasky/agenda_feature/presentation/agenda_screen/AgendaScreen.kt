@@ -163,10 +163,11 @@ fun AgendaScreenContent(
     // Guard against invalid authentication state OR perform logout
     SideEffect {
         if (state.isLoaded && state.authInfo == null) {
-            onAction(SetIsLoaded(false))
             navigateToLoginScreen()
         }
     }
+
+    state.authInfo ?: return
 
     BackHandler(true) {
         // todo: should we ask the user to quit?
@@ -433,9 +434,6 @@ fun AgendaScreenContent(
             .smallHeight()
         )
 
-        //val todayTasks = state.tasks.filter { it.date == todayDate }
-        //val todayTasksCount = todayTasks.size
-
         // • SHOW AGENDA ITEMS LIST
         LazyColumn(
             state = scrollState,
@@ -447,12 +445,6 @@ fun AgendaScreenContent(
             itemsIndexed(items = agendaItems) { index, agendaItem ->
                 Box {
                     AgendaCard(
-                        agendaItem = agendaItem,
-                        onToggleCompleted = {
-                            if (agendaItem is AgendaItem.Task) {
-                                onAction(ToggleTaskCompleted(agendaItem))
-                            }
-                        },
                         modifier = Modifier
                             .padding(start = DP.tiny, end = DP.tiny)
                             .clickable {
@@ -462,6 +454,13 @@ fun AgendaScreenContent(
                                     onAction
                                 )
                             },
+                        agendaItem = agendaItem,
+                        authInfo = state.authInfo ?: return@Box,
+                        onToggleCompleted = {
+                            if (agendaItem is AgendaItem.Task) {
+                                onAction(ToggleTaskCompleted(agendaItem))
+                            }
+                        },
                         onEdit = {
                             onActionForAgendaItem(
                                 AgendaItemAction.EDIT,
@@ -475,15 +474,14 @@ fun AgendaScreenContent(
                                 agendaItem,
                                 onAction
                             )
-                        },
-                        onViewDetails = {
-                            onActionForAgendaItem(
-                                AgendaItemAction.OPEN_DETAILS,
-                                agendaItem,
-                                onAction
-                            )
                         }
-                    )
+                    ) {
+                        onActionForAgendaItem(
+                            AgendaItemAction.OPEN_DETAILS,
+                            agendaItem,
+                            onAction
+                        )
+                    }
                 }
 
                 if (index < agendaItems.size - 1) {
@@ -577,7 +575,7 @@ fun AgendaScreenContent(
         }
     }
 
-    // • Confirm `Delete Agenda Item` Dialog
+    // • CONFIRM `DELETE AGENDA ITEM` DIALOG
     state.confirmDeleteAgendaItem?.let { agendaItem ->
 
         val agendaItemTypeName =
@@ -629,7 +627,7 @@ fun AgendaScreenContent(
         )
     }
 
-    // • Select current date for agenda
+    // • SELECT CURRENT DATE FOR AGENDA
     var pickedDate by remember(currentDate) { mutableStateOf(currentDate) }
     val dateDialogState = rememberMaterialDialogState()
     LaunchedEffect(state.chooseCurrentDateDialog) {
@@ -638,7 +636,7 @@ fun AgendaScreenContent(
         }
     }
 
-    // • Select current date for agenda
+    // • SELECT CURRENT DATE FOR AGENDA
     MaterialDialog(
         dialogState = dateDialogState,
         onCloseRequest = {

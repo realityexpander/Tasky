@@ -1,13 +1,14 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao
 
-import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
 
 interface IEventDao {
 
     suspend fun createEvent(event: EventEntity)
+    fun upsertEvent(event: EventEntity)
 
     suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<EventEntity>
     fun getEventsForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<EventEntity>>
@@ -24,5 +25,6 @@ interface IEventDao {
     suspend fun deleteEvent(event: EventEntity): Int      // completely deletes the event.
 
     suspend fun clearAllEvents(): Int
+    suspend fun clearAllEventsForDay(zonedDateTime: ZonedDateTime): Int
 }
 

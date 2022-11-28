@@ -3,12 +3,18 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.agendaReposit
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
+import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.IAttendeeRepository
 import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
@@ -28,14 +34,41 @@ class AgendaRepositoryImpl @Inject constructor(
     }
 
     override fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>> {
-        val events = eventRepository.getEventsForDayFlow(dateTime)
-//        val tasks = taskRepository.getTasks(dateTime)                             // todo implement tasks repo
-//        val reminders = reminderRepository.getReminders(dateTime)                 // todo implement reminders repo
-        return events // + tasks + reminders
+
+        return flow {
+            supervisorScope {
+                launch {
+                    try {
+                        val result = agendaApi.getAgenda(dateTime)
+
+                        //eventRepository.clearEventsForDay(dateTime)
+                        result.events.forEach { event ->
+                            eventRepository.upsertEventLocally(event.toDomain())
+                        }
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        // don't send error to user, just log it (silent fail is ok here)
+                    }
+                }
+                    emitAll(eventRepository.getEventsForDayFlow(dateTime))
+                }
+
+//                launch {
+//                    // todo implement api call for tasks - agendaApi.getTasks(dateTime)
+////                    emitAll(eventRepository.getTasksForDayFlow(dateTime))
+//                }
+
+//                launch {
+//                    // todo implement api call for reminders - agendaApi.getReminders(dateTime)
+////                    emitAll(eventRepository.getReminderForDayFlow(dateTime))
+//                }
+            }
     }
 
     override suspend fun syncAgenda(): ResultUiText<Void> {
-        val deletedEventIds = eventRepository.getDeletedEventIds()
+        val deletedEventIds = eventRepository.getDeletedEventIdsLocally()
 //        val deletedTaskIds = taskRepository.getDeletedTaskIds()                   // todo implement tasks repo
 //        val deletedReminderIds = reminderRepository.getDeletedReminderIds()       // todo implement reminders repo
 
@@ -49,7 +82,7 @@ class AgendaRepositoryImpl @Inject constructor(
             )
 
         if (deletedSuccessfully) {
-            return eventRepository.deleteFinallyEventIds(deletedEventIds)
+            return eventRepository.deleteEventsFinallyLocally(deletedEventIds)
         } else {
             return ResultUiText.Error(UiText.ResOrStr(R.string.agenda_sync_error, "Failed to sync agenda - deleteFinallyEventIds"))
         }
@@ -67,15 +100,20 @@ class AgendaRepositoryImpl @Inject constructor(
         return eventRepository.updateEvent(event)
     }
 
-    override suspend fun deleteEventId(eventId: EventId): ResultUiText<AgendaItem.Event> {
-        return eventRepository.deleteEventId(eventId)
+    override suspend fun deleteEventId(eventId: EventId): ResultUiText<Void> {
+        return eventRepository.deleteEvent(eventId)
     }
 
     override suspend fun clearAllEvents(): ResultUiText<Void> {
-        return eventRepository.clearAllEvents()
+        return eventRepository.clearAllEventsLocally()
     }
 
     override suspend fun validateAttendeeExists(attendeeEmail: Email): ResultUiText<Attendee> {
         return attendeeRepository.getAttendee(attendeeEmail)
+    }
+
+    override suspend fun removeLoggedInUserFromEventId(eventId: EventId): ResultUiText<Void> {
+        eventRepository.deleteEventsFinallyLocally(listOf(eventId))
+        return attendeeRepository.removeLoggedInUserFromEventId(eventId)
     }
 }

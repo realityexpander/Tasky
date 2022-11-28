@@ -137,6 +137,8 @@
     <string name="event_error_join_event">Error joining Event</string>
     <string name="event_message_event_saved">Event Saved</string>
     <string name="event_message_event_deleted_success">Event successfully deleted</string>
+    <string name="event_message_event_left_success">Event successfully left</string>
+    <string name="event_message_event_joined_success">Event successfully joined</string>
 
     <!--    Event Screen Dialog Titles -->
     <string name="event_dialog_title_choose_title_text">EDIT TITLE</string>
