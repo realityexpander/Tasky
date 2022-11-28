@@ -39,12 +39,13 @@ class AgendaRepositoryImpl @Inject constructor(
             supervisorScope {
                 launch(Dispatchers.IO) {
                     try {
-                        //eventRepository.clearEventsForDay(dateTime)
                         send(eventRepository.getEventsForDay(dateTime)) // send stale local data
 
                         // Get fresh data
                         val result = agendaApi.getAgenda(dateTime)
                         result.events.forEach { event ->
+                            eventRepository.clearEventsForDayLocally(dateTime) // clear local data
+
                             // Insert fresh data into db
                             val result2 =
                                 eventRepository.upsertEventLocally(event.toDomain())
