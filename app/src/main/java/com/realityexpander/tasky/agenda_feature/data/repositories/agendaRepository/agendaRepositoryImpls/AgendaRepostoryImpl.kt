@@ -10,10 +10,11 @@ import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
@@ -34,26 +35,36 @@ class AgendaRepositoryImpl @Inject constructor(
 
     override fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>> {
 
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val result = agendaApi.getAgenda(dateTime)
+        return flow {
+            supervisorScope {
+                launch {
+                    try {
+                        val result = agendaApi.getAgenda(dateTime)
 
-                //eventRepository.clearEventsForDay(dateTime)
-                result.events.forEach { event ->
-                    eventRepository.upsertEventLocally(event.toDomain())
+                        //eventRepository.clearEventsForDay(dateTime)
+                        result.events.forEach { event ->
+                            eventRepository.upsertEventLocally(event.toDomain())
+                        }
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        // don't send error to user, just log it (silent fail is ok here)
+                    }
                 }
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                e.printStackTrace()
-                // don't send error to user, just log it (silent fail is ok here)
-            }
-        }
+                    emitAll(eventRepository.getEventsForDayFlow(dateTime))
+                }
 
-        val events = eventRepository.getEventsForDayFlow(dateTime)
-    //        val tasks = taskRepository.getTasks(dateTime)                             // todo implement tasks repo
-    //        val reminders = reminderRepository.getReminders(dateTime)                 // todo implement reminders repo
-        return events // + tasks + reminders
+//                launch {
+//                    // todo implement api call for tasks - agendaApi.getTasks(dateTime)
+////                    emitAll(eventRepository.getTasksForDayFlow(dateTime))
+//                }
+
+//                launch {
+//                    // todo implement api call for reminders - agendaApi.getReminders(dateTime)
+////                    emitAll(eventRepository.getReminderForDayFlow(dateTime))
+//                }
+            }
     }
 
     override suspend fun syncAgenda(): ResultUiText<Void> {
