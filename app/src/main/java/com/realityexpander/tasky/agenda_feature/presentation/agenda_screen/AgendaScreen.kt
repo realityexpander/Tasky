@@ -520,7 +520,7 @@ fun AgendaScreenContent(
                         tint = MaterialTheme.colors.onSurface,
                         modifier = Modifier
                             .size(14.dp)
-                            .offset(x=(-2).dp)
+                            .offset(x=(-4).dp)
                             .align(Alignment.CenterStart)
                     )
 
