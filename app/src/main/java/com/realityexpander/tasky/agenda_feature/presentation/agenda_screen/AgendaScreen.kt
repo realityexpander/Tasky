@@ -441,6 +441,7 @@ fun AgendaScreenContent(
                 .background(color = MaterialTheme.colors.surface)
                 .fillMaxSize()
                 .padding(start = DP.tiny, end = DP.tiny)
+
         ) {
             val sortedAgendaItems = agendaItems.sortedBy { agendaItem ->
                 agendaItem.startTime
@@ -466,7 +467,7 @@ fun AgendaScreenContent(
                                 )
                             },
                         agendaItem = agendaItem,
-                        authInfo = state.authInfo ?: return@Box,
+                        authInfo = state.authInfo,
                         onToggleCompleted = {
                             if (agendaItem is AgendaItem.Task) {
                                 onAction(ToggleTaskCompleted(agendaItem))
@@ -494,36 +495,46 @@ fun AgendaScreenContent(
                         )
                     }
                 }
-
                 if (index < agendaItemsBeforeNow.size - 1) {
                     Spacer(modifier = Modifier.smallHeight())
                 }
             }
 
             // • TIME NEEDLE
-            item(true) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp)
-                        .height(14.dp)
-                ) {
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(2.dp)
-                        .background(color = MaterialTheme.colors.onSurface.copy(alpha = 0.9f))
-                        .align(Alignment.Center)
-                    )
-                    Icon(
-                        imageVector = Icons.Filled.Circle,
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.onSurface,
+            if(currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).year ==
+                    ZonedDateTime.now().year
+                && currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear ==
+                    ZonedDateTime.now().dayOfYear
+            ) {
+                item(true) {
+                    Box(
                         modifier = Modifier
-                            .size(14.dp)
-                            .offset(x=(-4).dp)
-                            .align(Alignment.CenterStart)
-                    )
+                            .fillMaxWidth()
+                            .padding(0.dp)
+                            .height(14.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(2.dp)
+                                .background(color = MaterialTheme.colors.onSurface.copy(alpha = 0.9f))
+                                .align(Alignment.Center)
+                        )
+                        Icon(
+                            imageVector = Icons.Filled.Circle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.onSurface,
+                            modifier = Modifier
+                                .size(14.dp)
+                                .offset(x = (-4).dp)
+                                .align(Alignment.CenterStart)
+                        )
 
+                    }
+                }
+            } else {
+                item(true) {
+                    Spacer(modifier = Modifier.smallHeight())
                 }
             }
 
