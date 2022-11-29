@@ -6,10 +6,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 interface IEventApi {
 
     suspend fun createEvent(event: EventDTO.Create): EventDTO.Response
-
     suspend fun getEvent(eventId: EventId): EventDTO.Response
-
     suspend fun deleteEvent(eventId: EventId): Result<Unit>
-
     suspend fun updateEvent(event: EventDTO.Update): EventDTO.Response
 }

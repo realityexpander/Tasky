@@ -1,32 +1,35 @@
 package com.realityexpander.tasky.agenda_feature.domain
 
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
 
 interface IAgendaRepository {
 
+    // • Agenda Repository
     suspend fun getAgendaForDay(dateTime: ZonedDateTime): List<AgendaItem>
     fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>>
     suspend fun syncAgenda(): ResultUiText<Void>
 
+    // • Event Repository
     suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event>
     suspend fun getEvent(eventId: EventId): AgendaItem.Event?
     suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event>
     suspend fun deleteEventId(eventId: EventId): ResultUiText<Void>
-    suspend fun clearAllEvents(): ResultUiText<Void>
+    suspend fun clearAllEventsLocally(): ResultUiText<Void>
 
-    // Attendee Repository
+    // • Attendee Repository
     suspend fun validateAttendeeExists(attendeeEmail: Email): ResultUiText<Attendee>
     suspend fun removeLoggedInUserFromEventId(eventId: EventId): ResultUiText<Void>
 
-    // todo implement repository
-//    suspend fun createTask(task: AgendaItem.Task): Boolean
-//    suspend fun getTask(taskId: TaskId): AgendaItem.Task?
-//    suspend fun updateTask(task: AgendaItem.Task): Boolean
-//    suspend fun deleteTask(taskId: TaskId): Boolean
-//    suspend fun deleteAllTasks(): Boolean
+    // • Task Repository
+    suspend fun createTask(task: AgendaItem.Task): ResultUiText<Void>
+    suspend fun getTask(taskId: TaskId): AgendaItem.Task?
+    suspend fun updateTask(task: AgendaItem.Task): ResultUiText<Void>
+    suspend fun deleteTaskId(taskId: TaskId): ResultUiText<Void>
+    suspend fun clearAllTasksLocally(): ResultUiText<Void>
 
     // todo implement repository
 //    suspend fun createReminder(reminder: AgendaItem.Reminder): Boolean

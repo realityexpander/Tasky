@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao
+package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local
 
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity

@@ -115,7 +115,7 @@
     <string name="event_description_add_photo">Foto hinzufügen</string>
     <string name="event_description_add_attendee_button">Schaltfläche Teilnehmer hinzufügen</string>
     <string name="event_description_photo">Foto</string>
-    <string name="event_save">Speichern</string>
+    <string name="save">Speichern</string>
     <string name="event_event_title">Vorfall</string>
     <string name="event_no_title_set">Kein Titel festgelegt</string>
     <string name="event_edit_event_title">Veranstaltungstitel bearbeiten</string>

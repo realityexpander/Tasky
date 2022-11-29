@@ -9,11 +9,14 @@ import com.realityexpander.tasky.agenda_feature.data.common.typeConverters.Strin
 import com.realityexpander.tasky.agenda_feature.data.common.typeConverters.ZonedDateTimeTypeConverter
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.eventDaoImpls.EventDaoImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.local.entities.TaskEntity
+import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.local.taskDao.taskDaoImpls.TaskDaoImpl
 
 
 @Database(
     entities = [
         EventEntity::class,
+        TaskEntity::class,
         ModifiedAgendaItemEntity::class
     ],
     version = 1,
@@ -27,6 +30,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 abstract class TaskyDatabase : RoomDatabase() {
 
     abstract fun eventDao(): EventDaoImpl
+    abstract fun taskDao(): TaskDaoImpl
 
     companion object {
         const val DATABASE_NAME = "tasky_database"

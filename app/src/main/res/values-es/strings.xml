@@ -115,7 +115,7 @@
     <string name="event_description_add_photo">Añadir foto</string>
     <string name="event_description_add_attendee_button">Botón Agregar asistente</string>
     <string name="event_description_photo">Foto</string>
-    <string name="event_save">Ahorrar</string>
+    <string name="save">Ahorrar</string>
     <string name="event_event_title">Evento</string>
     <string name="event_no_title_set">Sin título establecido</string>
     <string name="event_edit_event_title">Editar título del evento</string>

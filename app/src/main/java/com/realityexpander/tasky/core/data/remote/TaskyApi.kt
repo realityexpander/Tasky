@@ -1,11 +1,13 @@
 package com.realityexpander.tasky.core.data.remote
 
 import com.realityexpander.tasky.BuildConfig
+import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.common.util.TimeZoneStr
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaDayDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaSyncDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.GetAttendeeResponseDTO
+import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.DTOs.TaskDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.ApiCredentialsDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
@@ -103,5 +105,28 @@ interface TaskyApi {
     @DELETE("attendee")  // remove the logged-in user from the eventId (does NOT delete the attendee)
     suspend fun deleteAttendee(
         @Query("eventId") eventId: UuidStr,
+    ): Response<Void>
+
+
+    ////////////////// TASK //////////////////
+
+    @POST("task")
+    suspend fun createTask(
+        @Body task: TaskDTO
+    ): Response<Void>
+
+    @GET("task")
+    suspend fun getTask(
+        @Query("taskId") taskId: TaskId,
+    ): Response<TaskDTO>
+
+    @PUT("task")
+    suspend fun updateTask(
+        @Body task: TaskDTO
+    ): Response<Void>
+
+    @DELETE("task")
+    suspend fun deleteTask(
+        @Query("taskId") taskId: TaskId
     ): Response<Void>
 }

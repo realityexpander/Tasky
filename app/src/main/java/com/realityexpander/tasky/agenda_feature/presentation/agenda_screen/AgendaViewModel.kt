@@ -166,19 +166,21 @@ class AgendaViewModel @Inject constructor(
                         _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateEvent)
                     }
                     AgendaItemType.Task -> {
-//                        _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateTask)
+                        _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateTask)
                     }
                     AgendaItemType.Reminder -> {
 //                        _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateReminder)
                     }
                 }
             }
-            is ToggleTaskCompleted -> {
-                //agendaRepository.updateTask(uiEvent.agendaItem.copy(isCompleted = !uiEvent.agendaItem.isCompleted)) // todo implement update task - completed state
+            is SetTaskCompleted -> {
+                agendaRepository.updateTask(
+                    uiEvent.agendaItem.copy(isDone = uiEvent.isDone)
+                )
             }
             is Logout -> {
                 viewModelScope.launch {
-                    agendaRepository.clearAllEvents()
+                    agendaRepository.clearAllEventsLocally()
                     authRepository.logout()
 
                     _agendaState.update {
@@ -239,15 +241,6 @@ class AgendaViewModel @Inject constructor(
                     )
                 }
             }
-            is OneTimeEvent.NavigateToCreateEvent -> {
-                _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateEvent)
-            }
-            is OneTimeEvent.NavigateToOpenEvent -> {
-                _oneTimeEvent.emit(OneTimeEvent.NavigateToOpenEvent(uiEvent.eventId))
-            }
-            is OneTimeEvent.NavigateToEditEvent -> {
-                _oneTimeEvent.emit(OneTimeEvent.NavigateToEditEvent(uiEvent.eventId))
-            }
             is ShowConfirmDeleteAgendaItemDialog -> {
                 _agendaState.update {
                     it.copy(
@@ -297,6 +290,24 @@ class AgendaViewModel @Inject constructor(
                     sendEvent(ClearErrorMessage)
                 }
                 sendEvent(DismissConfirmDeleteAgendaItemDialog)
+            }
+            is OneTimeEvent.NavigateToCreateEvent -> {
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateEvent)
+            }
+            is OneTimeEvent.NavigateToOpenEvent -> {
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToOpenEvent(uiEvent.eventId))
+            }
+            is OneTimeEvent.NavigateToEditEvent -> {
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToEditEvent(uiEvent.eventId))
+            }
+            is OneTimeEvent.NavigateToCreateTask -> {
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateTask)
+            }
+            is OneTimeEvent.NavigateToEditTask -> {
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToEditTask(uiEvent.taskId))
+            }
+            is OneTimeEvent.NavigateToOpenTask -> {
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToOpenTask(uiEvent.taskId))
             }
         }
     }

@@ -16,11 +16,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
@@ -79,7 +81,7 @@ fun AgendaCard(
                                 Icons.Filled.TaskAlt // √ with CircleOutline
                             else
                                 Icons.Filled.RadioButtonUnchecked,  // Circle outline
-                        contentDescription = "Event",
+                        contentDescription = stringResource(R.string.agenda_isDone_icon_description),
                         tint = textColor,
                         modifier = Modifier
                             .align(Alignment.Start)
@@ -98,17 +100,21 @@ fun AgendaCard(
                         .weight(1f)
                 ) {
 
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.h3.copy(
-                            textDecoration =
-                                if (isTitleCrossedOut || isCompleted)
-                                    TextDecoration.LineThrough
-                                else
-                                    TextDecoration.None,
-                        ),
-                        color = textColor
-                    )
+                    if (isTitleCrossedOut || isCompleted) { // hacky way to cross out text
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.h3.copy(
+                                textDecoration = TextDecoration.LineThrough
+                            ),
+                            color = textColor
+                        )
+                    } else {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.h3,
+                            color = textColor
+                        )
+                    }
                     Spacer(modifier = Modifier.tinyHeight())
 
                     Text(
@@ -191,11 +197,7 @@ fun AgendaCard(
                 description = agendaItem.description,
                 fromDateTime = agendaItem.from,
                 toDateTime = agendaItem.to,
-//                isTitleCrossedOut = !agendaItem.isGoing,
                 isTitleCrossedOut = !isUserIdGoingAsAttendee(authInfo.userId, agendaItem.attendees),
-//                isTitleCrossedOut = agendaItem.attendees.any { attendee ->
-//                    attendee.id == authInfo.userId && !attendee.isGoing
-//                },
                 setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
                 onEdit = onEdit,

@@ -41,6 +41,7 @@ import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
@@ -55,6 +56,7 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.EventScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
+import com.realityexpander.tasky.destinations.TaskScreenDestination
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
@@ -113,18 +115,19 @@ fun AgendaScreenContent(
     val selectedDayIndex = state.selectedDayIndex
 
     // Create days of the week for top of screen
-    val daysInitialsAndDayOfWeek = remember(currentDate.dayOfYear) {   // initial of day of week, day of month
-        val days = mutableListOf<Pair<String, Int>>() // initial of day of week, day of month
+    val daysInitialsAndDayOfWeek =
+        remember(currentDate.dayOfYear) {   // initial of day of week, day of month
+            val days = mutableListOf<Pair<String, Int>>() // initial of day of week, day of month
 
-        for (i in 0..5) {
-            val date = currentDate.plusDays(i.toLong())
-            val dayOfWeek =
-                date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-            days += Pair(dayOfWeek.first().toString(), date.dayOfMonth)
+            for (i in 0..5) {
+                val date = currentDate.plusDays(i.toLong())
+                val dayOfWeek =
+                    date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                days += Pair(dayOfWeek.first().toString(), date.dayOfMonth)
+            }
+
+            days
         }
-
-        days
-    }
 
     // Display month name
     val month = remember(currentDate.month) {
@@ -160,6 +163,18 @@ fun AgendaScreenContent(
         }
     }
 
+    fun navigateToTaskScreen(taskId: TaskId?, isEditable: Boolean = false) {
+        navigator.navigate(
+            TaskScreenDestination(
+                initialTaskId = taskId,  // create new event
+                isEditable = isEditable,
+            )
+        ) {
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     // Guard against invalid authentication state OR perform logout
     SideEffect {
         if (state.isLoaded && state.authInfo == null) {
@@ -176,7 +191,7 @@ fun AgendaScreenContent(
 
     // Handle stateful one-time events
     LaunchedEffect(state.agendaItems) {
-        if(state.scrollToItemId != null) {
+        if (state.scrollToItemId != null) {
             val item = agendaItems.indexOfFirst { it.id == state.scrollToItemId }
             if (item >= 0) {
                 scope.launch {
@@ -185,13 +200,13 @@ fun AgendaScreenContent(
             }
             onAction(StatefulOneTimeEvent.ResetScrollTo)
         }
-        if(state.scrollToTop) {
+        if (state.scrollToTop) {
             scope.launch {
                 scrollState.animateScrollToItem(0)
             }
             onAction(StatefulOneTimeEvent.ResetScrollTo)
         }
-        if(state.scrollToBottom) {
+        if (state.scrollToBottom) {
             scope.launch {
                 scrollState.animateScrollToItem(agendaItems.size - 1)
             }
@@ -202,6 +217,7 @@ fun AgendaScreenContent(
     // • One-time events (like Navigation, SnackBars, etc) are handled here
     LaunchedEffect(oneTimeEvent) {
         when (oneTimeEvent) {
+            // • EVENT
             OneTimeEvent.NavigateToCreateEvent -> {
                 navigateToEventScreen(null, true)
             }
@@ -211,13 +227,26 @@ fun AgendaScreenContent(
             is OneTimeEvent.NavigateToEditEvent -> {
                 navigateToEventScreen(oneTimeEvent.eventId, true)
             }
+
+            // • TASK
+            OneTimeEvent.NavigateToCreateTask -> {
+                navigateToTaskScreen(null, true)
+            }
+            is OneTimeEvent.NavigateToOpenTask -> {
+                navigateToTaskScreen(oneTimeEvent.taskId)
+            }
+            is OneTimeEvent.NavigateToEditTask -> {
+                navigateToTaskScreen(oneTimeEvent.taskId, true)
+            }
+
             is OneTimeEvent.ShowToast -> {
                 Toast.makeText(
                     context,
                     context.getString(
                         oneTimeEvent.message.asResIdOrNull
                             ?: R.string.error_invalid_string_resource_id
-                    ), Toast.LENGTH_SHORT).show()
+                    ), Toast.LENGTH_SHORT
+                ).show()
             }
             null -> {}
         }
@@ -243,7 +272,7 @@ fun AgendaScreenContent(
         modifier = Modifier
             .background(color = MaterialTheme.colors.onSurface)
             .padding(0.dp)
-    ) col1@ {
+    ) col1@{
         Spacer(modifier = Modifier.mediumHeight())
 
         // • HEADER FOR SCREEN (Current Date, User Acronym, Logout)
@@ -291,7 +320,7 @@ fun AgendaScreenContent(
                 var isLogoutMenuExpanded by remember { mutableStateOf(false) }
 
                 UserAcronymCircle(
-                    username = state.authInfo?.username,
+                    username = state.authInfo.username,
                     modifier = Modifier
                         .clickable {
                             isLogoutMenuExpanded = true
@@ -363,13 +392,13 @@ fun AgendaScreenContent(
                             text = dayInitial,
                             style = MaterialTheme.typography.subtitle2,
                             fontWeight = if (selectedDayIndex == dayIndex)
-                                    FontWeight.Bold
-                                else
-                                    FontWeight.SemiBold,
+                                FontWeight.Bold
+                            else
+                                FontWeight.SemiBold,
                             color = if (selectedDayIndex == dayIndex)
-                                    Color.Black
-                                else
-                                    MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
+                                Color.Black
+                            else
+                                MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .wrapContentWidth(Alignment.CenterHorizontally)
@@ -383,9 +412,9 @@ fun AgendaScreenContent(
                             style = MaterialTheme.typography.h3,
                             fontWeight = FontWeight.Bold,
                             color = if (selectedDayIndex == dayIndex)
-                                    Color.Black
-                                else
-                                    MaterialTheme.colors.onSurface,
+                                Color.Black
+                            else
+                                MaterialTheme.colors.onSurface,
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .wrapContentWidth(Alignment.CenterHorizontally)
@@ -406,19 +435,19 @@ fun AgendaScreenContent(
         val nowDayOfYear = ZonedDateTime.now().dayOfYear
         Text(
             text =
-                if (selectedDayIndexDayOfYear == nowDayOfYear)
-                    stringResource(R.string.agenda_today)
-                else if (selectedDayIndexDayOfYear == nowDayOfYear + 1)
-                    stringResource(R.string.agenda_tomorrow)
-                else if (selectedDayIndexDayOfYear == nowDayOfYear - 1)
-                    stringResource(R.string.agenda_yesterday)
-                else {
+            when (selectedDayIndexDayOfYear) {
+                nowDayOfYear -> stringResource(R.string.agenda_today)
+                nowDayOfYear + 1 -> stringResource(R.string.agenda_tomorrow)
+                nowDayOfYear - 1 -> stringResource(R.string.agenda_yesterday)
+                else -> {
                     val date = currentDate.plusDays((selectedDayIndex ?: 0).toLong())
-                    val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                    val dayOfWeek =
+                        date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
                     val dayOfMonth = date.dayOfMonth.toString()
                     val monthName = date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
                     "$dayOfWeek, $monthName $dayOfMonth"
-                },
+                }
+            },
             style = MaterialTheme.typography.h3,
             fontWeight = FontWeight.Bold,
 
@@ -428,10 +457,11 @@ fun AgendaScreenContent(
                 .background(color = MaterialTheme.colors.surface)
                 .padding(start = DP.small)
         )
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colors.surface)
-            .smallHeight()
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colors.surface)
+                .smallHeight()
         )
 
         // • SHOW AGENDA ITEMS LIST
@@ -470,7 +500,7 @@ fun AgendaScreenContent(
                         authInfo = state.authInfo,
                         onToggleCompleted = {
                             if (agendaItem is AgendaItem.Task) {
-                                onAction(ToggleTaskCompleted(agendaItem))
+                                onAction(SetTaskCompleted(agendaItem, !agendaItem.isDone))
                             }
                         },
                         onEdit = {
@@ -495,16 +525,17 @@ fun AgendaScreenContent(
                         )
                     }
                 }
-                if (index < agendaItemsBeforeNow.size - 1) {
+                if (index < agendaItemsBeforeNow.size - 1
+                ) {
                     Spacer(modifier = Modifier.smallHeight())
                 }
             }
 
             // • TIME NEEDLE
-            if(currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).year ==
-                    ZonedDateTime.now().year
+            if (currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).year ==
+                ZonedDateTime.now().year
                 && currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear ==
-                    ZonedDateTime.now().dayOfYear
+                ZonedDateTime.now().dayOfYear
             ) {
                 item(true) {
                     Box(
@@ -526,15 +557,16 @@ fun AgendaScreenContent(
                             tint = MaterialTheme.colors.onSurface,
                             modifier = Modifier
                                 .size(14.dp)
-                                .offset(x = (-4).dp)
                                 .align(Alignment.CenterStart)
                         )
 
                     }
                 }
             } else {
-                item(true) {
-                    Spacer(modifier = Modifier.smallHeight())
+                if (agendaItemsBeforeNow.isNotEmpty()) {
+                    item(true) {
+                        Spacer(modifier = Modifier.smallHeight())
+                    }
                 }
             }
 
@@ -552,10 +584,10 @@ fun AgendaScreenContent(
                                 )
                             },
                         agendaItem = agendaItem,
-                        authInfo = state.authInfo ?: return@Box,
+                        authInfo = state.authInfo,
                         onToggleCompleted = {
                             if (agendaItem is AgendaItem.Task) {
-                                onAction(ToggleTaskCompleted(agendaItem))
+                                onAction(SetTaskCompleted(agendaItem, !agendaItem.isDone))
                             }
                         },
                         onEdit = {
@@ -586,7 +618,7 @@ fun AgendaScreenContent(
             }
         }
 
-            ////// STATUS ///////
+        ////// STATUS ///////
 //
 //            state.errorMessage.getOrNull?.let { errorMessage ->
 //                Spacer(modifier = Modifier.smallHeight())
@@ -675,7 +707,7 @@ fun AgendaScreenContent(
     state.confirmDeleteAgendaItem?.let { agendaItem ->
 
         val agendaItemTypeName =
-            when(agendaItem) {
+            when (agendaItem) {
                 is AgendaItem.Event -> {
                     stringResource(R.string.agenda_item_type_event)
                 }
@@ -690,10 +722,20 @@ fun AgendaScreenContent(
 
         AlertDialog(
             title = {
-                Text(stringResource(R.string.agenda_confirm_delete_item_dialog_title_phrase, agendaItemTypeName))
+                Text(
+                    stringResource(
+                        R.string.agenda_confirm_delete_item_dialog_title_phrase,
+                        agendaItemTypeName
+                    )
+                )
             },
             text = {
-                Text(stringResource(R.string.agenda_confirm_delete_item_dialog_text_phrase, agendaItem.title))
+                Text(
+                    stringResource(
+                        R.string.agenda_confirm_delete_item_dialog_text_phrase,
+                        agendaItem.title
+                    )
+                )
             },
             onDismissRequest = { onAction(DismissConfirmDeleteAgendaItemDialog) },
             confirmButton = {
@@ -750,9 +792,11 @@ fun AgendaScreenContent(
             }
             button(text = stringResource(R.string.agenda_choose_current_date_dialog_today_button_text)) {
                 dateDialogState.hide()
-                onAction(SetCurrentDate(
-                    ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
-                ))
+                onAction(
+                    SetCurrentDate(
+                        ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+                    )
+                )
             }
 
         }
@@ -761,7 +805,7 @@ fun AgendaScreenContent(
             initialDate = currentDate.toLocalDate(),
             title = stringResource(id = R.string.agenda_choose_current_date_dialog_title),
         ) {
-            pickedDate = it.atTime(0,0,0, 0).toZonedDateTime()
+            pickedDate = it.atTime(0, 0, 0, 0).toZonedDateTime()
         }
     }
 
@@ -792,24 +836,19 @@ fun onActionForAgendaItem(
         is AgendaItem.Task -> {
             when (action) {
                 AgendaItemAction.OPEN_DETAILS -> {
-                    println("OPEN DETAILS FOR TASK ${agendaItem.id}")
-//                    onAction(AgendaEvent.NavigateToOpenTask(agendaItem))
+                    onAction(OneTimeEvent.NavigateToOpenTask(agendaItem.id))
                 }
                 AgendaItemAction.EDIT -> {
-                    println("EDIT TASK ${agendaItem.id}")
-//                    onAction(AgendaEvent.NavigateToEditTask(agendaItem))
+                    onAction(OneTimeEvent.NavigateToEditTask(agendaItem.id))
                 }
                 AgendaItemAction.DELETE -> {
-                    println("DELETE TASK ${agendaItem.id}")
-//                    onAction(AgendaEvent.DeleteTask(agendaItem))
+                    onAction(ShowConfirmDeleteAgendaItemDialog(agendaItem))
                 }
                 AgendaItemAction.MARK_AS_DONE -> {
-                    println("MARK AS DONE TASK ${agendaItem.id}")
-//                    onAction(AgendaEvent.MarkTaskAsDone(agendaItem))
+                    onAction(SetTaskCompleted(agendaItem, true))
                 }
                 AgendaItemAction.MARK_AS_NOT_DONE -> {
-                    println("MARK AS NOT DONE TASK ${agendaItem.id}")
-//                    onAction(AgendaEvent.MarkTaskAsNotDone(agendaItem))
+                    onAction(SetTaskCompleted(agendaItem, false))
                 }
             }
         }
@@ -842,7 +881,7 @@ fun onActionForAgendaItem(
     name = "Agenda Screen Dark",
     apiLevel = 28,
     widthDp = 350,
-    group= "Night Mode=true"
+    group = "Night Mode=true"
 )
 fun AgendaScreenPreview() {
     TaskyTheme {
@@ -853,32 +892,32 @@ fun AgendaScreenPreview() {
                 ),
 //                agendaItems = flow {
                 agendaItems =
-                    listOf(
-                        AgendaItem.Event(
-                            id = "1",
-                            title = "Event 1",
-                            description = "Event Description 1",
-                            from = ZonedDateTime.now(),
-                            to = ZonedDateTime.now().plusHours(1),
-                            remindAt = ZonedDateTime.now(),
-                            host = "Chris Athanas",
-                        ),
-                        AgendaItem.Task(
-                            id = "2",
-                            title = "Task 2",
-                            description = "Task Description 2",
-                            time = ZonedDateTime.now().plusHours(3),
-                            isDone = false,
-                            remindAt = ZonedDateTime.now().plusHours(2),
-                        ),
-                        AgendaItem.Reminder(
-                            id = "3",
-                            title = "Reminder 3",
-                            description = "Reminder Description 3",
-                            time = ZonedDateTime.now(),
-                            remindAt = ZonedDateTime.now().plusDays(1),
-                        ),
+                listOf(
+                    AgendaItem.Event(
+                        id = "1",
+                        title = "Event 1",
+                        description = "Event Description 1",
+                        from = ZonedDateTime.now(),
+                        to = ZonedDateTime.now().plusHours(1),
+                        remindAt = ZonedDateTime.now(),
+                        host = "Chris Athanas",
                     ),
+                    AgendaItem.Task(
+                        id = "2",
+                        title = "Task 2",
+                        description = "Task Description 2",
+                        time = ZonedDateTime.now().plusHours(3),
+                        isDone = false,
+                        remindAt = ZonedDateTime.now().plusHours(2),
+                    ),
+                    AgendaItem.Reminder(
+                        id = "3",
+                        title = "Reminder 3",
+                        description = "Reminder Description 3",
+                        time = ZonedDateTime.now(),
+                        remindAt = ZonedDateTime.now().plusDays(1),
+                    ),
+                ),
                 isLoaded = true,
             ),
             onAction = { println("ACTION: $it") },
@@ -892,7 +931,7 @@ fun AgendaScreenPreview() {
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
-    group="Night Mode=false",
+    group = "Night Mode=false",
     apiLevel = 28,
     widthDp = 350,
 )
