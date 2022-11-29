@@ -264,15 +264,14 @@ class AgendaViewModel @Inject constructor(
                             if (uiEvent.agendaItem.isUserEventCreator) {
                                 agendaRepository.deleteEventId(uiEvent.agendaItem.id)
                             } else {
-                                // Otherwise, the user is removed from the Event.
+                                // Otherwise, the user (as Attendee) is removed from the Event.
                                 agendaRepository.removeLoggedInUserFromEventId(
                                     eventId = uiEvent.agendaItem.id,
                                 )
                             }
                         }
                         is AgendaItem.Task -> {
-//                                agendaRepository.deleteTaskId(agendaItem)  // todo implement
-                            ResultUiText.Error<AgendaItem.Task>(UiText.Str("unimplemented"))
+                            agendaRepository.deleteTaskId(uiEvent.agendaItem.id)
                         }
                         is AgendaItem.Reminder -> {
 //                                agendaRepository.deleteReminderId(agendaItem) // todo implement
