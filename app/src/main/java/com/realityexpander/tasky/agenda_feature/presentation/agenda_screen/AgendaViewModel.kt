@@ -91,6 +91,9 @@ class AgendaViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            agendaRepository.updateAgendaForDayFromRemote(
+                getDateForSelectedDayIndex(selectedDate, selectedDayIndex)
+            )
             yield() // wait for other init code to run
 
             // restore state after process death

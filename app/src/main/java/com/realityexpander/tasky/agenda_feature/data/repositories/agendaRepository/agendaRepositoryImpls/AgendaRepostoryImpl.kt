@@ -10,7 +10,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeReposi
 import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
-import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -38,39 +38,52 @@ class AgendaRepositoryImpl @Inject constructor(
         return events + tasks // + reminders
     }
 
+    override suspend fun updateAgendaForDayFromRemote(dateTime: ZonedDateTime) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Get fresh data
+                val result = agendaApi.getAgenda(dateTime)
+
+//                eventRepository.clearEventsForDayLocally(dateTime) // clear local data // todo add this?
+                // Insert fresh data into db
+                result.events.forEach { event ->
+                    val result2 =
+                        eventRepository.upsertEventLocally(event.toDomain())
+                    if(result2 is ResultUiText.Error) {
+                        throw IllegalStateException(result2.message.asStrOrNull())
+                    }
+                }
+
+//                taskRepository.clearTasksForDayLocally(dateTime) // clear local data // todo add this?
+                // Insert fresh data into db
+                result.tasks.forEach { task ->
+                    val result2 =
+                        taskRepository.upsertTaskLocally(task.toDomain())
+                    if(result2 is ResultUiText.Error) {
+                        throw IllegalStateException(result2.message.asStrOrNull())
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // don't send error to user, just log it (silent fail is ok here)
+            }
+        }
+    }
+
     override fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>> {
 
+//        return flow { // why doesnt this work?
         return channelFlow {
             supervisorScope {
-                launch(Dispatchers.IO) {
                     try {
-                        // send stale local data
-                        send(eventRepository.getEventsForDay(dateTime) +
-                                taskRepository.getTasksForDay(dateTime)
-                        )
+                        updateAgendaForDayFromRemote(dateTime)
 
-                        // Get fresh data
-                        val result = agendaApi.getAgenda(dateTime)
-
-//                        eventRepository.clearEventsForDayLocally(dateTime) // clear local data // todo add this?
-                        // Insert fresh data into db
-                        result.events.forEach { event ->
-                            val result2 =
-                                eventRepository.upsertEventLocally(event.toDomain())
-                            if(result2 is ResultUiText.Error) {
-                                throw IllegalStateException(result2.message.asStrOrNull())
-                            }
-                        }
-
-//                        taskRepository.clearTasksForDayLocally(dateTime) // clear local data // todo add this?
-                        // Insert fresh data into db
-                        result.tasks.forEach { task ->
-                            val result2 =
-                                taskRepository.upsertTaskLocally(task.toDomain())
-                            if(result2 is ResultUiText.Error) {
-                                throw IllegalStateException(result2.message.asStrOrNull())
-                            }
-                        }
+                        // This doesn't work with `flow`, why not?
+//                        emitAll(taskRepository.getTasksForDayFlow(dateTime).combine(
+//                            eventRepository.getEventsForDayFlow(dateTime)
+//                        ) { tasks, events ->
+//                            events + tasks // + reminders
+//                        })
 
                         taskRepository.getTasksForDayFlow(dateTime).combine(
                             eventRepository.getEventsForDayFlow(dateTime)
@@ -78,10 +91,8 @@ class AgendaRepositoryImpl @Inject constructor(
                             events + tasks // + reminders
                         }.collect { agendaItems ->
                             send(agendaItems)
+//                            emit(agendaItems)
                         }
-                    }
-                    catch (e: CancellationException) {
-                        /* intentionally eat this exception */
                     }
                     catch (e: Exception) {
                         e.printStackTrace()
@@ -89,8 +100,6 @@ class AgendaRepositoryImpl @Inject constructor(
                     }
 
                 }
-
-            }
         }
     }
 
