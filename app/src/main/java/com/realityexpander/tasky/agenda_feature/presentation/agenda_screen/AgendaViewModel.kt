@@ -172,7 +172,7 @@ class AgendaViewModel @Inject constructor(
                         _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateTask)
                     }
                     AgendaItemType.Reminder -> {
-//                        _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateReminder)
+                        _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateReminder)
                     }
                 }
             }
@@ -310,6 +310,15 @@ class AgendaViewModel @Inject constructor(
             }
             is OneTimeEvent.NavigateToOpenTask -> {
                 _oneTimeEvent.emit(OneTimeEvent.NavigateToOpenTask(uiEvent.taskId))
+            }
+            is OneTimeEvent.NavigateToCreateReminder -> {
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateReminder)
+            }
+            is OneTimeEvent.NavigateToEditReminder -> {
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToEditReminder(uiEvent.reminderId))
+            }
+            is OneTimeEvent.NavigateToOpenReminder -> {
+                _oneTimeEvent.emit(OneTimeEvent.NavigateToOpenReminder(uiEvent.reminderId))
             }
         }
     }

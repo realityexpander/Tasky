@@ -239,6 +239,17 @@ fun AgendaScreenContent(
                 navigateToTaskScreen(oneTimeEvent.taskId, true)
             }
 
+            // • REMINDER
+            OneTimeEvent.NavigateToCreateReminder -> {
+                navigateToTaskScreen(null, true)
+            }
+            is OneTimeEvent.NavigateToOpenReminder -> {
+                navigateToTaskScreen(oneTimeEvent.reminderId)
+            }
+            is OneTimeEvent.NavigateToEditReminder -> {
+                navigateToTaskScreen(oneTimeEvent.reminderId, true)
+            }
+
             is OneTimeEvent.ShowToast -> {
                 Toast.makeText(
                     context,
@@ -773,8 +784,6 @@ fun AgendaScreenContent(
             dateDialogState.show()
         }
     }
-
-    // • SELECT CURRENT DATE FOR AGENDA
     MaterialDialog(
         dialogState = dateDialogState,
         onCloseRequest = {
