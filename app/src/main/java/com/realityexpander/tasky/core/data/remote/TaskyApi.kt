@@ -1,12 +1,14 @@
 package com.realityexpander.tasky.core.data.remote
 
 import com.realityexpander.tasky.BuildConfig
+import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.common.util.TimeZoneStr
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaDayDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaSyncDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.GetAttendeeResponseDTO
+import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.DTOs.ReminderDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.DTOs.TaskDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.ApiCredentialsDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
@@ -128,5 +130,27 @@ interface TaskyApi {
     @DELETE("task")
     suspend fun deleteTask(
         @Query("taskId") taskId: TaskId
+    ): Response<Void>
+
+    ////////////////// REMINDER //////////////////
+
+    @POST("reminder")
+    suspend fun createReminder(
+        @Body reminder: ReminderDTO
+    ): Response<Void>
+
+    @GET("reminder")
+    suspend fun getReminder(
+        @Query("reminderId") reminderId: ReminderId,
+    ): Response<ReminderDTO>
+
+    @PUT("reminder")
+    suspend fun updateReminder(
+        @Body reminder: ReminderDTO
+    ): Response<Void>
+
+    @DELETE("reminder")
+    suspend fun deleteReminder(
+        @Query("reminderId") reminderId: ReminderId
     ): Response<Void>
 }
