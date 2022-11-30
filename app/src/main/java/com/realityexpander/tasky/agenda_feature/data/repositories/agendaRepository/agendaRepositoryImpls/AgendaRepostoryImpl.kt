@@ -87,22 +87,20 @@ class AgendaRepositoryImpl @Inject constructor(
 
         return flow {
             supervisorScope {
-                    try {
-                        updateAgendaForDayFromRemote(dateTime)
+                try {
+                    updateAgendaForDayFromRemote(dateTime)
 
-                        emitAll(combine(
-                            taskRepository.getTasksForDayFlow(dateTime),
-                            eventRepository.getEventsForDayFlow(dateTime),
-                            reminderRepository.getRemindersForDayFlow(dateTime)
-                        ) { tasks, events, reminders ->
-                            events + tasks + reminders
-                        })
-                    }
-                    catch (e: Exception) {
+                    emitAll(combine(
+                        taskRepository.getTasksForDayFlow(dateTime),
+                        eventRepository.getEventsForDayFlow(dateTime),
+                        reminderRepository.getRemindersForDayFlow(dateTime)
+                    ) { tasks, events, reminders ->
+                        events + tasks + reminders
+                    })
+                } catch (e: Exception) {
                         e.printStackTrace()
                         // don't send error to user, just log it (silent fail is ok here)
                     }
-
                 }
         }
     }

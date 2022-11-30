@@ -10,10 +10,10 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IReminderRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.util.rethrowIfCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.ZonedDateTime
-import java.util.concurrent.CancellationException
 
 class ReminderRepositoryImpl(
     private val reminderDao: IReminderDao,
@@ -30,9 +30,8 @@ class ReminderRepositoryImpl(
             reminderApi.createReminder(reminder.toDTO())
 
             ResultUiText.Success()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "createReminder error"))
         }
     }
@@ -45,9 +44,8 @@ class ReminderRepositoryImpl(
             reminderDao.upsertReminder(reminder.toEntity())  // save to local DB ONLY
 
             ResultUiText.Success()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "upsertReminder error"))
         }
     }
@@ -76,9 +74,8 @@ class ReminderRepositoryImpl(
 
             //ResultUiText.Success(response.toDomain())
             response.toDomain()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             null
         }
     }
@@ -86,9 +83,8 @@ class ReminderRepositoryImpl(
     suspend fun getAllRemindersLocally(): List<AgendaItem.Reminder> {
         return try {
             reminderDao.getReminders().map { it.toDomain() }
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             emptyList()
         }
     }
@@ -101,9 +97,8 @@ class ReminderRepositoryImpl(
             reminderApi.updateReminder(reminder.toDTO())
 
             ResultUiText.Success()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.localizedMessage ?: "updateReminder error"))
         }
     }
@@ -124,9 +119,8 @@ class ReminderRepositoryImpl(
             } else {
                 ResultUiText.Error(UiText.Str(response.exceptionOrNull()?.localizedMessage ?: "deleteReminder error"))
             }
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "deleteReminderId error"))
         }
     }
@@ -134,9 +128,8 @@ class ReminderRepositoryImpl(
     override suspend fun getDeletedReminderIdsLocally(): List<ReminderId> {
         return try {
             reminderDao.getMarkedDeletedReminderIds()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             emptyList()
         }
     }
@@ -146,9 +139,8 @@ class ReminderRepositoryImpl(
             reminderDao.deleteFinallyByReminderIds(reminderIds)
 
             ResultUiText.Success() // todo return the deleted reminders, for undo
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "deleteFinallyReminderIds error"))
         }
     }
@@ -160,9 +152,8 @@ class ReminderRepositoryImpl(
             reminderDao.clearAllReminders()
 
             ResultUiText.Success() // todo return the cleared reminder, yes for undo
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "clearAllReminders error"))
         }
     }
@@ -172,9 +163,8 @@ class ReminderRepositoryImpl(
             reminderDao.clearAllRemindersForDay(zonedDateTime)
 
             ResultUiText.Success() // todo return the cleared reminder, for undo
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "clearRemindersForDay error"))
         }
     }
