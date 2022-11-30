@@ -10,10 +10,10 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.ITaskRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.util.rethrowIfCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.ZonedDateTime
-import java.util.concurrent.CancellationException
 
 class TaskRepositoryImpl(
     private val taskDao: ITaskDao,
@@ -30,9 +30,8 @@ class TaskRepositoryImpl(
             taskApi.createTask(task.toDTO())
 
             ResultUiText.Success()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "createTask error"))
         }
     }
@@ -45,9 +44,8 @@ class TaskRepositoryImpl(
             taskDao.upsertTask(task.toEntity())  // save to local DB ONLY
 
             ResultUiText.Success()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "upsertTask error"))
         }
     }
@@ -76,8 +74,6 @@ class TaskRepositoryImpl(
 
             //ResultUiText.Success(response.toDomain())
             response.toDomain()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
             null
         }
@@ -86,9 +82,8 @@ class TaskRepositoryImpl(
     suspend fun getAllTasksLocally(): List<AgendaItem.Task> {
         return try {
             taskDao.getTasks().map { it.toDomain() }
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             emptyList()
         }
     }
@@ -101,9 +96,8 @@ class TaskRepositoryImpl(
             taskApi.updateTask(task.toDTO())
 
             ResultUiText.Success()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.localizedMessage ?: "updateTask error"))
         }
     }
@@ -124,9 +118,8 @@ class TaskRepositoryImpl(
             } else {
                 ResultUiText.Error(UiText.Str(response.exceptionOrNull()?.localizedMessage ?: "deleteTask error"))
             }
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "deleteTaskId error"))
         }
     }
@@ -134,9 +127,8 @@ class TaskRepositoryImpl(
     override suspend fun getDeletedTaskIdsLocally(): List<TaskId> {
         return try {
             taskDao.getMarkedDeletedTaskIds()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             emptyList()
         }
     }
@@ -146,9 +138,8 @@ class TaskRepositoryImpl(
             taskDao.deleteFinallyByTaskIds(taskIds)
 
             ResultUiText.Success() // todo return the deleted tasks, for undo
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "deleteFinallyTaskIds error"))
         }
     }
@@ -160,9 +151,8 @@ class TaskRepositoryImpl(
             taskDao.clearAllTasks()
 
             ResultUiText.Success() // todo return the cleared task, yes for undo
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "clearAllTasks error"))
         }
     }
@@ -172,9 +162,8 @@ class TaskRepositoryImpl(
             taskDao.clearAllTasksForDay(zonedDateTime)
 
             ResultUiText.Success() // todo return the cleared task, for undo
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "clearTasksForDay error"))
         }
     }

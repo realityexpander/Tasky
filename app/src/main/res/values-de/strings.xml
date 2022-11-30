@@ -5,6 +5,7 @@
     <!--    <string name="ok">OK</string>          Note: use android.R.string.ok instead-->
     <!--    <string name="cancel">Cancel</string>  Note: use android.R.string.cancel instead-->
     <string name="delete">Löschen</string>
+    <string name="save">Speichern</string>
 
     <!-- general descriptions -->
     <string name="back_description">Der Rücken</string>
@@ -106,16 +107,17 @@
     <string name="agenda_tomorrow">Morgen</string>
     <string name="agenda_choose_current_date_dialog_title">Wählen Sie das Startdatum für die Agendawoche aus</string>
     <string name="agenda_choose_current_date_dialog_today_button_text">Heute</string>
+    <string name="agenda_isDone_icon_description">Abgeschlossen angeben</string>
+
+    <string name="description_title_marker">Titelmarkierung für Meetings</string>
 
     <!--    Event screen -->
     <string name="event_description_close">Ereignisbildschirm schließen</string>
     <string name="event_description_edit_event">Ereignis bearbeiten</string>
-    <string name="event_description_meeting_title_marker">Titelmarkierung für Meetings</string>
     <string name="event_description_edit_event_description">Ereignisbeschreibung bearbeiten</string>
     <string name="event_description_add_photo">Foto hinzufügen</string>
     <string name="event_description_add_attendee_button">Schaltfläche Teilnehmer hinzufügen</string>
     <string name="event_description_photo">Foto</string>
-    <string name="save">Speichern</string>
     <string name="event_event_title">Vorfall</string>
     <string name="event_no_title_set">Kein Titel festgelegt</string>
     <string name="event_edit_event_title">Veranstaltungstitel bearbeiten</string>
@@ -140,7 +142,7 @@
     <string name="event_message_event_left_success">Veranstaltung erfolgreich verlassen</string>
     <string name="event_message_event_joined_success">Veranstaltung erfolgreich beigetreten</string>
 
-    <!--    Event Screen Dialog Titles -->
+    <!--    Editor Dialog -->
     <string name="event_dialog_title_choose_title_text">TITEL BEARBEITEN</string>
     <string name="event_dialog_title_choose_description_text">BESCHREIBUNG BEARBEITEN</string>
     <string name="event_dialog_title_choose_from_time">VON ZEIT EINSTELLEN</string>
@@ -162,8 +164,10 @@
     <string name="event_confirm_action_dialog_delete">Löschen</string>
     <string name="event_confirm_action_dialog_leave">Verlassen</string>
     <string name="event_confirm_action_dialog_join">Verbinden</string>
-    <string name="event_confirm_action_dialog_title_phrase">%1$s ist das %2$s\?</string>
-    <string name="event_confirm_action_dialog_text_phrase">Bist du sicher, dass du diesen %2$s %1$s möchtest\?</string>
+
+    <!--    Confirm-Action-dialog Common -->
+    <string name="confirm_action_dialog_title_phrase">%1$s ist das %2$s\?</string>
+    <string name="confirm_action_dialog_text_phrase">Bist du sicher, dass du diesen %2$s %1$s möchtest\?</string>
 
     <!--    Attendee - Add & Remove -->
     <string name="attendee_add_attendee_dialog_title">Teilnehmer hinzufügen</string>
@@ -176,5 +180,37 @@
 
     <!--    Agenda Sync -->
     <string name="agenda_sync_error">Agenda konnte nicht synchronisiert werden</string>
+
+    <!--    Task screen -->
+    <string name="task_description_close">Aufgabenbildschirm schließen</string>
+    <string name="task_description_edit_event">Aufgabe bearbeiten</string>
+    <string name="task_description_meeting_title_marker">Aufgabentitelmarkierung</string>
+    <string name="task_description_edit_task_description">Aufgabenbeschreibung bearbeiten</string>
+    <string name="task_task_title">Aufgabe</string>
+    <string name="task_no_title_set">Kein Titel festgelegt</string>
+    <string name="task_edit_task_title">Aufgabentitel bearbeiten</string>
+    <string name="task_no_description_set">Keine Beschreibung festgelegt</string>
+    <string name="task_time">Zeit</string>
+    <string name="task_delete_task">AUFGABE LÖSCHEN</string>
+    <string name="task_error_save_task">Fehler beim Speichern der Aufgabe: %s</string>
+    <string name="task_error_delete_task">Fehler beim Löschen der Aufgabe</string>
+    <string name="task_message_task_saved">Aufgabe gespeichert</string>
+    <string name="task_message_task_deleted_success">Aufgabe erfolgreich gelöscht</string>
+
+    <!--    Reminder screen -->
+    <string name="reminder_description_close">Bildschirm „Erinnerung“ schließen</string>
+    <string name="reminder_description_edit_event">Erinnerung bearbeiten</string>
+    <string name="reminder_description_meeting_title_marker">Erinnerungstitelmarkierung</string>
+    <string name="reminder_description_edit_reminder_description">Erinnerungsbeschreibung bearbeiten</string>
+    <string name="reminder_reminder_title">Erinnerung</string>
+    <string name="reminder_no_title_set">Kein Titel festgelegt</string>
+    <string name="reminder_edit_reminder_title">Erinnerungstitel bearbeiten</string>
+    <string name="reminder_no_description_set">Keine Beschreibung festgelegt</string>
+    <string name="reminder_time">Zeit</string>
+    <string name="reminder_delete_reminder">AUFGABE LÖSCHEN</string>
+    <string name="reminder_error_save_reminder">Fehler beim Speichern Erinnerung: %s</string>
+    <string name="reminder_error_delete_reminder">Fehler beim Löschen der Erinnerung</string>
+    <string name="reminder_message_reminder_saved">Erinnerung gespeichert</string>
+    <string name="reminder_message_reminder_deleted_success">Erinnerung erfolgreich gelöscht</string>
 
 </resources>

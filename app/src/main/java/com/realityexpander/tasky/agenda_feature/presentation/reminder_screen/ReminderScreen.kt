@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.agenda_feature.presentation.task_screen
+package com.realityexpander.tasky.agenda_feature.presentation.reminder_screen
 
 import android.content.res.Configuration
 import android.widget.Toast
@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,8 +28,7 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.TimeDateRow
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.RemindAtRow
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.SmallHeightHorizontalDivider
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.*
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.*
+import com.realityexpander.tasky.agenda_feature.presentation.reminder_screen.ReminderScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
@@ -45,19 +43,19 @@ import java.util.*
 
 @Composable
 @Destination
-fun TaskScreen(
+fun ReminderScreen(
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    initialTaskId: UuidStr? = null,
+    initialReminderId: UuidStr? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     isEditable: Boolean = false,
     navigator: DestinationsNavigator,
-    viewModel: TaskViewModel = hiltViewModel(),
+    viewModel: ReminderViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
     val oneTimeEvent by viewModel.oneTimeEvent.collectAsState(null)
 
     if (state.isLoaded) {
-        TaskScreenContent(
+        ReminderScreenContent(
             state = state,
             oneTimeEvent = oneTimeEvent,
             onAction = viewModel::sendEvent,
@@ -79,10 +77,10 @@ fun TaskScreen(
 }
 
 @Composable
-fun TaskScreenContent(
-    state: TaskScreenState,
+fun ReminderScreenContent(
+    state: ReminderScreenState,
     oneTimeEvent: OneTimeEvent?,
-    onAction: (TaskScreenEvent) -> Unit,
+    onAction: (ReminderScreenEvent) -> Unit,
     navigator: DestinationsNavigator,
 ) {
     val context = LocalContext.current
@@ -145,7 +143,7 @@ fun TaskScreenContent(
                 Icon(
                     imageVector = Icons.Filled.Close,
                     tint = MaterialTheme.colors.surface,
-                    contentDescription = stringResource(R.string.event_description_close),
+                    contentDescription = stringResource(R.string.reminder_description_close),
                     modifier = Modifier
                         .size(30.dp)
                         .alignByBaseline()
@@ -169,7 +167,7 @@ fun TaskScreenContent(
                     TextButton(
                         onClick = {
                             onAction(SetIsEditable(false))
-                            onAction(SaveTask)
+                            onAction(SaveReminder)
                         },
                         modifier = Modifier.weight(.25f)
                     ) {
@@ -195,7 +193,7 @@ fun TaskScreenContent(
                             Icon(
                                 imageVector = Icons.Filled.Edit,
                                 tint = MaterialTheme.colors.surface,
-                                contentDescription = stringResource(R.string.event_description_edit_event),
+                                contentDescription = stringResource(R.string.reminder_description_edit_event),
                                 modifier = Modifier
                                     .align(Alignment.CenterVertically)
                                     .width(40.dp)
@@ -221,7 +219,7 @@ fun TaskScreenContent(
         }
 
 
-        // • EVENT HEADER & MAIN CONTENT
+        // • REMINDER HEADER & MAIN CONTENT
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -229,7 +227,7 @@ fun TaskScreenContent(
                 .verticalScroll(rememberScrollState())
         ) col2@{
 
-            // • TASK TITLE & DESCRIPTION
+            // • REMINDER TITLE & DESCRIPTION
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -237,7 +235,7 @@ fun TaskScreenContent(
             ) {
                 Spacer(modifier = Modifier.smallHeight())
 
-                // • AGENDA ITEM TYPE (EVENT)
+                // • AGENDA ITEM TYPE (REMINDER)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -251,7 +249,7 @@ fun TaskScreenContent(
                     )
                     Spacer(modifier = Modifier.extraSmallWidth())
                     Text(
-                        stringResource(R.string.task_task_title),
+                        stringResource(R.string.agenda_item_type_reminder),
                         fontWeight = SemiBold,
                         color = MaterialTheme.colors.onSurface,
                         modifier = Modifier
@@ -260,63 +258,42 @@ fun TaskScreenContent(
                 }
                 Spacer(modifier = Modifier.smallHeight())
 
-                // • TASK TITLE
+                // • REMINDER TITLE
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
 
                     Row(
                         modifier = Modifier
-                            .weight(1f)
                     ) {
-
-                        // • Visual Circle
                         Icon(
-                            imageVector = if (state.task?.isDone == true)
-                                    Icons.Filled.TaskAlt // √ with CircleOutline
-                                        else
-                                    Icons.Outlined.Circle,
+                            imageVector = Icons.Outlined.Circle,
                             tint = MaterialTheme.colors.onSurface,
                             contentDescription = stringResource(R.string.description_title_marker),
                             modifier = Modifier
                                 .size(26.dp)
                                 .offset(0.dp, 8.dp)
                                 .align(Alignment.Top)
-                                .clickable {
-                                    onAction(ToggleIsDone)
-                                }
                         )
                         Spacer(modifier = Modifier.extraSmallWidth())
-                        if (state.task?.isDone == true) { // hack to get the `line-through` to work
-                            Text(
-                                text = state.task?.title ?: "",
-                                color = MaterialTheme.colors.onSurface,
-                                fontWeight = SemiBold,
-                                style = MaterialTheme.typography.h2,
-                                textDecoration = TextDecoration.LineThrough,
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .weight(1f)
-                            )
-                        } else {
-                            Text(
-                                text = state.task?.title ?: "",
-                                color = MaterialTheme.colors.onSurface,
-                                fontWeight = SemiBold,
-                                style = MaterialTheme.typography.h2,
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .weight(1f)
-                            )
-                        }
                     }
+
+                    Text(
+                        text = state.reminder?.title ?: "",
+                        color = MaterialTheme.colors.onSurface,
+                        fontWeight = SemiBold,
+                        style = MaterialTheme.typography.h2,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .weight(1f)
+                    )
 
                     val editTextStyle =
                         MaterialTheme.typography.h2  // can only access in Composable scope
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
-                        contentDescription = stringResource(R.string.event_edit_event_title),
+                        contentDescription = stringResource(R.string.reminder_edit_reminder_title),
                         modifier = Modifier
                             .size(28.dp)
                             .weight(.1f)
@@ -324,8 +301,8 @@ fun TaskScreenContent(
                             .clickable(isEditable) {
                                 onAction(
                                     SetEditMode(
-                                        ChooseTitleText(
-                                            state.task?.title ?: "",
+                                        EditMode.ChooseTitleText(
+                                            state.reminder?.title ?: "",
                                             editTextStyle = editTextStyle
                                         )
                                     )
@@ -337,7 +314,7 @@ fun TaskScreenContent(
 
                 SmallHeightHorizontalDivider()
 
-                // • TASK DESCRIPTION
+                // • REMINDER DESCRIPTION
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -347,7 +324,7 @@ fun TaskScreenContent(
                             .weight(1f)
                     ) {
                         Text(
-                            text = state.task?.description
+                            text = state.reminder?.description
                                 ?: stringResource(R.string.event_no_description_set),
                             style = MaterialTheme.typography.h5,
                             color = MaterialTheme.colors.onSurface,
@@ -361,7 +338,7 @@ fun TaskScreenContent(
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
                         tint = if (isEditable) MaterialTheme.colors.onSurface else Color.Transparent,
-                        contentDescription = stringResource(R.string.event_description_edit_event_description),
+                        contentDescription = stringResource(R.string.reminder_description_edit_reminder_description),
                         modifier = Modifier
                             .size(28.dp, 28.dp)
                             .weight(.1f)
@@ -369,8 +346,8 @@ fun TaskScreenContent(
                             .clickable(enabled = isEditable) {
                                 onAction(
                                     SetEditMode(
-                                        ChooseDescriptionText(
-                                            state.task?.description ?: "",
+                                        EditMode.ChooseDescriptionText(
+                                            state.reminder?.description ?: "",
                                             editTextStyle = editTextStyle
                                         )
                                     )
@@ -381,7 +358,7 @@ fun TaskScreenContent(
             }
 
 
-            // • EVENT TIMES & DATES & JOIN/DELETE/LEAVE (FROM, TO, REMIND AT)
+            // • REMINDER TIMES & DATES & JOIN/DELETE/LEAVE (FROM, TO, REMIND AT)
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -394,36 +371,36 @@ fun TaskScreenContent(
                 // • TIME/DATE ROW
                 TimeDateRow(
                     title = stringResource(R.string.event_from),
-                    date = state.task?.time ?: ZonedDateTime.now(),
+                    date = state.reminder?.time ?: ZonedDateTime.now(),
                     isEditable = isEditable ,
                     onEditDate = {
                         onAction(
                             SetEditMode(
-                                ChooseDate(state.task?.time ?: ZonedDateTime.now())
+                                EditMode.ChooseDate(state.reminder?.time ?: ZonedDateTime.now())
                             )
                         )
                     },
                     onEditTime = {
                         onAction(
                             SetEditMode(
-                                ChooseTime(state.task?.time ?: ZonedDateTime.now())
+                                EditMode.ChooseTime(state.reminder?.time ?: ZonedDateTime.now())
                             )
                         )
                     }
                 )
                 SmallHeightHorizontalDivider()
 
-                // • REMIND AT ROW
+                // • REMIND-AT ROW
                 RemindAtRow(
-                    fromDateTime = state.task?.time ?: ZonedDateTime.now(),
-                    remindAtDateTime = state.task?.remindAt ?: ZonedDateTime.now(),
+                    fromDateTime = state.reminder?.time ?: ZonedDateTime.now(),
+                    remindAtDateTime = state.reminder?.remindAt ?: ZonedDateTime.now(),
                     isEditable = isEditable,
-                    isDropdownMenuVisible = state.editMode is ChooseRemindAtDateTime,
+                    isDropdownMenuVisible = state.editMode is EditMode.ChooseRemindAtDateTime,
                     onEditRemindAtDateTime = {
                         onAction(
                             SetEditMode(
-                                ChooseRemindAtDateTime(
-                                    state.task?.remindAt ?: ZonedDateTime.now()
+                                EditMode.ChooseRemindAtDateTime(
+                                    state.reminder?.remindAt ?: ZonedDateTime.now()
                                 )
                             )
                         )
@@ -431,7 +408,7 @@ fun TaskScreenContent(
                     onDismissRequest = { onAction(CancelEditMode) },
                     onSaveRemindAtDateTime = { dateTime ->
                         onAction(
-                            UpdateDateTime(dateTime)
+                            EditMode.UpdateDateTime(dateTime)
                         )
                     }
                 )
@@ -439,25 +416,25 @@ fun TaskScreenContent(
 
                 Spacer(modifier = Modifier.largeHeight())
 
-                // • DELETE TASK BUTTON
+                // • DELETE REMINDER BUTTON
                 fun ShowAlertDialogActionType.getTitle() = UiText.Res(
                         R.string.confirm_action_dialog_title_phrase,
                         context.getStringSafe(title.asResIdOrNull),
-                        context.getString(R.string.agenda_item_type_task)
+                        context.getString(R.string.agenda_item_type_reminder)
                     )
                 fun ShowAlertDialogActionType.getMessage() = UiText.Res(
                         R.string.confirm_action_dialog_text_phrase,
                         context.getStringSafe(title.asResIdOrNull).lowercase(),
-                        context.getString(R.string.agenda_item_type_task).lowercase()
+                        context.getString(R.string.agenda_item_type_reminder).lowercase()
                     )
                 TextButton(
                     onClick = {
                             onAction(ShowAlertDialog(
-                                title = ShowAlertDialogActionType.DeleteTask.getTitle(),
-                                message = ShowAlertDialogActionType.DeleteTask.getMessage(),
-                                confirmButtonLabel =  ShowAlertDialogActionType.DeleteTask.title,
+                                title = ShowAlertDialogActionType.DeleteReminder.getTitle(),
+                                message = ShowAlertDialogActionType.DeleteReminder.getMessage(),
+                                confirmButtonLabel =  ShowAlertDialogActionType.DeleteReminder.title,
                                 onConfirm = {
-                                    onAction(DeleteTask)
+                                    onAction(DeleteReminder)
                                 }
                             ))
                     },
@@ -465,7 +442,7 @@ fun TaskScreenContent(
                         .fillMaxWidth()
                 ) {
                     Text(
-                        stringResource(R.string.task_delete_task),
+                        stringResource(R.string.reminder_delete_reminder),
                         style = MaterialTheme.typography.h4,
                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
                         textAlign = TextAlign.Center,
@@ -480,7 +457,7 @@ fun TaskScreenContent(
 
     // • EDITORS FOR TASK PROPERTIES
     state.editMode?.let {
-        TaskPropertyEditors(
+        ReminderPropertyEditors(
             editMode = it,
             onAction = onAction,
         )
@@ -536,14 +513,14 @@ fun Preview() {
             username = "Cameron Anderson"
         )
 
-        TaskScreenContent(
-            state = TaskScreenState(
+        ReminderScreenContent(
+            state = ReminderScreenState(
                 authInfo = authInfo,
                 username = "Cameron Anderson",
-                task = AgendaItem.Task(
+                reminder = AgendaItem.Reminder(
                     id = "0001",
-                    title = "Title of Task",
-                    description = "Description of Task",
+                    title = "Title of Reminder",
+                    description = "Description of Reminder",
                     time = ZonedDateTime.now().plusHours(1),
                     remindAt = ZonedDateTime.now().plusMinutes(30),
                 )

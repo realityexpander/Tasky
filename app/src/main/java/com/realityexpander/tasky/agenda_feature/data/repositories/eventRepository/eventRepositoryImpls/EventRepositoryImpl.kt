@@ -11,10 +11,10 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.util.rethrowIfCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.ZonedDateTime
-import java.util.concurrent.CancellationException
 
 class EventRepositoryImpl(
     private val eventDao: IEventDao, // = EventDaoFakeImpl(),
@@ -31,9 +31,8 @@ class EventRepositoryImpl(
             eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
 
             ResultUiText.Success(response.toDomain())
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "createEvent error"))
         }
     }
@@ -46,9 +45,8 @@ class EventRepositoryImpl(
             eventDao.upsertEvent(event.toEntity())  // save to local DB ONLY
 
             ResultUiText.Success()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "upsertEvent error"))
         }
     }
@@ -71,9 +69,8 @@ class EventRepositoryImpl(
     override suspend fun getEvent(eventId: EventId): AgendaItem.Event? {
         return try {
             eventDao.getEventById(eventId)?.toDomain()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             null
         }
     }
@@ -81,9 +78,8 @@ class EventRepositoryImpl(
     suspend fun getAllEventsLocally(): List<AgendaItem.Event> {
         return try {
             eventDao.getEvents().map { it.toDomain() }
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             emptyList()
         }
     }
@@ -96,9 +92,8 @@ class EventRepositoryImpl(
             eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
 
             ResultUiText.Success(response.toDomain())
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.localizedMessage ?: "updateEvent error"))
         }
     }
@@ -119,9 +114,8 @@ class EventRepositoryImpl(
             } else {
                 ResultUiText.Error(UiText.Str(response.exceptionOrNull()?.localizedMessage ?: "deleteEvent error"))
             }
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "deleteEventId error"))
         }
     }
@@ -129,9 +123,8 @@ class EventRepositoryImpl(
     override suspend fun getDeletedEventIdsLocally(): List<EventId> {
         return try {
             eventDao.getMarkedDeletedEventIds()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             emptyList()
         }
     }
@@ -141,9 +134,8 @@ class EventRepositoryImpl(
             eventDao.deleteFinallyByEventIds(eventIds)
 
             ResultUiText.Success() // todo return the deleted events, for undo
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "deleteFinallyEventIds error"))
         }
     }
@@ -155,9 +147,8 @@ class EventRepositoryImpl(
             eventDao.clearAllEvents()
 
             ResultUiText.Success() // todo return the cleared event, yes for undo
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "clearAllEvents error"))
         }
     }
@@ -167,9 +158,8 @@ class EventRepositoryImpl(
             eventDao.clearAllEventsForDay(zonedDateTime)
 
             ResultUiText.Success() // todo return the cleared event, for undo
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "clearEventsForDay error"))
         }
     }

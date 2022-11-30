@@ -109,10 +109,11 @@
     <string name="agenda_choose_current_date_dialog_today_button_text">Today</string>
     <string name="agenda_isDone_icon_description">Indicate Completed</string>
 
+    <string name="description_title_marker">Title marker</string>
+
     <!--    Event screen -->
     <string name="event_description_close">Close Event screen</string>
     <string name="event_description_edit_event">Edit Event</string>
-    <string name="event_description_meeting_title_marker">Meeting title marker</string>
     <string name="event_description_edit_event_description">Edit Event Description</string>
     <string name="event_description_add_photo">Add photo</string>
     <string name="event_description_add_attendee_button">Add Attendee button</string>
@@ -163,8 +164,10 @@
     <string name="event_confirm_action_dialog_delete">Delete</string>
     <string name="event_confirm_action_dialog_leave">Leave</string>
     <string name="event_confirm_action_dialog_join">Join</string>
-    <string name="event_confirm_action_dialog_title_phrase">%1$s this %2$s?</string>
-    <string name="event_confirm_action_dialog_text_phrase">Are you sure you want to %1$s this %2$s?</string>
+
+    <!--    Confirm-Action-dialog Common -->
+    <string name="confirm_action_dialog_title_phrase">%1$s this %2$s?</string>
+    <string name="confirm_action_dialog_text_phrase">Are you sure you want to %1$s this %2$s?</string>
 
     <!--    Attendee - Add & Remove -->
     <string name="attendee_add_attendee_dialog_title">Add Attendee</string>
@@ -193,5 +196,21 @@
     <string name="task_error_delete_task">Error deleting Task</string>
     <string name="task_message_task_saved">Task Saved</string>
     <string name="task_message_task_deleted_success">Task successfully deleted</string>
+
+    <!--    Reminder screen -->
+    <string name="reminder_description_close">Close Reminder screen</string>
+    <string name="reminder_description_edit_event">Edit Reminder</string>
+    <string name="reminder_description_meeting_title_marker">Reminder title marker</string>
+    <string name="reminder_description_edit_reminder_description">Edit Reminder Description</string>
+    <string name="reminder_reminder_title">Reminder</string>
+    <string name="reminder_no_title_set">No title set</string>
+    <string name="reminder_edit_reminder_title">Edit Reminder Title</string>
+    <string name="reminder_no_description_set">No description set</string>
+    <string name="reminder_time">Time</string>
+    <string name="reminder_delete_reminder">DELETE TASK</string>
+    <string name="reminder_error_save_reminder">Error saving Reminder: %s</string>
+    <string name="reminder_error_delete_reminder">Error deleting Reminder</string>
+    <string name="reminder_message_reminder_saved">Reminder Saved</string>
+    <string name="reminder_message_reminder_deleted_success">Reminder successfully deleted</string>
 
 </resources>
