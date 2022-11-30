@@ -36,4 +36,7 @@ object SavedStateConstants {
 
     // Task screen
     const val SAVED_STATE_initialTaskId                         = "initialTaskId"
+
+    // Reminder screen
+    const val SAVED_STATE_initialReminderId                     = "initialReminderId"
 }

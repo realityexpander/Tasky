@@ -110,7 +110,7 @@
     <!--    Event screen -->
     <string name="event_description_close">Ereignisbildschirm schließen</string>
     <string name="event_description_edit_event">Ereignis bearbeiten</string>
-    <string name="event_description_meeting_title_marker">Titelmarkierung für Meetings</string>
+    <string name="description_title_marker">Titelmarkierung für Meetings</string>
     <string name="event_description_edit_event_description">Ereignisbeschreibung bearbeiten</string>
     <string name="event_description_add_photo">Foto hinzufügen</string>
     <string name="event_description_add_attendee_button">Schaltfläche Teilnehmer hinzufügen</string>
@@ -162,8 +162,8 @@
     <string name="event_confirm_action_dialog_delete">Löschen</string>
     <string name="event_confirm_action_dialog_leave">Verlassen</string>
     <string name="event_confirm_action_dialog_join">Verbinden</string>
-    <string name="event_confirm_action_dialog_title_phrase">%1$s ist das %2$s\?</string>
-    <string name="event_confirm_action_dialog_text_phrase">Bist du sicher, dass du diesen %2$s %1$s möchtest\?</string>
+    <string name="confirm_action_dialog_title_phrase">%1$s ist das %2$s\?</string>
+    <string name="confirm_action_dialog_text_phrase">Bist du sicher, dass du diesen %2$s %1$s möchtest\?</string>
 
     <!--    Attendee - Add & Remove -->
     <string name="attendee_add_attendee_dialog_title">Teilnehmer hinzufügen</string>

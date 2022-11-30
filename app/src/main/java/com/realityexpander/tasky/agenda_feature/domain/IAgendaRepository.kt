@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.domain
 
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.flow.Flow
@@ -32,10 +33,10 @@ interface IAgendaRepository {
     suspend fun deleteTaskId(taskId: TaskId): ResultUiText<Void>
     suspend fun clearAllTasksLocally(): ResultUiText<Void>
 
-    // todo implement repository
-//    suspend fun createReminder(reminder: AgendaItem.Reminder): Boolean
-//    suspend fun getReminder(reminderId: ReminderId): AgendaItem.Reminder?
-//    suspend fun updateReminder(reminder: AgendaItem.Reminder): Boolean
-//    suspend fun deleteReminder(reminderId: ReminderId): Boolean
-//    suspend fun deleteAllReminders(): Boolean
+    // • Reminder Repository
+    suspend fun createReminder(reminder: AgendaItem.Reminder): ResultUiText<Void>
+    suspend fun getReminder(reminderId: ReminderId): AgendaItem.Reminder?
+    suspend fun updateReminder(reminder: AgendaItem.Reminder): ResultUiText<Void>
+    suspend fun deleteReminderId(reminderId: ReminderId): ResultUiText<Void>
+    suspend fun clearAllRemindersLocally(): ResultUiText<Void>
 }

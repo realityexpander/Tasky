@@ -41,6 +41,7 @@ import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
@@ -56,6 +57,7 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.EventScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
+import com.realityexpander.tasky.destinations.ReminderScreenDestination
 import com.realityexpander.tasky.destinations.TaskScreenDestination
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
@@ -166,7 +168,19 @@ fun AgendaScreenContent(
     fun navigateToTaskScreen(taskId: TaskId?, isEditable: Boolean = false) {
         navigator.navigate(
             TaskScreenDestination(
-                initialTaskId = taskId,  // create new event
+                initialTaskId = taskId,  // create new task
+                isEditable = isEditable,
+            )
+        ) {
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
+    fun navigateToReminderScreen(reminderId: ReminderId?, isEditable: Boolean = false) {
+        navigator.navigate(
+            ReminderScreenDestination(
+                initialReminderId = reminderId,  // create new reminder
                 isEditable = isEditable,
             )
         ) {
@@ -241,13 +255,13 @@ fun AgendaScreenContent(
 
             // • REMINDER
             OneTimeEvent.NavigateToCreateReminder -> {
-                navigateToTaskScreen(null, true)
+                navigateToReminderScreen(null, true)
             }
             is OneTimeEvent.NavigateToOpenReminder -> {
-                navigateToTaskScreen(oneTimeEvent.reminderId)
+                navigateToReminderScreen(oneTimeEvent.reminderId)
             }
             is OneTimeEvent.NavigateToEditReminder -> {
-                navigateToTaskScreen(oneTimeEvent.reminderId, true)
+                navigateToReminderScreen(oneTimeEvent.reminderId, true)
             }
 
             is OneTimeEvent.ShowToast -> {

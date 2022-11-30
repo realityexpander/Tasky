@@ -371,7 +371,7 @@ fun AddEventScreenContent(
                         Icon(
                             imageVector = Icons.Outlined.Circle,
                             tint = MaterialTheme.colors.onSurface,
-                            contentDescription = stringResource(R.string.event_description_meeting_title_marker),
+                            contentDescription = stringResource(R.string.description_title_marker),
                             modifier = Modifier
                                 .size(26.dp)
                                 .offset(0.dp, 8.dp)
@@ -839,12 +839,12 @@ fun AddEventScreenContent(
 
                 // • JOIN/LEAVE/DELETE EVENT BUTTON
                 fun ShowAlertDialogActionType.getTitle() = UiText.Res(
-                        R.string.event_confirm_action_dialog_title_phrase,
+                        R.string.confirm_action_dialog_title_phrase,
                         context.getStringSafe(title.asResIdOrNull),
                         context.getString(R.string.agenda_item_type_event)
                     )
                 fun ShowAlertDialogActionType.getMessage() = UiText.Res(
-                        R.string.event_confirm_action_dialog_text_phrase,
+                        R.string.confirm_action_dialog_text_phrase,
                         context.getStringSafe(title.asResIdOrNull).lowercase(),
                         context.getString(R.string.agenda_item_type_event).lowercase()
                     )

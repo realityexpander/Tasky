@@ -2,6 +2,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.agendaReposit
 
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
@@ -24,7 +25,7 @@ class AgendaRepositoryImpl @Inject constructor(
     private val agendaApi: IAgendaApi,
     private val eventRepository: IEventRepository,
     private val attendeeRepository: IAttendeeRepository,
-//    private val reminderRepository: IReminderRepository,                          // todo implement reminders repo
+    private val reminderRepository: IReminderRepository,
     private val taskRepository: ITaskRepository,
 ) : IAgendaRepository {
 
@@ -177,6 +178,29 @@ class AgendaRepositoryImpl @Inject constructor(
 
     override suspend fun clearAllTasksLocally(): ResultUiText<Void> {
         return taskRepository.clearAllTasksLocally()
+    }
+
+    ///////////////////////////////////////////////
+    // • REMINDER
+
+    override suspend fun createReminder(reminder: AgendaItem.Reminder): ResultUiText<Void> {
+        return reminderRepository.createReminder(reminder)
+    }
+
+    override suspend fun getReminder(reminderId: ReminderId): AgendaItem.Reminder? {
+        return reminderRepository.getReminder(reminderId)
+    }
+
+    override suspend fun updateReminder(reminder: AgendaItem.Reminder): ResultUiText<Void> {
+        return reminderRepository.updateReminder(reminder)
+    }
+
+    override suspend fun deleteReminderId(reminderId: ReminderId): ResultUiText<Void> {
+        return reminderRepository.deleteReminder(reminderId)
+    }
+
+    override suspend fun clearAllRemindersLocally(): ResultUiText<Void> {
+        return reminderRepository.clearAllRemindersLocally()
     }
 
 }
