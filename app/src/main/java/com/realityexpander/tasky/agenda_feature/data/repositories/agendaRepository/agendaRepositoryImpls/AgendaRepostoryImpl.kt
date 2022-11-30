@@ -15,8 +15,9 @@ import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import java.time.ZonedDateTime
@@ -84,29 +85,18 @@ class AgendaRepositoryImpl @Inject constructor(
 
     override fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>> {
 
-//        return flow { // why doesnt this work?
-        return channelFlow {
+        return flow {
             supervisorScope {
                     try {
                         updateAgendaForDayFromRemote(dateTime)
 
-                        // This doesn't work with `flow`, why not?
-//                        emitAll(taskRepository.getTasksForDayFlow(dateTime).combine(
-//                            eventRepository.getEventsForDayFlow(dateTime)
-//                        ) { tasks, events ->
-//                            events + tasks // + reminders
-//                        })
-
-                        combine(
+                        emitAll(combine(
                             taskRepository.getTasksForDayFlow(dateTime),
                             eventRepository.getEventsForDayFlow(dateTime),
                             reminderRepository.getRemindersForDayFlow(dateTime)
                         ) { tasks, events, reminders ->
                             events + tasks + reminders
-                        }.collect { agendaItems ->
-                            send(agendaItems)
-//                            emit(agendaItems)
-                        }
+                        })
                     }
                     catch (e: Exception) {
                         e.printStackTrace()
