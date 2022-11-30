@@ -164,7 +164,7 @@
     <string name="event_confirm_action_dialog_delete">Borrar</string>
     <string name="event_confirm_action_dialog_leave">Abandonar</string>
     <string name="event_confirm_action_dialog_join">Unirse</string>
-    
+
     <!--    Confirm-Action-dialog Common -->
     <string name="confirm_action_dialog_title_phrase">%1$s este %2$s\?</string>
     <string name="confirm_action_dialog_text_phrase">¿Está seguro de que desea %1$s este %2$s\?</string>
