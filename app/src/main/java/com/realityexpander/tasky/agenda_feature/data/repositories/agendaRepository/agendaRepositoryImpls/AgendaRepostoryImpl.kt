@@ -79,6 +79,7 @@ class AgendaRepositoryImpl @Inject constructor(
                     try {
                         updateAgendaForDayFromRemote(dateTime)
 
+                        // This doesn't work with `flow`, why not?
 //                        emitAll(taskRepository.getTasksForDayFlow(dateTime).combine(
 //                            eventRepository.getEventsForDayFlow(dateTime)
 //                        ) { tasks, events ->
@@ -94,9 +95,6 @@ class AgendaRepositoryImpl @Inject constructor(
 //                            emit(agendaItems)
                         }
                     }
-//                    catch (e: CancellationException) {            // not needed here?
-//                        /* intentionally eat this exception */
-//                    }
                     catch (e: Exception) {
                         e.printStackTrace()
                         // don't send error to user, just log it (silent fail is ok here)
