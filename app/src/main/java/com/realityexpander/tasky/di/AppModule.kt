@@ -14,11 +14,16 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeReposi
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.remote.AttendeeApiImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.remote.IAttendeeApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls.EventRepositoryImpl
-import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.IEventDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.eventApiImpls.EventApiImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.local.ITaskDao
+import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.ITaskApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.taskApi.taskApiImpls.TaskApiImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.taskRepositoryImpls.TaskRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
+import com.realityexpander.tasky.agenda_feature.domain.ITaskRepository
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryImpl
 import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
@@ -284,14 +289,15 @@ object AppModule {
     fun provideAgendaRepository(
         eventRepository: IEventRepository,
         attendeeRepository: IAttendeeRepository,
-//        taskRepository: ITaskRepository,              // todo implement soon
+        taskRepository: ITaskRepository,
 //        reminderRepository: IReminderRepository,      // todo implement soon
         agendaApi: IAgendaApi,
     ): IAgendaRepository =
         AgendaRepositoryImpl(
+            agendaApi = agendaApi,
             eventRepository = eventRepository,
             attendeeRepository = attendeeRepository,
-            agendaApi = agendaApi,
+            taskRepository = taskRepository,
         )
 
     /////////// EVENTS REPOSITORY ///////////
@@ -318,6 +324,31 @@ object AppModule {
         eventApi: IEventApi
     ): IEventRepository =
         EventRepositoryImpl(eventDao, eventApi)
+
+    /////////// TASKS REPOSITORY ///////////
+
+    @Provides
+    @Singleton
+    fun provideTaskDaoProd(
+        taskyDatabase: TaskyDatabase
+    ): ITaskDao =
+        taskyDatabase.taskDao()
+
+    @Provides
+    @Singleton
+    fun provideTaskApiProd(
+        taskyApi: TaskyApi,
+        @ApplicationContext context: Context
+    ): ITaskApi =
+        TaskApiImpl(taskyApi, context)
+
+    @Provides
+    @Singleton
+    fun provideTaskRepository(
+        taskDao: ITaskDao,
+        taskApi: ITaskApi
+    ): ITaskRepository =
+        TaskRepositoryImpl(taskDao, taskApi)
 
     /////////// ATTENDEE REPOSITORY ///////////
 

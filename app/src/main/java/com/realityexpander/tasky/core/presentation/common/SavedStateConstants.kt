@@ -34,4 +34,6 @@ object SavedStateConstants {
     const val SAVED_STATE_isAttendeeEmailValid                   = "isAttendeeEmailValid"
     const val SAVED_STATE_initialEventId                         = "initialEventId"
 
+    // Task screen
+    const val SAVED_STATE_initialTaskId                         = "initialTaskId"
 }

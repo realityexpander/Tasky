@@ -12,7 +12,7 @@ abstract class AgendaItem {
     abstract val id: UuidStr
     abstract val title: String
     abstract val description: String
-    abstract val startTime: ZonedDateTime
+    abstract val startTime: ZonedDateTime  // for sorting in Agenda
 
     @Parcelize
     data class Event(

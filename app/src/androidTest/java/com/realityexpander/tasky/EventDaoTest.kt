@@ -4,10 +4,10 @@ import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.realityexpander.tasky.agenda_feature.data.repositories.TaskyDatabase
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.IEventDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.AttendeeEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.PhotoEntity
-import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.IEventDao
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -52,7 +52,6 @@ open class EventDaoTest {
             remindAt = ZonedDateTime.now(),
             host = "Host 1",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -97,7 +96,6 @@ open class EventDaoTest {
             remindAt = ZonedDateTime.now(),
             host = "Host 1",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -145,7 +143,6 @@ open class EventDaoTest {
             remindAt = ZonedDateTime.now(),
             host = "Host 1",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -191,7 +188,6 @@ open class EventDaoTest {
             remindAt = ZonedDateTime.now(),
             host = "Host 1",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -218,7 +214,6 @@ open class EventDaoTest {
             remindAt = ZonedDateTime.now(),
             host = "Host 2",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -265,7 +260,6 @@ open class EventDaoTest {
             remindAt = ZonedDateTime.now(),
             host = "Host 1",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -292,7 +286,6 @@ open class EventDaoTest {
             remindAt = ZonedDateTime.now(),
             host = "Host 2",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -345,7 +338,6 @@ open class EventDaoTest {
             remindAt = ZonedDateTime.now(),
             host = "Host 1",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -372,7 +364,6 @@ open class EventDaoTest {
             remindAt = ZonedDateTime.now(),
             host = "Host 2",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -424,7 +415,6 @@ open class EventDaoTest {
             remindAt = ZonedDateTime.now(),
             host = "Host 1",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -451,7 +441,6 @@ open class EventDaoTest {
             remindAt = ZonedDateTime.now(),
             host = "Host 2",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -510,7 +499,6 @@ open class EventDaoTest {
             remindAt = today.plusHours(2),
             host = "Host 1",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -537,7 +525,6 @@ open class EventDaoTest {
             remindAt = today.plusDays(1).plusMinutes(0),
             host = "Host 2",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",
@@ -564,7 +551,6 @@ open class EventDaoTest {
             remindAt = today.minusDays(1),
             host = "Host 2",
             isUserEventCreator = true,
-            isGoing = true,
             attendees = listOf(
                 AttendeeEntity(
                     "1",

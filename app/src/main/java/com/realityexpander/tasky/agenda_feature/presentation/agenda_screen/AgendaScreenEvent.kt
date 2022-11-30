@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.core.presentation.common.util.UiText
@@ -25,7 +26,11 @@ sealed interface AgendaScreenEvent {
     object DismissConfirmDeleteAgendaItemDialog : AgendaScreenEvent
     data class DeleteAgendaItem(val agendaItem: AgendaItem) : AgendaScreenEvent
 
-    data class ToggleTaskCompleted(val agendaItem: AgendaItem.Task) : AgendaScreenEvent
+    // • Task
+    data class SetTaskCompleted(
+        val agendaItem: AgendaItem.Task,
+        val isDone: Boolean,
+    ) : AgendaScreenEvent
 
     // • Errors
     data class SetErrorMessage(val message: UiText) : AgendaScreenEvent
@@ -46,6 +51,11 @@ sealed interface AgendaScreenEvent {
         // • Event - Navigate to Create/Open/Edit Event Screen
         object NavigateToCreateEvent : AgendaScreenEvent, OneTimeEvent
         data class NavigateToOpenEvent(val eventId: EventId) : AgendaScreenEvent, OneTimeEvent
-        data class NavigateToEditEvent(val eventId: EventId) : AgendaScreenEvent, OneTimeEvent
+        data class NavigateToEditEvent(val eventId: EventId) : AgendaScreenEvent, OneTimeEvent        // • Event - Navigate to Create/Open/Edit Event Screen
+
+        // • Task - Navigate to Create/Open/Edit Task Screen
+        object NavigateToCreateTask : AgendaScreenEvent, OneTimeEvent
+        data class NavigateToOpenTask(val taskId: TaskId) : AgendaScreenEvent, OneTimeEvent
+        data class NavigateToEditTask(val taskId: TaskId) : AgendaScreenEvent, OneTimeEvent
     }
 }

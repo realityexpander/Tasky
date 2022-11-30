@@ -2,6 +2,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.agendaReposit
 
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
@@ -13,24 +14,28 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class AgendaRepositoryImpl @Inject constructor(
-    private val eventRepository: IEventRepository, // = EventRepositoryImpl(),
-    private val attendeeRepository: IAttendeeRepository, // = AttendeeRepositoryImpl(),
-//    private val taskRepository: ITaskRepository,                                  // todo implement tasks repo
-//    private val reminderRepository: IReminderRepository,                          // todo implement reminders repo
     private val agendaApi: IAgendaApi,
+    private val eventRepository: IEventRepository,
+    private val attendeeRepository: IAttendeeRepository,
+//    private val reminderRepository: IReminderRepository,                          // todo implement reminders repo
+    private val taskRepository: ITaskRepository,
 ) : IAgendaRepository {
+
+    ///////////////////////////////////////////////
+    // • AGENDA
 
     override suspend fun getAgendaForDay(dateTime: ZonedDateTime): List<AgendaItem> {
         val events = eventRepository.getEventsForDay(dateTime)
-//        val tasks = taskRepository.getTasks(dateTime)                             // todo implement tasks repo
+        val tasks = taskRepository.getTasksForDay(dateTime)                             // todo implement tasks repo
 //        val reminders = reminderRepository.getReminders(dateTime)                 // todo implement reminders repo
-        return events // + tasks + reminders
+        return events + tasks // + reminders
     }
 
     override fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>> {
@@ -39,14 +44,17 @@ class AgendaRepositoryImpl @Inject constructor(
             supervisorScope {
                 launch(Dispatchers.IO) {
                     try {
-                        send(eventRepository.getEventsForDay(dateTime)) // send stale local data
+                        // send stale local data
+                        send(eventRepository.getEventsForDay(dateTime) +
+                                taskRepository.getTasksForDay(dateTime)
+                        )
 
                         // Get fresh data
                         val result = agendaApi.getAgenda(dateTime)
 
-//                        eventRepository.clearEventsForDayLocally(dateTime) // clear local data // todo add this
+//                        eventRepository.clearEventsForDayLocally(dateTime) // clear local data // todo add this?
+                        // Insert fresh data into db
                         result.events.forEach { event ->
-                            // Insert fresh data into db
                             val result2 =
                                 eventRepository.upsertEventLocally(event.toDomain())
                             if(result2 is ResultUiText.Error) {
@@ -54,9 +62,22 @@ class AgendaRepositoryImpl @Inject constructor(
                             }
                         }
 
-                        // Emit the current state from DB
-                        eventRepository.getEventsForDayFlow(dateTime).collect { events ->
-                            send(events)
+//                        taskRepository.clearTasksForDayLocally(dateTime) // clear local data // todo add this?
+                        // Insert fresh data into db
+                        result.tasks.forEach { task ->
+                            val result2 =
+                                taskRepository.upsertTaskLocally(task.toDomain())
+                            if(result2 is ResultUiText.Error) {
+                                throw IllegalStateException(result2.message.asStrOrNull())
+                            }
+                        }
+
+                        taskRepository.getTasksForDayFlow(dateTime).combine(
+                            eventRepository.getEventsForDayFlow(dateTime)
+                        ) { tasks, events ->
+                            events + tasks // + reminders
+                        }.collect { agendaItems ->
+                            send(agendaItems)
                         }
                     }
                     catch (e: CancellationException) {
@@ -69,15 +90,6 @@ class AgendaRepositoryImpl @Inject constructor(
 
                 }
 
-//                launch {
-//                    // todo implement api call for tasks - agendaApi.getTasks(dateTime)
-////                    emitAll(eventRepository.getTasksForDayFlow(dateTime))
-//                }
-
-//                launch {
-//                    // todo implement api call for reminders - agendaApi.getReminders(dateTime)
-////                    emitAll(eventRepository.getReminderForDayFlow(dateTime))
-//                }
             }
         }
     }
@@ -103,6 +115,9 @@ class AgendaRepositoryImpl @Inject constructor(
         }
     }
 
+    ///////////////////////////////////////////////
+    // • EVENTS
+
     override suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
         return eventRepository.createEvent(event)
     }
@@ -119,7 +134,7 @@ class AgendaRepositoryImpl @Inject constructor(
         return eventRepository.deleteEvent(eventId)
     }
 
-    override suspend fun clearAllEvents(): ResultUiText<Void> {
+    override suspend fun clearAllEventsLocally(): ResultUiText<Void> {
         return eventRepository.clearAllEventsLocally()
     }
 
@@ -131,4 +146,28 @@ class AgendaRepositoryImpl @Inject constructor(
         eventRepository.deleteEventsFinallyLocally(listOf(eventId))
         return attendeeRepository.removeLoggedInUserFromEventId(eventId)
     }
+
+    ///////////////////////////////////////////////
+    // • TASKS
+
+    override suspend fun createTask(task: AgendaItem.Task): ResultUiText<Void> {
+        return taskRepository.createTask(task)
+    }
+
+    override suspend fun getTask(taskId: TaskId): AgendaItem.Task? {
+        return taskRepository.getTask(taskId)
+    }
+
+    override suspend fun updateTask(task: AgendaItem.Task): ResultUiText<Void> {
+        return taskRepository.updateTask(task)
+    }
+
+    override suspend fun deleteTaskId(taskId: TaskId): ResultUiText<Void> {
+        return taskRepository.deleteTask(taskId)
+    }
+
+    override suspend fun clearAllTasksLocally(): ResultUiText<Void> {
+        return taskRepository.clearAllTasksLocally()
+    }
+
 }

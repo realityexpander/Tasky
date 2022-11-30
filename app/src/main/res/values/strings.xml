@@ -5,6 +5,7 @@
     <!--    <string name="ok">OK</string>          Note: use android.R.string.ok instead-->
     <!--    <string name="cancel">Cancel</string>  Note: use android.R.string.cancel instead-->
     <string name="delete">Delete</string>
+    <string name="save">Save</string>
 
     <!-- general descriptions -->
     <string name="back_description">Back</string>
@@ -106,6 +107,7 @@
     <string name="agenda_tomorrow">Tomorrow</string>
     <string name="agenda_choose_current_date_dialog_title">Select Start Date for Agenda Week</string>
     <string name="agenda_choose_current_date_dialog_today_button_text">Today</string>
+    <string name="agenda_isDone_icon_description">Indicate Completed</string>
 
     <!--    Event screen -->
     <string name="event_description_close">Close Event screen</string>
@@ -115,7 +117,6 @@
     <string name="event_description_add_photo">Add photo</string>
     <string name="event_description_add_attendee_button">Add Attendee button</string>
     <string name="event_description_photo">Photo</string>
-    <string name="event_save">Save</string>
     <string name="event_event_title">Event</string>
     <string name="event_no_title_set">No title set</string>
     <string name="event_edit_event_title">Edit Event Title</string>
@@ -140,7 +141,7 @@
     <string name="event_message_event_left_success">Event successfully left</string>
     <string name="event_message_event_joined_success">Event successfully joined</string>
 
-    <!--    Event Screen Dialog Titles -->
+    <!--    Editor Dialog -->
     <string name="event_dialog_title_choose_title_text">EDIT TITLE</string>
     <string name="event_dialog_title_choose_description_text">EDIT DESCRIPTION</string>
     <string name="event_dialog_title_choose_from_time">SET FROM TIME</string>
@@ -176,5 +177,21 @@
 
     <!--    Agenda Sync -->
     <string name="agenda_sync_error">Failed to sync agenda</string>
+
+    <!--    Task screen -->
+    <string name="task_description_close">Close Task screen</string>
+    <string name="task_description_edit_event">Edit Task</string>
+    <string name="task_description_meeting_title_marker">Task title marker</string>
+    <string name="task_description_edit_task_description">Edit Task Description</string>
+    <string name="task_task_title">Task</string>
+    <string name="task_no_title_set">No title set</string>
+    <string name="task_edit_task_title">Edit Task Title</string>
+    <string name="task_no_description_set">No description set</string>
+    <string name="task_time">Time</string>
+    <string name="task_delete_task">DELETE TASK</string>
+    <string name="task_error_save_task">Error saving Task: %s</string>
+    <string name="task_error_delete_task">Error deleting Task</string>
+    <string name="task_message_task_saved">Task Saved</string>
+    <string name="task_message_task_deleted_success">Task successfully deleted</string>
 
 </resources>

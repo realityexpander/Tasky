@@ -272,7 +272,7 @@ fun AddEventScreenContent(
                         modifier = Modifier.weight(.25f)
                     ) {
                         Text(
-                            text = stringResource(R.string.event_save),
+                            text = stringResource(R.string.save),
                             color = MaterialTheme.colors.surface,
                             textAlign = TextAlign.End,
                             modifier = Modifier
