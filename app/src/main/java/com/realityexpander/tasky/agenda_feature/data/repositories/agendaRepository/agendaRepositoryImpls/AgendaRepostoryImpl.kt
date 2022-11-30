@@ -75,7 +75,6 @@ class AgendaRepositoryImpl @Inject constructor(
 //        return flow { // why doesnt this work?
         return channelFlow {
             supervisorScope {
-                launch(Dispatchers.IO) {
                     try {
                         updateAgendaForDayFromRemote(dateTime)
 
@@ -101,8 +100,6 @@ class AgendaRepositoryImpl @Inject constructor(
                     }
 
                 }
-
-            }
         }
     }
 
