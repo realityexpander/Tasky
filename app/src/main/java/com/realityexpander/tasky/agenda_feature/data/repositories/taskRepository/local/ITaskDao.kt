@@ -19,10 +19,10 @@ interface ITaskDao {
 
     suspend fun updateTask(event: TaskEntity): Int
 
-    suspend fun markTaskDeletedById(eventId: TaskId): Int    // only marks the event as deleted
+    suspend fun markTaskDeletedById(taskId: TaskId): Int    // only marks the event as deleted
     suspend fun getMarkedDeletedTaskIds(): List<TaskId>      // gets only the "isDeleted==true" events
-    suspend fun deleteFinallyByTaskIds(eventIds: List<TaskId>): Int
-    suspend fun deleteTask(event: TaskEntity): Int      // completely deletes the event.
+    suspend fun deleteFinallyByTaskIds(taskIds: List<TaskId>): Int
+    suspend fun deleteTask(task: TaskEntity): Int      // completely deletes the event.
 
     suspend fun clearAllTasks(): Int
     suspend fun clearAllTasksForDay(zonedDateTime: ZonedDateTime): Int
