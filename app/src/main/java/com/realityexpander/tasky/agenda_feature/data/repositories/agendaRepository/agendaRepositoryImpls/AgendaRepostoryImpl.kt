@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls
 
+import com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
@@ -64,6 +65,16 @@ class AgendaRepositoryImpl @Inject constructor(
                         throw IllegalStateException(result2.message.asStrOrNull())
                     }
                 }
+
+//                reminderRepository.clearRemindersForDayLocally(dateTime) // clear local data // todo add this?
+                // Insert fresh data into db
+                result.reminders.forEach { reminder ->
+                    val result2 =
+                        reminderRepository.upsertReminderLocally(reminder.toDomain())
+                    if(result2 is ResultUiText.Error) {
+                        throw IllegalStateException(result2.message.asStrOrNull())
+                    }
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 // don't send error to user, just log it (silent fail is ok here)
@@ -86,10 +97,12 @@ class AgendaRepositoryImpl @Inject constructor(
 //                            events + tasks // + reminders
 //                        })
 
-                        taskRepository.getTasksForDayFlow(dateTime).combine(
-                            eventRepository.getEventsForDayFlow(dateTime)
-                        ) { tasks, events ->
-                            events + tasks // + reminders
+                        combine(
+                            taskRepository.getTasksForDayFlow(dateTime),
+                            eventRepository.getEventsForDayFlow(dateTime),
+                            reminderRepository.getRemindersForDayFlow(dateTime)
+                        ) { tasks, events, reminders ->
+                            events + tasks + reminders
                         }.collect { agendaItems ->
                             send(agendaItems)
 //                            emit(agendaItems)
@@ -106,15 +119,15 @@ class AgendaRepositoryImpl @Inject constructor(
 
     override suspend fun syncAgenda(): ResultUiText<Void> {
         val deletedEventIds = eventRepository.getDeletedEventIdsLocally()
-//        val deletedTaskIds = taskRepository.getDeletedTaskIds()                   // todo implement tasks repo
-//        val deletedReminderIds = reminderRepository.getDeletedReminderIds()       // todo implement reminders repo
+        val deletedTaskIds = taskRepository.getDeletedTaskIdsLocally()
+        val deletedReminderIds = reminderRepository.getDeletedReminderIdsLocally()
 
         val deletedSuccessfully =
             agendaApi.syncAgenda(
                 AgendaSync(
                     deleteEventIds = deletedEventIds,
-//                    deleteTaskIds = deletedTaskIds,                               // todo implement tasks repo
-//                    deleteReminderIds = deletedReminderIds,                       // todo implement reminders repo
+                    deleteTaskIds = deletedTaskIds,
+                    deleteReminderIds = deletedReminderIds,
                 ).toDTO()
             )
 

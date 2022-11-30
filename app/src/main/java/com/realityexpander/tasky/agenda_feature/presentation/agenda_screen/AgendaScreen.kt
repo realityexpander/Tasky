@@ -878,16 +878,13 @@ fun onActionForAgendaItem(
         is AgendaItem.Reminder -> {
             when (action) {
                 AgendaItemAction.OPEN_DETAILS -> {
-                    println("OPEN DETAILS FOR REMINDER ${agendaItem.id}")
-//                    onAction(AgendaEvent.NavigateToOpenReminder(agendaItem))
+                    onAction(OneTimeEvent.NavigateToOpenReminder(agendaItem.id))
                 }
                 AgendaItemAction.EDIT -> {
-                    println("EDIT REMINDER ${agendaItem.id}")
-//                    onAction(AgendaEvent.NavigateToEditReminder(agendaItem))
+                    onAction(OneTimeEvent.NavigateToEditReminder(agendaItem.id))
                 }
                 AgendaItemAction.DELETE -> {
-                    println("DELETE REMINDER ${agendaItem.id}")
-//                    onAction(AgendaEvent.DeleteReminder(agenda))
+                    onAction(ShowConfirmDeleteAgendaItemDialog(agendaItem))
                 }
                 else -> {}
             }
