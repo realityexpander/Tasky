@@ -23,5 +23,5 @@ interface ITaskDao {
     suspend fun deleteTask(task: TaskEntity): Int
 
     suspend fun clearAllTasks(): Int
-    suspend fun clearAllTasksForDay(zonedDateTime: ZonedDateTime): Int
+    suspend fun clearAllSyncedTasksForDay(zonedDateTime: ZonedDateTime): Int
 }

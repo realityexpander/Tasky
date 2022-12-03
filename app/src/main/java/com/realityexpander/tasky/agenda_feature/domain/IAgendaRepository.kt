@@ -13,7 +13,7 @@ interface IAgendaRepository {
     suspend fun getAgendaForDay(dateTime: ZonedDateTime): List<AgendaItem>
     fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>>
     suspend fun syncAgenda(): ResultUiText<Void>
-    suspend fun updateAgendaForDayFromRemote(dateTime: ZonedDateTime)
+    suspend fun updateLocalAgendaForDayFromRemote(dateTime: ZonedDateTime)
 
     // • Event Repository
     suspend fun createEvent(event: AgendaItem.Event, isRemoteOnly: Boolean = false): ResultUiText<AgendaItem.Event>

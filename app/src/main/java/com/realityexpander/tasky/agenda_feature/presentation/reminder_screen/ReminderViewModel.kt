@@ -229,41 +229,42 @@ class ReminderViewModel @Inject constructor(
                     )
                 }
 
-                val result =
-                    when (initialReminderId) {
-                        null -> {
-                            agendaRepository.createReminder(_state.value.reminder ?: return)
-                        }
-                        else -> {
-                            agendaRepository.updateReminder(_state.value.reminder ?: return)
-                        }
+//                val result =
+                when (initialReminderId) {
+                    null -> {
+                        agendaRepository.createReminder(_state.value.reminder ?: return)
                     }
-
-                when (result) {
-                    is ResultUiText.Success -> {
-                        _state.update { _state ->
-                            _state.copy(
-                                isProgressVisible = false,
-                                errorMessage = null
-                            )
-                        }
-                        _oneTimeEvent.emit(
-                            OneTimeEvent.ShowToast(
-                                UiText.Res(R.string.task_message_task_saved)
-                            )
-                        )
-                        sendEvent(CancelEditMode)
-                        sendEvent(OneTimeEvent.NavigateBack)
-                    }
-                    is ResultUiText.Error -> {
-                        _state.update { _state ->
-                            _state.copy(
-                                isProgressVisible = false,
-                                errorMessage = result.message
-                            )
-                        }
+                    else -> {
+                        agendaRepository.updateReminder(_state.value.reminder ?: return)
                     }
                 }
+
+//                when (result) {
+//                    is ResultUiText.Success,
+//                    is ResultUiText.Error -> {
+                _state.update { _state ->
+                    _state.copy(
+                        isProgressVisible = false,
+                        errorMessage = null
+                    )
+                }
+                _oneTimeEvent.emit(
+                    OneTimeEvent.ShowToast(
+                        UiText.Res(R.string.reminder_message_reminder_saved)
+                    )
+                )
+                sendEvent(CancelEditMode)
+                sendEvent(OneTimeEvent.NavigateBack)
+    //                    }
+//                    is ResultUiText.Error -> {
+//                        _state.update { _state ->
+//                            _state.copy(
+//                                isProgressVisible = false,
+//                                errorMessage = result.message
+//                            )
+//                        }
+//                    }
+//                }
             }
             is DeleteReminder -> {
                 _state.value.reminder ?: return

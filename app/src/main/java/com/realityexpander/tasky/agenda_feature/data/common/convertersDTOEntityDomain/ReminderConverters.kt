@@ -17,6 +17,7 @@ fun AgendaItem.Reminder.toEntity(): ReminderEntity {
         description = description,
         remindAt = remindAt,
         time = time,
+        isSynced = isSynced
     )
 }
 
@@ -28,6 +29,7 @@ fun ReminderEntity.toDomain(): AgendaItem.Reminder {
         description = description,
         time = time,
         remindAt = remindAt,
+        isSynced = isSynced
     )
 }
 
@@ -39,6 +41,7 @@ fun ReminderDTO.toDomain(): AgendaItem.Reminder {
         description = description,
         remindAt = remindAt.toZonedDateTime(),
         time = time.toZonedDateTime(),
+        isSynced = true
     )
 }
 

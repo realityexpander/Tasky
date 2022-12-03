@@ -5,7 +5,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.AgendaItemTypeForSync
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ISyncDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ModificationTypeForSync
-import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.entities.ModifiedAgendaItemEntity
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.entities.SyncAgendaItemEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.remote.ISyncApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.remote.SyncAgendaRequestDTO
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
@@ -17,7 +17,7 @@ class SyncRepositoryImpl @Inject constructor(
     private val syncApi: ISyncApi,
     private val syncDao: ISyncDao,
 ) : ISyncRepository {
-    override suspend fun addCreatedItem(agendaItem: AgendaItem): ResultUiText<Void> {
+    override suspend fun addCreatedSyncItem(agendaItem: AgendaItem): ResultUiText<Void> {
         addModifiedAgendaItem(
             agendaItem.id,
             agendaItem.toAgendaItemTypeForSync(),
@@ -26,15 +26,15 @@ class SyncRepositoryImpl @Inject constructor(
         return ResultUiText.Success(null)  // todo error checks
     }
 
-    override suspend fun removeCreatedItem(agendaItem: AgendaItem): ResultUiText<Void> {
-        syncDao.deleteModifiedAgendaItemByAgendaItemId(
+    override suspend fun removeCreatedSyncItem(agendaItem: AgendaItem): ResultUiText<Void> {
+        syncDao.deleteSyncAgendaItemByAgendaItemId(
             agendaItem.id,
             ModificationTypeForSync.Created
         )
         return ResultUiText.Success(null) // todo error checks
     }
 
-    override suspend fun addUpdatedItem(agendaItem: AgendaItem): ResultUiText<Void> {
+    override suspend fun addUpdatedSyncItem(agendaItem: AgendaItem): ResultUiText<Void> {
         addModifiedAgendaItem(
             agendaItem.id,
             agendaItem.toAgendaItemTypeForSync(),
@@ -43,12 +43,16 @@ class SyncRepositoryImpl @Inject constructor(
         return ResultUiText.Success(null) // todo error checks
     }
 
-    override suspend fun removeUpdatedItem(agendaItem: AgendaItem): ResultUiText<Void> {
-        syncDao.deleteModifiedAgendaItemByAgendaItemId(agendaItem.id, ModificationTypeForSync.Updated)
+    override suspend fun removeUpdatedSyncItem(agendaItem: AgendaItem): ResultUiText<Void> {
+        syncDao.deleteSyncAgendaItemByAgendaItemId(agendaItem.id, ModificationTypeForSync.Updated)
         return ResultUiText.Success(null)
     }
 
-    override suspend fun addDeletedItem(agendaItem: AgendaItem): ResultUiText<Void> {
+    override suspend fun addDeletedSyncItem(agendaItem: AgendaItem): ResultUiText<Void> {
+        // remove any existing sync items for this Agenda item (e.g. if it was created (or updated) and then deleted while offline)
+        syncDao.deleteSyncAgendaItemByAgendaItemId(agendaItem.id, ModificationTypeForSync.Created)
+        syncDao.deleteSyncAgendaItemByAgendaItemId(agendaItem.id, ModificationTypeForSync.Updated)
+
         addModifiedAgendaItem(
             agendaItem.id,
             agendaItem.toAgendaItemTypeForSync(),
@@ -57,20 +61,20 @@ class SyncRepositoryImpl @Inject constructor(
         return ResultUiText.Success(null)  // todo error checks
     }
 
-    override suspend fun removeDeletedItem(agendaItem: AgendaItem): ResultUiText<Void> {
-        val deleted = syncDao.deleteModifiedAgendaItemByAgendaItemId(agendaItem.id, ModificationTypeForSync.Deleted)
+    override suspend fun removeDeletedSyncItem(agendaItem: AgendaItem): ResultUiText<Void> {
+        val deleted = syncDao.deleteSyncAgendaItemByAgendaItemId(agendaItem.id, ModificationTypeForSync.Deleted)
         return if(deleted > 0)
             ResultUiText.Success(null)
         else
             ResultUiText.Error(UiText.Str("Failed to remove deleted item"))
     }
 
-    override suspend fun syncDeletedAgendaItems(modifiedAgendaItems: List<ModifiedAgendaItemEntity>) : ResultUiText<Void> {
+    override suspend fun syncDeletedAgendaItems(modifiedAgendaItems: List<SyncAgendaItemEntity>) : ResultUiText<Void> {
         val result = syncApi.syncAgenda(modifiedAgendaItems.toSyncAgendaRequestDTO())
 
         if (result.isSuccess) {
             modifiedAgendaItems.forEach {
-                deleteModifiedAgendaItemByAgendaItemId(it.agendaItemId, it.modificationTypeForSync)
+                deleteSyncAgendaItemByAgendaItemId(it.agendaItemId, it.modificationTypeForSync)
             }
             return ResultUiText.Success(null)
         } else {
@@ -78,8 +82,8 @@ class SyncRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getModifiedAgendaItemsForSync() : List<ModifiedAgendaItemEntity> =
-        syncDao.getModifiedAgendaItemsForSync()
+    override suspend fun getSyncAgendaItemEntities() : List<SyncAgendaItemEntity> =
+        syncDao.getSyncAgendaItems()
 
     //////////////////////////
     //// HELPERS
@@ -101,7 +105,7 @@ class SyncRepositoryImpl @Inject constructor(
         modificationTypeForSync: ModificationTypeForSync
     ) {
         syncDao.addModifiedAgendaItem(
-            ModifiedAgendaItemEntity(
+            SyncAgendaItemEntity(
                 agendaItemId = agendaItemId,
                 agendaItemTypeForSync = agendaItemTypeForSync,
                 modificationTypeForSync = modificationTypeForSync
@@ -109,11 +113,11 @@ class SyncRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun deleteModifiedAgendaItemByAgendaItemId(agendaItemId: AgendaItemId, modificationTypeForSync: ModificationTypeForSync) =
-        syncDao.deleteModifiedAgendaItemByAgendaItemId(agendaItemId, modificationTypeForSync)
+    override suspend fun deleteSyncAgendaItemByAgendaItemId(agendaItemId: AgendaItemId, modificationTypeForSync: ModificationTypeForSync) =
+        syncDao.deleteSyncAgendaItemByAgendaItemId(agendaItemId, modificationTypeForSync)
 
     // Prepare the OFFLINE-DELETED AgendaItems to be sent to the server
-    private fun List<ModifiedAgendaItemEntity>.toSyncAgendaRequestDTO() =
+    private fun List<SyncAgendaItemEntity>.toSyncAgendaRequestDTO() =
         SyncAgendaRequestDTO(
             deletedEventIds =
             this

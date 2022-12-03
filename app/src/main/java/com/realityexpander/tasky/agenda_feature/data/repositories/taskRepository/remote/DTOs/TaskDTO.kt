@@ -14,6 +14,7 @@ data class TaskDTO(
     override val id: TaskId,
     override val title: String,
     override val description: String,
+
     val remindAt: UtcMillis,
     val time: UtcMillis,
 

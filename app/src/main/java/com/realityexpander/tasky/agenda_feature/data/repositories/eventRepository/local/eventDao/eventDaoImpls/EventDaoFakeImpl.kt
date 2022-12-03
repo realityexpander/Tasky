@@ -116,7 +116,7 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         }
     }
 
-    override suspend fun clearAllEventsForDay(zonedDateTime: ZonedDateTime): Int {
+    override suspend fun clearAllSyncedEventsForDay(zonedDateTime: ZonedDateTime): Int {
         return try {
             0
 //            clearAllEventsForDayInFakeDatabase(zonedDateTime)  // todo implement

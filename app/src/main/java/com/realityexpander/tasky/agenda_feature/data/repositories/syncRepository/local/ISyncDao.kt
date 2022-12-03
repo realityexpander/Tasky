@@ -1,16 +1,16 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local
 
 import com.realityexpander.tasky.agenda_feature.common.util.AgendaItemId
-import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.entities.ModifiedAgendaItemEntity
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.entities.SyncAgendaItemEntity
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 
 interface ISyncDao {
 
     suspend fun addModifiedAgendaItem(
-        item: ModifiedAgendaItemEntity
+        item: SyncAgendaItemEntity
     ): Unit
 
-    suspend fun deleteModifiedAgendaItemByAgendaItemId(
+    suspend fun deleteSyncAgendaItemByAgendaItemId(
         agendaItemId: AgendaItemId,
         modificationTypeForSync: ModificationTypeForSync
     ): Int
@@ -19,7 +19,7 @@ interface ISyncDao {
         modificationTypeForSync: ModificationTypeForSync
     ): Int
 
-    suspend fun getModifiedAgendaItemsForSync(): List<ModifiedAgendaItemEntity>
+    suspend fun getSyncAgendaItems(): List<SyncAgendaItemEntity>
 }
 
 enum class ModificationTypeForSync {

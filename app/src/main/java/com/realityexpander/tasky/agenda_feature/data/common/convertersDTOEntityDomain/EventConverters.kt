@@ -30,6 +30,7 @@ fun AgendaItem.Event.toEntity(): EventEntity {
                 it.toEntity()
             },
         deletedPhotoIds = deletedPhotoIds,
+        isSynced = isSynced
     )
 }
 
@@ -47,6 +48,7 @@ fun EventEntity.toDomain(): AgendaItem.Event {
         attendees = attendees.map { it.toDomain() },
         photos = photos.map { it.toDomain() },
         deletedPhotoIds = deletedPhotoIds,
+        isSynced = isSynced
     )
 }
 
@@ -72,7 +74,8 @@ fun EventDTO.toDomain(): AgendaItem.Event {
                 isUserEventCreator = isUserEventCreator,
                 attendees = attendees.map { it.toDomain() },
                 photos = photos.map { it.toDomain() },
-                deletedPhotoIds = emptyList()
+                deletedPhotoIds = emptyList(),
+                isSynced = true
             )
         }
         else -> {

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
+import com.realityexpander.tasky.core.util.Exceptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,6 +32,12 @@ class MainActivityViewModel @Inject constructor(
             val authenticateSuccess = try {
                 authRepository.authenticate() // todo check for off-line state
                 true
+            } catch (e: Exceptions.NetworkException) {
+                if(e.localizedMessage == "401 Unauthorized") {
+                    false
+                } else {
+                    authInfo?.authToken != null
+                }
             } catch (e: Exception) {
                 _splashState.update {
                     it.copy(

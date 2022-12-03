@@ -62,20 +62,21 @@ interface ReminderDaoImpl : IReminderDao {
 
     // • DELETE
 
-    @Query("DELETE FROM reminders WHERE id = :reminder")
-    override suspend fun deleteReminderById(reminder: ReminderId): Int
+    @Delete
+    override suspend fun deleteReminder(reminder: ReminderEntity): Int
+
+    @Query("DELETE FROM reminders WHERE id = :reminderId")
+    override suspend fun deleteReminderById(reminderId: ReminderId): Int
 
     @Query("DELETE FROM reminders WHERE id IN (:reminderIds)")
     override suspend fun deleteRemindersByReminderIds(reminderIds: List<ReminderId>): Int
 
-    @Delete
-    override suspend fun deleteReminder(reminder: ReminderEntity): Int  // completely deletes the reminder.
-
     @Query("DELETE FROM reminders")
-    override suspend fun clearAllReminders(): Int  // completely deletes all reminders.
+    override suspend fun clearAllReminders(): Int
 
+    // Deletes all SYNCED reminders for the given day.
     @Query(deleteRemindersForDayQuery)
-    override suspend fun clearAllRemindersForDay(zonedDateTime: ZonedDateTime): Int // completely deletes all UNDELETED reminders for the given day.
+    override suspend fun clearAllSyncedRemindersForDay(zonedDateTime: ZonedDateTime): Int
 
     companion object {
 
@@ -88,8 +89,9 @@ interface ReminderDaoImpl : IReminderDao {
 
         const val deleteRemindersForDayQuery =
             """
-            DELETE FROM reminders 
-                WHERE ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- reminder starts this today
+            DELETE FROM reminders WHERE 
+                isSynced = 1
+                AND ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- reminder starts this today
             """
     }
 }

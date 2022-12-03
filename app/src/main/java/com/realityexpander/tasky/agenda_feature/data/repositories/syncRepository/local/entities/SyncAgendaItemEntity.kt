@@ -7,7 +7,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository
 import com.realityexpander.tasky.core.util.UuidStr
 
 @Entity(tableName = "modified_agenda_items")
-data class ModifiedAgendaItemEntity(
+data class SyncAgendaItemEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
 

@@ -240,41 +240,42 @@ class TaskViewModel @Inject constructor(
                     )
                 }
 
-                val result =
-                    when (initialTaskId) {
-                        null -> {
-                            agendaRepository.createTask(_state.value.task ?: return)
-                        }
-                        else -> {
-                            agendaRepository.updateTask(_state.value.task ?: return)
-                        }
+//                val result =
+                when (initialTaskId) {
+                    null -> {
+                        agendaRepository.createTask(_state.value.task ?: return)
                     }
-
-                when (result) {
-                    is ResultUiText.Success -> {
-                        _state.update { _state ->
-                            _state.copy(
-                                isProgressVisible = false,
-                                errorMessage = null
-                            )
-                        }
-                        _oneTimeEvent.emit(
-                            OneTimeEvent.ShowToast(
-                                UiText.Res(R.string.task_message_task_saved)
-                            )
-                        )
-                        sendEvent(CancelEditMode)
-                        sendEvent(OneTimeEvent.NavigateBack)
-                    }
-                    is ResultUiText.Error -> {
-                        _state.update { _state ->
-                            _state.copy(
-                                isProgressVisible = false,
-                                errorMessage = result.message
-                            )
-                        }
+                    else -> {
+                        agendaRepository.updateTask(_state.value.task ?: return)
                     }
                 }
+
+//                when (result) {
+//                    is ResultUiText.Success,
+//                    is ResultUiText.Error -> { // ignore errors for UI
+                _state.update { _state ->
+                    _state.copy(
+                        isProgressVisible = false,
+                        errorMessage = null
+                    )
+                }
+                _oneTimeEvent.emit(
+                    OneTimeEvent.ShowToast(
+                        UiText.Res(R.string.task_message_task_saved)
+                    )
+                )
+                sendEvent(CancelEditMode)
+                sendEvent(OneTimeEvent.NavigateBack)
+//                    }
+//                    is ResultUiText.Error -> {
+//                        _state.update { _state ->
+//                            _state.copy(
+//                                isProgressVisible = false,
+//                                errorMessage = result.message
+//                            )
+//                        }
+//                    }
+//                }
             }
             is DeleteTask -> {
                 _state.value.task ?: return

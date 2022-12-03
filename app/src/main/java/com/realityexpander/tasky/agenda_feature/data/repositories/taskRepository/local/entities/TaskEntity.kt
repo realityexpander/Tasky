@@ -15,4 +15,6 @@ data class TaskEntity(
     val remindAt: ZonedDateTime,
     val time: ZonedDateTime,
     val isDone: Boolean,
+
+    val isSynced: Boolean = false
 )

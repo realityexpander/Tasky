@@ -23,5 +23,5 @@ interface IReminderDao {
     suspend fun deleteReminder(reminder: ReminderEntity): Int      // completely deletes the event.
 
     suspend fun clearAllReminders(): Int
-    suspend fun clearAllRemindersForDay(zonedDateTime: ZonedDateTime): Int
+    suspend fun clearAllSyncedRemindersForDay(zonedDateTime: ZonedDateTime): Int
 }

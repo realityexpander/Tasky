@@ -28,13 +28,13 @@ class EventRepositoryImpl(
     override suspend fun createEvent(event: AgendaItem.Event, isRemoteOnly: Boolean): ResultUiText<AgendaItem.Event> {
         return try {
             if(!isRemoteOnly) {
-                eventDao.createEvent(event.toEntity())  // save to local DB first
+                eventDao.createEvent(event.copy(isSynced = false).toEntity())  // save to local DB first
+                syncRepository.addCreatedSyncItem(event)
             }
-            syncRepository.addCreatedItem(event)
 
             val response = eventApi.createEvent(event.toEventDTOCreate())
-            eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
-            syncRepository.removeCreatedItem(event)
+            eventDao.updateEvent(response.toDomain().copy(isSynced = true).toEntity())  // update with response from server
+            syncRepository.removeCreatedSyncItem(event)
 
             ResultUiText.Success(response.toDomain())
         } catch (e: Exception) {
@@ -44,7 +44,7 @@ class EventRepositoryImpl(
     }
 
 
-    // • UPSERT
+    // • UPDATE / UPSERT
 
     override suspend fun upsertEventLocally(event: AgendaItem.Event): ResultUiText<Void> {
         return try {
@@ -57,6 +57,23 @@ class EventRepositoryImpl(
         }
     }
 
+    override suspend fun updateEvent(event: AgendaItem.Event, isRemoteOnly: Boolean): ResultUiText<AgendaItem.Event> {
+        return try {
+            if(!isRemoteOnly) {
+                eventDao.updateEvent(event.copy(isSynced = false).toEntity())  // optimistic update
+                syncRepository.addUpdatedSyncItem(event)
+            }
+
+            val response = eventApi.updateEvent(event.toEventDTOUpdate())
+            eventDao.updateEvent(response.toDomain().copy(isSynced = true).toEntity())  // update with response from server
+            syncRepository.removeUpdatedSyncItem(event)
+
+            ResultUiText.Success(response.toDomain())
+        } catch (e: Exception) {
+            e.rethrowIfCancellation()
+            ResultUiText.Error(UiText.Str(e.localizedMessage ?: "updateEvent error"))
+        }
+    }
 
     // • READ
 
@@ -87,30 +104,12 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun updateEvent(event: AgendaItem.Event, isRemoteOnly: Boolean): ResultUiText<AgendaItem.Event> {
-        return try {
-            if(!isRemoteOnly) {
-                eventDao.updateEvent(event.toEntity())  // optimistic update
-            }
-            syncRepository.addUpdatedItem(event)
-
-            val response = eventApi.updateEvent(event.toEventDTOUpdate())
-            eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
-            syncRepository.removeUpdatedItem(event)
-
-            ResultUiText.Success(response.toDomain())
-        } catch (e: Exception) {
-            e.rethrowIfCancellation()
-            ResultUiText.Error(UiText.Str(e.localizedMessage ?: "updateEvent error"))
-        }
-    }
-
     // • DELETE
 
     override suspend fun deleteEvent(event: AgendaItem.Event): ResultUiText<Void> {
         return try {
             eventDao.deleteEvent(event.toEntity())
-            syncRepository.addDeletedItem(event)
+            syncRepository.addDeletedSyncItem(event)
 
             // Attempt to delete on server
             val response = eventApi.deleteEvent(event.toEventDTOUpdate())
@@ -141,7 +140,7 @@ class EventRepositoryImpl(
 
     override suspend fun clearEventsForDayLocally(zonedDateTime: ZonedDateTime): ResultUiText<Void> {
         return try {
-            eventDao.clearAllEventsForDay(zonedDateTime)
+            eventDao.clearAllSyncedEventsForDay(zonedDateTime)
 
             ResultUiText.Success() // todo return the cleared event, for undo
         } catch (e: Exception) {

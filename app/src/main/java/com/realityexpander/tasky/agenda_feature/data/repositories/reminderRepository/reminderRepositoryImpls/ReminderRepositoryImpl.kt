@@ -27,13 +27,15 @@ class ReminderRepositoryImpl(
     override suspend fun createReminder(reminder: AgendaItem.Reminder, isRemoteOnly: Boolean): ResultUiText<Void> {
         return try {
             if(!isRemoteOnly) {
-                reminderDao.createReminder(reminder.toEntity())  // save to local DB first
+                // save to local DB first
+                reminderDao.createReminder(reminder.copy(isSynced = false).toEntity())
+                syncRepository.addCreatedSyncItem(reminder)
             }
-            syncRepository.addCreatedItem(reminder)
 
             val result = reminderApi.createReminder(reminder.toDTO())
             if(result.isSuccess) {
-                syncRepository.removeCreatedItem(reminder)
+                syncRepository.removeCreatedSyncItem(reminder)
+                reminderDao.updateReminder(reminder.copy(isSynced = true).toEntity())
             }
 
             ResultUiText.Success()
@@ -90,13 +92,15 @@ class ReminderRepositoryImpl(
     override suspend fun updateReminder(reminder: AgendaItem.Reminder, isRemoteOnly: Boolean): ResultUiText<Void> {
         return try {
             if(!isRemoteOnly) {
-                reminderDao.updateReminder(reminder.toEntity())  // save to local DB first
+                // save to local DB first
+                reminderDao.updateReminder(reminder.copy(isSynced = false).toEntity())
             }
-            syncRepository.addUpdatedItem(reminder)
+            syncRepository.addUpdatedSyncItem(reminder)
 
             val result = reminderApi.updateReminder(reminder.toDTO()) // no payload from server for this
             if(result.isSuccess) {
-                syncRepository.removeUpdatedItem(reminder)
+                syncRepository.removeUpdatedSyncItem(reminder)
+                reminderDao.updateReminder(reminder.copy(isSynced = true).toEntity())
             }
 
             ResultUiText.Success()
@@ -112,12 +116,12 @@ class ReminderRepositoryImpl(
     override suspend fun deleteReminder(reminder: AgendaItem.Reminder): ResultUiText<Void> {
         return try {
             reminderDao.deleteReminderById(reminder.id)
-            syncRepository.addDeletedItem(reminder)
+            syncRepository.addDeletedSyncItem(reminder)
 
             // Attempt to delete on server
             val response = reminderApi.deleteReminder(reminder.id)
             if (response.isSuccess) {
-                syncRepository.removeDeletedItem(reminder)
+                syncRepository.removeDeletedSyncItem(reminder)
                 ResultUiText.Success()
             } else {
                 ResultUiText.Error(UiText.Str(response.exceptionOrNull()?.localizedMessage ?: "deleteReminder error"))
@@ -144,7 +148,7 @@ class ReminderRepositoryImpl(
 
     override suspend fun clearRemindersForDayLocally(zonedDateTime: ZonedDateTime): ResultUiText<Void> {
         return try {
-            reminderDao.clearAllRemindersForDay(zonedDateTime)
+            reminderDao.clearAllSyncedRemindersForDay(zonedDateTime)
 
             ResultUiText.Success() // todo return the cleared reminder, for undo
         } catch (e: Exception) {

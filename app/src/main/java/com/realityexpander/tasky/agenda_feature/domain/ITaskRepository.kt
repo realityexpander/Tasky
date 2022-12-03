@@ -14,7 +14,7 @@ interface ITaskRepository {
 
     suspend fun updateTask(task: AgendaItem.Task, isRemoteOnly: Boolean = false): ResultUiText<Void>
 
-    suspend fun deleteTaskBy(task: AgendaItem.Task): ResultUiText<Void>
+    suspend fun deleteTask(task: AgendaItem.Task): ResultUiText<Void>
 
     suspend fun clearAllTasksLocally(): ResultUiText<Void>
     suspend fun clearTasksForDayLocally(zonedDateTime: ZonedDateTime): ResultUiText<Void>

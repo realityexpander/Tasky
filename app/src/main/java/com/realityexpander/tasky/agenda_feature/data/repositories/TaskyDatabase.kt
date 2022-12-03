@@ -11,7 +11,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.eventDaoImpls.EventDaoImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.entities.ReminderEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.reminderDao.reminderDaoImpls.ReminderDaoImpl
-import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.entities.ModifiedAgendaItemEntity
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.entities.SyncAgendaItemEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.syncDao.syncDaoImpl.SyncDaoImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.local.entities.TaskEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.local.taskDao.taskDaoImpls.TaskDaoImpl
@@ -22,7 +22,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository
         EventEntity::class,
         TaskEntity::class,
         ReminderEntity::class,
-        ModifiedAgendaItemEntity::class     // for sync
+        SyncAgendaItemEntity::class     // for sync
     ],
     version = 1,
     exportSchema = false

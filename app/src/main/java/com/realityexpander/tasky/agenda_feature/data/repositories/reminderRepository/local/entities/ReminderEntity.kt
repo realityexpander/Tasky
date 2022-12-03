@@ -14,4 +14,6 @@ data class ReminderEntity(
     val description: String,
     val remindAt: ZonedDateTime,
     val time: ZonedDateTime,
+
+    val isSynced: Boolean = false
 )

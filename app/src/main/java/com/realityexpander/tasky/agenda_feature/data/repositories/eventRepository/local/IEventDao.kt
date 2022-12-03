@@ -23,6 +23,6 @@ interface IEventDao {
     suspend fun deleteEvent(event: EventEntity): Int
 
     suspend fun clearAllEvents(): Int
-    suspend fun clearAllEventsForDay(zonedDateTime: ZonedDateTime): Int
+    suspend fun clearAllSyncedEventsForDay(zonedDateTime: ZonedDateTime): Int
 }
 

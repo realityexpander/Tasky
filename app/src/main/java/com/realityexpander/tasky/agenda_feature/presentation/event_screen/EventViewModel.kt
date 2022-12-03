@@ -107,7 +107,8 @@ class EventViewModel @Inject constructor(
                                     email = authInfo.email ?: "",
                                     isGoing = true,
                                 )
-                            )
+                            ),
+                            isSynced = false,
                         ),
                 )
             }

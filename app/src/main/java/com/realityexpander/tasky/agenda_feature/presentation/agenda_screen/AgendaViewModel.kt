@@ -94,7 +94,7 @@ class AgendaViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             agendaRepository.syncAgenda()  // push local changes to server
-            agendaRepository.updateAgendaForDayFromRemote(
+            agendaRepository.updateLocalAgendaForDayFromRemote(
                 getDateForSelectedDayIndex(selectedDate, selectedDayIndex)
             )
             yield() // wait for other init code to run

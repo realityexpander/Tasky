@@ -21,19 +21,19 @@ interface EventDaoImpl : IEventDao {
 
     // • UPSERT
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertEvent(event: EventEntity): Long
-
-    @Update(onConflict = OnConflictStrategy.IGNORE)
-    fun update2Event(event: EventEntity)
-
     @Transaction
     override fun upsertEvent(event: EventEntity) {
-        val id = insertEvent(event)
+        val id = _upsertEventExecInsertEvent(event)
         if (id == -1L) {
-            update2Event(event)
+            _upsertEventExecUpdateEvent(event)
         }
     }
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun _upsertEventExecInsertEvent(event: EventEntity): Long
+
+    @Update(onConflict = OnConflictStrategy.IGNORE)
+    fun _upsertEventExecUpdateEvent(event: EventEntity)
 
 
     // • READ
@@ -63,7 +63,7 @@ interface EventDaoImpl : IEventDao {
     // • DELETE
 
     @Query("DELETE FROM events WHERE id IN (:eventIds)")
-    override suspend fun deleteByEventIds(eventIds: List<EventId>): Int  // completely deletes the events.
+    override suspend fun deleteByEventIds(eventIds: List<EventId>): Int
 
     @Delete
     override suspend fun deleteEvent(event: EventEntity): Int
@@ -72,10 +72,11 @@ interface EventDaoImpl : IEventDao {
     override suspend fun deleteEventById(eventId: EventId): Int
 
     @Query("DELETE FROM events")
-    override suspend fun clearAllEvents(): Int  // completely deletes all events.
+    override suspend fun clearAllEvents(): Int
 
+    // Deletes all SYNCED events for the given day.
     @Query(deleteEventsForDayQuery)
-    override suspend fun clearAllEventsForDay(zonedDateTime: ZonedDateTime): Int // completely deletes all UNDELETED events for the given day.
+    override suspend fun clearAllSyncedEventsForDay(zonedDateTime: ZonedDateTime): Int
 
     companion object {
 
@@ -98,8 +99,9 @@ interface EventDaoImpl : IEventDao {
         const val deleteEventsForDayQuery =
             """
             DELETE FROM events WHERE 
-                (
-                    ( ( `from` >= :zonedDateTime) AND (`from`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event starts within day
+                isSynced = 1
+                AND 
+                ( ( `from` >= :zonedDateTime) AND (`from`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event starts within day
                     
                   --      ( ( `from` >= :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event fits within day
                   --    OR
@@ -108,7 +110,6 @@ interface EventDaoImpl : IEventDao {
                   --      ( ( `to`   >  :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `to` ends on day
                   --    OR
                   --      ( ( `from` <= :zonedDateTime) AND (`to`   > :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event straddles today     
-                )
             """
     }
 }

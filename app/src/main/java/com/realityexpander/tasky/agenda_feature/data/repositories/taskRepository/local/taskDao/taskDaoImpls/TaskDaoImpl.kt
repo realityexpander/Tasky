@@ -38,7 +38,7 @@ interface TaskDaoImpl : ITaskDao {
 
     // • READ
 
-    @Query("SELECT * FROM tasks WHERE id = :taskId")  // only returns the tasks that are *NOT* marked as deleted.
+    @Query("SELECT * FROM tasks WHERE id = :taskId")
     override suspend fun getTaskById(taskId: TaskId): TaskEntity?
 
     @Query("SELECT * FROM tasks")
@@ -72,10 +72,11 @@ interface TaskDaoImpl : ITaskDao {
     override suspend fun deleteTasksByIds(taskIds: List<TaskId>): Int
 
     @Query("DELETE FROM tasks")
-    override suspend fun clearAllTasks(): Int  // completely deletes all tasks.
+    override suspend fun clearAllTasks(): Int
 
+    // Deletes all SYNCED tasks for the given day.
     @Query(deleteTasksForDayQuery)
-    override suspend fun clearAllTasksForDay(zonedDateTime: ZonedDateTime): Int // completely deletes all UNDELETED tasks for the given day.
+    override suspend fun clearAllSyncedTasksForDay(zonedDateTime: ZonedDateTime): Int
 
     companion object {
 
@@ -89,7 +90,8 @@ interface TaskDaoImpl : ITaskDao {
         const val deleteTasksForDayQuery =
             """
             DELETE FROM tasks WHERE
-                    ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `time` start this today
+               isSynced = 1
+               AND ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `time` start this today
             """
     }
 }
