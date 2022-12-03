@@ -29,9 +29,7 @@ class ReminderApiImpl @Inject constructor(
             if (response.isSuccessful) {
                 return Result.success(Unit)
             } else {
-                return Result.failure(
-                    Exception("Error updating reminder: ${response.message()}")
-                )
+                return Result.failure(Exception("Error updating reminder: ${response.message()}"))
             }
         } catch (e: Exception) {
             throw Exception("Error creating reminder: ${e.message}")
@@ -58,9 +56,7 @@ class ReminderApiImpl @Inject constructor(
             if (response.isSuccessful) {
                 return Result.success(Unit)
             } else {
-                return Result.failure(
-                    Exception("Error updating reminder: ${response.message()}")
-                )
+                return Result.failure(Exception("Error updating reminder: ${response.message()}"))
             }
         } catch (e: NetworkErrorException) {
             return Result.failure(

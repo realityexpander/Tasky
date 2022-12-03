@@ -34,10 +34,7 @@ class TaskApiImpl @Inject constructor(
                 )
             }
         } catch (e: NetworkErrorException) {
-//            throw Exception("Network Error updating task: ${e.localizedMessage}")
-            return Result.failure(
-                Exception("Error updating task: ${e.localizedMessage}")
-            )
+            return Result.failure(Exception("Error updating task: ${e.localizedMessage}"))
         } catch (e: Exception) {
             throw Exception("Error creating task: ${e.message}")
         }
@@ -63,9 +60,7 @@ class TaskApiImpl @Inject constructor(
             if (response.isSuccessful) {
                 return Result.success(Unit)
             } else {
-                return Result.failure(
-                    Exception("Error updating task: ${response.message()}")
-                )
+                return Result.failure(Exception("Error updating task: ${response.message()}"))
             }
         } catch (e: NetworkErrorException) {
             return Result.failure(
