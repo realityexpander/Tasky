@@ -65,6 +65,22 @@ class SyncRepositoryImpl @Inject constructor(
             ResultUiText.Error(UiText.Str("Failed to remove deleted item"))
     }
 
+    override suspend fun syncDeletedAgendaItems(modifiedAgendaItems: List<ModifiedAgendaItemEntity>) : ResultUiText<Void> {
+        val result = syncApi.syncAgenda(modifiedAgendaItems.toSyncAgendaRequestDTO())
+
+        if (result.isSuccess) {
+            modifiedAgendaItems.forEach {
+                deleteModifiedAgendaItemByAgendaItemId(it.agendaItemId, it.modificationTypeForSync)
+            }
+            return ResultUiText.Success(null)
+        } else {
+            return ResultUiText.Error(UiText.Str(result.exceptionOrNull()?.localizedMessage ?: "Unknown error"))
+        }
+    }
+
+    override suspend fun getModifiedAgendaItemsForSync() : List<ModifiedAgendaItemEntity> =
+        syncDao.getModifiedAgendaItemsForSync()
+
     //////////////////////////
     //// HELPERS
 
@@ -95,22 +111,6 @@ class SyncRepositoryImpl @Inject constructor(
 
     override suspend fun deleteModifiedAgendaItemByAgendaItemId(agendaItemId: AgendaItemId, modificationTypeForSync: ModificationTypeForSync) =
         syncDao.deleteModifiedAgendaItemByAgendaItemId(agendaItemId, modificationTypeForSync)
-
-    override suspend fun getModifiedAgendaItemsForSync() : List<ModifiedAgendaItemEntity> =
-        syncDao.getModifiedAgendaItemsForSync()
-
-    override suspend fun syncDeletedAgendaItems(modifiedAgendaItems: List<ModifiedAgendaItemEntity>) : ResultUiText<Void> {
-        val result = syncApi.syncAgenda(modifiedAgendaItems.toSyncAgendaRequestDTO())
-
-        if (result.isSuccess) {
-            modifiedAgendaItems.forEach {
-                deleteModifiedAgendaItemByAgendaItemId(it.agendaItemId, it.modificationTypeForSync)
-            }
-            return ResultUiText.Success(null)
-        } else {
-            return ResultUiText.Error(UiText.Str(result.exceptionOrNull()?.localizedMessage ?: "Unknown error"))
-        }
-    }
 
     // Prepare the OFFLINE-DELETED AgendaItems to be sent to the server
     private fun List<ModifiedAgendaItemEntity>.toSyncAgendaRequestDTO() =
