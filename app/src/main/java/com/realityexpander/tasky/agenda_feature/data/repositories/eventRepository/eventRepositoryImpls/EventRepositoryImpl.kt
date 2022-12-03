@@ -7,6 +7,7 @@ import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityD
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEventDTOUpdate
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.IEventDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.ISyncRepository
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
@@ -17,18 +18,23 @@ import kotlinx.coroutines.flow.map
 import java.time.ZonedDateTime
 
 class EventRepositoryImpl(
-    private val eventDao: IEventDao, // = EventDaoFakeImpl(),
-    private val eventApi: IEventApi, // = EventApiFakeImpl(),
+    private val eventDao: IEventDao,
+    private val eventApi: IEventApi,
+    private val syncRepository: ISyncRepository
 ) : IEventRepository {
 
     // • CREATE
 
-    override suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
+    override suspend fun createEvent(event: AgendaItem.Event, isRemoteOnly: Boolean): ResultUiText<AgendaItem.Event> {
         return try {
-            eventDao.createEvent(event.toEntity())  // save to local DB first
+            if(!isRemoteOnly) {
+                eventDao.createEvent(event.toEntity())  // save to local DB first
+            }
+            syncRepository.addCreatedItem(event)
 
             val response = eventApi.createEvent(event.toEventDTOCreate())
             eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
+            syncRepository.removeCreatedItem(event)
 
             ResultUiText.Success(response.toDomain())
         } catch (e: Exception) {
@@ -66,30 +72,31 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun getEvent(eventId: EventId): AgendaItem.Event? {
+    override suspend fun getEvent(eventId: EventId, isLocalOnly: Boolean): AgendaItem.Event? {
         return try {
-            eventDao.getEventById(eventId)?.toDomain()
+            val result = eventDao.getEventById(eventId)?.toDomain()
+            if(isLocalOnly) return result
+
+            val response = eventApi.getEvent(eventId)
+            eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
+
+            response.toDomain()
         } catch (e: Exception) {
             e.rethrowIfCancellation()
             null
         }
     }
 
-    suspend fun getAllEventsLocally(): List<AgendaItem.Event> {
+    override suspend fun updateEvent(event: AgendaItem.Event, isRemoteOnly: Boolean): ResultUiText<AgendaItem.Event> {
         return try {
-            eventDao.getEvents().map { it.toDomain() }
-        } catch (e: Exception) {
-            e.rethrowIfCancellation()
-            emptyList()
-        }
-    }
-
-    override suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event> {
-        return try {
-            eventDao.updateEvent(event.toEntity())  // optimistic update
+            if(!isRemoteOnly) {
+                eventDao.updateEvent(event.toEntity())  // optimistic update
+            }
+            syncRepository.addUpdatedItem(event)
 
             val response = eventApi.updateEvent(event.toEventDTOUpdate())
             eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
+            syncRepository.removeUpdatedItem(event)
 
             ResultUiText.Success(response.toDomain())
         } catch (e: Exception) {
@@ -100,43 +107,22 @@ class EventRepositoryImpl(
 
     // • DELETE
 
-    override suspend fun deleteEvent(eventId: EventId): ResultUiText<Void> {
+    override suspend fun deleteEvent(event: AgendaItem.Event): ResultUiText<Void> {
         return try {
-            // Optimistic delete
-            eventDao.markEventDeletedById(eventId)
+            eventDao.deleteEvent(event.toEntity())
+            syncRepository.addDeletedItem(event)
 
             // Attempt to delete on server
-            val response = eventApi.deleteEvent(eventId)
+            val response = eventApi.deleteEvent(event.toEventDTOUpdate())
             if (response.isSuccess) {
-                // Success, delete fully from local DB
-                eventDao.deleteFinallyByEventIds(listOf(eventId))  // just one event
                 ResultUiText.Success()
             } else {
+                // Should show error here? Or silently fail? Show off-line message?
                 ResultUiText.Error(UiText.Str(response.exceptionOrNull()?.localizedMessage ?: "deleteEvent error"))
             }
         } catch (e: Exception) {
             e.rethrowIfCancellation()
-            ResultUiText.Error(UiText.Str(e.message ?: "deleteEventId error"))
-        }
-    }
-
-    override suspend fun getDeletedEventIdsLocally(): List<EventId> {
-        return try {
-            eventDao.getMarkedDeletedEventIds()
-        } catch (e: Exception) {
-            e.rethrowIfCancellation()
-            emptyList()
-        }
-    }
-
-    override suspend fun deleteEventsFinallyLocally(eventIds: List<EventId>): ResultUiText<Void> {
-        return try {
-            eventDao.deleteFinallyByEventIds(eventIds)
-
-            ResultUiText.Success() // todo return the deleted events, for undo
-        } catch (e: Exception) {
-            e.rethrowIfCancellation()
-            ResultUiText.Error(UiText.Str(e.message ?: "deleteFinallyEventIds error"))
+            ResultUiText.Error(UiText.Str(e.message ?: "deleteEvent error"))
         }
     }
 
@@ -146,7 +132,7 @@ class EventRepositoryImpl(
         return try {
             eventDao.clearAllEvents()
 
-            ResultUiText.Success() // todo return the cleared event, yes for undo
+            ResultUiText.Success() // todo return the cleared event, for undo
         } catch (e: Exception) {
             e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "clearAllEvents error"))

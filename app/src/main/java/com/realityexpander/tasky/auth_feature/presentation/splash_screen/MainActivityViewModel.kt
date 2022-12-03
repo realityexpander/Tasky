@@ -29,7 +29,7 @@ class MainActivityViewModel @Inject constructor(
 
             // Validate the AuthToken
             val authenticateSuccess = try {
-                authRepository.authenticate()
+                authRepository.authenticate() // todo check for off-line state
                 true
             } catch (e: Exception) {
                 _splashState.update {

@@ -95,9 +95,9 @@ class EventApiImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteEvent(eventId: EventId): Result<Unit> {
+    override suspend fun deleteEvent(event: EventDTO.Update): Result<Unit> {
         return try {
-            val response = taskyApi.deleteEvent(eventId)
+            val response = taskyApi.deleteEvent(event.id)
             if (response.isSuccessful) {
                 Result.success(Unit)
             } else {

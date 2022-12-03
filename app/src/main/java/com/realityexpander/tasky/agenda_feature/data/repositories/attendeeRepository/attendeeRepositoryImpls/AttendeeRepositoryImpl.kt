@@ -1,10 +1,10 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.attendeeRepositoryImpls
 
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.IAttendeeRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.remote.IAttendeeApi
+import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
@@ -52,8 +52,8 @@ class AttendeeRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun removeLoggedInUserFromEventId(eventId: EventId): ResultUiText<Void> {
-        val result = attendeeApi.deleteAttendee(eventId)
+    override suspend fun removeLoggedInUserFromEvent(event: AgendaItem.Event): ResultUiText<Void> {
+        val result = attendeeApi.deleteAttendee(event.id)
 
         return if(result.isSuccess) {
             ResultUiText.Success<Void>()

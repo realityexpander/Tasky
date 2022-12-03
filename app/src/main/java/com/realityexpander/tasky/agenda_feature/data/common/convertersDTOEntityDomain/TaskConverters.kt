@@ -17,7 +17,6 @@ fun AgendaItem.Task.toEntity(): TaskEntity {
         description = description,
         remindAt = remindAt,
         time = time,
-        isDeleted = isDeleted,
         isDone = isDone,
     )
 }

@@ -17,7 +17,6 @@ fun AgendaItem.Reminder.toEntity(): ReminderEntity {
         description = description,
         remindAt = remindAt,
         time = time,
-        isDeleted = isDeleted,
     )
 }
 

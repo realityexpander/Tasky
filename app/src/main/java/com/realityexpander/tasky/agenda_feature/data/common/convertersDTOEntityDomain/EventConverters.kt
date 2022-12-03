@@ -30,7 +30,6 @@ fun AgendaItem.Event.toEntity(): EventEntity {
                 it.toEntity()
             },
         deletedPhotoIds = deletedPhotoIds,
-        isDeleted = isDeleted,
     )
 }
 

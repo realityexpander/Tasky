@@ -299,7 +299,7 @@ class TaskViewModel @Inject constructor(
                 }
 
                 val result =
-                    agendaRepository.deleteTaskId(_state.value.task?.id ?: return)
+                    agendaRepository.deleteTask(_state.value.task ?: return)
 
                 when (result) {
                     is ResultUiText.Success -> {

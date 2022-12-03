@@ -6,6 +6,7 @@ import com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEnt
 import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
 import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.IReminderApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.ISyncRepository
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IReminderRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
@@ -18,16 +19,22 @@ import java.time.ZonedDateTime
 class ReminderRepositoryImpl(
     private val reminderDao: IReminderDao,
     private val reminderApi: IReminderApi,
+    private val syncRepository: ISyncRepository
 ) : IReminderRepository {
 
     // • CREATE
 
-    override suspend fun createReminder(reminder: AgendaItem.Reminder): ResultUiText<Void> {
+    override suspend fun createReminder(reminder: AgendaItem.Reminder, isRemoteOnly: Boolean): ResultUiText<Void> {
         return try {
-            // todo add to list of updates to send to server
+            if(!isRemoteOnly) {
+                reminderDao.createReminder(reminder.toEntity())  // save to local DB first
+            }
+            syncRepository.addCreatedItem(reminder)
 
-            reminderDao.createReminder(reminder.toEntity())  // save to local DB first
-            reminderApi.createReminder(reminder.toDTO())
+            val result = reminderApi.createReminder(reminder.toDTO())
+            if(result.isSuccess) {
+                syncRepository.removeCreatedItem(reminder)
+            }
 
             ResultUiText.Success()
         } catch (e: Exception) {
@@ -37,7 +44,7 @@ class ReminderRepositoryImpl(
     }
 
 
-    // • UPSERT
+    // • UPSERT (LOCAL ONLY)
 
     override suspend fun upsertReminderLocally(reminder: AgendaItem.Reminder): ResultUiText<Void> {
         return try {
@@ -65,14 +72,14 @@ class ReminderRepositoryImpl(
         }
     }
 
-    override suspend fun getReminder(reminderId: ReminderId): AgendaItem.Reminder? {
+    override suspend fun getReminder(reminderId: ReminderId, isLocalOnly: Boolean): AgendaItem.Reminder? {
         return try {
-            reminderDao.getReminderById(reminderId)?.toDomain() // get from local DB first
+            val result = reminderDao.getReminderById(reminderId)?.toDomain() // get from local DB first
+            if(isLocalOnly) return result
 
             val response = reminderApi.getReminder(reminderId)
             reminderDao.updateReminder(response.toDomain().toEntity())  // update with response from server
 
-            //ResultUiText.Success(response.toDomain())
             response.toDomain()
         } catch (e: Exception) {
             e.rethrowIfCancellation()
@@ -80,21 +87,17 @@ class ReminderRepositoryImpl(
         }
     }
 
-    suspend fun getAllRemindersLocally(): List<AgendaItem.Reminder> {
+    override suspend fun updateReminder(reminder: AgendaItem.Reminder, isRemoteOnly: Boolean): ResultUiText<Void> {
         return try {
-            reminderDao.getReminders().map { it.toDomain() }
-        } catch (e: Exception) {
-            e.rethrowIfCancellation()
-            emptyList()
-        }
-    }
+            if(!isRemoteOnly) {
+                reminderDao.updateReminder(reminder.toEntity())  // save to local DB first
+            }
+            syncRepository.addUpdatedItem(reminder)
 
-    override suspend fun updateReminder(reminder: AgendaItem.Reminder): ResultUiText<Void> {
-        return try {
-            // todo add to list of updates to send to server
-
-            reminderDao.updateReminder(reminder.toEntity())  // optimistic update
-            reminderApi.updateReminder(reminder.toDTO())
+            val result = reminderApi.updateReminder(reminder.toDTO()) // no payload from server for this
+            if(result.isSuccess) {
+                syncRepository.removeUpdatedItem(reminder)
+            }
 
             ResultUiText.Success()
         } catch (e: Exception) {
@@ -103,47 +106,28 @@ class ReminderRepositoryImpl(
         }
     }
 
+
     // • DELETE
 
-    override suspend fun deleteReminder(reminderId: ReminderId): ResultUiText<Void> {
+    override suspend fun deleteReminder(reminder: AgendaItem.Reminder): ResultUiText<Void> {
         return try {
-            // Optimistic delete
-            reminderDao.markReminderDeletedById(reminderId)
+            reminderDao.deleteReminderById(reminder.id)
+            syncRepository.addDeletedItem(reminder)
 
             // Attempt to delete on server
-            val response = reminderApi.deleteReminder(reminderId)
+            val response = reminderApi.deleteReminder(reminder.id)
             if (response.isSuccess) {
-                // Success, delete fully from local DB
-                reminderDao.deleteFinallyByReminderIds(listOf(reminderId))  // just one reminder
+                syncRepository.removeDeletedItem(reminder)
                 ResultUiText.Success()
             } else {
                 ResultUiText.Error(UiText.Str(response.exceptionOrNull()?.localizedMessage ?: "deleteReminder error"))
             }
         } catch (e: Exception) {
             e.rethrowIfCancellation()
-            ResultUiText.Error(UiText.Str(e.message ?: "deleteReminderId error"))
+            ResultUiText.Error(UiText.Str(e.message ?: "deleteReminder error"))
         }
     }
 
-    override suspend fun getDeletedReminderIdsLocally(): List<ReminderId> {
-        return try {
-            reminderDao.getMarkedDeletedReminderIds()
-        } catch (e: Exception) {
-            e.rethrowIfCancellation()
-            emptyList()
-        }
-    }
-
-    override suspend fun deleteRemindersFinallyLocally(reminderIds: List<ReminderId>): ResultUiText<Void> {
-        return try {
-            reminderDao.deleteFinallyByReminderIds(reminderIds)
-
-            ResultUiText.Success() // todo return the deleted reminders, for undo
-        } catch (e: Exception) {
-            e.rethrowIfCancellation()
-            ResultUiText.Error(UiText.Str(e.message ?: "deleteFinallyReminderIds error"))
-        }
-    }
 
     // • CLEAR / CLEANUP
 

@@ -21,6 +21,11 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.eventApiImpls.EventApiImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.IReminderApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.ISyncRepository
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ISyncDao
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.remote.ISyncApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.remote.syncApiImpls.SyncApiImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.syncRepositoryImpls.SyncRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.local.ITaskDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.ITaskApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.taskApi.taskApiImpls.TaskApiImpl
@@ -296,7 +301,7 @@ object AppModule {
         attendeeRepository: IAttendeeRepository,
         taskRepository: ITaskRepository,
         reminderRepository: IReminderRepository,
-//        reminderRepository: IReminderRepository,      // todo implement soon
+        syncRepository: ISyncRepository,
         agendaApi: IAgendaApi,
     ): IAgendaRepository =
         AgendaRepositoryImpl(
@@ -304,7 +309,8 @@ object AppModule {
             eventRepository = eventRepository,
             attendeeRepository = attendeeRepository,
             taskRepository = taskRepository,
-            reminderRepository = reminderRepository
+            reminderRepository = reminderRepository,
+            syncRepository = syncRepository,
         )
 
     /////////// EVENTS REPOSITORY ///////////
@@ -328,9 +334,10 @@ object AppModule {
     @Singleton
     fun provideEventRepository(
         eventDao: IEventDao,
-        eventApi: IEventApi
+        eventApi: IEventApi,
+        syncRepository: ISyncRepository,
     ): IEventRepository =
-        EventRepositoryImpl(eventDao, eventApi)
+        EventRepositoryImpl(eventDao, eventApi, syncRepository)
 
     /////////// TASKS REPOSITORY ///////////
 
@@ -345,17 +352,17 @@ object AppModule {
     @Singleton
     fun provideTaskApiProd(
         taskyApi: TaskyApi,
-        @ApplicationContext context: Context
     ): ITaskApi =
-        TaskApiImpl(taskyApi, context)
+        TaskApiImpl(taskyApi)
 
     @Provides
     @Singleton
     fun provideTaskRepository(
         taskDao: ITaskDao,
-        taskApi: ITaskApi
+        taskApi: ITaskApi,
+        syncRepository: ISyncRepository,
     ): ITaskRepository =
-        TaskRepositoryImpl(taskDao, taskApi)
+        TaskRepositoryImpl(taskDao, taskApi, syncRepository)
 
 
     /////////// REMINDER REPOSITORY ///////////
@@ -371,17 +378,42 @@ object AppModule {
     @Singleton
     fun provideReminderApiProd(
         taskyApi: TaskyApi,
-        @ApplicationContext context: Context
     ): IReminderApi =
-        ReminderApiImpl(taskyApi, context)
+        ReminderApiImpl(taskyApi)
 
     @Provides
     @Singleton
     fun provideReminderRepository(
         reminderDao: IReminderDao,
-        reminderApi: IReminderApi
+        reminderApi: IReminderApi,
+        syncRepository: ISyncRepository,
     ): IReminderRepository =
-        ReminderRepositoryImpl(reminderDao, reminderApi)
+        ReminderRepositoryImpl(reminderDao, reminderApi, syncRepository)
+
+
+    /////////// SYNC REPOSITORY ///////////
+
+    @Provides
+    @Singleton
+    fun provideSyncDaoProd(
+        taskyDatabase: TaskyDatabase
+    ): ISyncDao =
+        taskyDatabase.syncDao()
+
+    @Provides
+    @Singleton
+    fun provideSyncApiProd(
+        taskyApi: TaskyApi,
+    ): ISyncApi =
+        SyncApiImpl(taskyApi)
+
+    @Provides
+    @Singleton
+    fun provideSyncRepository(
+        syncDao: ISyncDao,
+        syncApi: ISyncApi,
+    ): ISyncRepository =
+        SyncRepositoryImpl(syncApi, syncDao)
 
 
     /////////// ATTENDEE REPOSITORY ///////////

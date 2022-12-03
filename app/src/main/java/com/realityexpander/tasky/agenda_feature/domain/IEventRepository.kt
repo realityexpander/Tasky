@@ -5,21 +5,16 @@ import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
 
 interface IEventRepository {
-    suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event>
+    suspend fun createEvent(event: AgendaItem.Event, isRemoteOnly: Boolean = false): ResultUiText<AgendaItem.Event>
     suspend fun upsertEventLocally(event: AgendaItem.Event): ResultUiText<Void>
 
     suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<AgendaItem.Event>
     fun getEventsForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<AgendaItem.Event>>
-    suspend fun getEvent(eventId: EventId): AgendaItem.Event?
+    suspend fun getEvent(eventId: EventId, isLocalOnly: Boolean = false): AgendaItem.Event?
 
-    suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event>
+    suspend fun updateEvent(event: AgendaItem.Event, isRemoteOnly: Boolean = false): ResultUiText<AgendaItem.Event>
 
-    // only marks the event as deleted
-    suspend fun deleteEvent(eventId: EventId): ResultUiText<Void>
-
-    // gets only the "marked as deleted" events
-    suspend fun getDeletedEventIdsLocally(): List<EventId>
-    suspend fun deleteEventsFinallyLocally(eventIds: List<EventId>): ResultUiText<Void>
+    suspend fun deleteEvent(event: AgendaItem.Event): ResultUiText<Void>
 
     suspend fun clearAllEventsLocally(): ResultUiText<Void>
     suspend fun clearEventsForDayLocally(zonedDateTime: ZonedDateTime): ResultUiText<Void>

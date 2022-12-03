@@ -5,10 +5,10 @@ import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.common.util.TimeZoneStr
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaDayDTO
-import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaSyncDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.GetAttendeeResponseDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.DTOs.ReminderDTO
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.remote.SyncAgendaRequestDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.DTOs.TaskDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.ApiCredentialsDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
@@ -66,7 +66,7 @@ interface TaskyApi {
 
     @POST("syncAgenda")
     suspend fun syncAgenda(
-        @Body request: AgendaSyncDTO,
+        @Body agendaSyncRequest: SyncAgendaRequestDTO,
     ): Response<Void>
 
 

@@ -55,6 +55,8 @@ class AgendaViewModel @Inject constructor(
         }
 //        .flattenMerge()  // was not working for some reason...
         .flatMapLatest { it }
+        .debounce(50)
+        .distinctUntilChanged()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _agendaState =
@@ -91,6 +93,7 @@ class AgendaViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            agendaRepository.syncAgenda()  // push local changes to server
             agendaRepository.updateAgendaForDayFromRemote(
                 getDateForSelectedDayIndex(selectedDate, selectedDayIndex)
             )
@@ -265,20 +268,19 @@ class AgendaViewModel @Inject constructor(
                         is AgendaItem.Event -> {
                             // If the logged-in user owns the Event, they are allowed to delete it.
                             if (uiEvent.agendaItem.isUserEventCreator) {
-                                agendaRepository.deleteEventId(uiEvent.agendaItem.id)
+                                agendaRepository.deleteEvent(uiEvent.agendaItem)
                             } else {
                                 // Otherwise, the user (as Attendee) is removed from the Event.
-                                agendaRepository.removeLoggedInUserFromEventId(
-                                    eventId = uiEvent.agendaItem.id,
+                                agendaRepository.removeLoggedInUserFromEvent(
+                                    event = uiEvent.agendaItem,
                                 )
                             }
                         }
                         is AgendaItem.Task -> {
-                            agendaRepository.deleteTaskId(uiEvent.agendaItem.id)
+                            agendaRepository.deleteTask(uiEvent.agendaItem)
                         }
                         is AgendaItem.Reminder -> {
-//                                agendaRepository.deleteReminderId(agendaItem) // todo implement
-                            ResultUiText.Error<AgendaItem.Task>(UiText.Str("unimplemented"))
+                            agendaRepository.deleteReminder(uiEvent.agendaItem)
                         }
                         else -> {
                             ResultUiText.Error<AgendaItem>(UiText.Res(R.string.error_unknown_agenda_type))
@@ -436,82 +438,7 @@ class AgendaViewModel @Inject constructor(
 //                        isDone = true
 //                    ),
 //                )
-//                    AgendaItem.Task(  // todo add task
-//                        id = "0002",
-//                        title = "Task with Jim",
-//                        time = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(2), zoneId),
-//                        remindAt = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(1), zoneId),
-//                        description = "Do the old project"
-//                    ),
-//                    AgendaItem.Reminder( // todo add reminder
-//                        id = "0003",
-//                        title = "Reminder with Jane",
-//                        time = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(3), zoneId),
-//                        remindAt = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(2), zoneId),
-//                        description = "Reminder to move the different project"
-//                    ),
-//                    AgendaItem.Task(  // todo add task
-//                        id = "0004",
-//                        title = "Task with Joe",
-//                        time = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(4), zoneId),
-//                        remindAt = ZonedDateTime.of(todayDate, today.toLocalTime().plusHours(3), zoneId),
-//                        description = "Do the the other project",
-//                        isDone = true
-//                    ),
         }
     }
 
 }
-
-
-// todo remove later - left for reference
-//    private fun createAgendaItem(agendaItemType: AgendaItemType) {
-//        viewModelScope.launch {
-//            val today = LocalDate.now()
-//            val todayDayOfWeek = today.dayOfWeek.name
-//            val todayDayOfMonth = today.dayOfMonth
-//            val todayMonth = today.month
-//            val todayYear = today.year
-//            val todayDate = LocalDate.of(todayYear, todayMonth, todayDayOfMonth)
-//
-//            // todo create Dummy data for now - replace with actual data soon
-//            val id = when(agendaItemType) {
-////                AgendaItemType.Task ->
-////                     AgendaItem.Task(
-////                          id = UUID.randomUUID().toString(),
-////                          title = "New Task for $todayDate",
-////                          time = ZonedDateTime.of(
-////                              todayDate,
-////                              LocalTime.now().plusHours(1),
-////                              ZoneId.systemDefault()
-////                          ),
-////                          remindAt = ZonedDateTime.of(
-////                              todayDate,
-////                              LocalTime.now().plusMinutes(30),
-////                              ZoneId.systemDefault()
-////                          ),
-////                          description = "New Task Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
-////                     )
-////                }
-////                AgendaItemType.Reminder ->
-////                     AgendaItem.Reminder(
-////                          id = UUID.randomUUID().toString(),
-////                          title = "New Reminder for $todayDate",
-////                          time = ZonedDateTime.of(
-////                              todayDate,
-////                              LocalTime.now().plusHours(2),
-////                              ZoneId.systemDefault()
-////                          ),
-////                          remindAt = ZonedDateTime.of(
-////                              todayDate,
-////                              LocalTime.now().plusMinutes(60),
-////                              ZoneId.systemDefault()
-////                          ),
-////                          description = "New Reminder Description - $todayDayOfWeek - $todayDayOfMonth - $todayMonth - $todayYear"
-////                     )
-////                }
-//            }
-//
-//            id?.let { sendEvent(StatefulOneTimeEvent.ScrollToItemId(id)) }
-//        }
-//    }

@@ -288,7 +288,7 @@ class ReminderViewModel @Inject constructor(
                 }
 
                 val result =
-                    agendaRepository.deleteTaskId(_state.value.reminder?.id ?: return)
+                    agendaRepository.deleteReminder(_state.value.reminder ?: return)
 
                 when (result) {
                     is ResultUiText.Success -> {

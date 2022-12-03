@@ -16,27 +16,27 @@ interface IAgendaRepository {
     suspend fun updateAgendaForDayFromRemote(dateTime: ZonedDateTime)
 
     // • Event Repository
-    suspend fun createEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event>
-    suspend fun getEvent(eventId: EventId): AgendaItem.Event?
-    suspend fun updateEvent(event: AgendaItem.Event): ResultUiText<AgendaItem.Event>
-    suspend fun deleteEventId(eventId: EventId): ResultUiText<Void>
+    suspend fun createEvent(event: AgendaItem.Event, isRemoteOnly: Boolean = false): ResultUiText<AgendaItem.Event>
+    suspend fun getEvent(eventId: EventId, isLocalOnly: Boolean = false): AgendaItem.Event?
+    suspend fun updateEvent(event: AgendaItem.Event, isRemoteOnly: Boolean = false): ResultUiText<AgendaItem.Event>
+    suspend fun deleteEvent(event: AgendaItem.Event): ResultUiText<Void>
     suspend fun clearAllEventsLocally(): ResultUiText<Void>
 
     // • Attendee Repository
     suspend fun validateAttendeeExists(attendeeEmail: Email): ResultUiText<Attendee>
-    suspend fun removeLoggedInUserFromEventId(eventId: EventId): ResultUiText<Void>
+    suspend fun removeLoggedInUserFromEvent(event: AgendaItem.Event): ResultUiText<Void>
 
     // • Task Repository
-    suspend fun createTask(task: AgendaItem.Task): ResultUiText<Void>
-    suspend fun getTask(taskId: TaskId): AgendaItem.Task?
-    suspend fun updateTask(task: AgendaItem.Task): ResultUiText<Void>
-    suspend fun deleteTaskId(taskId: TaskId): ResultUiText<Void>
+    suspend fun createTask(task: AgendaItem.Task, isRemoteOnly: Boolean = false): ResultUiText<Void>
+    suspend fun getTask(taskId: TaskId, isLocalOnly: Boolean = false): AgendaItem.Task?
+    suspend fun updateTask(task: AgendaItem.Task, isRemoteOnly: Boolean = false): ResultUiText<Void>
+    suspend fun deleteTask(task: AgendaItem.Task): ResultUiText<Void>
     suspend fun clearAllTasksLocally(): ResultUiText<Void>
 
     // • Reminder Repository
-    suspend fun createReminder(reminder: AgendaItem.Reminder): ResultUiText<Void>
-    suspend fun getReminder(reminderId: ReminderId): AgendaItem.Reminder?
-    suspend fun updateReminder(reminder: AgendaItem.Reminder): ResultUiText<Void>
-    suspend fun deleteReminderId(reminderId: ReminderId): ResultUiText<Void>
-    suspend fun clearAllRemindersLocally(): ResultUiText<Void>
+    suspend fun createReminder(reminder: AgendaItem.Reminder, isRemoteOnly: Boolean = false): ResultUiText<Void>
+    suspend fun getReminder(reminderId: ReminderId, isLocalOnly: Boolean = false): AgendaItem.Reminder?
+    suspend fun updateReminder(reminder: AgendaItem.Reminder, isRemoteOnly: Boolean = false): ResultUiText<Void>
+    suspend fun deleteReminder(reminder: AgendaItem.Reminder): ResultUiText<Void>
+    suspend fun clearAllRemindersLocal(): ResultUiText<Void>
 }

@@ -4,6 +4,7 @@ import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEntity
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.ISyncRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.local.ITaskDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.ITaskApi
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
@@ -18,18 +19,25 @@ import java.time.ZonedDateTime
 class TaskRepositoryImpl(
     private val taskDao: ITaskDao,
     private val taskApi: ITaskApi,
+    private val syncRepository: ISyncRepository,
 ) : ITaskRepository {
 
     // • CREATE
 
-    override suspend fun createTask(task: AgendaItem.Task): ResultUiText<Void> {
+    override suspend fun createTask(task: AgendaItem.Task, isRemoteOnly: Boolean): ResultUiText<Void> {
         return try {
-            // todo add to list of updates to send to server
+            if(!isRemoteOnly) {
+                taskDao.createTask(task.toEntity())  // save to local DB first
+            }
+            syncRepository.addCreatedItem(task)
 
-            taskDao.createTask(task.toEntity())  // save to local DB first
-            taskApi.createTask(task.toDTO())
-
-            ResultUiText.Success()
+            val result = taskApi.createTask(task.toDTO())
+            if(result.isSuccess) {
+                syncRepository.removeCreatedItem(task)
+                ResultUiText.Success()
+            } else {
+                ResultUiText.Error(UiText.Str(result.exceptionOrNull()?.localizedMessage ?: "createTask error"))
+            }
         } catch (e: Exception) {
             e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.message ?: "createTask error"))
@@ -65,37 +73,35 @@ class TaskRepositoryImpl(
         }
     }
 
-    override suspend fun getTask(taskId: TaskId): AgendaItem.Task? {
+    override suspend fun getTask(taskId: TaskId, isLocalOnly: Boolean): AgendaItem.Task? {
         return try {
-            taskDao.getTaskById(taskId)?.toDomain() // get from local DB first
+            val result = taskDao.getTaskById(taskId)?.toDomain() // get from local DB first
+            if(isLocalOnly) return result
 
             val response = taskApi.getTask(taskId)
             taskDao.updateTask(response.toDomain().toEntity())  // update with response from server
 
-            //ResultUiText.Success(response.toDomain())
             response.toDomain()
         } catch (e: Exception) {
             null
         }
     }
 
-    suspend fun getAllTasksLocally(): List<AgendaItem.Task> {
+    override suspend fun updateTask(task: AgendaItem.Task, isRemoteOnly: Boolean): ResultUiText<Void> {
         return try {
-            taskDao.getTasks().map { it.toDomain() }
-        } catch (e: Exception) {
-            e.rethrowIfCancellation()
-            emptyList()
-        }
-    }
+            if(!isRemoteOnly) {
+                taskDao.updateTask(task.toEntity())  // save to local DB first
+            }
+            syncRepository.addUpdatedItem(task)
 
-    override suspend fun updateTask(task: AgendaItem.Task): ResultUiText<Void> {
-        return try {
-            // todo add to list of updates to send to server
+            val result = taskApi.updateTask(task.toDTO())
+            if(result.isSuccess) {
+                syncRepository.removeUpdatedItem(task)
+                ResultUiText.Success()
+            } else {
+                ResultUiText.Error(UiText.Str(result.exceptionOrNull()?.localizedMessage ?: "updateTask error"))
+            }
 
-            taskDao.updateTask(task.toEntity())  // optimistic update
-            taskApi.updateTask(task.toDTO())
-
-            ResultUiText.Success()
         } catch (e: Exception) {
             e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.localizedMessage ?: "updateTask error"))
@@ -104,43 +110,29 @@ class TaskRepositoryImpl(
 
     // • DELETE
 
-    override suspend fun deleteTask(taskId: TaskId): ResultUiText<Void> {
+    override suspend fun deleteTaskBy(task: AgendaItem.Task): ResultUiText<Void> {
         return try {
-            // Optimistic delete
-            taskDao.markTaskDeletedById(taskId)
+            return try {
+                taskDao.deleteTaskById(task.id)
+                syncRepository.addDeletedItem(task)
 
-            // Attempt to delete on server
-            val response = taskApi.deleteTask(taskId)
-            if (response.isSuccess) {
-                // Success, delete fully from local DB
-                taskDao.deleteFinallyByTaskIds(listOf(taskId))  // just one task
-                ResultUiText.Success()
-            } else {
-                ResultUiText.Error(UiText.Str(response.exceptionOrNull()?.localizedMessage ?: "deleteTask error"))
+                // Attempt to delete on server
+                val result = taskApi.deleteTask(task.id)
+                if (result.isSuccess) {
+                    syncRepository.removeDeletedItem(task)
+                    ResultUiText.Success()
+                } else {
+                    ResultUiText.Error(UiText.Str(result.exceptionOrNull()?.localizedMessage ?: "deleteReminder error"))
+                }
+            } catch (e: Exception) {
+                e.rethrowIfCancellation()
+                ResultUiText.Error(UiText.Str(e.message ?: "deleteReminder error"))
             }
+
+
         } catch (e: Exception) {
             e.rethrowIfCancellation()
-            ResultUiText.Error(UiText.Str(e.message ?: "deleteTaskId error"))
-        }
-    }
-
-    override suspend fun getDeletedTaskIdsLocally(): List<TaskId> {
-        return try {
-            taskDao.getMarkedDeletedTaskIds()
-        } catch (e: Exception) {
-            e.rethrowIfCancellation()
-            emptyList()
-        }
-    }
-
-    override suspend fun deleteTasksFinallyLocally(taskIds: List<TaskId>): ResultUiText<Void> {
-        return try {
-            taskDao.deleteFinallyByTaskIds(taskIds)
-
-            ResultUiText.Success() // todo return the deleted tasks, for undo
-        } catch (e: Exception) {
-            e.rethrowIfCancellation()
-            ResultUiText.Error(UiText.Str(e.message ?: "deleteFinallyTaskIds error"))
+            ResultUiText.Error(UiText.Str(e.message ?: "deleteReminder error"))
         }
     }
 
@@ -153,7 +145,7 @@ class TaskRepositoryImpl(
             ResultUiText.Success() // todo return the cleared task, yes for undo
         } catch (e: Exception) {
             e.rethrowIfCancellation()
-            ResultUiText.Error(UiText.Str(e.message ?: "clearAllTasks error"))
+            ResultUiText.Error(UiText.Str(e.message ?: "clearAllTasksLocally error"))
         }
     }
 
@@ -164,7 +156,7 @@ class TaskRepositoryImpl(
             ResultUiText.Success() // todo return the cleared task, for undo
         } catch (e: Exception) {
             e.rethrowIfCancellation()
-            ResultUiText.Error(UiText.Str(e.message ?: "clearTasksForDay error"))
+            ResultUiText.Error(UiText.Str(e.message ?: "clearTasksForDayLocally error"))
         }
     }
 }

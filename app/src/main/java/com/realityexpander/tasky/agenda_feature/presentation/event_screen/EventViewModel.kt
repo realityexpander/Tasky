@@ -457,7 +457,7 @@ class EventViewModel @Inject constructor(
                 }
 
                 val result =
-                    agendaRepository.deleteEventId(_state.value.event?.id ?: return)
+                    agendaRepository.deleteEvent(_state.value.event ?: return)
 
                 when (result) {
                     is ResultUiText.Success -> {

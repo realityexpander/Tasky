@@ -1,10 +1,10 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.eventDao.eventDaoImpls
 
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.IEventDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.AttendeeEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.EventEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.PhotoEntity
-import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.IEventDao
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,13 +47,13 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         return getEventByIdInFakeDatabase(eventId)
     }
 
-    // returns only the events that are *NOT* marked as deleted.
-    override suspend fun getEvents(): List<EventEntity> {
-        return getEventsInFakeDatabase()
-    }
+//    // returns only the events that are *NOT* marked as deleted.
+//    override suspend fun getEvents(): List<EventEntity> {
+//        return getEventsInFakeDatabase()
+//    }
 
     // returns all events, including the deleted ones.
-    override suspend fun getAllEvents(): List<EventEntity> {
+    override suspend fun getEvents(): List<EventEntity> {
         return getAllEventsInFakeDatabase()
     }
 
@@ -68,19 +68,27 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         }
     }
 
-
-    // • DELETE
-
-    // Only marks the event as deleted
-    override suspend fun markEventDeletedById(eventId: EventId): Int {
+    override suspend fun deleteEventById(eventId: EventId): Int {
         return try {
-            return markEventDeletedByIdInFakeDatabase(eventId)
+            return deleteFinallyByEventIdsInFakeDatabase(listOf(eventId))
         } catch (e: Exception) {
             0
         }
     }
 
-    override suspend fun deleteFinallyByEventIds(eventIds: List<EventId>): Int {
+
+    // • DELETE
+
+//    // Only marks the event as deleted
+//    override suspend fun markEventDeletedById(eventId: EventId): Int {
+//        return try {
+//            return markEventDeletedByIdInFakeDatabase(eventId)
+//        } catch (e: Exception) {
+//            0
+//        }
+//    }
+
+    override suspend fun deleteByEventIds(eventIds: List<EventId>): Int {
         return try {
             return deleteFinallyByEventIdsInFakeDatabase(eventIds)
         } catch (e: Exception) {
@@ -96,9 +104,9 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         }
     }
 
-    override suspend fun getMarkedDeletedEventIds(): List<EventId> {
-        return getMarkedDeletedEventIdsInFakeDatabase()
-    }
+//    override suspend fun getMarkedDeletedEventIds(): List<EventId> {
+//        return getMarkedDeletedEventIdsInFakeDatabase()
+//    }
 
     override suspend fun clearAllEvents(): Int {
         return try {
@@ -150,16 +158,18 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
 
     private fun isEventVisibleForDay(entity: EventEntity, zonedDateTime: ZonedDateTime): Boolean {
         return (
-            !entity.isDeleted
-             &&
+//            !entity.isDeleted
+//             &&
             (
-                ( (entity.from >= zonedDateTime) && (entity.to   < zonedDateTime.plusDays(1) )) // -- event fits within a day
-                ||
-                ( (entity.from >  zonedDateTime) && (entity.from < zonedDateTime.plusDays(1) )) // -- `from` starts today
-                ||
-                ( (entity.to   >  zonedDateTime) && (entity.to   < zonedDateTime.plusDays(1) )) // -- `to` ends today
-                ||
-                ( (entity.from <= zonedDateTime) && (entity.to   > zonedDateTime.plusDays(1) )) // -- event straddles today
+                ( (entity.from >= zonedDateTime) && (entity.from   < zonedDateTime.plusDays(1) )) // -- event starts within day
+
+//                ( (entity.from >= zonedDateTime) && (entity.to   < zonedDateTime.plusDays(1) )) // -- event fits within a day
+//                ||
+//                ( (entity.from >  zonedDateTime) && (entity.from < zonedDateTime.plusDays(1) )) // -- `from` starts today
+//                ||
+//                ( (entity.to   >  zonedDateTime) && (entity.to   < zonedDateTime.plusDays(1) )) // -- `to` ends today
+//                ||
+//                ( (entity.from <= zonedDateTime) && (entity.to   > zonedDateTime.plusDays(1) )) // -- event straddles today
             )
         )
     }
@@ -167,25 +177,26 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
     private fun getAllEventsFlowInFakeDatabase(): Flow<List<EventEntity>> {
         return eventsDBTableFlow
             .map { events ->
-                events.filter { event ->
-                    !(event.isDeleted)
-                }
+//                events.filter { event ->
+//                    !(event.isDeleted)
+//                }
+                events
             }
     }
 
     private suspend fun getEventByIdInFakeDatabase(eventId: EventId): EventEntity? {
         return eventsDBTable.find {
-            it.id == eventId && !it.isDeleted
+            it.id == eventId //&& !it.isDeleted
         }
     }
 
-    // Gets all events except the deleted ones
-    private suspend fun getEventsInFakeDatabase(): List<EventEntity> {
-        return eventsDBTable
-            .filter { event ->
-                !event.isDeleted
-            }
-    }
+//    // Gets all events except the deleted ones
+//    private suspend fun getEventsInFakeDatabase(): List<EventEntity> {
+//        return eventsDBTable
+//            .filter { event ->
+//                !event.isDeleted
+//            }
+//    }
 
     // Gets all events including the deleted ones
     private suspend fun getAllEventsInFakeDatabase(): List<EventEntity> {
@@ -207,15 +218,15 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
 
     // • DELETE
 
-    // only marks the event as deleted
-    private suspend fun markEventDeletedByIdInFakeDatabase(eventId: EventId): Int {
-        val index = eventsDBTable.indexOfFirst { it.id == eventId }
-        if (index == -1) return 0
-
-        eventsDBTable[index] = eventsDBTable[index].copy(isDeleted = true)
-        eventsDBTableFlow.update { eventsDBTable.toList() }
-        return 1
-    }
+//    // only marks the event as deleted
+//    private suspend fun markEventDeletedByIdInFakeDatabase(eventId: EventId): Int {
+//        val index = eventsDBTable.indexOfFirst { it.id == eventId }
+//        if (index == -1) return 0
+//
+//        eventsDBTable[index] = eventsDBTable[index].copy(isDeleted = true)
+//        eventsDBTableFlow.update { eventsDBTable.toList() }
+//        return 1
+//    }
 
     private suspend fun deleteFinallyByEventIdsInFakeDatabase(eventIds: List<EventId>): Int {
         val eventIdsDeleteSize = eventIds.size
@@ -228,14 +239,14 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         return eventIdsDeleteSize
     }
 
-    private suspend fun getMarkedDeletedEventIdsInFakeDatabase(): List<EventId> {
-        return eventsDBTable.filter {
-            it.isDeleted
-        }.map {
-            it.id
-        }.also{
-        }
-    }
+//    private suspend fun getMarkedDeletedEventIdsInFakeDatabase(): List<EventId> {
+//        return eventsDBTable.filter {
+//            it.isDeleted
+//        }.map {
+//            it.id
+//        }.also{
+//        }
+//    }
 
     private suspend fun deleteEventInFakeDatabase(event: EventEntity): Int {
         val index = eventsDBTable.indexOfFirst { it.id == event.id }
@@ -320,7 +331,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
+//            isDeleted = false,
         )
     )
 
@@ -351,7 +362,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
+//            isDeleted = false,
         )
     )
 
@@ -380,7 +391,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
+//            isDeleted = false,
         )
     )
 
@@ -409,7 +420,7 @@ suspend fun runGetEventsForDayFlowTest(dao: IEventDao) {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
+//            isDeleted = false,
         )
     )
 
@@ -449,7 +460,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
+//            isDeleted = false,
         )
     )
 
@@ -480,7 +491,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
+//            isDeleted = false,
         )
     )
 
@@ -509,7 +520,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
+//            isDeleted = false,
         )
     )
 
@@ -540,7 +551,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
+//            isDeleted = false,
         )
     )
 
@@ -573,7 +584,7 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
+//            isDeleted = false,
         )
     )
 
@@ -581,24 +592,24 @@ suspend fun runGeneralDBFlowTest(dao: IEventDao) {
     println()
 
     print(".deleteEventById(eventId=4) -> ")
-    dao.markEventDeletedById("4")
+    dao.deleteEventById("4")
 
-    val deletedEventIds =
-        dao.getMarkedDeletedEventIds().also { eventIds ->
-            println("EventIds Marked as Deleted: $eventIds")
-        }
+//    val deletedEventIds =
+//        dao.getMarkedDeletedEventIds().also { eventIds ->
+//            println("EventIds Marked as Deleted: $eventIds")
+//        }
 
     delay(100)
     println()
 
-    print(".deleteFinallyByEventIds(deletedEventIds) -> ")
-    dao.deleteFinallyByEventIds(deletedEventIds)
+//    print(".deleteByEventIds(deletedEventIds) -> ")
+//    dao.deleteByEventIds(deletedEventIds)
 
     delay(100)
 
-    dao.getMarkedDeletedEventIds().also { eventIds ->
-        println("EventIds Marked as Deleted: $eventIds")
-    }
+//    dao.getMarkedDeletedEventIds().also { eventIds ->
+//        println("EventIds Marked as Deleted: $eventIds")
+//    }
 
     println()
     print(".clearAllEvents() -> ")

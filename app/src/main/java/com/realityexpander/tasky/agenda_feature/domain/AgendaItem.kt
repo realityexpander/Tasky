@@ -36,7 +36,7 @@ abstract class AgendaItem {
 
         val isDeleted: Boolean = false,
 
-    ) : AgendaItem(), Parcelable
+        ) : AgendaItem(), Parcelable
 
     @Parcelize
     data class Task(
