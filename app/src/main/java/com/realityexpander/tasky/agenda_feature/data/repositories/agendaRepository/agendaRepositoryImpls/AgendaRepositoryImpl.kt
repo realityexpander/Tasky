@@ -44,6 +44,27 @@ class AgendaRepositoryImpl @Inject constructor(
         return events + tasks + reminders
     }
 
+    override suspend fun getAgendaForDayFromRemote(dateTime: ZonedDateTime): Result<List<AgendaItem>> {
+        return try {
+            val result = agendaApi.getAgenda(dateTime)
+            if (result.isSuccess) {
+                val agendaDayDTO = result.getOrNull()
+                if (agendaDayDTO != null) {
+                    val events = agendaDayDTO.events.map { it.toDomain() }
+                    val tasks = agendaDayDTO.tasks.map { it.toDomain() }
+                    val reminders = agendaDayDTO.reminders.map { it.toDomain() }
+                    Result.success(events + tasks + reminders)
+                } else {
+                    Result.failure(Exception("Response body is null"))
+                }
+            } else {
+                Result.failure(Exception("Error getting agenda"))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Error getting agenda"))
+        }
+    }
+
     override suspend fun updateLocalAgendaForDayFromRemote(dateTime: ZonedDateTime) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -110,6 +131,38 @@ class AgendaRepositoryImpl @Inject constructor(
                         // don't send error to user, just log it (silent fail is ok here)
                     }
                 }
+        }
+    }
+
+    override fun addAgendaItems(agendaItems: List<AgendaItem>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                agendaItems.forEach { agendaItem ->
+                    when (agendaItem) {
+                        is AgendaItem.Event -> {
+                            val result = eventRepository.upsertEventLocally(agendaItem)
+                            if (result is ResultUiText.Error) {
+                                throw IllegalStateException(result.message.asStrOrNull())
+                            }
+                        }
+                        is AgendaItem.Task -> {
+                            val result = taskRepository.upsertTaskLocally(agendaItem)
+                            if (result is ResultUiText.Error) {
+                                throw IllegalStateException(result.message.asStrOrNull())
+                            }
+                        }
+                        is AgendaItem.Reminder -> {
+                            val result = reminderRepository.upsertReminderLocally(agendaItem)
+                            if (result is ResultUiText.Error) {
+                                throw IllegalStateException(result.message.asStrOrNull())
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // don't send error to user, just log it (silent fail is ok here)
+            }
         }
     }
 

@@ -16,11 +16,8 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.yield
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -104,6 +101,27 @@ class AgendaViewModel @Inject constructor(
                     authInfo = authRepository.getAuthInfo(),
                     agendaItems = _agendaItems.value,
                 )
+            }
+
+            // Fetch/Refresh the previous and coming week's agenda items
+            withContext(Dispatchers.IO) {
+                (-5..5).map { index ->
+                    if (index != 0) {
+                        val date = getDateForSelectedDayIndex(selectedDate, index)
+                        async { agendaRepository.getAgendaForDayFromRemote(date) }
+                    } else {
+                        async { null }
+                    }
+                }.awaitAll()
+                .mapNotNull { oneDayOfAgendaItems ->
+                    oneDayOfAgendaItems?.run {
+                        if (isSuccess) {
+                            agendaRepository.addAgendaItems(
+                                oneDayOfAgendaItems.getOrNull() ?: emptyList()
+                            )
+                        }
+                    }
+                }
             }
 
 //            yield() // wait for database to load  // leave for testing for now // todo remove
