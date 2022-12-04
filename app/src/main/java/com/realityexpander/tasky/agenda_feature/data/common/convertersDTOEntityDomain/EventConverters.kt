@@ -7,6 +7,8 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
+import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.toUtcMillis
 import com.realityexpander.tasky.core.util.toZonedDateTime
 import java.time.ZonedDateTime
@@ -75,7 +77,7 @@ fun EventDTO.toDomain(): AgendaItem.Event {
                 attendees = attendees.map { it.toDomain() },
                 photos = photos.map { it.toDomain() },
                 deletedPhotoIds = emptyList(),
-                isSynced = true
+                isSynced = true,
             )
         }
         else -> {
@@ -103,7 +105,7 @@ fun AgendaItem.Event.toEventDTOCreate(): EventDTO.Create {
 }
 
 // from Domain to EventDTO.Update (also converts local ZonedDateTime to UTC time millis)
-fun AgendaItem.Event.toEventDTOUpdate(): EventDTO.Update {
+fun AgendaItem.Event.toEventDTOUpdate(authUserId: UserId? = null): EventDTO.Update {
     return EventDTO.Update(
         id = id,
         title = title,
@@ -111,7 +113,7 @@ fun AgendaItem.Event.toEventDTOUpdate(): EventDTO.Update {
         from = from.toUtcMillis(),
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
-        isGoing = isGoing,
+        isGoing = if(authUserId == null) isGoing else isUserIdGoingAsAttendee(authUserId, attendees),
         attendeeIds = attendees.map { attendee ->
             attendee.id
         },
@@ -154,7 +156,6 @@ fun main() {
         remindAt = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES),
         host = "host",
         isUserEventCreator = true,
-        isGoing = true,
         attendees = listOf(
             Attendee(
                 id = "id1",

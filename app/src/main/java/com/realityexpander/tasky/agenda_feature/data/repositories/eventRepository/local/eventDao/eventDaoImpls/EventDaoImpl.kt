@@ -18,24 +18,6 @@ interface EventDaoImpl : IEventDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     override suspend fun createEvent(event: EventEntity)
 
-
-    // • UPSERT
-
-    @Transaction
-    override fun upsertEvent(event: EventEntity) {
-        val id = _upsertEventExecInsertEvent(event)
-        if (id == -1L) {
-            _upsertEventExecUpdateEvent(event)
-        }
-    }
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun _upsertEventExecInsertEvent(event: EventEntity): Long
-
-    @Update(onConflict = OnConflictStrategy.IGNORE)
-    fun _upsertEventExecUpdateEvent(event: EventEntity)
-
-
     // • READ
 
     @Query("SELECT * FROM events WHERE id = :eventId")
@@ -58,6 +40,22 @@ interface EventDaoImpl : IEventDao {
 
     @Update
     override suspend fun updateEvent(event: EventEntity): Int
+
+    // • UPSERT
+
+    @Transaction
+    override fun upsertEvent(event: EventEntity) {
+        val id = _insertEvent(event)
+        if (id == -1L) {
+            _updateEvent(event)
+        }
+    }
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun _insertEvent(event: EventEntity): Long
+
+    @Update(onConflict = OnConflictStrategy.IGNORE)
+    fun _updateEvent(event: EventEntity)
 
 
     // • DELETE

@@ -49,6 +49,7 @@ class AgendaViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class) // for .flatMapLatest, .flattenMerge
     private val _agendaItems =
         _selectedDayIndex.combine(_currentDate) { dayIndex, date ->
+            agendaRepository.syncAgenda()
             agendaRepository.getAgendaForDayFlow(
                 getDateForSelectedDayIndex(date, dayIndex)
             )
@@ -93,10 +94,6 @@ class AgendaViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            agendaRepository.syncAgenda()  // push local changes to server
-            agendaRepository.updateLocalAgendaForDayFromRemote(
-                getDateForSelectedDayIndex(selectedDate, selectedDayIndex)
-            )
             yield() // wait for other init code to run
 
             // restore state after process death
@@ -350,7 +347,6 @@ class AgendaViewModel @Inject constructor(
                     ),
                     host = "635dc7880806b27dc8ab81ae",
                     isUserEventCreator = false,
-                    isGoing = true,
                     attendees = listOf(
                         Attendee(
                             id = authRepository.getAuthInfo()?.userId!!,
@@ -384,7 +380,6 @@ class AgendaViewModel @Inject constructor(
                     description = "Discuss the yet another project",
                     host = "635dc7880806b27dc8ab81ae",
                     isUserEventCreator = true,
-                    isGoing = true,
                     attendees = listOf(
                         Attendee(
                             id = authRepository.getAuthInfo()?.userId!!,
@@ -410,7 +405,6 @@ class AgendaViewModel @Inject constructor(
                     description = "Discuss the worse project",
                     host = "635dc7880806b27dc8ab81ae",
                     isUserEventCreator = true,
-                    isGoing = true,
                     attendees = listOf(
                         Attendee(
                             id = authRepository.getAuthInfo()?.userId!!,

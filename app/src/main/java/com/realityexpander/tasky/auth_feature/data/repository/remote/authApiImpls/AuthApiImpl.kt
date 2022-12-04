@@ -109,7 +109,7 @@ class AuthApiImpl @Inject constructor (
         try {
             // Use the current user's AuthToken from the IAuthApi companion object
             val response = taskyApi.authenticate()
-
+            
             return when(response.code()) {
                 200 -> true // Success
                 401 -> false

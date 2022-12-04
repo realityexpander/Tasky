@@ -1,6 +1,5 @@
 package com.realityexpander.tasky.auth_feature.presentation.splash_screen
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
@@ -16,7 +15,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
-    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _splashState = MutableStateFlow(SplashState())
@@ -25,7 +23,7 @@ class MainActivityViewModel @Inject constructor(
     fun onSetAuthInfo(authInfo: AuthInfo?) {
         viewModelScope.launch {
 
-            // set the AuthInfo (& AuthToken) for this user
+            // set the AuthInfo (& AuthToken) for this user from the AuthRepository
             authRepository.setAuthInfo(authInfo)
 
             // Validate the AuthToken
@@ -38,6 +36,8 @@ class MainActivityViewModel @Inject constructor(
                 } else {
                     authInfo?.authToken != null
                 }
+            } catch (e: Exceptions.UnknownErrorException) {
+                authInfo?.authToken != null
             } catch (e: Exception) {
                 _splashState.update {
                     it.copy(
@@ -48,11 +48,7 @@ class MainActivityViewModel @Inject constructor(
                 false
             }
 
-            // If the AuthToken is valid, proceed to the Agenda screen
-            // Otherwise, proceed to the Login screen.
-            if( authInfo != null
-                && authenticateSuccess
-            ) {
+            if(authenticateSuccess) {
                 // User is authenticated
                 _splashState.update {
                     it.copy(
@@ -69,6 +65,7 @@ class MainActivityViewModel @Inject constructor(
             }
         }
     }
+
 }
 
 // to scale the splash screen if XML/SVG:

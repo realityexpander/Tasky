@@ -44,7 +44,7 @@ abstract class EventDTO {
         override val to: UtcMillis,
 
         @Required
-        val isGoing : Boolean,
+        val isGoing : Boolean,  // ONLY used to set `isGoing` status for `UpdateEventDTO`, not used anywhere else in app.
 
         @Required  // forces write of empty list -> []   (instead of field not written when empty)
         val attendeeIds: List<AttendeeId> = emptyList(),

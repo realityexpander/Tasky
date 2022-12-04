@@ -102,6 +102,10 @@ class AuthRepositoryFakeImpl(
         authDao.clearAuthInfo()
     }
 
+    override fun getAuthUserId(): String? {
+        return IAuthApi.authUserId
+    }
+
     override suspend fun authenticate(): Boolean {
         return authApi.authenticate()
     }

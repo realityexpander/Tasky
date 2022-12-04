@@ -27,7 +27,7 @@ class TaskRepositoryImpl(
     override suspend fun createTask(task: AgendaItem.Task, isRemoteOnly: Boolean): ResultUiText<Void> {
         return try {
             if(!isRemoteOnly) {
-                taskDao.createTask(task.toEntity())  // save to local DB first
+                taskDao.createTask(task.copy(isSynced = false).toEntity())  // save to local DB first
                 syncRepository.addCreatedSyncItem(task)
             }
 
@@ -74,23 +74,13 @@ class TaskRepositoryImpl(
     }
 
     override suspend fun getTask(taskId: TaskId, isLocalOnly: Boolean): AgendaItem.Task? {
-        return try {
-            val result = taskDao.getTaskById(taskId)?.toDomain() // get from local DB first
-            if(isLocalOnly) return result
-
-            val response = taskApi.getTask(taskId)
-            taskDao.updateTask(response.toDomain().toEntity())  // update with response from server
-
-            response.toDomain()
-        } catch (e: Exception) {
-            null
-        }
+        return taskDao.getTaskById(taskId)?.toDomain()
     }
 
     override suspend fun updateTask(task: AgendaItem.Task, isRemoteOnly: Boolean): ResultUiText<Void> {
         return try {
             if(!isRemoteOnly) {
-                taskDao.updateTask(task.toEntity())  // save to local DB first
+                taskDao.updateTask(task.copy(isSynced = false).toEntity())  // save to local DB first
                 syncRepository.addUpdatedSyncItem(task)
             }
 

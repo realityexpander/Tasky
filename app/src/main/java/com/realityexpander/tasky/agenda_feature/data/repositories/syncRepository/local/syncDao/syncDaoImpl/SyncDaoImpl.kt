@@ -4,7 +4,7 @@ import androidx.room.*
 import com.realityexpander.tasky.agenda_feature.common.util.AgendaItemId
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ISyncDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ModificationTypeForSync
-import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.entities.SyncAgendaItemEntity
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.entities.SyncItemEntity
 
 // SyncDao implements a Persistent Set using Room
 
@@ -14,8 +14,8 @@ interface SyncDaoImpl : ISyncDao {
     // • CREATE / UPDATE
 
     @Transaction
-    override suspend fun addModifiedAgendaItem(
-        item: SyncAgendaItemEntity
+    override suspend fun addSyncEntity(
+        item: SyncItemEntity
     ) {
         // Delete any existing entries
         getSyncAgendaItems().filter {
@@ -31,19 +31,19 @@ interface SyncDaoImpl : ISyncDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun _insertModifiedAgendaItem(
-        item: SyncAgendaItemEntity
+        item: SyncItemEntity
     )
 
 
     // • READ
 
-    @Query("SELECT * FROM modified_agenda_items")
-    override suspend fun getSyncAgendaItems(): List<SyncAgendaItemEntity>
+    @Query("SELECT * FROM sync_items")
+    override suspend fun getSyncAgendaItems(): List<SyncItemEntity>
 
 
     // • DELETE
 
-    @Query("DELETE FROM modified_agenda_items " +
+    @Query("DELETE FROM sync_items " +
             "WHERE agendaItemId = :agendaItemId " +
             "AND modificationTypeForSync = :modificationTypeForSync")
     override suspend fun deleteSyncAgendaItemByAgendaItemId(
@@ -51,7 +51,7 @@ interface SyncDaoImpl : ISyncDao {
         modificationTypeForSync: ModificationTypeForSync
     ): Int
 
-    @Query("DELETE FROM modified_agenda_items " +
+    @Query("DELETE FROM sync_items " +
             "WHERE agendaItemId IN (:agendaItemIds) " +
             "AND modificationTypeForSync = :modificationTypeForSync")
     override suspend fun deleteModifiedAgendaItemsByAgendaItemIds(

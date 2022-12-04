@@ -11,6 +11,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
+import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.rethrowIfCancellation
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +21,8 @@ import java.time.ZonedDateTime
 class EventRepositoryImpl(
     private val eventDao: IEventDao,
     private val eventApi: IEventApi,
-    private val syncRepository: ISyncRepository
+    private val syncRepository: ISyncRepository,
+    private val authRepository: IAuthRepository  // todo add to DI constructor
 ) : IEventRepository {
 
     // • CREATE
@@ -33,7 +35,14 @@ class EventRepositoryImpl(
             }
 
             val response = eventApi.createEvent(event.toEventDTOCreate())
-            eventDao.updateEvent(response.toDomain().copy(isSynced = true).toEntity())  // update with response from server
+
+            // update with response from server and mark isSynced
+            eventDao.updateEvent(
+                response
+                    .toDomain()
+                    .copy(isSynced = true)
+                    .toEntity()
+            )
             syncRepository.removeCreatedSyncItem(event)
 
             ResultUiText.Success(response.toDomain())
@@ -64,8 +73,18 @@ class EventRepositoryImpl(
                 syncRepository.addUpdatedSyncItem(event)
             }
 
-            val response = eventApi.updateEvent(event.toEventDTOUpdate())
-            eventDao.updateEvent(response.toDomain().copy(isSynced = true).toEntity())  // update with response from server
+            val response =
+                eventApi.updateEvent(
+                    event.toEventDTOUpdate(
+                        authRepository.getAuthUserId()
+                ))
+
+            // update with response from server and mark synced
+            eventDao.updateEvent(
+                response
+                    .toDomain()
+                    .copy(isSynced = true)
+                    .toEntity())
             syncRepository.removeUpdatedSyncItem(event)
 
             ResultUiText.Success(response.toDomain())
@@ -90,18 +109,7 @@ class EventRepositoryImpl(
     }
 
     override suspend fun getEvent(eventId: EventId, isLocalOnly: Boolean): AgendaItem.Event? {
-        return try {
-            val result = eventDao.getEventById(eventId)?.toDomain()
-            if(isLocalOnly) return result
-
-            val response = eventApi.getEvent(eventId)
-            eventDao.updateEvent(response.toDomain().toEntity())  // update with response from server
-
-            response.toDomain()
-        } catch (e: Exception) {
-            e.rethrowIfCancellation()
-            null
-        }
+        return eventDao.getEventById(eventId)?.toDomain()
     }
 
     // • DELETE
@@ -114,6 +122,7 @@ class EventRepositoryImpl(
             // Attempt to delete on server
             val response = eventApi.deleteEvent(event.toEventDTOUpdate())
             if (response.isSuccess) {
+                syncRepository.removeDeletedSyncItem(event)
                 ResultUiText.Success()
             } else {
                 // Should show error here? Or silently fail? Show off-line message?

@@ -11,6 +11,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.AgendaItemTypeForSync
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ModificationTypeForSync
 import com.realityexpander.tasky.agenda_feature.domain.*
+import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +31,7 @@ class AgendaRepositoryImpl @Inject constructor(
     private val reminderRepository: IReminderRepository,
     private val taskRepository: ITaskRepository,
     private val syncRepository: ISyncRepository,
+    private val authRepository: IAuthRepository
 ) : IAgendaRepository {
 
     ///////////////////////////////////////////////
@@ -113,48 +115,27 @@ class AgendaRepositoryImpl @Inject constructor(
 
     // Upload local changes to remote
     override suspend fun syncAgenda(): ResultUiText<Void> {
-        val syncAgendaItems = syncRepository.getSyncAgendaItemEntities()
-        if (syncAgendaItems.isEmpty()) {
+        val syncItems = syncRepository.getSyncItems()
+        if (syncItems.isEmpty()) {
             return ResultUiText.Success(null)
         }
 
         // Sync the `Create` API calls first
-        syncAgendaItems.forEach { syncItem ->
+        syncItems.forEach { syncItem ->
             when (syncItem.modificationTypeForSync) {
                 ModificationTypeForSync.Created -> {
                     when (syncItem.agendaItemTypeForSync) {
                         AgendaItemTypeForSync.Event -> {
                             val event = getEvent(syncItem.agendaItemId, true) ?: return@forEach
-                            val result = createEvent(event, true)
-                            if(result is ResultUiText.Success) {
-                                syncRepository.deleteSyncAgendaItemByAgendaItemId(
-                                    syncItem.agendaItemId,
-                                    ModificationTypeForSync.Created
-                                )
-                                updateEvent(event.copy(isSynced = true))
-                            }
+                            createEvent(event, true)
                         }
                         AgendaItemTypeForSync.Task -> {
                             val task = getTask(syncItem.agendaItemId, true) ?: return@forEach
-                            val result = createTask(task, true)
-                            if(result is ResultUiText.Success) {
-                                syncRepository.deleteSyncAgendaItemByAgendaItemId(
-                                    syncItem.agendaItemId,
-                                    ModificationTypeForSync.Created
-                                )
-                                updateTask(task.copy(isSynced = true))
-                            }
+                            createTask(task, true)
                         }
                         AgendaItemTypeForSync.Reminder -> {
                             val reminder = getReminder(syncItem.agendaItemId, true) ?: return@forEach
-                            val result = createReminder(reminder, true)
-                            if(result is ResultUiText.Success) {
-                                syncRepository.deleteSyncAgendaItemByAgendaItemId(
-                                    syncItem.agendaItemId,
-                                    ModificationTypeForSync.Created
-                                )
-                                updateReminder(reminder.copy(isSynced = true))
-                            }
+                            createReminder(reminder, true)
                         }
                     }
                 }
@@ -165,42 +146,21 @@ class AgendaRepositoryImpl @Inject constructor(
         }
 
         // Sync the `Updates` API calls next
-        syncAgendaItems.forEach {
-            when (it.modificationTypeForSync) {
+        syncItems.forEach { syncItem ->
+            when (syncItem.modificationTypeForSync) {
                 ModificationTypeForSync.Updated -> {
-                    when (it.agendaItemTypeForSync) {
+                    when (syncItem.agendaItemTypeForSync) {
                         AgendaItemTypeForSync.Event -> {
-                            val event = getEvent(it.agendaItemId, true) ?: return@forEach
-                            val result = updateEvent(event, true)
-                            if(result is ResultUiText.Success) {
-                                syncRepository.deleteSyncAgendaItemByAgendaItemId(
-                                    it.agendaItemId,
-                                    ModificationTypeForSync.Updated
-                                )
-                                updateEvent(event.copy(isSynced = true))
-                            }
+                            val event = getEvent(syncItem.agendaItemId, true) ?: return@forEach
+                            updateEvent(event, true)
                         }
                         AgendaItemTypeForSync.Task -> {
-                            val task = getTask(it.agendaItemId, true) ?: return@forEach
-                            val result = updateTask(task, true)
-                            if(result is ResultUiText.Success) {
-                                syncRepository.deleteSyncAgendaItemByAgendaItemId(
-                                    it.agendaItemId,
-                                    ModificationTypeForSync.Updated
-                                )
-                                updateTask(task.copy(isSynced = true))
-                            }
+                            val task = getTask(syncItem.agendaItemId, true) ?: return@forEach
+                            updateTask(task, true)
                         }
                         AgendaItemTypeForSync.Reminder -> {
-                            val reminder = getReminder(it.agendaItemId, true) ?: return@forEach
-                            val result = updateReminder(reminder, true)
-                            if(result is ResultUiText.Success) {
-                                syncRepository.deleteSyncAgendaItemByAgendaItemId(
-                                    it.agendaItemId,
-                                    ModificationTypeForSync.Updated
-                                )
-                                updateReminder(reminder.copy(isSynced = true))
-                            }
+                            val reminder = getReminder(syncItem.agendaItemId, true) ?: return@forEach
+                            updateReminder(reminder, true)
                         }
                     }
                 }
@@ -211,7 +171,7 @@ class AgendaRepositoryImpl @Inject constructor(
         }
 
         // Send the `Deletes` last
-        return  syncRepository.syncDeletedAgendaItems(syncAgendaItems)
+        return  syncRepository.syncDeletedAgendaItems(syncItems)
     }
 
     ///////////////////////////////////////////////

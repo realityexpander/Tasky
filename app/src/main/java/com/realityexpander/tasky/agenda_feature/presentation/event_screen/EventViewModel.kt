@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.domain.*
-import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.max
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.min
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
@@ -84,7 +83,6 @@ class EventViewModel @Inject constructor(
                     authInfo = authInfo,
 
                     event = initialEventId?.let { eventId ->
-                        // Load event from repository
                         agendaRepository.getEvent(eventId)
                     } ?:
                         // If `initialEventId` is null, then create a new event.
@@ -98,7 +96,6 @@ class EventViewModel @Inject constructor(
                             remindAt = ZonedDateTime.now().plusMinutes(30),
                             host = authInfo?.userId,
                             isUserEventCreator = true,
-                            isGoing = true,
                             photos = emptyList(),
                             attendees = listOf(
                                 Attendee(
@@ -384,7 +381,7 @@ class EventViewModel @Inject constructor(
                 }
             }
             is SaveEvent -> {
-                var event = _state.value.event ?: return
+                val event = _state.value.event ?: return
                 _state.update { _state ->
                     _state.copy(
                         isProgressVisible = true,
@@ -392,14 +389,6 @@ class EventViewModel @Inject constructor(
                     )
                 }
 
-                // set `isGoing` to right before api/dao call, based on SSOT of `attendees`
-                event = event.copy(
-                    isGoing =
-                        event.isUserEventCreator
-                        || isUserIdGoingAsAttendee(_state.value.authInfo?.userId, event.attendees),
-                )
-
-                val result =
                     when (initialEventId) {
                         null -> {
                             agendaRepository.createEvent(event)
@@ -409,31 +398,19 @@ class EventViewModel @Inject constructor(
                         }
                     }
 
-                when (result) {
-                    is ResultUiText.Success -> {
-                        _state.update { _state ->
-                            _state.copy(
-                                isProgressVisible = false,
-                                errorMessage = null
-                            )
-                        }
-                        _oneTimeEvent.emit(
-                            OneTimeEvent.ShowToast(
-                                UiText.StrOrRes("Event saved", R.string.event_message_event_saved)
-                            )
+                    _state.update { _state ->
+                        _state.copy(
+                            isProgressVisible = false,
+                            errorMessage = null
                         )
-                        sendEvent(CancelEditMode)
-                        sendEvent(OneTimeEvent.NavigateBack)
                     }
-                    is ResultUiText.Error -> {
-                        _state.update { _state ->
-                            _state.copy(
-                                isProgressVisible = false,
-                                errorMessage = result.message
-                            )
-                        }
-                    }
-                }
+                    _oneTimeEvent.emit(
+                        OneTimeEvent.ShowToast(
+                            UiText.StrOrRes("Event saved", R.string.event_message_event_saved)
+                        )
+                    )
+                    sendEvent(CancelEditMode)
+                    sendEvent(OneTimeEvent.NavigateBack)
             }
             is DeleteEvent -> {
                 _state.value.event ?: return
@@ -497,7 +474,6 @@ class EventViewModel @Inject constructor(
                                     it
                                 }
                             },
-                            isGoing = false
                         )
                     )
                 }
@@ -513,7 +489,6 @@ class EventViewModel @Inject constructor(
                                     it
                                 }
                             },
-                            isGoing = true
                         )
 
                     )

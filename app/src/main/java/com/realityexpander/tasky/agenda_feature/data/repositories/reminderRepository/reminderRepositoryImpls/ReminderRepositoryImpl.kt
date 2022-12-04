@@ -75,18 +75,7 @@ class ReminderRepositoryImpl(
     }
 
     override suspend fun getReminder(reminderId: ReminderId, isLocalOnly: Boolean): AgendaItem.Reminder? {
-        return try {
-            val result = reminderDao.getReminderById(reminderId)?.toDomain() // get from local DB first
-            if(isLocalOnly) return result
-
-            val response = reminderApi.getReminder(reminderId)
-            reminderDao.updateReminder(response.toDomain().toEntity())  // update with response from server
-
-            response.toDomain()
-        } catch (e: Exception) {
-            e.rethrowIfCancellation()
-            null
-        }
+        return reminderDao.getReminderById(reminderId)?.toDomain()
     }
 
     override suspend fun updateReminder(reminder: AgendaItem.Reminder, isRemoteOnly: Boolean): ResultUiText<Void> {

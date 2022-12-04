@@ -53,8 +53,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -303,6 +302,7 @@ object AppModule {
         reminderRepository: IReminderRepository,
         syncRepository: ISyncRepository,
         agendaApi: IAgendaApi,
+        authRepository: IAuthRepository
     ): IAgendaRepository =
         AgendaRepositoryImpl(
             agendaApi = agendaApi,
@@ -311,6 +311,7 @@ object AppModule {
             taskRepository = taskRepository,
             reminderRepository = reminderRepository,
             syncRepository = syncRepository,
+            authRepository = authRepository
         )
 
     /////////// EVENTS REPOSITORY ///////////
@@ -336,8 +337,9 @@ object AppModule {
         eventDao: IEventDao,
         eventApi: IEventApi,
         syncRepository: ISyncRepository,
+        authRepository: IAuthRepository
     ): IEventRepository =
-        EventRepositoryImpl(eventDao, eventApi, syncRepository)
+        EventRepositoryImpl(eventDao, eventApi, syncRepository, authRepository)
 
     /////////// TASKS REPOSITORY ///////////
 

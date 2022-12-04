@@ -2,7 +2,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.syncRepositor
 
 import com.realityexpander.tasky.agenda_feature.common.util.AgendaItemId
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ModificationTypeForSync
-import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.entities.SyncAgendaItemEntity
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.entities.SyncItemEntity
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 
@@ -16,8 +16,8 @@ interface ISyncRepository {
     suspend fun addDeletedSyncItem(agendaItem: AgendaItem): ResultUiText<Void>
     suspend fun removeDeletedSyncItem(agendaItem: AgendaItem): ResultUiText<Void>
 
-    suspend fun getSyncAgendaItemEntities() : List<SyncAgendaItemEntity>
-    suspend fun deleteSyncAgendaItemByAgendaItemId(agendaItemId: AgendaItemId, modificationTypeForSync: ModificationTypeForSync): Int
+    suspend fun getSyncItems() : List<SyncItemEntity>
+    suspend fun deleteSyncItemByAgendaItemId(agendaItemId: AgendaItemId, modificationTypeForSync: ModificationTypeForSync): Int
 
-    suspend fun syncDeletedAgendaItems(modifiedAgendaItems: List<SyncAgendaItemEntity>): ResultUiText<Void>
+    suspend fun syncDeletedAgendaItems(syncItems: List<SyncItemEntity>): ResultUiText<Void>
 }
