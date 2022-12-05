@@ -54,6 +54,7 @@ class AuthRepositoryImpl @Inject constructor(
 
         authInfo?.let {
             authDao.setAuthInfo(authInfo)
+            authApi.setAuthUserId(authInfo.userId)
             return authDao.getAuthInfo()
                 ?: throw Exceptions.LoginException("No AuthInfo")
         } ?: throw Exceptions.LoginException("No AuthInfo")
@@ -107,8 +108,14 @@ class AuthRepositoryImpl @Inject constructor(
         return authDao.getAuthInfo()
     }
 
+    override fun getAuthUserId(): String? {
+        return IAuthApi.authUserId
+    }
+
     override suspend fun setAuthInfo(authInfo: AuthInfo?) {
         authApi.setAuthToken(authInfo?.authToken)
+        authApi.setAuthUserId(authInfo?.userId)
+
         authDao.setAuthInfo(authInfo)
     }
 

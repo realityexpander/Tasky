@@ -40,6 +40,7 @@ interface IAuthRepository {
     suspend fun setAuthInfo(authInfo: AuthInfo?)
     suspend fun getAuthInfo(): AuthInfo?
     suspend fun clearAuthInfo()
+    fun getAuthUserId(): String?
 
     // uses the logged-in user's authInfo to check if the user is authenticated
     suspend fun authenticate(): Boolean

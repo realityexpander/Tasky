@@ -38,16 +38,13 @@ interface TaskDaoImpl : ITaskDao {
 
     // • READ
 
-    @Query("SELECT * FROM tasks WHERE id = :taskId AND isDeleted = 0")  // only returns the tasks that are *NOT* marked as deleted.
+    @Query("SELECT * FROM tasks WHERE id = :taskId")
     override suspend fun getTaskById(taskId: TaskId): TaskEntity?
 
-    @Query("SELECT * FROM tasks WHERE isDeleted = 0")  // only returns the tasks that are *NOT* marked as deleted
+    @Query("SELECT * FROM tasks")
     override suspend fun getTasks(): List<TaskEntity>
-
-    @Query("SELECT * FROM tasks")                      // returns all tasks (marked deleted or not)
-    override suspend fun getAllTasks(): List<TaskEntity>
-
-    @Query("SELECT * FROM tasks WHERE isDeleted = 0")  // only returns the tasks that are *NOT* marked as deleted.
+//
+    @Query("SELECT * FROM tasks")
     override fun getTasksFlow(): Flow<List<TaskEntity>>
 
     @Query(getTasksForDayQuery)
@@ -65,39 +62,36 @@ interface TaskDaoImpl : ITaskDao {
 
     // • DELETE
 
-    @Query("UPDATE tasks SET isDeleted = 1 WHERE id = :taskId")
-    override suspend fun markTaskDeletedById(taskId: TaskId): Int   // only marks the task as deleted.
+    @Delete
+    override suspend fun deleteTask(task: TaskEntity): Int
 
-    @Query("SELECT id FROM tasks WHERE isDeleted = 1")
-    override suspend fun getMarkedDeletedTaskIds(): List<TaskId>
+    @Query("DELETE FROM tasks WHERE id = :taskId")
+    override suspend fun deleteTaskById(taskId: TaskId): Int
 
     @Query("DELETE FROM tasks WHERE id IN (:taskIds)")
-    override suspend fun deleteFinallyByTaskIds(taskIds: List<TaskId>): Int  // completely deletes the tasks.
-
-    @Delete
-    override suspend fun deleteTask(task: TaskEntity): Int  // completely deletes the task.
+    override suspend fun deleteTasksByIds(taskIds: List<TaskId>): Int
 
     @Query("DELETE FROM tasks")
-    override suspend fun clearAllTasks(): Int  // completely deletes all tasks.
+    override suspend fun clearAllTasks(): Int
 
+    // Deletes all SYNCED tasks for the given day.
     @Query(deleteTasksForDayQuery)
-    override suspend fun clearAllTasksForDay(zonedDateTime: ZonedDateTime): Int // completely deletes all UNDELETED tasks for the given day.
+    override suspend fun clearAllSyncedTasksForDay(zonedDateTime: ZonedDateTime): Int
 
     companion object {
 
         const val getTasksForDayQuery =
             """
-            SELECT * FROM tasks WHERE isDeleted = 0 
-                AND 
+            SELECT * FROM tasks WHERE 
                     ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- task starts this day
                 
             """
 
         const val deleteTasksForDayQuery =
             """
-            DELETE FROM tasks WHERE isDeleted = 0 
-                AND 
-                    ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `time` start this today
+            DELETE FROM tasks WHERE
+               isSynced = 1
+               AND ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `time` start this today
             """
     }
 }

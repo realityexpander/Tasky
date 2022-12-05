@@ -16,5 +16,5 @@ data class TaskEntity(
     val time: ZonedDateTime,
     val isDone: Boolean,
 
-    val isDeleted: Boolean = false,
+    val isSynced: Boolean = false
 )

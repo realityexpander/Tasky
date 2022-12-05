@@ -1,12 +1,10 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.taskApi.taskApiImpls
 
 import android.accounts.NetworkErrorException
-import android.content.Context
 import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.DTOs.TaskDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.ITaskApi
 import com.realityexpander.tasky.core.data.remote.TaskyApi
-import com.realityexpander.tasky.core.data.remote.utils.getErrorBodyMessage
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -23,19 +21,20 @@ val jsonPrettyPrint = Json {
 
 class TaskApiImpl @Inject constructor(
     private val taskyApi: TaskyApi,
-    private val context: Context
 ) : ITaskApi {
 
     override suspend fun createTask(task: TaskDTO): Result<Unit> {
         try {
             val response = taskyApi.createTask(task)
             if (response.isSuccessful) {
-                //val responseBody = response.body()
-                // return responseBody ?: throw Exception("Response body is null") // todo remove
                 return Result.success(Unit)
             } else {
-                throw Exception(getErrorBodyMessage(response.errorBody()?.string()))
+                return Result.failure(
+                    Exception("Error updating task: ${response.message()}")
+                )
             }
+        } catch (e: NetworkErrorException) {
+            return Result.failure(Exception("Error updating task: ${e.localizedMessage}"))
         } catch (e: Exception) {
             throw Exception("Error creating task: ${e.message}")
         }
@@ -59,16 +58,14 @@ class TaskApiImpl @Inject constructor(
         try {
             val response = taskyApi.updateTask(task)
             if (response.isSuccessful) {
-//                val responseBody = response.body()
-//                return responseBody ?: throw Exception("Response body is null")  // todo remove
                 return Result.success(Unit)
             } else {
-                return Result.failure(
-                    Exception("Error updating task: ${getErrorBodyMessage(response.errorBody()?.string())}")
-                )
+                return Result.failure(Exception("Error updating task: ${response.message()}"))
             }
         } catch (e: NetworkErrorException) {
-            throw Exception("Network Error updating task: ${e.localizedMessage}")
+            return Result.failure(
+                Exception("Error updating task (network): ${e.localizedMessage}")
+            )
         } catch (e: Exception) {
             throw Exception("${e.message}")
         }

@@ -206,7 +206,9 @@ fun AgendaScreenContent(
     // Handle stateful one-time events
     LaunchedEffect(state.agendaItems) {
         if (state.scrollToItemId != null) {
-            val item = agendaItems.indexOfFirst { it.id == state.scrollToItemId }
+            val item = agendaItems.indexOfFirst {
+                it.id == state.scrollToItemId
+            }
             if (item >= 0) {
                 scope.launch {
                     scrollState.animateScrollToItem(item)
@@ -486,7 +488,7 @@ fun AgendaScreenContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = MaterialTheme.colors.surface)
-                .smallHeight()
+                .tinyHeight()
         )
 
         // • SHOW AGENDA ITEMS LIST
@@ -506,6 +508,22 @@ fun AgendaScreenContent(
             }
             val agendaItemsAfterNow = sortedAgendaItems.filter { agendaItem ->
                 agendaItem.startTime.isAfter(ZonedDateTime.now())
+            }
+
+            fun isToday() = (
+                    currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).year ==
+                    ZonedDateTime.now().year
+                    && currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear ==
+                    ZonedDateTime.now().dayOfYear
+                )
+
+            if (!isToday() || (isToday() && agendaItemsBeforeNow.isNotEmpty())) {
+                item("before_spacer_for_today") {
+                    Spacer(modifier = Modifier
+                        .height(14.dp)
+                        .fillMaxWidth()
+                    )
+                }
             }
 
             itemsIndexed(items = agendaItemsBeforeNow) { index, agendaItem ->
@@ -556,13 +574,9 @@ fun AgendaScreenContent(
                 }
             }
 
-            // • TIME NEEDLE
-            if (currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).year ==
-                ZonedDateTime.now().year
-                && currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear ==
-                ZonedDateTime.now().dayOfYear
-            ) {
-                item(true) {
+            // • TIME NEEDLE - only show on today (present day)
+            if (isToday()) {
+                item("time_needle") {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -589,7 +603,7 @@ fun AgendaScreenContent(
                 }
             } else {
                 if (agendaItemsBeforeNow.isNotEmpty()) {
-                    item(true) {
+                    item("time_needle") {
                         Spacer(modifier = Modifier.smallHeight())
                     }
                 }

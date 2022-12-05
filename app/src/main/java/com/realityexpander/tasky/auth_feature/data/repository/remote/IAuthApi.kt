@@ -2,10 +2,7 @@ package com.realityexpander.tasky.auth_feature.data.repository.remote
 
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
-import com.realityexpander.tasky.core.util.AuthToken
-import com.realityexpander.tasky.core.util.Email
-import com.realityexpander.tasky.core.util.Password
-import com.realityexpander.tasky.core.util.Username
+import com.realityexpander.tasky.core.util.*
 
 interface IAuthApi {
     suspend fun login(
@@ -32,10 +29,16 @@ interface IAuthApi {
 
     fun clearAuthToken() {
         IAuthApi.Companion.authToken = null
+        IAuthApi.Companion.authUserId = null
+    }
+
+    fun setAuthUserId(authUserId: UserId?) {
+        IAuthApi.Companion.authUserId = authUserId
     }
 
     companion object {
         var authToken: String? = null
+        var authUserId: UserId? = null
 
         var authorizationHeader: String? = null
             private set // only allow generating from Companion.authToken

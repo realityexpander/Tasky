@@ -21,6 +21,11 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.eventApiImpls.EventApiImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.IReminderApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.ISyncRepository
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ISyncDao
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.remote.ISyncApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.remote.syncApiImpls.SyncApiImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.syncRepositoryImpls.SyncRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.local.ITaskDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.ITaskApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.taskApi.taskApiImpls.TaskApiImpl
@@ -48,10 +53,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -61,10 +66,12 @@ import org.json.JSONObject
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.create
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Qualifier
 import javax.inject.Singleton
+
 
 const val USE_FAKE_REPOSITORY = false
 
@@ -87,10 +94,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideTaskyApi(
-        converterFactory: Converter.Factory,
+    fun provideOkHttpClient(
         @AuthDaoProdUsingBinds authDao: IAuthDao,
-    ): TaskyApi {
+    ): OkHttpClient {
+
+        // Configure to Allow more simultaneous requests
+        val dispatcher = Dispatcher(Executors.newFixedThreadPool(20))
+        dispatcher.maxRequests = 20
+        dispatcher.maxRequestsPerHost = 20
 
         val addHeadersInterceptor = Interceptor { chain ->
             runBlocking(Dispatchers.IO) {
@@ -131,7 +142,10 @@ object AppModule {
                     return print("=== more than 500 characters ===")
 
                 if (message.startsWith("{") || message.startsWith("[")) try {
-                    JSONObject(message).toString(2).also(::print)
+                    JSONObject(message)
+                        .toString(2)
+                        .take(500)
+                        .also(::print)
                 } catch (e: JSONException) {
                     print(message)
                 }
@@ -139,12 +153,13 @@ object AppModule {
             }
         }
 
-        val client = if(BuildConfig.DEBUG) {
+        return if(BuildConfig.DEBUG) {
             val logging = HttpLoggingInterceptor(jsonPrettyPrinter)
             logging.level = HttpLoggingInterceptor.Level.BODY
-//            logging.level = HttpLoggingInterceptor.Level.HEADERS
+            //logging.level = HttpLoggingInterceptor.Level.HEADERS
 
             OkHttpClient.Builder()
+                .dispatcher(dispatcher)
                 .addInterceptor(addHeadersInterceptor)
                 .addInterceptor(logging)
                 .connectTimeout(1, TimeUnit.MINUTES)
@@ -154,6 +169,7 @@ object AppModule {
                 .build()
         } else {
             OkHttpClient.Builder()
+                .dispatcher(dispatcher)
                 .addInterceptor(addHeadersInterceptor)
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .callTimeout(1, TimeUnit.MINUTES)
@@ -161,10 +177,19 @@ object AppModule {
                 .writeTimeout(1, TimeUnit.MINUTES)
                 .build()
         }
+    }
+
+    @Provides
+    @Singleton
+    fun provideTaskyApi(
+        okHttpClient: OkHttpClient,
+        converterFactory: Converter.Factory,
+        @AuthDaoProdUsingBinds authDao: IAuthDao,
+    ): TaskyApi {
 
         return Retrofit.Builder()
             .baseUrl(TaskyApi.BASE_URL)
-            .client(client)
+            .client(okHttpClient)
             .addConverterFactory(converterFactory)
             .build()
             .create()
@@ -284,9 +309,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAgendaApi(
-        taskyApi: TaskyApi
+        taskyApi: TaskyApi,
+        okHttpClient: OkHttpClient,
     ) : IAgendaApi =
-        AgendaApiImpl(taskyApi)
+        AgendaApiImpl(taskyApi, okHttpClient)
 
 
     @Provides
@@ -296,7 +322,7 @@ object AppModule {
         attendeeRepository: IAttendeeRepository,
         taskRepository: ITaskRepository,
         reminderRepository: IReminderRepository,
-//        reminderRepository: IReminderRepository,      // todo implement soon
+        syncRepository: ISyncRepository,
         agendaApi: IAgendaApi,
     ): IAgendaRepository =
         AgendaRepositoryImpl(
@@ -304,7 +330,8 @@ object AppModule {
             eventRepository = eventRepository,
             attendeeRepository = attendeeRepository,
             taskRepository = taskRepository,
-            reminderRepository = reminderRepository
+            reminderRepository = reminderRepository,
+            syncRepository = syncRepository,
         )
 
     /////////// EVENTS REPOSITORY ///////////
@@ -328,9 +355,11 @@ object AppModule {
     @Singleton
     fun provideEventRepository(
         eventDao: IEventDao,
-        eventApi: IEventApi
+        eventApi: IEventApi,
+        syncRepository: ISyncRepository,
+        authRepository: IAuthRepository
     ): IEventRepository =
-        EventRepositoryImpl(eventDao, eventApi)
+        EventRepositoryImpl(eventDao, eventApi, syncRepository, authRepository)
 
     /////////// TASKS REPOSITORY ///////////
 
@@ -345,17 +374,17 @@ object AppModule {
     @Singleton
     fun provideTaskApiProd(
         taskyApi: TaskyApi,
-        @ApplicationContext context: Context
     ): ITaskApi =
-        TaskApiImpl(taskyApi, context)
+        TaskApiImpl(taskyApi)
 
     @Provides
     @Singleton
     fun provideTaskRepository(
         taskDao: ITaskDao,
-        taskApi: ITaskApi
+        taskApi: ITaskApi,
+        syncRepository: ISyncRepository,
     ): ITaskRepository =
-        TaskRepositoryImpl(taskDao, taskApi)
+        TaskRepositoryImpl(taskDao, taskApi, syncRepository)
 
 
     /////////// REMINDER REPOSITORY ///////////
@@ -371,17 +400,42 @@ object AppModule {
     @Singleton
     fun provideReminderApiProd(
         taskyApi: TaskyApi,
-        @ApplicationContext context: Context
     ): IReminderApi =
-        ReminderApiImpl(taskyApi, context)
+        ReminderApiImpl(taskyApi)
 
     @Provides
     @Singleton
     fun provideReminderRepository(
         reminderDao: IReminderDao,
-        reminderApi: IReminderApi
+        reminderApi: IReminderApi,
+        syncRepository: ISyncRepository,
     ): IReminderRepository =
-        ReminderRepositoryImpl(reminderDao, reminderApi)
+        ReminderRepositoryImpl(reminderDao, reminderApi, syncRepository)
+
+
+    /////////// SYNC REPOSITORY ///////////
+
+    @Provides
+    @Singleton
+    fun provideSyncDaoProd(
+        taskyDatabase: TaskyDatabase
+    ): ISyncDao =
+        taskyDatabase.syncDao()
+
+    @Provides
+    @Singleton
+    fun provideSyncApiProd(
+        taskyApi: TaskyApi,
+    ): ISyncApi =
+        SyncApiImpl(taskyApi)
+
+    @Provides
+    @Singleton
+    fun provideSyncRepository(
+        syncDao: ISyncDao,
+        syncApi: ISyncApi,
+    ): ISyncRepository =
+        SyncRepositoryImpl(syncApi, syncDao)
 
 
     /////////// ATTENDEE REPOSITORY ///////////

@@ -17,8 +17,8 @@ fun AgendaItem.Task.toEntity(): TaskEntity {
         description = description,
         remindAt = remindAt,
         time = time,
-        isDeleted = isDeleted,
         isDone = isDone,
+        isSynced = isSynced
     )
 }
 
@@ -31,6 +31,7 @@ fun TaskEntity.toDomain(): AgendaItem.Task {
         time = time,
         remindAt = remindAt,
         isDone = isDone,
+        isSynced = isSynced
     )
 }
 
@@ -43,6 +44,7 @@ fun TaskDTO.toDomain(): AgendaItem.Task {
         remindAt = remindAt.toZonedDateTime(),
         time = time.toZonedDateTime(),
         isDone = isDone,
+        isSynced = true
     )
 }
 

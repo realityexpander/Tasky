@@ -67,7 +67,6 @@ open class EventDaoTest {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = emptyList(),
-            isDeleted = false,
         )
 
         runTest {
@@ -111,7 +110,6 @@ open class EventDaoTest {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
         )
 
         runTest {
@@ -158,7 +156,6 @@ open class EventDaoTest {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
         )
 
         runTest {
@@ -203,7 +200,6 @@ open class EventDaoTest {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
         )
         val event2 = EventEntity(
             "2",
@@ -229,7 +225,6 @@ open class EventDaoTest {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
         )
 
         runTest {
@@ -243,160 +238,6 @@ open class EventDaoTest {
             // ASSERT
             val events = eventDao.getEvents()
             assert(events.isEmpty())
-        }
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun markEventDeletedById_MarksEventDataAsDeleted() {
-
-        // ARRANGE
-        val event1 = EventEntity(
-            "1",
-            "Event 1",
-            "2021-01-01T00:00:00.000Z",
-            from = ZonedDateTime.now(),
-            to = ZonedDateTime.now(),
-            remindAt = ZonedDateTime.now(),
-            host = "Host 1",
-            isUserEventCreator = true,
-            attendees = listOf(
-                AttendeeEntity(
-                    "1",
-                    "Attendee 1",
-                    "Email1@email.com",
-                    "FullName",
-                    isGoing = true,
-                    remindAt = ZonedDateTime.now(),
-                    photo = "https://www.google.com"
-                ),
-            ),
-            photos = listOf(
-                PhotoEntity("1", "https://www.google.com")
-            ),
-            deletedPhotoIds = listOf(),
-            isDeleted = false,
-        )
-        val event2 = EventEntity(
-            "2",
-            "Event 2",
-            "2021-01-01T00:00:00.000Z",
-            from = ZonedDateTime.now(),
-            to = ZonedDateTime.now(),
-            remindAt = ZonedDateTime.now(),
-            host = "Host 2",
-            isUserEventCreator = true,
-            attendees = listOf(
-                AttendeeEntity(
-                    "1",
-                    "Attendee 1",
-                    "Email1@email.com",
-                    "FullName",
-                    isGoing = true,
-                    remindAt = ZonedDateTime.now(),
-                    photo = "https://www.google.com"
-                ),
-            ),
-            photos = listOf(
-                PhotoEntity("1", "https://www.google.com")
-            ),
-            deletedPhotoIds = listOf(),
-            isDeleted = false,
-        )
-
-        runTest {
-            // ARRANGE
-            eventDao.createEvent(event1)
-            eventDao.createEvent(event2)
-
-            // ACT
-            eventDao.markEventDeletedById("1")
-
-            // ASSERT
-            val eventsAll = eventDao.getAllEvents()
-            assert(eventsAll.size == 2)
-            assert(eventsAll[0].isDeleted)
-
-            val events = eventDao.getEvents()
-            assert(events.size == 1)
-            assert(events[0].id == "2")
-        }
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun deleteFinallyByEventIds_eventDataIsCompletelyDeleted() {
-
-        // ARRANGE
-        val expectedDeletedEventId = "1"
-        val event1 = EventEntity(
-            expectedDeletedEventId,
-            "Event 1",
-            "2021-01-01T00:00:00.000Z",
-            from = ZonedDateTime.now(),
-            to = ZonedDateTime.now(),
-            remindAt = ZonedDateTime.now(),
-            host = "Host 1",
-            isUserEventCreator = true,
-            attendees = listOf(
-                AttendeeEntity(
-                    "1",
-                    "Attendee 1",
-                    "Email1@email.com",
-                    "FullName",
-                    isGoing = true,
-                    remindAt = ZonedDateTime.now(),
-                    photo = "https://www.google.com"
-                ),
-            ),
-            photos = listOf(
-                PhotoEntity("1", "https://www.google.com")
-            ),
-            deletedPhotoIds = listOf(),
-            isDeleted = false,
-        )
-        val event2 = EventEntity(
-            "2",
-            "Event 2",
-            "2021-01-01T00:00:00.000Z",
-            from = ZonedDateTime.now(),
-            to = ZonedDateTime.now(),
-            remindAt = ZonedDateTime.now(),
-            host = "Host 2",
-            isUserEventCreator = true,
-            attendees = listOf(
-                AttendeeEntity(
-                    "1",
-                    "Attendee 1",
-                    "Email1@email.com",
-                    "FullName",
-                    isGoing = true,
-                    remindAt = ZonedDateTime.now(),
-                    photo = "https://www.google.com"
-                ),
-            ),
-            photos = listOf(
-                PhotoEntity("1", "https://www.google.com")
-            ),
-            deletedPhotoIds = listOf(),
-            isDeleted = false,
-        )
-
-        runTest {
-            // ARRANGE
-            eventDao.createEvent(event1)
-            eventDao.createEvent(event2)
-            eventDao.markEventDeletedById(expectedDeletedEventId)
-
-            // ACT
-            val markedDeletedEventIds = eventDao.getMarkedDeletedEventIds()
-            eventDao.deleteFinallyByEventIds(markedDeletedEventIds)
-
-            // ASSERT
-            assert(markedDeletedEventIds.size == 1)
-            assert(markedDeletedEventIds[0] == expectedDeletedEventId)
-            val eventsAll = eventDao.getAllEvents()
-            assert(eventsAll.size == 1)
         }
     }
 
@@ -430,7 +271,6 @@ open class EventDaoTest {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
         )
         val event2 = EventEntity(
             expectedRemainingEventId,
@@ -456,7 +296,6 @@ open class EventDaoTest {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
         )
 
         runTest {
@@ -468,10 +307,7 @@ open class EventDaoTest {
             eventDao.deleteEvent(event1)
 
             // ASSERT
-            val deletedEventIds = eventDao.getMarkedDeletedEventIds()
-            assert(deletedEventIds.isEmpty())
-
-            val eventsAll = eventDao.getAllEvents()
+            val eventsAll = eventDao.getEvents()
             assert(eventsAll.size == 1)
             assert(eventsAll[0].id == expectedRemainingEventId)
         }
@@ -514,7 +350,6 @@ open class EventDaoTest {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
         )
         val event2 = EventEntity( // This event is not for today
             "2",
@@ -540,7 +375,6 @@ open class EventDaoTest {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
         )
         val event3 = EventEntity(  // This event is not for today
             "3",
@@ -566,7 +400,6 @@ open class EventDaoTest {
                 PhotoEntity("1", "https://www.google.com")
             ),
             deletedPhotoIds = listOf(),
-            isDeleted = false,
         )
 
         runTest {

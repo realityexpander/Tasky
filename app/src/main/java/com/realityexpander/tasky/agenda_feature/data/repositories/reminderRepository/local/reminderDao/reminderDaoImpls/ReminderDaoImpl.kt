@@ -1,4 +1,4 @@
-package com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.local.reminderDao.reminderDaoImpls
+package com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.reminderDao.reminderDaoImpls
 
 import androidx.room.*
 import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
@@ -38,16 +38,13 @@ interface ReminderDaoImpl : IReminderDao {
 
     // • READ
 
-    @Query("SELECT * FROM reminders WHERE id = :reminderId AND isDeleted = 0")  // only returns the reminders that are *NOT* marked as deleted.
+    @Query("SELECT * FROM reminders WHERE id = :reminderId")
     override suspend fun getReminderById(reminderId: ReminderId): ReminderEntity?
 
-    @Query("SELECT * FROM reminders WHERE isDeleted = 0")  // only returns the reminders that are *NOT* marked as deleted
+    @Query("SELECT * FROM reminders")
     override suspend fun getReminders(): List<ReminderEntity>
 
-    @Query("SELECT * FROM reminders")                      // returns all reminders (marked deleted or not)
-    override suspend fun getAllReminders(): List<ReminderEntity>
-
-    @Query("SELECT * FROM reminders WHERE isDeleted = 0")  // only returns the reminders that are *NOT* marked as deleted.
+    @Query("SELECT * FROM reminders")
     override fun getRemindersFlow(): Flow<List<ReminderEntity>>
 
     @Query(getRemindersForDayQuery)
@@ -65,39 +62,36 @@ interface ReminderDaoImpl : IReminderDao {
 
     // • DELETE
 
-    @Query("UPDATE reminders SET isDeleted = 1 WHERE id = :reminderId")
-    override suspend fun markReminderDeletedById(reminderId: ReminderId): Int   // only marks the reminder as deleted.
+    @Delete
+    override suspend fun deleteReminder(reminder: ReminderEntity): Int
 
-    @Query("SELECT id FROM reminders WHERE isDeleted = 1")
-    override suspend fun getMarkedDeletedReminderIds(): List<ReminderId>
+    @Query("DELETE FROM reminders WHERE id = :reminderId")
+    override suspend fun deleteReminderById(reminderId: ReminderId): Int
 
     @Query("DELETE FROM reminders WHERE id IN (:reminderIds)")
-    override suspend fun deleteFinallyByReminderIds(reminderIds: List<ReminderId>): Int  // completely deletes the reminders.
-
-    @Delete
-    override suspend fun deleteReminder(reminder: ReminderEntity): Int  // completely deletes the reminder.
+    override suspend fun deleteRemindersByReminderIds(reminderIds: List<ReminderId>): Int
 
     @Query("DELETE FROM reminders")
-    override suspend fun clearAllReminders(): Int  // completely deletes all reminders.
+    override suspend fun clearAllReminders(): Int
 
+    // Deletes all SYNCED reminders for the given day.
     @Query(deleteRemindersForDayQuery)
-    override suspend fun clearAllRemindersForDay(zonedDateTime: ZonedDateTime): Int // completely deletes all UNDELETED reminders for the given day.
+    override suspend fun clearAllSyncedRemindersForDay(zonedDateTime: ZonedDateTime): Int
 
     companion object {
 
         const val getRemindersForDayQuery =
             """
-            SELECT * FROM reminders WHERE isDeleted = 0 
-                AND 
-                    ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- reminder starts this day
+            SELECT * FROM reminders 
+                WHERE ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- reminder starts this day
                 
             """
 
         const val deleteRemindersForDayQuery =
             """
-            DELETE FROM reminders WHERE isDeleted = 0 
-                AND 
-                    ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `time` start this today
+            DELETE FROM reminders WHERE 
+                isSynced = 1
+                AND ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- reminder starts this today
             """
     }
 }

@@ -1,11 +1,11 @@
 package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 
+import com.realityexpander.tasky.agenda_feature.common.util.AgendaItemId
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.core.presentation.common.util.UiText
-import com.realityexpander.tasky.core.util.UuidStr
 import java.time.ZonedDateTime
 
 sealed interface AgendaScreenEvent {
@@ -38,10 +38,12 @@ sealed interface AgendaScreenEvent {
 
     // • Stateful One-time events
     sealed interface StatefulOneTimeEvent {
-        object ResetScrollTo                                 : StatefulOneTimeEvent, AgendaScreenEvent
-        object ScrollToTop                                   : StatefulOneTimeEvent, AgendaScreenEvent
-        object ScrollToBottom                                : StatefulOneTimeEvent, AgendaScreenEvent
-        data class ScrollToItemId(val agendaItemId: UuidStr) : StatefulOneTimeEvent, AgendaScreenEvent
+        object ResetScrollTo  : StatefulOneTimeEvent, AgendaScreenEvent
+        object ScrollToTop    : StatefulOneTimeEvent, AgendaScreenEvent
+        object ScrollToBottom : StatefulOneTimeEvent, AgendaScreenEvent
+        data class ScrollToItemId(
+            val agendaItemId: AgendaItemId
+        ) : StatefulOneTimeEvent, AgendaScreenEvent
     }
 
     // • One Time Events

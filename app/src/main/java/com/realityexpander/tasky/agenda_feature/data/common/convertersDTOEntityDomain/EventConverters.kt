@@ -7,6 +7,8 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
+import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.toUtcMillis
 import com.realityexpander.tasky.core.util.toZonedDateTime
 import java.time.ZonedDateTime
@@ -30,7 +32,7 @@ fun AgendaItem.Event.toEntity(): EventEntity {
                 it.toEntity()
             },
         deletedPhotoIds = deletedPhotoIds,
-        isDeleted = isDeleted,
+        isSynced = isSynced
     )
 }
 
@@ -48,6 +50,7 @@ fun EventEntity.toDomain(): AgendaItem.Event {
         attendees = attendees.map { it.toDomain() },
         photos = photos.map { it.toDomain() },
         deletedPhotoIds = deletedPhotoIds,
+        isSynced = isSynced
     )
 }
 
@@ -73,7 +76,8 @@ fun EventDTO.toDomain(): AgendaItem.Event {
                 isUserEventCreator = isUserEventCreator,
                 attendees = attendees.map { it.toDomain() },
                 photos = photos.map { it.toDomain() },
-                deletedPhotoIds = emptyList()
+                deletedPhotoIds = emptyList(),
+                isSynced = true,
             )
         }
         else -> {
@@ -101,7 +105,8 @@ fun AgendaItem.Event.toEventDTOCreate(): EventDTO.Create {
 }
 
 // from Domain to EventDTO.Update (also converts local ZonedDateTime to UTC time millis)
-fun AgendaItem.Event.toEventDTOUpdate(): EventDTO.Update {
+// Note: Automatically sets `isGoing` for `EventDTO.Update`based using authUserId == logged-in user id
+fun AgendaItem.Event.toEventDTOUpdate(authUserId: UserId? = null): EventDTO.Update {
     return EventDTO.Update(
         id = id,
         title = title,
@@ -109,7 +114,7 @@ fun AgendaItem.Event.toEventDTOUpdate(): EventDTO.Update {
         from = from.toUtcMillis(),
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
-        isGoing = isGoing,
+        isGoing = isUserIdGoingAsAttendee(authUserId, attendees),
         attendeeIds = attendees.map { attendee ->
             attendee.id
         },
@@ -152,7 +157,6 @@ fun main() {
         remindAt = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES),
         host = "host",
         isUserEventCreator = true,
-        isGoing = true,
         attendees = listOf(
             Attendee(
                 id = "id1",

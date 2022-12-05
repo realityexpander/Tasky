@@ -6,6 +6,7 @@ import com.realityexpander.tasky.core.util.UuidStr
 typealias EventId = UuidStr
 typealias ReminderId = UuidStr
 typealias TaskId = UuidStr
+typealias AgendaItemId = UuidStr
 typealias AttendeeId = UserId
 typealias PhotoId = UuidStr
 const val emptyId = ""

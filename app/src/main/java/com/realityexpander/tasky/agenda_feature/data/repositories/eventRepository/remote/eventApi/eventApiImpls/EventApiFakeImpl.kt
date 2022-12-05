@@ -1,12 +1,12 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.eventApiImpls
 
+import com.realityexpander.tasky.agenda_feature.common.util.AgendaItemId
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEventDTOResponse
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
-import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
@@ -38,9 +38,9 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
         }
     }
 
-    override suspend fun deleteEvent(eventId: EventId): Result<Unit> {
+    override suspend fun deleteEvent(event: EventDTO.Update): Result<Unit> {
         try {
-            val result = deleteEventOnFakeServer(eventId)
+            val result = deleteEventOnFakeServer(event.id)
             return Result.success(Unit)
         } catch (e: Exception) {
             throw Exception("Error deleting event: ${e.message}")
@@ -61,7 +61,7 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
         return event.toDomain().toEventDTOResponse()
     }
 
-    private suspend fun getEventOnFakeServer(eventId: UuidStr): EventDTO.Response {
+    private suspend fun getEventOnFakeServer(eventId: AgendaItemId): EventDTO.Response {
         // simulate network delay
         delay(500)
 
@@ -84,7 +84,7 @@ class EventApiFakeImpl @Inject constructor(): IEventApi {
         return event.toDomain().toEventDTOResponse()
     }
 
-    private suspend fun deleteEventOnFakeServer(eventId: UuidStr): Boolean {
+    private suspend fun deleteEventOnFakeServer(eventId: AgendaItemId): Boolean {
         // simulate network delay
         delay(500)
 

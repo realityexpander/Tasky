@@ -18,36 +18,15 @@ interface EventDaoImpl : IEventDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     override suspend fun createEvent(event: EventEntity)
 
-
-    // • UPSERT
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertEvent(event: EventEntity): Long
-
-    @Update(onConflict = OnConflictStrategy.IGNORE)
-    fun update2Event(event: EventEntity)
-
-    @Transaction
-    override fun upsertEvent(event: EventEntity) {
-        val id = insertEvent(event)
-        if (id == -1L) {
-            update2Event(event)
-        }
-    }
-
-
     // • READ
 
-    @Query("SELECT * FROM events WHERE id = :eventId AND isDeleted = 0")  // only returns the events that are *NOT* marked as deleted.
+    @Query("SELECT * FROM events WHERE id = :eventId")
     override suspend fun getEventById(eventId: EventId): EventEntity?
 
-    @Query("SELECT * FROM events WHERE isDeleted = 0")  // only returns the events that are *NOT* marked as deleted
+    @Query("SELECT * FROM events")
     override suspend fun getEvents(): List<EventEntity>
 
-    @Query("SELECT * FROM events")                      // returns all events (marked deleted or not)
-    override suspend fun getAllEvents(): List<EventEntity>
-
-    @Query("SELECT * FROM events WHERE isDeleted = 0")  // only returns the events that are *NOT* marked as deleted.
+    @Query("SELECT * FROM events")
     override fun getEventsFlow(): Flow<List<EventEntity>>
 
     @Query(getEventsForDayQuery)
@@ -62,55 +41,73 @@ interface EventDaoImpl : IEventDao {
     @Update
     override suspend fun updateEvent(event: EventEntity): Int
 
+    // • UPSERT
+
+    @Transaction
+    override fun upsertEvent(event: EventEntity) {
+        val id = _insertEvent(event)
+        if (id == -1L) {
+            _updateEvent(event)
+        }
+    }
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun _insertEvent(event: EventEntity): Long
+
+    @Update(onConflict = OnConflictStrategy.IGNORE)
+    fun _updateEvent(event: EventEntity)
+
 
     // • DELETE
 
-    @Query("UPDATE events SET isDeleted = 1 WHERE id = :eventId")
-    override suspend fun markEventDeletedById(eventId: EventId): Int   // only marks the event as deleted.
-
-    @Query("SELECT id FROM events WHERE isDeleted = 1")
-    override suspend fun getMarkedDeletedEventIds(): List<EventId>
-
     @Query("DELETE FROM events WHERE id IN (:eventIds)")
-    override suspend fun deleteFinallyByEventIds(eventIds: List<EventId>): Int  // completely deletes the events.
+    override suspend fun deleteByEventIds(eventIds: List<EventId>): Int
 
     @Delete
-    override suspend fun deleteEvent(event: EventEntity): Int  // completely deletes the event.
+    override suspend fun deleteEvent(event: EventEntity): Int
+
+    @Query("DELETE FROM events WHERE id = :eventId")
+    override suspend fun deleteEventById(eventId: EventId): Int
 
     @Query("DELETE FROM events")
-    override suspend fun clearAllEvents(): Int  // completely deletes all events.
+    override suspend fun clearAllEvents(): Int
 
+    // Deletes all SYNCED events for the given day.
     @Query(deleteEventsForDayQuery)
-    override suspend fun clearAllEventsForDay(zonedDateTime: ZonedDateTime): Int // completely deletes all UNDELETED events for the given day.
+    override suspend fun clearAllSyncedEventsForDay(zonedDateTime: ZonedDateTime): Int
 
     companion object {
 
         const val getEventsForDayQuery =
             """
-            SELECT * FROM events WHERE isDeleted = 0 
-                AND (
-                        ( ( `from` >= :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event fits within a day
-                      OR
-                        ( ( `from` >  :zonedDateTime) AND (`from` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `from` starts today
-                      OR
-                        ( ( `to`   >  :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `to` ends today
-                      OR
-                        ( ( `from` <= :zonedDateTime) AND (`to`   > :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event straddles today     
+            SELECT * FROM events WHERE  
+                (
+                    ( ( `from` >= :zonedDateTime) AND (`from`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event starts within day
+
+                  --      ( ( `from` >= :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event fits within day
+                  --    OR
+                  --      ( ( `from` >  :zonedDateTime) AND (`from` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `from` starts on day
+                  --    OR
+                  --      ( ( `to`   >  :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `to` ends on day
+                  --    OR
+                  --      ( ( `from` <= :zonedDateTime) AND (`to`   > :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event straddles day     
                 )
             """
 
         const val deleteEventsForDayQuery =
             """
-            DELETE FROM events WHERE isDeleted = 0 
-                AND (
-                        ( ( `from` >= :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event fits within a day
-                      OR
-                        ( ( `from` >  :zonedDateTime) AND (`from` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `from` starts today
-                      OR
-                        ( ( `to`   >  :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `to` ends today
-                      OR
-                        ( ( `from` <= :zonedDateTime) AND (`to`   > :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event straddles today     
-                )
+            DELETE FROM events WHERE 
+                isSynced = 1
+                AND 
+                ( ( `from` >= :zonedDateTime) AND (`from`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event starts within day
+                    
+                  --      ( ( `from` >= :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event fits within day
+                  --    OR
+                  --      ( ( `from` >  :zonedDateTime) AND (`from` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `from` starts on day
+                  --    OR
+                  --      ( ( `to`   >  :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `to` ends on day
+                  --    OR
+                  --      ( ( `from` <= :zonedDateTime) AND (`to`   > :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event straddles today     
             """
     }
 }
