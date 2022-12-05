@@ -107,14 +107,13 @@ class AgendaViewModel @Inject constructor(
             (-5..5).map { index ->
                 if (index != 0) {
                     val date = getDateForSelectedDayIndex(selectedDate, index)
-                    async { agendaRepository.updateLocalAgendaForDayFromRemote(date) }
+                    async { agendaRepository.updateLocalAgendaDayFromRemote(date) }
                 } else {
                     async { null }
                 }
             }
             //}//.awaitAll()  // will fail if any of the `async`s fail (LEAVE FOR REFERENCE)
-            // will NOT fail all if one fails (unlike .awaitAll())
-            .map {
+            .map {// will NOT fail all if any async fails (unlike .awaitAll())
                 it.await()
             }
 

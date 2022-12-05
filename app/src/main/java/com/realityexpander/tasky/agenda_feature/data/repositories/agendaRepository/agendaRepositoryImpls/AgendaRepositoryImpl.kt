@@ -42,7 +42,30 @@ class AgendaRepositoryImpl @Inject constructor(
         return events + tasks + reminders
     }
 
-    override suspend fun updateLocalAgendaForDayFromRemote(dateTime: ZonedDateTime) {
+    override fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>> {
+        CoroutineScope(Dispatchers.IO).launch {
+            updateLocalAgendaDayFromRemote(dateTime)
+        }
+
+        return flow {
+            try {
+                emitAll(combine(
+                    taskRepository.getTasksForDayFlow(dateTime),
+                    eventRepository.getEventsForDayFlow(dateTime),
+                    reminderRepository.getRemindersForDayFlow(dateTime)
+                ) { tasks,
+                    events,
+                    reminders ->
+                    events + tasks + reminders
+                })
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // don't send error to user, just log it (silent fail is ok here)
+            }
+        }
+    }
+
+    override suspend fun updateLocalAgendaDayFromRemote(dateTime: ZonedDateTime) {
         withContext(Dispatchers.IO) {
             try {
                 // Get fresh data
@@ -89,37 +112,14 @@ class AgendaRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>> {
-        CoroutineScope(Dispatchers.IO).launch {
-            updateLocalAgendaForDayFromRemote(dateTime)
-        }
-
-        return flow {
-            try {
-                emitAll(combine(
-                    taskRepository.getTasksForDayFlow(dateTime),
-                    eventRepository.getEventsForDayFlow(dateTime),
-                    reminderRepository.getRemindersForDayFlow(dateTime)
-                ) { tasks,
-                    events,
-                    reminders ->
-                    events + tasks + reminders
-                })
-            } catch (e: Exception) {
-                e.printStackTrace()
-                // don't send error to user, just log it (silent fail is ok here)
-            }
-        }
-    }
-
-    // Upload local changes to remote
+    // Send local changes (made while offline) to remote
     override suspend fun syncAgenda(): ResultUiText<Void> {
         val syncItems = syncRepository.getSyncItems()
         if (syncItems.isEmpty()) {
             return ResultUiText.Success(null)
         }
 
-        // Sync the `Create` API calls first
+        // Sync the `Create` API calls first...
         syncItems.forEach { syncItem ->
             when (syncItem.modificationTypeForSync) {
                 ModificationTypeForSync.Created -> {
@@ -153,7 +153,7 @@ class AgendaRepositoryImpl @Inject constructor(
             }
         }
 
-        // Sync the `Update` API calls next
+        // Sync the `Update` API calls next...
         syncItems.forEach { syncItem ->
             when (syncItem.modificationTypeForSync) {
                 ModificationTypeForSync.Updated -> {
@@ -187,7 +187,7 @@ class AgendaRepositoryImpl @Inject constructor(
             }
         }
 
-        // Sync the `Delete` last
+        // Sync the `Delete` last.
         return syncRepository.syncDeletedAgendaItems(syncItems)
     }
 
