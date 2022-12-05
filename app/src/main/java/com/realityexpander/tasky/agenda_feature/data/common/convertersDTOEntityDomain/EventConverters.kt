@@ -113,7 +113,7 @@ fun AgendaItem.Event.toEventDTOUpdate(authUserId: UserId? = null): EventDTO.Upda
         from = from.toUtcMillis(),
         to = to.toUtcMillis(),
         remindAt = remindAt.toUtcMillis(),
-        isGoing = if(authUserId == null) isGoing else isUserIdGoingAsAttendee(authUserId, attendees),
+        isGoing = isUserIdGoingAsAttendee(authUserId, attendees),
         attendeeIds = attendees.map { attendee ->
             attendee.id
         },
