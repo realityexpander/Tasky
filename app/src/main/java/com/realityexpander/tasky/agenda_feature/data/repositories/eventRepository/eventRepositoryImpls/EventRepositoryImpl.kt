@@ -22,7 +22,7 @@ class EventRepositoryImpl(
     private val eventDao: IEventDao,
     private val eventApi: IEventApi,
     private val syncRepository: ISyncRepository,
-    private val authRepository: IAuthRepository  // todo add to DI constructor
+    private val authRepository: IAuthRepository   // to get `AuthInfo` for setting `isGoing` for `EventDTO.Update`
 ) : IEventRepository {
 
     // • CREATE
@@ -76,7 +76,7 @@ class EventRepositoryImpl(
             val response =
                 eventApi.updateEvent(
                     event.toEventDTOUpdate(
-                        authRepository.getAuthUserId()
+                        authUserId = authRepository.getAuthUserId()
                 ))
 
             // update with response from server and mark synced

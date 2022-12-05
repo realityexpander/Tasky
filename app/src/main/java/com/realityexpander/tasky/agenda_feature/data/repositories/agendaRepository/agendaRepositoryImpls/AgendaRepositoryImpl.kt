@@ -11,7 +11,6 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.AgendaItemTypeForSync
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ModificationTypeForSync
 import com.realityexpander.tasky.agenda_feature.domain.*
-import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +30,6 @@ class AgendaRepositoryImpl @Inject constructor(
     private val reminderRepository: IReminderRepository,
     private val taskRepository: ITaskRepository,
     private val syncRepository: ISyncRepository,
-    private val authRepository: IAuthRepository
 ) : IAgendaRepository {
 
     ///////////////////////////////////////////////
@@ -194,7 +192,7 @@ class AgendaRepositoryImpl @Inject constructor(
     }
 
     ///////////////////////////////////////////////
-    // • EVENTS
+    // • EVENT
 
     override suspend fun createEvent(
         event: AgendaItem.Event,
@@ -232,7 +230,7 @@ class AgendaRepositoryImpl @Inject constructor(
     }
 
     ///////////////////////////////////////////////
-    // • TASKS
+    // • TASK
 
     override suspend fun createTask(
         task: AgendaItem.Task,

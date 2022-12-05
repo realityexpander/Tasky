@@ -105,6 +105,7 @@ fun AgendaItem.Event.toEventDTOCreate(): EventDTO.Create {
 }
 
 // from Domain to EventDTO.Update (also converts local ZonedDateTime to UTC time millis)
+// Note: Automatically sets `isGoing` for `EventDTO.Update`based using authUserId == logged-in user id
 fun AgendaItem.Event.toEventDTOUpdate(authUserId: UserId? = null): EventDTO.Update {
     return EventDTO.Update(
         id = id,

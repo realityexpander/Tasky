@@ -17,6 +17,14 @@ class SyncRepositoryImpl @Inject constructor(
     private val syncApi: ISyncApi,
     private val syncDao: ISyncDao,
 ) : ISyncRepository {
+
+    // • GET ALL SYNC ITEMS
+
+    override suspend fun getSyncItems(): List<SyncItemEntity> =
+        syncDao.getSyncAgendaItems()
+
+    // • `CREATE` SYNC ITEM
+
     override suspend fun addCreatedSyncItem(agendaItem: AgendaItem): ResultUiText<Void> {
         addSyncItem(
             ModificationTypeForSync.Created,
@@ -34,6 +42,8 @@ class SyncRepositoryImpl @Inject constructor(
         return ResultUiText.Success(null) // todo error checks
     }
 
+    // • `UPDATE` SYNC ITEM
+
     override suspend fun addUpdatedSyncItem(agendaItem: AgendaItem): ResultUiText<Void> {
         return addSyncItem(
             ModificationTypeForSync.Updated,
@@ -46,6 +56,8 @@ class SyncRepositoryImpl @Inject constructor(
         syncDao.deleteSyncAgendaItemByAgendaItemId(agendaItem.id, ModificationTypeForSync.Updated)
         return ResultUiText.Success(null)
     }
+
+    // • `DELETE` SYNC ITEM
 
     override suspend fun addDeletedSyncItem(agendaItem: AgendaItem): ResultUiText<Void> {
         // SPECIAL CASE: If the item is created, then it is not yet on the server,
@@ -81,6 +93,8 @@ class SyncRepositoryImpl @Inject constructor(
             ResultUiText.Error(UiText.Str("Failed to remove deleted item"))
     }
 
+    // • PERFORM SYNC FOR DELETED ITEMS
+    // Sends all deleted Agenda Item Ids to the server, if any.
     override suspend fun syncDeletedAgendaItems(syncItems: List<SyncItemEntity>): ResultUiText<Void> {
         val deleteRequest = syncItems.toSyncAgendaRequestDTO()
 
@@ -107,9 +121,6 @@ class SyncRepositoryImpl @Inject constructor(
             )
         }
     }
-
-    override suspend fun getSyncItems(): List<SyncItemEntity> =
-        syncDao.getSyncAgendaItems()
 
     //////////////////////////
     //// HELPERS

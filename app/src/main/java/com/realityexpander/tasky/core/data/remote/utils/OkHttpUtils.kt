@@ -2,7 +2,7 @@ package com.realityexpander.tasky.core.data.remote.utils
 
 import okhttp3.OkHttpClient
 
-fun cancelExistingCallWithSameValues(
+fun cancelExistingApiCallWithSameValues(
     okHttpClient: OkHttpClient,
     urlParameter: String,
     urlValue: String

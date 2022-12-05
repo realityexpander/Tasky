@@ -324,7 +324,6 @@ object AppModule {
         reminderRepository: IReminderRepository,
         syncRepository: ISyncRepository,
         agendaApi: IAgendaApi,
-        authRepository: IAuthRepository
     ): IAgendaRepository =
         AgendaRepositoryImpl(
             agendaApi = agendaApi,
@@ -333,7 +332,6 @@ object AppModule {
             taskRepository = taskRepository,
             reminderRepository = reminderRepository,
             syncRepository = syncRepository,
-            authRepository = authRepository
         )
 
     /////////// EVENTS REPOSITORY ///////////
