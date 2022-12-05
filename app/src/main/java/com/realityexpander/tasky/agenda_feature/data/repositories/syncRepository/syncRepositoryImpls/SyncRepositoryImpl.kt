@@ -52,7 +52,7 @@ class SyncRepositoryImpl @Inject constructor(
         //   so we can just remove it from the local database and no need to sync.
         val syncAgendaItem = syncDao.getSyncAgendaItems().firstOrNull {
             it.agendaItemId == agendaItem.id
-            && it.modificationTypeForSync == ModificationTypeForSync.Created
+                    && it.modificationTypeForSync == ModificationTypeForSync.Created
         }
         syncAgendaItem?.run {
             removeCreatedSyncItem(agendaItem)
@@ -71,18 +71,21 @@ class SyncRepositoryImpl @Inject constructor(
     }
 
     override suspend fun removeDeletedSyncItem(agendaItem: AgendaItem): ResultUiText<Void> {
-        val deleted = syncDao.deleteSyncAgendaItemByAgendaItemId(agendaItem.id, ModificationTypeForSync.Deleted)
-        return if(deleted > 0)
+        val deleted = syncDao.deleteSyncAgendaItemByAgendaItemId(
+            agendaItem.id,
+            ModificationTypeForSync.Deleted
+        )
+        return if (deleted > 0)
             ResultUiText.Success(null)
         else
             ResultUiText.Error(UiText.Str("Failed to remove deleted item"))
     }
 
-    override suspend fun syncDeletedAgendaItems(syncItems: List<SyncItemEntity>) : ResultUiText<Void> {
+    override suspend fun syncDeletedAgendaItems(syncItems: List<SyncItemEntity>): ResultUiText<Void> {
         val deleteRequest = syncItems.toSyncAgendaRequestDTO()
 
         // If there are no items to Delete, then there is nothing to sync.
-        if(deleteRequest.deletedEventIds.isNullOrEmpty()
+        if (deleteRequest.deletedEventIds.isNullOrEmpty()
             && deleteRequest.deletedTaskIds.isNullOrEmpty()
             && deleteRequest.deletedReminderIds.isNullOrEmpty()
         ) {
@@ -97,11 +100,15 @@ class SyncRepositoryImpl @Inject constructor(
             }
             ResultUiText.Success(null)
         } else {
-            ResultUiText.Error(UiText.Str(result.exceptionOrNull()?.localizedMessage ?: "Unknown error"))
+            ResultUiText.Error(
+                UiText.Str(
+                    result.exceptionOrNull()?.localizedMessage ?: "Unknown error"
+                )
+            )
         }
     }
 
-    override suspend fun getSyncItems() : List<SyncItemEntity> =
+    override suspend fun getSyncItems(): List<SyncItemEntity> =
         syncDao.getSyncAgendaItems()
 
     //////////////////////////
@@ -137,39 +144,41 @@ class SyncRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteSyncItemByAgendaItemId(agendaItemId: AgendaItemId, modificationTypeForSync: ModificationTypeForSync) =
+    override suspend fun deleteSyncItemByAgendaItemId(
+        agendaItemId: AgendaItemId,
+        modificationTypeForSync: ModificationTypeForSync
+    ) =
         syncDao.deleteSyncAgendaItemByAgendaItemId(agendaItemId, modificationTypeForSync)
 
     // Prepare the OFFLINE-DELETED AgendaItems to be sent to the server
-    private fun List<SyncItemEntity>.toSyncAgendaRequestDTO() =
-        SyncAgendaRequestDTO(
-            deletedEventIds =
-            this
-                .filter {
-                    it.agendaItemTypeForSync == AgendaItemTypeForSync.Event
-                            && it.modificationTypeForSync == ModificationTypeForSync.Deleted
-                }
-                .map {
-                    it.agendaItemId
-                },
-            deletedTaskIds =
-            this
-                .filter {
-                    it.agendaItemTypeForSync == AgendaItemTypeForSync.Task
-                            && it.modificationTypeForSync == ModificationTypeForSync.Deleted
-                }
-                .map {
-                    it.agendaItemId
-                },
-            deletedReminderIds =
-            this
-                .filter {
-                    it.agendaItemTypeForSync == AgendaItemTypeForSync.Reminder
-                            && it.modificationTypeForSync == ModificationTypeForSync.Deleted
-                }
-                .map {
-                    it.agendaItemId
-                },
+    private fun List<SyncItemEntity>.toSyncAgendaRequestDTO(): SyncAgendaRequestDTO {
+
+        val deletedEventIds = this.filter {
+                it.agendaItemTypeForSync == AgendaItemTypeForSync.Event
+                && it.modificationTypeForSync == ModificationTypeForSync.Deleted
+            }.map {
+                it.agendaItemId
+            }
+
+        val deletedTaskIds = this.filter {
+                it.agendaItemTypeForSync == AgendaItemTypeForSync.Task
+                && it.modificationTypeForSync == ModificationTypeForSync.Deleted
+            }.map {
+                it.agendaItemId
+            }
+
+        val deletedReminderIds = this.filter {
+                it.agendaItemTypeForSync == AgendaItemTypeForSync.Reminder
+                && it.modificationTypeForSync == ModificationTypeForSync.Deleted
+            }.map {
+                it.agendaItemId
+            }
+
+        return SyncAgendaRequestDTO(
+            deletedEventIds = deletedEventIds,
+            deletedTaskIds = deletedTaskIds,
+            deletedReminderIds = deletedReminderIds
         )
+    }
 
 }
