@@ -13,10 +13,12 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository
 import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.util.Email
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
@@ -72,30 +74,36 @@ class AgendaRepositoryImpl @Inject constructor(
                 eventRepository.clearEventsForDayLocally(dateTime)
                 // Insert fresh data locally
                 agenda?.events?.forEach { event ->
-                    val result2 =
-                        eventRepository.upsertEventLocally(event.toDomain())
-                    if (result2 is ResultUiText.Error) {
-                        throw IllegalStateException(result2.message.asStrOrNull())
+                    withContext(Dispatchers.IO) {
+                        val result2 =
+                            eventRepository.upsertEventLocally(event.toDomain())
+                        if (result2 is ResultUiText.Error) {
+                            throw IllegalStateException(result2.message.asStrOrNull())
+                        }
                     }
                 }
 
                 taskRepository.clearTasksForDayLocally(dateTime)
                 // Insert fresh data locally
                 agenda?.tasks?.forEach { task ->
-                    val result2 =
-                        taskRepository.upsertTaskLocally(task.toDomain())
-                    if (result2 is ResultUiText.Error) {
-                        throw IllegalStateException(result2.message.asStrOrNull())
+                    withContext(Dispatchers.IO) {
+                        val result2 =
+                            taskRepository.upsertTaskLocally(task.toDomain())
+                        if (result2 is ResultUiText.Error) {
+                            throw IllegalStateException(result2.message.asStrOrNull())
+                        }
                     }
                 }
 
                 reminderRepository.clearRemindersForDayLocally(dateTime)
                 // Insert fresh data locally
                 agenda?.reminders?.forEach { reminder ->
-                    val result2 =
-                        reminderRepository.upsertReminderLocally(reminder.toDomain())
-                    if (result2 is ResultUiText.Error) {
-                        throw IllegalStateException(result2.message.asStrOrNull())
+                    withContext(Dispatchers.IO) {
+                        val result2 =
+                            reminderRepository.upsertReminderLocally(reminder.toDomain())
+                        if (result2 is ResultUiText.Error) {
+                            throw IllegalStateException(result2.message.asStrOrNull())
+                        }
                     }
                 }
 
