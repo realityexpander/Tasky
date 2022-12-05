@@ -112,7 +112,8 @@ class AgendaViewModel @Inject constructor(
                     } else {
                         async { null }
                     }
-                }.awaitAll()
+                }//.awaitAll()  // will fail if any of the `async`s fail (LEAVE FOR REFERENCE)
+                .map { it.await() } // will NOT fail all if one fails (unlike .awaitAll())
                 .mapNotNull { oneDayOfAgendaItems ->
                     oneDayOfAgendaItems?.run {
                         if (isSuccess) {
