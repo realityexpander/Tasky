@@ -94,10 +94,9 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideTaskyApi(
-        converterFactory: Converter.Factory,
+    fun provideOkHttpClient(
         @AuthDaoProdUsingBinds authDao: IAuthDao,
-    ): TaskyApi {
+    ): OkHttpClient {
 
         // Configure to Allow more simultaneous requests
         val dispatcher = Dispatcher(Executors.newFixedThreadPool(20))
@@ -154,10 +153,10 @@ object AppModule {
             }
         }
 
-        val client = if(BuildConfig.DEBUG) {
+        return if(BuildConfig.DEBUG) {
             val logging = HttpLoggingInterceptor(jsonPrettyPrinter)
             logging.level = HttpLoggingInterceptor.Level.BODY
-//            logging.level = HttpLoggingInterceptor.Level.HEADERS
+            //logging.level = HttpLoggingInterceptor.Level.HEADERS
 
             OkHttpClient.Builder()
                 .dispatcher(dispatcher)
@@ -178,10 +177,19 @@ object AppModule {
                 .writeTimeout(1, TimeUnit.MINUTES)
                 .build()
         }
+    }
+
+    @Provides
+    @Singleton
+    fun provideTaskyApi(
+        okHttpClient: OkHttpClient,
+        converterFactory: Converter.Factory,
+        @AuthDaoProdUsingBinds authDao: IAuthDao,
+    ): TaskyApi {
 
         return Retrofit.Builder()
             .baseUrl(TaskyApi.BASE_URL)
-            .client(client)
+            .client(okHttpClient)
             .addConverterFactory(converterFactory)
             .build()
             .create()
@@ -301,9 +309,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAgendaApi(
-        taskyApi: TaskyApi
+        taskyApi: TaskyApi,
+        okHttpClient: OkHttpClient,
     ) : IAgendaApi =
-        AgendaApiImpl(taskyApi)
+        AgendaApiImpl(taskyApi, okHttpClient)
 
 
     @Provides

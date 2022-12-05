@@ -2,17 +2,27 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.agendaReposit
 
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaDayDTO
 import com.realityexpander.tasky.core.data.remote.TaskyApi
+import com.realityexpander.tasky.core.data.remote.utils.cancelExistingCallWithSameValues
 import com.realityexpander.tasky.core.util.rethrowIfCancellation
 import com.realityexpander.tasky.core.util.toUtcMillis
+import okhttp3.OkHttpClient
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
+
 class AgendaApiImpl @Inject constructor(
-    private val taskyApi: TaskyApi
-): IAgendaApi {
+    private val taskyApi: TaskyApi,
+    private val okHttpClient: OkHttpClient,
+) : IAgendaApi {
 
     override suspend fun getAgenda(zonedDateTime: ZonedDateTime): Result<AgendaDayDTO> {
         return try {
+            cancelExistingCallWithSameValues(
+                okHttpClient,
+                "date",
+                zonedDateTime.toUtcMillis().toString()
+            )
+
             val response = taskyApi.getAgenda(
                 ZonedDateTime.now().zone.id.toString(),
                 zonedDateTime.toUtcMillis()
@@ -32,3 +42,4 @@ class AgendaApiImpl @Inject constructor(
         }
     }
 }
+

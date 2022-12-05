@@ -28,7 +28,6 @@ abstract class AgendaItem {
 
         val host: UserId? = null,
         val isUserEventCreator: Boolean = false,
-        val isGoing: Boolean = false,                 // *output only* - ONLY used to set `isGoing` status for `UpdateEventDTO`, not used anywhere else in app.
 
         val attendees: List<Attendee> = emptyList(),
 
