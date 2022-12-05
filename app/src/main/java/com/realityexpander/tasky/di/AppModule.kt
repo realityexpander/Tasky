@@ -56,6 +56,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -65,10 +66,12 @@ import org.json.JSONObject
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.create
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Qualifier
 import javax.inject.Singleton
+
 
 const val USE_FAKE_REPOSITORY = false
 
@@ -95,6 +98,11 @@ object AppModule {
         converterFactory: Converter.Factory,
         @AuthDaoProdUsingBinds authDao: IAuthDao,
     ): TaskyApi {
+
+        // Configure to Allow more simultaneous requests
+        val dispatcher = Dispatcher(Executors.newFixedThreadPool(20))
+        dispatcher.maxRequests = 20
+        dispatcher.maxRequestsPerHost = 20
 
         val addHeadersInterceptor = Interceptor { chain ->
             runBlocking(Dispatchers.IO) {
@@ -135,7 +143,10 @@ object AppModule {
                     return print("=== more than 500 characters ===")
 
                 if (message.startsWith("{") || message.startsWith("[")) try {
-                    JSONObject(message).toString(2).also(::print)
+                    JSONObject(message)
+                        .toString(2)
+                        .take(500)
+                        .also(::print)
                 } catch (e: JSONException) {
                     print(message)
                 }
@@ -149,6 +160,7 @@ object AppModule {
 //            logging.level = HttpLoggingInterceptor.Level.HEADERS
 
             OkHttpClient.Builder()
+                .dispatcher(dispatcher)
                 .addInterceptor(addHeadersInterceptor)
                 .addInterceptor(logging)
                 .connectTimeout(1, TimeUnit.MINUTES)
@@ -158,6 +170,7 @@ object AppModule {
                 .build()
         } else {
             OkHttpClient.Builder()
+                .dispatcher(dispatcher)
                 .addInterceptor(addHeadersInterceptor)
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .callTimeout(1, TimeUnit.MINUTES)
