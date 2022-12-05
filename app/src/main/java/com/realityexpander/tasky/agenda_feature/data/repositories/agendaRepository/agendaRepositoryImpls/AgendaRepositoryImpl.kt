@@ -201,7 +201,10 @@ class AgendaRepositoryImpl @Inject constructor(
         return eventRepository.createEvent(event, isRemoteOnly)
     }
 
-    override suspend fun getEvent(eventId: EventId, isLocalOnly: Boolean): AgendaItem.Event? {
+    override suspend fun getEvent(
+        eventId: EventId,
+        isLocalOnly: Boolean
+    ): AgendaItem.Event? {
         return eventRepository.getEvent(eventId, isLocalOnly)
     }
 
@@ -239,7 +242,10 @@ class AgendaRepositoryImpl @Inject constructor(
         return taskRepository.createTask(task, isRemoteOnly)
     }
 
-    override suspend fun getTask(taskId: TaskId, isLocalOnly: Boolean): AgendaItem.Task? {
+    override suspend fun getTask(
+        taskId: TaskId,
+        isLocalOnly: Boolean
+    ): AgendaItem.Task? {
         return taskRepository.getTask(taskId, isLocalOnly)
     }
 
