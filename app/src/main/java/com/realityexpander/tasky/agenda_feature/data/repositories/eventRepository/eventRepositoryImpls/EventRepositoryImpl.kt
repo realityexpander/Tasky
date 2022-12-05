@@ -54,16 +54,16 @@ class EventRepositoryImpl(
 
     // • READ
 
+    override suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<AgendaItem.Event> {
+        return eventDao.getEventsForDay(zonedDateTime).map { it.toDomain() }
+    }
+
     override fun getEventsForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<AgendaItem.Event>> {
         return eventDao.getEventsForDayFlow(zonedDateTime).map { eventEntities ->
             eventEntities.map { eventEntity ->
                 eventEntity.toDomain()
             }
         }
-    }
-
-    override suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<AgendaItem.Event> {
-        return eventDao.getEventsForDay(zonedDateTime).map { it.toDomain() }
     }
 
     override suspend fun getEvent(eventId: EventId, isLocalOnly: Boolean): AgendaItem.Event? {
