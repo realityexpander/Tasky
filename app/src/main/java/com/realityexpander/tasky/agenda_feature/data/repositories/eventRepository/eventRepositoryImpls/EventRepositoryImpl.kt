@@ -52,18 +52,18 @@ class EventRepositoryImpl(
         }
     }
 
+    // • READ
 
-    // • UPDATE / UPSERT
-
-    override suspend fun upsertEventLocally(event: AgendaItem.Event): ResultUiText<Void> {
-        return try {
-            eventDao.upsertEvent(event.toEntity())  // save to local DB ONLY
-
-            ResultUiText.Success()
-        } catch (e: Exception) {
-            e.rethrowIfCancellation()
-            ResultUiText.Error(UiText.Str(e.message ?: "upsertEvent error"))
+    override fun getEventsForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<AgendaItem.Event>> {
+        return eventDao.getEventsForDayFlow(zonedDateTime).map { eventEntities ->
+            eventEntities.map { eventEntity ->
+                eventEntity.toDomain()
+            }
         }
+    }
+
+    override suspend fun getEvent(eventId: EventId, isLocalOnly: Boolean): AgendaItem.Event? {
+        return eventDao.getEventById(eventId)?.toDomain()
     }
 
     override suspend fun updateEvent(event: AgendaItem.Event, isRemoteOnly: Boolean): ResultUiText<AgendaItem.Event> {
@@ -77,7 +77,7 @@ class EventRepositoryImpl(
                 eventApi.updateEvent(
                     event.toEventDTOUpdate(
                         authUserId = authRepository.getAuthUserId()
-                ))
+                    ))
 
             // update with response from server and mark synced
             eventDao.updateEvent(
@@ -94,22 +94,21 @@ class EventRepositoryImpl(
         }
     }
 
-    // • READ
+    // • UPDATE / UPSERT
 
     override suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<AgendaItem.Event> {
         return eventDao.getEventsForDay(zonedDateTime).map { it.toDomain() }
     }
 
-    override fun getEventsForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<AgendaItem.Event>> {
-        return eventDao.getEventsForDayFlow(zonedDateTime).map { eventEntities ->
-            eventEntities.map { eventEntity ->
-                eventEntity.toDomain()
-            }
-        }
-    }
+    override suspend fun upsertEventLocally(event: AgendaItem.Event): ResultUiText<Void> {
+        return try {
+            eventDao.upsertEvent(event.toEntity())  // save to local DB ONLY
 
-    override suspend fun getEvent(eventId: EventId, isLocalOnly: Boolean): AgendaItem.Event? {
-        return eventDao.getEventById(eventId)?.toDomain()
+            ResultUiText.Success()
+        } catch (e: Exception) {
+            e.rethrowIfCancellation()
+            ResultUiText.Error(UiText.Str(e.message ?: "upsertEvent error"))
+        }
     }
 
     // • DELETE

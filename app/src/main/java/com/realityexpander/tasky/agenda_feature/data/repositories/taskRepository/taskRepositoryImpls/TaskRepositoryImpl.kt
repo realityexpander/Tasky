@@ -44,26 +44,7 @@ class TaskRepositoryImpl(
         }
     }
 
-
-    // • UPSERT
-
-    override suspend fun upsertTaskLocally(task: AgendaItem.Task): ResultUiText<Void> {
-        return try {
-            taskDao.upsertTask(task.toEntity())  // save to local DB ONLY
-
-            ResultUiText.Success()
-        } catch (e: Exception) {
-            e.rethrowIfCancellation()
-            ResultUiText.Error(UiText.Str(e.message ?: "upsertTask error"))
-        }
-    }
-
-
     // • READ
-
-    override suspend fun getTasksForDay(zonedDateTime: ZonedDateTime): List<AgendaItem.Task> {
-        return taskDao.getTasksForDay(zonedDateTime).map { it.toDomain() }
-    }
 
     override fun getTasksForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<AgendaItem.Task>> {
         return taskDao.getTasksForDayFlow(zonedDateTime).map { taskEntities ->
@@ -94,6 +75,23 @@ class TaskRepositoryImpl(
         } catch (e: Exception) {
             e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.localizedMessage ?: "updateTask error"))
+        }
+    }
+
+    // • UPDATE / UPSERT
+
+    override suspend fun getTasksForDay(zonedDateTime: ZonedDateTime): List<AgendaItem.Task> {
+        return taskDao.getTasksForDay(zonedDateTime).map { it.toDomain() }
+    }
+
+    override suspend fun upsertTaskLocally(task: AgendaItem.Task): ResultUiText<Void> {
+        return try {
+            taskDao.upsertTask(task.toEntity())  // save to local DB ONLY
+
+            ResultUiText.Success()
+        } catch (e: Exception) {
+            e.rethrowIfCancellation()
+            ResultUiText.Error(UiText.Str(e.message ?: "upsertTask error"))
         }
     }
 
