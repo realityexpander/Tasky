@@ -104,26 +104,39 @@ class AgendaViewModel @Inject constructor(
             }
 
             // Fetch/Refresh the previous and coming week's agenda items
-            withContext(Dispatchers.IO) {
-                (-5..5).map { index ->
-                    if (index != 0) {
-                        val date = getDateForSelectedDayIndex(selectedDate, index)
-                        async { agendaRepository.getAgendaForDayFromRemote(date) }
-                    } else {
-                        async { null }
-                    }
-                }//.awaitAll()  // will fail if any of the `async`s fail (LEAVE FOR REFERENCE)
-                .map { it.await() } // will NOT fail all if one fails (unlike .awaitAll())
-                .mapNotNull { oneDayOfAgendaItems ->
-                    oneDayOfAgendaItems?.run {
-                        if (isSuccess) {
-                            agendaRepository.addAgendaItems(
-                                oneDayOfAgendaItems.getOrNull() ?: emptyList()
-                            )
-                        }
-                    }
+            (-5..5).map { index ->
+                if (index != 0) {
+                    val date = getDateForSelectedDayIndex(selectedDate, index)
+                    async { agendaRepository.updateLocalAgendaForDayFromRemote(date) }
+                } else {
+                    async { null }
                 }
             }
+            .map {
+                it.await()
+            }
+
+//            // Fetch/Refresh the previous and coming week's agenda items
+//            withContext(Dispatchers.IO) {
+//                (-5..5).map { index ->
+//                    if (index != 0) {
+//                        val date = getDateForSelectedDayIndex(selectedDate, index)
+//                        async { agendaRepository.getAgendaForDayFromRemote(date) }
+//                    } else {
+//                        async { null }
+//                    }
+//                }//.awaitAll()  // will fail if any of the `async`s fail (LEAVE FOR REFERENCE)
+//                .map { it.await() } // will NOT fail all if one fails (unlike .awaitAll())
+//                .mapNotNull { oneDayOfAgendaItems ->
+//                    oneDayOfAgendaItems?.run {
+//                        if (isSuccess) {
+//                            agendaRepository.addAgendaItemsLocally(
+//                                oneDayOfAgendaItems.getOrNull() ?: emptyList()
+//                            )
+//                        }
+//                    }
+//                }
+//            }
 
 //            yield() // wait for database to load  // leave for testing for now // todo remove
 //            if(agendaState.value.agendaItems.isEmpty()) { // if no items for today, make some fake ones
