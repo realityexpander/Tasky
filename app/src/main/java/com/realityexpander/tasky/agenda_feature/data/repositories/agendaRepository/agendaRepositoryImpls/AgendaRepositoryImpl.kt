@@ -12,14 +12,11 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ModificationTypeForSync
 import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.core.util.Email
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
@@ -36,10 +33,20 @@ class AgendaRepositoryImpl @Inject constructor(
     // • AGENDA
 
     override suspend fun getAgendaForDay(dateTime: ZonedDateTime): List<AgendaItem> {
-        val events = eventRepository.getEventsForDay(dateTime)
-        val tasks = taskRepository.getTasksForDay(dateTime)
-        val reminders = reminderRepository.getRemindersForDay(dateTime)
-        return events + tasks + reminders
+        // Sequential DB queries - left for reference
+//        val events = eventRepository.getEventsForDay(dateTime)
+//        val tasks = taskRepository.getTasksForDay(dateTime)
+//        val reminders = reminderRepository.getRemindersForDay(dateTime)
+//        return events + tasks + reminders
+
+        // run DB queries in parallel
+        return supervisorScope {
+            val events = async { eventRepository.getEventsForDay(dateTime) }
+            val tasks = async { taskRepository.getTasksForDay(dateTime) }
+            val reminders = async { reminderRepository.getRemindersForDay(dateTime) }
+
+            events.await() + tasks.await() + reminders.await()
+        }
     }
 
     override fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>> {
