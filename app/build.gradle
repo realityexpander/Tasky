@@ -140,14 +140,20 @@ dependencies {
 
     //Dagger - Hilt
     implementation "com.google.dagger:hilt-android:$dagger_hilt_version"
-    kapt "com.google.dagger:hilt-android-compiler:$dagger_hilt_version"
-    kapt "androidx.hilt:hilt-compiler:1.0.0"
+//    kapt "com.google.dagger:hilt-android-compiler:$dagger_hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$dagger_hilt_version"
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+
+    // WorkManager
+    implementation "androidx.work:work-runtime-ktx:$work_manager_version"
+    implementation 'androidx.hilt:hilt-work:1.0.0'
+    implementation "androidx.startup:startup-runtime:1.1.1"
 
     // KotlinX Serialization
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_json_version"

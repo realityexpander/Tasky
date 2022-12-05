@@ -11,6 +11,7 @@ buildscript {
         lifecycle_version = '2.5.1'
         compose_compiler_version = '1.3.0-rc01' // for compose 1.3.0
         compose_material_dialogs_datetime_version = '0.8.1-rc'
+        work_manager_version = '2.7.1'
     }
 
     repositories {
@@ -21,7 +22,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.google.dagger:hilt-android-gradle-plugin:2.44"
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$dagger_hilt_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
     }

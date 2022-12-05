@@ -3,7 +3,10 @@ package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.agenda_feature.data.common.workers.SyncWorker
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
@@ -30,6 +33,7 @@ class AgendaViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     private val agendaRepository: IAgendaRepository,
     private val savedStateHandle: SavedStateHandle,
+    private val workManager: WorkManager
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)
@@ -116,6 +120,13 @@ class AgendaViewModel @Inject constructor(
             .map {// will NOT fail all if any async fails (unlike .awaitAll())
                 it.await()
             }
+
+            val workRequest =
+                OneTimeWorkRequestBuilder<SyncWorker>()
+//                PeriodicWorkRequestBuilder<SyncWorker>(1, TimeUnit.MINUTES)
+//                    .setInputData(createInputDataForUri()) // any input needed?
+                    .build()
+            workManager.enqueue(workRequest)
 
 //            yield() // wait for database to load  // leave for testing for now // todo remove
 //            if(agendaState.value.agendaItems.isEmpty()) { // if no items for today, make some fake ones
