@@ -62,9 +62,15 @@ class EventRepositoryImpl(
         }
     }
 
+    override suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<AgendaItem.Event> {
+        return eventDao.getEventsForDay(zonedDateTime).map { it.toDomain() }
+    }
+
     override suspend fun getEvent(eventId: EventId, isLocalOnly: Boolean): AgendaItem.Event? {
         return eventDao.getEventById(eventId)?.toDomain()
     }
+
+    // • UPDATE / UPSERT
 
     override suspend fun updateEvent(event: AgendaItem.Event, isRemoteOnly: Boolean): ResultUiText<AgendaItem.Event> {
         return try {
@@ -92,12 +98,6 @@ class EventRepositoryImpl(
             e.rethrowIfCancellation()
             ResultUiText.Error(UiText.Str(e.localizedMessage ?: "updateEvent error"))
         }
-    }
-
-    // • UPDATE / UPSERT
-
-    override suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<AgendaItem.Event> {
-        return eventDao.getEventsForDay(zonedDateTime).map { it.toDomain() }
     }
 
     override suspend fun upsertEventLocally(event: AgendaItem.Event): ResultUiText<Void> {
