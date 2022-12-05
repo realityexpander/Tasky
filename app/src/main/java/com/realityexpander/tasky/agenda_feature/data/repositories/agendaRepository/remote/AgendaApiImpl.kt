@@ -28,7 +28,6 @@ class AgendaApiImpl @Inject constructor(
             }
         } catch (e: Exception) {
             e.rethrowIfCancellation()
-//            throw e  // todo improve error handling
             Result.failure(Exception("Error getting agenda"))
         }
     }

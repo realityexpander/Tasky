@@ -26,6 +26,7 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlin.system.exitProcess
 
@@ -78,14 +79,16 @@ class MainActivity : ComponentActivity() {
                         viewModel.onSetAuthInfo(appSettings.authInfo)
                     }
 
-                    if (!splashState.isLoading) {
-
-                        // Check for errors
+                    // Display any errors
+                    LaunchedEffect(splashState.error) {
                         if (splashState.error != null) {
                             Toast.makeText(context, splashState.error, Toast.LENGTH_LONG).show()
-                            Thread.sleep(1000)
+                            delay(1000)
                             viewModel.onSetAuthInfo(null)
                         }
+                    }
+
+                    if (!splashState.isLoading) {
 
                         DestinationsNavHost(
                             navGraph = NavGraphs.root,
