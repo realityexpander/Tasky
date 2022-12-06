@@ -112,7 +112,7 @@ class AgendaViewModel @Inject constructor(
                     async { null }
                 }
             }
-            //}//.awaitAll()  // will fail if any of the `async`s fail (LEAVE FOR REFERENCE)
+            //.awaitAll()  // will fail if any of the `async`s fail (LEAVE FOR REFERENCE)
             .map {// will NOT fail all if any async fails (unlike .awaitAll())
                 it.await()
             }

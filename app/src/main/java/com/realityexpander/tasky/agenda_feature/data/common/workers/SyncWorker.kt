@@ -17,9 +17,8 @@ class SyncWorker @AssistedInject constructor(
 ): CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        val result = agendaRepository.syncAgenda()
 
-        return when (result) {
+        return when (agendaRepository.syncAgenda()) {
             is ResultUiText.Success -> Result.success()
             is ResultUiText.Error -> Result.failure()
         }

@@ -12,7 +12,6 @@ buildscript {
         compose_compiler_version = '1.3.0-rc01' // for compose 1.3.0
         compose_material_dialogs_datetime_version = '0.8.1-rc'
         work_manager_version = '2.7.1'
-//        work_manager_version = '2.8.0.beta02'
     }
 
     repositories {
