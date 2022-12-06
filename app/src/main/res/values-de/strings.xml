@@ -213,4 +213,8 @@
     <string name="reminder_message_reminder_saved">Erinnerung gespeichert</string>
     <string name="reminder_message_reminder_deleted_success">Erinnerung erfolgreich gelöscht</string>
 
+    <!--    Syncing -->
+    <string name="error_syncing_agenda">Fehler beim Synchronisieren der Agenda</string>
+    <string name="error_sync_failed">Synchronisierung fehlgeschlagen</string>
+
 </resources>

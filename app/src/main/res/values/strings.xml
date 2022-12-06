@@ -180,6 +180,8 @@
 
     <!--    Agenda Sync -->
     <string name="agenda_sync_error">Failed to sync agenda</string>
+    <string name="error_syncing_agenda">Error Syncing Agenda</string>
+    <string name="error_sync_failed">Sync Failed</string>
 
     <!--    Task screen -->
     <string name="task_description_close">Close Task screen</string>
@@ -212,6 +214,5 @@
     <string name="reminder_error_delete_reminder">Error deleting Reminder</string>
     <string name="reminder_message_reminder_saved">Reminder Saved</string>
     <string name="reminder_message_reminder_deleted_success">Reminder successfully deleted</string>
-    <string name="error_syncing_agenda">Error Syncing Agenda</string>
 
 </resources>
