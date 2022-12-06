@@ -5,28 +5,23 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
+import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 @HiltWorker
 class SyncWorker @AssistedInject constructor(
-    @Assisted val appContext: Context,
+    @Assisted val context: Context,
     @Assisted val workerParams: WorkerParameters,
-    private val agendaRepository: IAgendaRepository  // <-- causes runtime error
-): CoroutineWorker(appContext, workerParams) {
+    val agendaRepository: IAgendaRepository
+): CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        println("SyncWorker.doWork()")
-//        val result = agendaRepository.syncAgenda()
+        val result = agendaRepository.syncAgenda()
 
-        if (runAttemptCount > 2) {
-            return Result.failure()
+        return when (result) {
+            is ResultUiText.Success -> Result.success()
+            is ResultUiText.Error -> Result.failure()
         }
-
-        return Result.success()
-//        if(result is ResultUiText.Success)
-//            Result.success()
-//        else
-//            Result.failure()
     }
 }
