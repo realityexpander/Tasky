@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls
 
 import com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
+import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.common.util.TaskId
@@ -11,6 +12,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.AgendaItemTypeForSync
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ModificationTypeForSync
 import com.realityexpander.tasky.agenda_feature.domain.*
+import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -120,38 +122,46 @@ class AgendaRepositoryImpl @Inject constructor(
     }
 
     // Send local changes (made while offline) to remote
+    // Note: ResultUiText.Success is returned even if there are no changes to sync.
+    // Note: ResultUiText.Error is returned if there are changes to sync, and ANY sync item fails.
+    // ALL SYNC ITEMS WILL BE ATTEMPTED.
     override suspend fun syncAgenda(): ResultUiText<Void> {
         val syncItems = syncRepository.getSyncItems()
         if (syncItems.isEmpty()) {
             return ResultUiText.Success(null)
         }
 
+        var isFailure = false
+
         // Sync the `Create` API calls first...
         syncItems.forEach { syncItem ->
             when (syncItem.modificationTypeForSync) {
                 ModificationTypeForSync.Created -> {
-                    when (syncItem.agendaItemTypeForSync) {
+                    val success = when (syncItem.agendaItemTypeForSync) {
                         AgendaItemTypeForSync.Event -> {
                             val event = getEvent(
                                 eventId = syncItem.agendaItemId,
                                 isLocalOnly = true
                             ) ?: return@forEach
-                            createEvent(event = event, isRemoteOnly = true)
+                            createEvent(event = event, isRemoteOnly = true) is ResultUiText.Success
                         }
                         AgendaItemTypeForSync.Task -> {
                             val task = getTask(
                                 taskId = syncItem.agendaItemId,
                                 isLocalOnly = true
                             ) ?: return@forEach
-                            createTask(task = task, isRemoteOnly = true)
+                            createTask(task = task, isRemoteOnly = true) is ResultUiText.Success
                         }
                         AgendaItemTypeForSync.Reminder -> {
                             val reminder = getReminder(
                                 reminderId = syncItem.agendaItemId,
                                 isLocalOnly = true
                             ) ?: return@forEach
-                            createReminder(reminder = reminder, isRemoteOnly = true)
+                            createReminder(reminder = reminder, isRemoteOnly = true) is ResultUiText.Success
                         }
+                    }
+                    if(!success) {
+                        isFailure = true
                     }
                 }
                 else -> {
@@ -164,28 +174,31 @@ class AgendaRepositoryImpl @Inject constructor(
         syncItems.forEach { syncItem ->
             when (syncItem.modificationTypeForSync) {
                 ModificationTypeForSync.Updated -> {
-                    when (syncItem.agendaItemTypeForSync) {
+                    val success = when (syncItem.agendaItemTypeForSync) {
                         AgendaItemTypeForSync.Event -> {
                             val event = getEvent(
                                 eventId = syncItem.agendaItemId,
                                 isLocalOnly = true
                             ) ?: return@forEach
-                            updateEvent(event = event, isRemoteOnly = true)
+                            updateEvent(event = event, isRemoteOnly = true) is ResultUiText.Success
                         }
                         AgendaItemTypeForSync.Task -> {
                             val task = getTask(
                                 taskId = syncItem.agendaItemId,
                                 isLocalOnly = true
                             ) ?: return@forEach
-                            updateTask(task = task, isRemoteOnly = true)
+                            updateTask(task = task, isRemoteOnly = true) is ResultUiText.Success
                         }
                         AgendaItemTypeForSync.Reminder -> {
                             val reminder = getReminder(
                                 reminderId = syncItem.agendaItemId,
                                 isLocalOnly = true
                             ) ?: return@forEach
-                            updateReminder(reminder = reminder, isRemoteOnly = true)
+                            updateReminder(reminder = reminder, isRemoteOnly = true) is ResultUiText.Success
                         }
+                    }
+                    if(!success) {
+                        isFailure = true
                     }
                 }
                 else -> {
@@ -195,7 +208,15 @@ class AgendaRepositoryImpl @Inject constructor(
         }
 
         // Sync the `Delete` last.
-        return syncRepository.syncDeletedAgendaItems(syncItems)
+        if(syncRepository.syncDeletedAgendaItems(syncItems) is ResultUiText.Error) {
+            isFailure = true
+        }
+
+        return if(isFailure) {
+            ResultUiText.Error(UiText.Res(R.string.error_sync_failed))
+        } else {
+            ResultUiText.Success(null)
+        }
     }
 
     ///////////////////////////////////////////////
