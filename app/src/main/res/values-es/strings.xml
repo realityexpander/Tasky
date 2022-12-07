@@ -180,6 +180,11 @@
 
     <!--    Agenda Sync -->
     <string name="agenda_sync_error">No se pudo sincronizar la agenda</string>
+    <string name="error_syncing_agenda">Error al sincronizar la agenda</string>
+    <string name="error_sync_failed">Sincronización fallida</string>
+    <string name="agenda_sync_notification_title">Tasky sincronizando agenda…</string>
+    <string name="agenda_sync_notification_content_text">Sincronizando Agenda de la semana pasada y esta semana</string>
+    <string name="agenda_sync_uploading_items_text">Cargar elementos de la agenda creados sin conexión</string>
 
     <!--    Task screen -->
     <string name="task_description_close">Cerrar pantalla de tareas</string>
@@ -212,9 +217,5 @@
     <string name="reminder_error_delete_reminder">Error al eliminar el recordatorio</string>
     <string name="reminder_message_reminder_saved">Recordatorio guardado</string>
     <string name="reminder_message_reminder_deleted_success">Recordatorio eliminado con éxito</string>
-
-    <!--    Syncing -->
-    <string name="error_syncing_agenda">Error al sincronizar la agenda</string>
-    <string name="error_sync_failed">Sincronización fallida</string>
 
 </resources>

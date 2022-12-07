@@ -182,6 +182,9 @@
     <string name="agenda_sync_error">Failed to sync agenda</string>
     <string name="error_syncing_agenda">Error Syncing Agenda</string>
     <string name="error_sync_failed">Sync Failed</string>
+    <string name="agenda_sync_notification_title">Tasky Syncing Agenda…</string>
+    <string name="agenda_sync_notification_content_text">Syncing Agenda for last week and this week</string>
+    <string name="agenda_sync_uploading_items_text">Uploading Agenda Items created while offline</string>
 
     <!--    Task screen -->
     <string name="task_description_close">Close Task screen</string>
@@ -214,7 +217,5 @@
     <string name="reminder_error_delete_reminder">Error deleting Reminder</string>
     <string name="reminder_message_reminder_saved">Reminder Saved</string>
     <string name="reminder_message_reminder_deleted_success">Reminder successfully deleted</string>
-    <string name="agenda_sync_notification_title">Tasky Syncing Agenda…</string>
-    <string name="agenda_sync_notification_content_text">Syncing Agenda for last week and this week</string>
 
 </resources>

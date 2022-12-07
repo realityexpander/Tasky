@@ -180,6 +180,11 @@
 
     <!--    Agenda Sync -->
     <string name="agenda_sync_error">Agenda konnte nicht synchronisiert werden</string>
+    <string name="error_syncing_agenda">Fehler beim Synchronisieren der Agenda</string>
+    <string name="error_sync_failed">Synchronisierung fehlgeschlagen</string>
+    <string name="agenda_sync_notification_title">Tasky Synchronisierungsagenda…</string>
+    <string name="agenda_sync_notification_content_text">Agenda für letzte Woche und diese Woche synchronisieren</string>
+    <string name="agenda_sync_uploading_items_text">Hochladen von Tagesordnungspunkten, die offline erstellt wurden</string>
 
     <!--    Task screen -->
     <string name="task_description_close">Aufgabenbildschirm schließen</string>
@@ -212,9 +217,5 @@
     <string name="reminder_error_delete_reminder">Fehler beim Löschen der Erinnerung</string>
     <string name="reminder_message_reminder_saved">Erinnerung gespeichert</string>
     <string name="reminder_message_reminder_deleted_success">Erinnerung erfolgreich gelöscht</string>
-
-    <!--    Syncing -->
-    <string name="error_syncing_agenda">Fehler beim Synchronisieren der Agenda</string>
-    <string name="error_sync_failed">Synchronisierung fehlgeschlagen</string>
 
 </resources>
