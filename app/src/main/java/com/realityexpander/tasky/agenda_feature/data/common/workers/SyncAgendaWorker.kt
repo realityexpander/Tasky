@@ -20,6 +20,8 @@ import kotlinx.coroutines.delay
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
+// Worker to synchronize offline actions for the Agenda for the current day
+//   & download any new items for the current day.
 @HiltWorker
 class SyncAgendaWorker @AssistedInject constructor(
     @Assisted val context: Context,

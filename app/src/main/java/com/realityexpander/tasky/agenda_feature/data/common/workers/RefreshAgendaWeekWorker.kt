@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import java.time.ZonedDateTime
 
+// Worker to refresh Agenda data for 10 days around the `startDate`
 @HiltWorker
 class RefreshAgendaWeekWorker @AssistedInject constructor(
     @Assisted val context: Context,
