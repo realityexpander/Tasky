@@ -70,7 +70,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
     companion object {
         const val WORKER_NAME = "REFRESH_AGENDA_WEEK_WORKER"
         const val NOTIFICATION_ID = 100001
-        const val NOTIFICATION_CHANNEL_ID = "SYNC_WORKER_CHANNEL"
+        const val NOTIFICATION_CHANNEL_ID = NOTIFICATION_SYNC_WORKER_CHANNEL_ID
 
         const val PARAMETER_START_DATE = "startDate"
         const val START_DAY_OFFSET = -5

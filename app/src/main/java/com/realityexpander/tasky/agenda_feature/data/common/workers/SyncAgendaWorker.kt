@@ -59,7 +59,7 @@ class SyncAgendaWorker @AssistedInject constructor(
     companion object {
         const val WORKER_NAME = "SYNC_AGENDA_WORKER"
         const val NOTIFICATION_ID = 100002
-        const val NOTIFICATION_CHANNEL_ID = "SYNC_WORKER_CHANNEL"
+        const val NOTIFICATION_CHANNEL_ID = NOTIFICATION_SYNC_WORKER_CHANNEL_ID
     }
 
     init {
