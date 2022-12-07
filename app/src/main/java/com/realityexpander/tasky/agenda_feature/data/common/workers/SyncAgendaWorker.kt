@@ -83,7 +83,7 @@ class SyncAgendaWorker @AssistedInject constructor(
     private fun createNotification(): Notification {
         return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setContentTitle(context.getString(R.string.agenda_sync_notification_title))
-            .setContentText("Uploading Agenda Items created while offline")
+            .setContentText(context.getString(R.string.agenda_sync_uploading_items_text))
             .setSmallIcon(R.drawable.ic_notification_sync_upload_foreground)
             .setColor(ResourcesCompat.getColor(context.resources, R.color.tasky_green, null))
             .setLargeIcon(ResourcesCompat.getDrawable(context.resources, R.drawable.tasky_logo_for_splash, null)?.toBitmap(100,100))
