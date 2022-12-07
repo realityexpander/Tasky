@@ -41,7 +41,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
 
         // Fetch/Refresh the previous and coming week's Agenda items
         val success =
-            (-5..5).map { dayOffset ->
+            (START_DAY_OFFSET..END_DAY_OFFSET).map { dayOffset ->
                 if (dayOffset != 0) { // don't refresh the current day
                     val date = getDateForDayOffset(startDate, dayOffset)
                     return@map CoroutineScope(Dispatchers.IO).async {
@@ -72,6 +72,8 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
         const val NOTIFICATION_ID = 100001
         const val NOTIFICATION_CHANNEL_ID = "SYNC_WORKER_CHANNEL"
         const val PARAMETER_START_DATE = "startDate"
+        const val START_DAY_OFFSET = -5
+        const val END_DAY_OFFSET = 5
     }
 
     init {
