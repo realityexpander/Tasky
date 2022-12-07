@@ -129,10 +129,10 @@ class AgendaRepositoryImpl @Inject constructor(
 
     }
 
-    // Send local changes (made while offline) to remote
+    // Upload local changes (made while offline) to remote
     // Note: ResultUiText.Success is returned even if there are no changes to sync.
     // Note: ResultUiText.Error is returned if there are changes to sync, and ANY sync item fails.
-    // ALL SYNC ITEMS WILL BE ATTEMPTED.
+    // ALL SYNC ITEMS WILL BE ATTEMPTED TO BE UPLOADED.
     override suspend fun syncAgenda(): ResultUiText<Void> {
         val syncItems = syncRepository.getSyncItems()
         if (syncItems.isEmpty()) {
