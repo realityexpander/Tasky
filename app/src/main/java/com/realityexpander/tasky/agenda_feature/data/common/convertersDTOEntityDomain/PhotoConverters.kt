@@ -6,57 +6,35 @@ import com.realityexpander.tasky.agenda_feature.domain.Photo
 
 // From Entity to Domain
 fun PhotoEntity.toDomain() =
-    if(uri==null)
-        Photo.Remote(
-            id = id,
-            url = url ?: throw IllegalStateException("PhotoEntity with null Uri must have non-null Url"),
+    if (uri == null)
+        Photo.Remote(id = id, url = url
+                ?: throw IllegalStateException("PhotoEntity with null Uri must have non-null Url"),
         )
     else
-        Photo.Local(
-            id = id,
-            uri = uri,
-        )
+        Photo.Local(id = id, uri = uri,)
 
 // From DTO to Domain (only allows Remote bc Local is never sent from server)
 fun PhotoDTO.Remote.toDomain() =
-    Photo.Remote(
-        id = id,
-        url = url,
-    )
+    Photo.Remote(id = id, url = url)
 
 // From Domain to Entity
 fun Photo.toEntity() =
-    when(this) {
+    when (this) {
         is Photo.Remote ->
-            PhotoEntity(
-                id = id,
-                url = url,
-            )
+            PhotoEntity(id = id, url = url)
         is Photo.Local ->
-            PhotoEntity(
-                id = id,
-                uri = uri,
-            )
+            PhotoEntity(id = id, uri = uri)
     }
 
 // From Domain to DTO
 fun Photo.toDTO() =
-    when(this) {
+    when (this) {
         is Photo.Remote ->
-            PhotoDTO.Remote(
-                id = id,
-                url = url,
-            )
+            PhotoDTO.Remote(id = id, url = url)
         is Photo.Local ->
-            PhotoDTO.Local(
-                id = id,
-                uri = uri,
-            )
+            PhotoDTO.Local(id = id, uri = uri)
     }
 
 // From Domain to PhotoDTO.Local
 fun Photo.Local.toDTO() =
-    PhotoDTO.Local(
-        id = id,
-        uri = uri,
-    )
+    PhotoDTO.Local(id = id, uri = uri)

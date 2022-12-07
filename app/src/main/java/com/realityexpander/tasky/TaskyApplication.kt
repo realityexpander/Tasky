@@ -33,7 +33,7 @@ class TaskyApplication: Application(), Configuration.Provider {
             setRequiresBatteryNotLow(true)
         }.build()
         val workRequest =
-            PeriodicWorkRequestBuilder<SyncAgendaWorker>(10, TimeUnit.MINUTES)
+            PeriodicWorkRequestBuilder<SyncAgendaWorker>(5, TimeUnit.MINUTES)
                 .setConstraints(syncAgendaWorkerConstraints)
                 .setInitialDelay(2, TimeUnit.MINUTES)
                 .addTag(SyncAgendaWorker.WORKER_NAME)
