@@ -74,51 +74,59 @@ class AgendaRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateLocalAgendaDayFromRemote(dateTime: ZonedDateTime) {
-        withContext(Dispatchers.IO) {
-            try {
-                // Get fresh data
-                val result = agendaApi.getAgenda(dateTime)
+    override suspend fun updateLocalAgendaDayFromRemote(dateTime: ZonedDateTime): ResultUiText<Unit> {
+        try {
+            // Get fresh data
+            val result = agendaApi.getAgenda(dateTime)
 
-                if (result.isSuccess) {
-                    val agenda = result.getOrNull()
+            if (result.isSuccess) {
+                val agenda = result.getOrNull()
 
-                    eventRepository.clearEventsForDayLocally(dateTime)
-                    // Insert fresh data locally
-                    agenda?.events?.forEach { event ->
-                        val result2 =
-                            eventRepository.upsertEventLocally(event.toDomain())
-                        if (result2 is ResultUiText.Error) {
-                            throw IllegalStateException(result2.message.asStrOrNull())
-                        }
+                eventRepository.clearEventsForDayLocally(dateTime)
+                // Insert fresh data locally
+                agenda?.events?.forEach { event ->
+                    val result2 =
+                        eventRepository.upsertEventLocally(event.toDomain())
+                    if (result2 is ResultUiText.Error) {
+                        throw IllegalStateException(result2.message.asStrOrNull())
                     }
-
-                    taskRepository.clearTasksForDayLocally(dateTime)
-                    // Insert fresh data locally
-                    agenda?.tasks?.forEach { task ->
-                        val result2 =
-                            taskRepository.upsertTaskLocally(task.toDomain())
-                        if (result2 is ResultUiText.Error) {
-                            throw IllegalStateException(result2.message.asStrOrNull())
-                        }
-                    }
-
-                    reminderRepository.clearRemindersForDayLocally(dateTime)
-                    // Insert fresh data locally
-                    agenda?.reminders?.forEach { reminder ->
-                        val result2 =
-                            reminderRepository.upsertReminderLocally(reminder.toDomain())
-                        if (result2 is ResultUiText.Error) {
-                            throw IllegalStateException(result2.message.asStrOrNull())
-                        }
-                    }
-
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                // don't send error to user, just log it (silent fail is ok here)
+
+                taskRepository.clearTasksForDayLocally(dateTime)
+                // Insert fresh data locally
+                agenda?.tasks?.forEach { task ->
+                    val result2 =
+                        taskRepository.upsertTaskLocally(task.toDomain())
+                    if (result2 is ResultUiText.Error) {
+                        throw IllegalStateException(result2.message.asStrOrNull())
+                    }
+                }
+
+                reminderRepository.clearRemindersForDayLocally(dateTime)
+                // Insert fresh data locally
+                agenda?.reminders?.forEach { reminder ->
+                    val result2 =
+                        reminderRepository.upsertReminderLocally(reminder.toDomain())
+                    if (result2 is ResultUiText.Error) {
+                        throw IllegalStateException(result2.message.asStrOrNull())
+                    }
+                }
+
+                return ResultUiText.Success(Unit)
+
+            } else {
+                return ResultUiText.Error(
+                    UiText.Res(R.string.agenda_error_network)
+                )
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // don't send error to user, just log it (silent fail is ok here)
+            return ResultUiText.Error(
+                UiText.Res(R.string.agenda_error_network)
+            )
         }
+
     }
 
     // Send local changes (made while offline) to remote
@@ -157,10 +165,13 @@ class AgendaRepositoryImpl @Inject constructor(
                                 reminderId = syncItem.agendaItemId,
                                 isLocalOnly = true
                             ) ?: return@forEach
-                            createReminder(reminder = reminder, isRemoteOnly = true) is ResultUiText.Success
+                            createReminder(
+                                reminder = reminder,
+                                isRemoteOnly = true
+                            ) is ResultUiText.Success
                         }
                     }
-                    if(!success) {
+                    if (!success) {
                         isFailure = true
                     }
                 }
@@ -194,10 +205,13 @@ class AgendaRepositoryImpl @Inject constructor(
                                 reminderId = syncItem.agendaItemId,
                                 isLocalOnly = true
                             ) ?: return@forEach
-                            updateReminder(reminder = reminder, isRemoteOnly = true) is ResultUiText.Success
+                            updateReminder(
+                                reminder = reminder,
+                                isRemoteOnly = true
+                            ) is ResultUiText.Success
                         }
                     }
-                    if(!success) {
+                    if (!success) {
                         isFailure = true
                     }
                 }
@@ -208,11 +222,11 @@ class AgendaRepositoryImpl @Inject constructor(
         }
 
         // Sync the `Delete` last.
-        if(syncRepository.syncDeletedAgendaItems(syncItems) is ResultUiText.Error) {
+        if (syncRepository.syncDeletedAgendaItems(syncItems) is ResultUiText.Error) {
             isFailure = true
         }
 
-        return if(isFailure) {
+        return if (isFailure) {
             ResultUiText.Error(UiText.Res(R.string.error_sync_failed))
         } else {
             ResultUiText.Success(null)

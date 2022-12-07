@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
@@ -16,8 +17,11 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
 import com.realityexpander.tasky.core.presentation.common.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -48,7 +52,7 @@ class AgendaViewModel @Inject constructor(
         _selectedDayIndex.combine(_currentDate) { dayIndex, date ->
             agendaRepository.syncAgenda()
             agendaRepository.getAgendaForDayFlow(
-                getDateForSelectedDayIndex(date, dayIndex)
+                getDateForDayOffset(date, dayIndex)
             )
         }
 //        .flattenMerge()  // was not working for some reason...
@@ -103,20 +107,6 @@ class AgendaViewModel @Inject constructor(
                 )
             }
 
-            // Fetch/Refresh the previous and coming week's agenda items
-            (-5..5).map { index ->
-                if (index != 0) {
-                    val date = getDateForSelectedDayIndex(selectedDate, index)
-                    async { agendaRepository.updateLocalAgendaDayFromRemote(date) }
-                } else {
-                    async { null }
-                }
-            }
-            //.awaitAll()  // will fail if any of the `async`s fail (LEAVE FOR REFERENCE)
-            .map {// will NOT fail all if any async fails (unlike .awaitAll())
-                it.await()
-            }
-
 //            yield() // wait for database to load  // leave for testing for now // todo remove
 //            if(agendaState.value.agendaItems.isEmpty()) { // if no items for today, make some fake ones
 //                createFakeAgendaItems(agendaRepository)
@@ -129,14 +119,6 @@ class AgendaViewModel @Inject constructor(
             onEvent(event)
             yield() // allow events to percolate
         }
-    }
-
-    private fun getDateForSelectedDayIndex(
-        startDate: ZonedDateTime?,
-        selectedDayIndex: Int?
-    ): ZonedDateTime {
-        return (startDate ?: ZonedDateTime.now(ZoneId.systemDefault()))
-                .plusDays(selectedDayIndex?.toLong() ?: 0)
     }
 
     private suspend fun onEvent(uiEvent: AgendaScreenEvent) {

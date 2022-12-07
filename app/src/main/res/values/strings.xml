@@ -214,5 +214,7 @@
     <string name="reminder_error_delete_reminder">Error deleting Reminder</string>
     <string name="reminder_message_reminder_saved">Reminder Saved</string>
     <string name="reminder_message_reminder_deleted_success">Reminder successfully deleted</string>
+    <string name="agenda_sync_notification_title">Tasky Syncing Agenda…</string>
+    <string name="agenda_sync_notification_content_text">Syncing Agenda for last week and this week</string>
 
 </resources>
