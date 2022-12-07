@@ -35,7 +35,7 @@ class TaskyApplication: Application(), Configuration.Provider {
         val workRequest =
             PeriodicWorkRequestBuilder<SyncAgendaWorker>(10, TimeUnit.MINUTES)
                 .setConstraints(syncAgendaWorkerConstraints)
-                .setInitialDelay(5, TimeUnit.MINUTES)
+                .setInitialDelay(2, TimeUnit.MINUTES)
                 .addTag(SyncAgendaWorker.WORKER_NAME)
                 .build()
         WorkManager.getInstance(applicationContext).cancelAllWorkByTag(SyncAgendaWorker.WORKER_NAME)
@@ -58,7 +58,7 @@ class TaskyApplication: Application(), Configuration.Provider {
                 .setConstraints(refreshAgendaWeekConstraints)
                 .setInputData(data)
                 .addTag(name)
-                .addTag("For weeks around ${data.getString(RefreshAgendaWeekWorker.PARAMETER_START_DATE)}")
+                .addTag("For 10 days around ${data.getString(RefreshAgendaWeekWorker.PARAMETER_START_DATE)}")
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.MINUTES)
                 .build()
