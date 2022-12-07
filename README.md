@@ -38,4 +38,6 @@ Task manager similar to a lite version of Google Calendar
     - Modular and customizable Material Design UI components for Android.
 - [Accompanist](https://github.com/google/accompanist)
     - A collection of extension libraries for Jetpack Compose.
+- [Coil]()
+    - Image loading library for Compose.
 <br />
