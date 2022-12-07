@@ -43,7 +43,7 @@ class TaskyApplication: Application(), Configuration.Provider {
         WorkManager.getInstance(applicationContext)
             .enqueue(workRequest)
 
-        // • Start the 'Agenda Week' Refresh Worker
+        // • Start the one-time Refresh 'Agenda Week' Worker
         val refreshAgendaWeekConstraints: Constraints = Constraints.Builder().apply {
             setRequiredNetworkType(NetworkType.CONNECTED)
         }.build()
