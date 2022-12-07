@@ -56,7 +56,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
             .map {// will NOT cancel all if any async fails (unlike .awaitAll())
                 it.await() is ResultUiText.Success // return true if success
             }.all { success ->
-                success == true   // if any of the async's failed, return failure
+                success == true   // if any of the async's failed, return retry
             }
 
         return if (success) {
