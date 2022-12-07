@@ -5,12 +5,13 @@ buildscript {
         room_version = '2.4.3' //'2.5.0-beta02'
         retrofit_version = '2.9.0'
         okhttp_version = '5.0.0-alpha.3'
-        dagger_hilt_version = '2.44'
+        dagger_hilt_version = '2.44.2'
         compose_destinations_version = '1.6.13-beta' // for kotlin 1.7.10
         kotlinx_serialization_json_version = '1.4.1'
         lifecycle_version = '2.5.1'
         compose_compiler_version = '1.3.0-rc01' // for compose 1.3.0
         compose_material_dialogs_datetime_version = '0.8.1-rc'
+        work_manager_version = '2.7.1'
     }
 
     repositories {
@@ -21,9 +22,10 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.google.dagger:hilt-android-gradle-plugin:2.44"
+        classpath "com.android.tools.build:gradle:7.4.0-rc01"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$dagger_hilt_version"
     }
 }
 

@@ -2,7 +2,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.agendaReposit
 
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaDayDTO
 import com.realityexpander.tasky.core.data.remote.TaskyApi
-import com.realityexpander.tasky.core.data.remote.utils.cancelExistingApiCallWithSameValues
+import com.realityexpander.tasky.core.data.remote.utils.cancelExistingApiCallWithSameParameterValue
 import com.realityexpander.tasky.core.util.rethrowIfCancellation
 import com.realityexpander.tasky.core.util.toUtcMillis
 import okhttp3.OkHttpClient
@@ -17,7 +17,7 @@ class AgendaApiImpl @Inject constructor(
 
     override suspend fun getAgenda(zonedDateTime: ZonedDateTime): Result<AgendaDayDTO> {
         return try {
-            cancelExistingApiCallWithSameValues(
+            cancelExistingApiCallWithSameParameterValue(
                 okHttpClient,
                 "date",
                 zonedDateTime.toUtcMillis().toString()

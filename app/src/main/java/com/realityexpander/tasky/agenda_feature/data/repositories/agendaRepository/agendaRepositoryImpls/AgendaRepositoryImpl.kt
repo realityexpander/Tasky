@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls
 
 import com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
+import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.common.util.TaskId
@@ -11,15 +12,13 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.AgendaItemTypeForSync
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ModificationTypeForSync
 import com.realityexpander.tasky.agenda_feature.domain.*
+import com.realityexpander.tasky.core.presentation.common.util.UiText
 import com.realityexpander.tasky.core.util.Email
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
@@ -36,10 +35,20 @@ class AgendaRepositoryImpl @Inject constructor(
     // • AGENDA
 
     override suspend fun getAgendaForDay(dateTime: ZonedDateTime): List<AgendaItem> {
-        val events = eventRepository.getEventsForDay(dateTime)
-        val tasks = taskRepository.getTasksForDay(dateTime)
-        val reminders = reminderRepository.getRemindersForDay(dateTime)
-        return events + tasks + reminders
+        // Sequential DB queries - left for reference
+//        val events = eventRepository.getEventsForDay(dateTime)
+//        val tasks = taskRepository.getTasksForDay(dateTime)
+//        val reminders = reminderRepository.getRemindersForDay(dateTime)
+//        return events + tasks + reminders
+
+        // run DB queries in parallel
+        return supervisorScope {
+            val events = async { eventRepository.getEventsForDay(dateTime) }
+            val tasks = async { taskRepository.getTasksForDay(dateTime) }
+            val reminders = async { reminderRepository.getRemindersForDay(dateTime) }
+
+            events.await() + tasks.await() + reminders.await()
+        }
     }
 
     override fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>> {
@@ -65,86 +74,105 @@ class AgendaRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateLocalAgendaDayFromRemote(dateTime: ZonedDateTime) {
-        withContext(Dispatchers.IO) {
-            try {
-                // Get fresh data
-                val result = agendaApi.getAgenda(dateTime)
+    override suspend fun updateLocalAgendaDayFromRemote(dateTime: ZonedDateTime): ResultUiText<Unit> {
+        try {
+            // Get fresh data
+            val result = agendaApi.getAgenda(dateTime)
 
-                if (result.isSuccess) {
-                    val agenda = result.getOrNull()
+            if (result.isSuccess) {
+                val agenda = result.getOrNull()
 
-                    eventRepository.clearEventsForDayLocally(dateTime)
-                    // Insert fresh data locally
-                    agenda?.events?.forEach { event ->
-                        val result2 =
-                            eventRepository.upsertEventLocally(event.toDomain())
-                        if (result2 is ResultUiText.Error) {
-                            throw IllegalStateException(result2.message.asStrOrNull())
-                        }
+                eventRepository.clearEventsForDayLocally(dateTime)
+                // Insert fresh data locally
+                agenda?.events?.forEach { event ->
+                    val result2 =
+                        eventRepository.upsertEventLocally(event.toDomain())
+                    if (result2 is ResultUiText.Error) {
+                        throw IllegalStateException(result2.message.asStrOrNull())
                     }
-
-                    taskRepository.clearTasksForDayLocally(dateTime)
-                    // Insert fresh data locally
-                    agenda?.tasks?.forEach { task ->
-                        val result2 =
-                            taskRepository.upsertTaskLocally(task.toDomain())
-                        if (result2 is ResultUiText.Error) {
-                            throw IllegalStateException(result2.message.asStrOrNull())
-                        }
-                    }
-
-                    reminderRepository.clearRemindersForDayLocally(dateTime)
-                    // Insert fresh data locally
-                    agenda?.reminders?.forEach { reminder ->
-                        val result2 =
-                            reminderRepository.upsertReminderLocally(reminder.toDomain())
-                        if (result2 is ResultUiText.Error) {
-                            throw IllegalStateException(result2.message.asStrOrNull())
-                        }
-                    }
-
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                // don't send error to user, just log it (silent fail is ok here)
+
+                taskRepository.clearTasksForDayLocally(dateTime)
+                // Insert fresh data locally
+                agenda?.tasks?.forEach { task ->
+                    val result2 =
+                        taskRepository.upsertTaskLocally(task.toDomain())
+                    if (result2 is ResultUiText.Error) {
+                        throw IllegalStateException(result2.message.asStrOrNull())
+                    }
+                }
+
+                reminderRepository.clearRemindersForDayLocally(dateTime)
+                // Insert fresh data locally
+                agenda?.reminders?.forEach { reminder ->
+                    val result2 =
+                        reminderRepository.upsertReminderLocally(reminder.toDomain())
+                    if (result2 is ResultUiText.Error) {
+                        throw IllegalStateException(result2.message.asStrOrNull())
+                    }
+                }
+
+                return ResultUiText.Success(Unit)
+
+            } else {
+                return ResultUiText.Error(
+                    UiText.Res(R.string.agenda_error_network)
+                )
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // don't send error to user, just log it (silent fail is ok here)
+            return ResultUiText.Error(
+                UiText.Res(R.string.agenda_error_network)
+            )
         }
+
     }
 
-    // Send local changes (made while offline) to remote
+    // Upload local changes (made while offline) to remote
+    // Note: ResultUiText.Success is returned even if there are no changes to sync.
+    // Note: ResultUiText.Error is returned if there are changes to sync, and ANY sync item fails.
+    // ALL SYNC ITEMS WILL BE ATTEMPTED TO BE UPLOADED.
     override suspend fun syncAgenda(): ResultUiText<Void> {
         val syncItems = syncRepository.getSyncItems()
         if (syncItems.isEmpty()) {
             return ResultUiText.Success(null)
         }
 
+        var isFailure = false
+
         // Sync the `Create` API calls first...
         syncItems.forEach { syncItem ->
             when (syncItem.modificationTypeForSync) {
                 ModificationTypeForSync.Created -> {
-                    when (syncItem.agendaItemTypeForSync) {
+                    val success = when (syncItem.agendaItemTypeForSync) {
                         AgendaItemTypeForSync.Event -> {
                             val event = getEvent(
                                 eventId = syncItem.agendaItemId,
                                 isLocalOnly = true
                             ) ?: return@forEach
-                            createEvent(event = event, isRemoteOnly = true)
+                            createEvent(event = event, isRemoteOnly = true) is ResultUiText.Success
                         }
                         AgendaItemTypeForSync.Task -> {
                             val task = getTask(
                                 taskId = syncItem.agendaItemId,
                                 isLocalOnly = true
                             ) ?: return@forEach
-                            createTask(task = task, isRemoteOnly = true)
+                            createTask(task = task, isRemoteOnly = true) is ResultUiText.Success
                         }
                         AgendaItemTypeForSync.Reminder -> {
                             val reminder = getReminder(
                                 reminderId = syncItem.agendaItemId,
                                 isLocalOnly = true
                             ) ?: return@forEach
-                            createReminder(reminder = reminder, isRemoteOnly = true)
+                            createReminder(
+                                reminder = reminder,
+                                isRemoteOnly = true
+                            ) is ResultUiText.Success
                         }
+                    }
+                    if (!success) {
+                        isFailure = true
                     }
                 }
                 else -> {
@@ -157,28 +185,34 @@ class AgendaRepositoryImpl @Inject constructor(
         syncItems.forEach { syncItem ->
             when (syncItem.modificationTypeForSync) {
                 ModificationTypeForSync.Updated -> {
-                    when (syncItem.agendaItemTypeForSync) {
+                    val success = when (syncItem.agendaItemTypeForSync) {
                         AgendaItemTypeForSync.Event -> {
                             val event = getEvent(
                                 eventId = syncItem.agendaItemId,
                                 isLocalOnly = true
                             ) ?: return@forEach
-                            updateEvent(event = event, isRemoteOnly = true)
+                            updateEvent(event = event, isRemoteOnly = true) is ResultUiText.Success
                         }
                         AgendaItemTypeForSync.Task -> {
                             val task = getTask(
                                 taskId = syncItem.agendaItemId,
                                 isLocalOnly = true
                             ) ?: return@forEach
-                            updateTask(task = task, isRemoteOnly = true)
+                            updateTask(task = task, isRemoteOnly = true) is ResultUiText.Success
                         }
                         AgendaItemTypeForSync.Reminder -> {
                             val reminder = getReminder(
                                 reminderId = syncItem.agendaItemId,
                                 isLocalOnly = true
                             ) ?: return@forEach
-                            updateReminder(reminder = reminder, isRemoteOnly = true)
+                            updateReminder(
+                                reminder = reminder,
+                                isRemoteOnly = true
+                            ) is ResultUiText.Success
                         }
+                    }
+                    if (!success) {
+                        isFailure = true
                     }
                 }
                 else -> {
@@ -188,7 +222,15 @@ class AgendaRepositoryImpl @Inject constructor(
         }
 
         // Sync the `Delete` last.
-        return syncRepository.syncDeletedAgendaItems(syncItems)
+        if (syncRepository.syncDeletedAgendaItems(syncItems) is ResultUiText.Error) {
+            isFailure = true
+        }
+
+        return if (isFailure) {
+            ResultUiText.Error(UiText.Res(R.string.error_sync_failed))
+        } else {
+            ResultUiText.Success(null)
+        }
     }
 
     ///////////////////////////////////////////////

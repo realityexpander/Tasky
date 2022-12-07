@@ -3,6 +3,7 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <!-- using android:theme="@style/Theme.App.Starting" will use the splash screen theme -->
@@ -35,6 +36,13 @@
                     android:name="android.app.lib_name"
                     android:value="" />
         </activity>
+
+        <provider
+                android:name="androidx.startup.InitializationProvider"
+                android:authorities="${applicationId}.androidx-startup"
+                tools:node="remove">
+        </provider>
+
     </application>
 
 </manifest>
