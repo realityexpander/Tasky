@@ -35,18 +35,18 @@ class SyncAgendaWorker @AssistedInject constructor(
         showNotification(createNotification())
 
         // Push up local changes to remote
-        val result = agendaRepository.syncAgenda()
-        if(result is ResultUiText.Success) {
+        val resultSyncAgenda = agendaRepository.syncAgenda()
+        if(resultSyncAgenda is ResultUiText.Success) {
 
             // Fetch the latest remote changes for today
-            val result2 = agendaRepository.updateLocalAgendaDayFromRemote(
+            val resultUpdateLocalAgenda = agendaRepository.updateLocalAgendaDayFromRemote(
                 ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
             )
 
             delay(3000) // prevent flashing notification
             clearNotification()
 
-            return when (result2) {
+            return when (resultUpdateLocalAgenda) {
                 is ResultUiText.Success -> Result.success()
                 is ResultUiText.Error -> Result.failure()
             }
