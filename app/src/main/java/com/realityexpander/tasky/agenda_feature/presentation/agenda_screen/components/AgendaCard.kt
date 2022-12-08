@@ -80,6 +80,7 @@ fun AgendaCard(
                         imageVector = if (isCompleted)
                                 Icons.Filled.TaskAlt // √ with CircleOutline
                             else
+                                // is event happening now?
                                 if (zonedDateTimeNow.isAfter(fromDateTime)
                                     && toDateTime?.let { zonedDateTimeNow.isBefore(toDateTime) } == true
                                 )
@@ -183,8 +184,8 @@ fun AgendaCard(
                 AnimatedVisibility(zonedDateTimeNow.isAfter(fromDateTime) && zonedDateTimeNow.isBefore(toDateTime)) {
                     Text(
                         text = "In Progress: " +
-                                (100 - ( ( (toDateTime.toEpochSecond() - zonedDateTimeNow.toEpochSecond()).toFloat()
-                                  / (toDateTime.toEpochSecond() - fromDateTime.toEpochSecond()).toFloat() )*100))
+                                ( ( (zonedDateTimeNow.toEpochSecond() - fromDateTime.toEpochSecond()).toFloat()
+                                  / (toDateTime.toEpochSecond() - fromDateTime.toEpochSecond()).toFloat() )*100)
                                     .roundToInt() + "% Complete",
                         textAlign = TextAlign.End,
                         style = MaterialTheme.typography.subtitle1,
