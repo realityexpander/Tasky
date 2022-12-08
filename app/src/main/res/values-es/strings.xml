@@ -10,7 +10,7 @@
     <!-- general descriptions -->
     <string name="back_description">atrás</string>
     <string name="remove_description">Remover</string>
-    
+
     <!-- general messages -->
     <string name="no_internet">📡 Red fuera de línea</string>
 
@@ -111,6 +111,7 @@
     <string name="agenda_choose_current_date_dialog_title">Seleccione la fecha de inicio para la semana de la agenda</string>
     <string name="agenda_choose_current_date_dialog_today_button_text">Este Día</string>
     <string name="agenda_isDone_icon_description">Indicar completado</string>
+    <string name="agenda_empty_list">No hay puntos de agenda para este día</string>
 
     <string name="description_title_marker">Marcador de título de reunión</string>
 

@@ -111,7 +111,7 @@
     <string name="agenda_choose_current_date_dialog_title">Select Start Date for Agenda Week</string>
     <string name="agenda_choose_current_date_dialog_today_button_text">Today</string>
     <string name="agenda_isDone_icon_description">Indicate Completed</string>
-
+    <string name="agenda_empty_list">No agenda items for this day</string>
     <string name="description_title_marker">Title marker</string>
 
     <!--    Event screen -->

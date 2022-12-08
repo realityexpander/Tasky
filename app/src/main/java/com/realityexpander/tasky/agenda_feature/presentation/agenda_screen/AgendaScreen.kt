@@ -729,7 +729,7 @@ fun AgendaScreenContent(
                         .align(Alignment.CenterHorizontally)
                 ) {
                     Text(
-                        text = "No agenda items for this day",
+                        text = stringResource(R.string.agenda_empty_list),
                         style = MaterialTheme.typography.h5,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.60f),
