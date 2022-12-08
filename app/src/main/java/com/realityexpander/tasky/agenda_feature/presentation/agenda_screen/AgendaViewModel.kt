@@ -13,8 +13,8 @@ import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
-import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_currentDate
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
+import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDate
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
 import com.realityexpander.tasky.core.presentation.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,12 +36,13 @@ class AgendaViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)
-    private val errorMessage: UiText? =
-        savedStateHandle[SAVED_STATE_errorMessage]
     private val selectedDayIndex: Int? =
         savedStateHandle[SAVED_STATE_selectedDayIndex]
+
+    private val errorMessage: UiText? =
+        savedStateHandle[SAVED_STATE_errorMessage]
     private val selectedDate: ZonedDateTime? =
-        savedStateHandle[SAVED_STATE_currentDate] ?: ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+        savedStateHandle[SAVED_STATE_selectedDate] ?: ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
 
     private val _currentDate = MutableStateFlow(selectedDate)
     private val _selectedDayIndex = MutableStateFlow(selectedDayIndex)
@@ -83,7 +84,7 @@ class AgendaViewModel @Inject constructor(
 
         savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
         savedStateHandle[SAVED_STATE_selectedDayIndex] = selectedDayIndex
-        savedStateHandle[SAVED_STATE_currentDate] = currentDate
+        savedStateHandle[SAVED_STATE_selectedDate] = currentDate
 
         state.copy(
             agendaItems = items,

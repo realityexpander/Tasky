@@ -78,7 +78,6 @@ import java.util.*
 fun AgendaScreen(
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     selectedDayIndex: Int? = 0,
-
     navigator: DestinationsNavigator,
     viewModel: AgendaViewModel = hiltViewModel(),
 ) {
@@ -108,18 +107,18 @@ fun AgendaScreen(
     }
 
     // Offline? Show delayed warning in case starting up
-    val showBanner = remember { mutableStateOf(false) }
+    val showOfflineBanner = remember { mutableStateOf(false) }
     LaunchedEffect(connectivityState) {
-        showBanner.value = false
+        showOfflineBanner.value = false
 
         if (connectivityState == IConnectivityObserver.Status.Lost
             || connectivityState == IConnectivityObserver.Status.Unavailable
         ) {
             delay(1000)
-            showBanner.value = true
+            showOfflineBanner.value = true
         }
     }
-    AnimatedVisibility(showBanner.value) {
+    AnimatedVisibility(showOfflineBanner.value) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
