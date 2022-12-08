@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.presentation.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -179,7 +180,7 @@ fun AgendaCard(
 
             // • Progress indicator for (for Events only)
             toDateTime?.let {
-                if(zonedDateTimeNow.isAfter(fromDateTime) && zonedDateTimeNow.isBefore(toDateTime)) {
+                AnimatedVisibility(zonedDateTimeNow.isAfter(fromDateTime) && zonedDateTimeNow.isBefore(toDateTime)) {
                     Text(
                         text = "In Progress: " +
                                 (100 - ( ( (toDateTime.toEpochSecond() - zonedDateTimeNow.toEpochSecond()).toFloat()
