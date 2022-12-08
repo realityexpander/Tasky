@@ -5,7 +5,7 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.AttendeeId
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
-import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.presentation.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import java.time.ZonedDateTime
 

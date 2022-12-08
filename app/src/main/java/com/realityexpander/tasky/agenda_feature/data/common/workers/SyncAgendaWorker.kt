@@ -31,7 +31,7 @@ class SyncAgendaWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
 
-        Log.d("SyncAgendaWorker.doWork()", "attemptedRuns: ${workerParams.runAttemptCount}")
+        Log.d("SyncAgendaWorker", "SyncAgendaWorker.doWork()attemptedRuns: ${workerParams.runAttemptCount}")
         showNotification(createNotification())
 
         // Push up local changes to remote

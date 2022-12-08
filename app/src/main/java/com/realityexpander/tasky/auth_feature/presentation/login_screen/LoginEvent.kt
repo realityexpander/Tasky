@@ -1,7 +1,7 @@
 package com.realityexpander.tasky.auth_feature.presentation.login_screen
 
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
-import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.presentation.util.UiText
 
 sealed interface LoginEvent {
     data class UpdateEmail(val email: String) : LoginEvent

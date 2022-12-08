@@ -15,7 +15,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.presentation.util.UiText
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 
 @Composable

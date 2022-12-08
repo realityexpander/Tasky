@@ -138,8 +138,6 @@ object AppModule {
             }
 
             override fun log(message: String) {
-                if (message.length > 500)
-                    return print("=== more than 500 characters ===")
 
                 if (message.startsWith("{") || message.startsWith("[")) try {
                     JSONObject(message)
@@ -150,6 +148,9 @@ object AppModule {
                     print(message)
                 }
                 else print(message)
+
+                if (message.length > 500)
+                    return print("=== more than 500 characters ===")
             }
         }
 

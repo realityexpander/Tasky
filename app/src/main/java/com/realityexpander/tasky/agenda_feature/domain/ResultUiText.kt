@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.domain
 
-import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.presentation.util.UiText
 
 sealed class ResultUiText<T> {
     data class Success<T>(

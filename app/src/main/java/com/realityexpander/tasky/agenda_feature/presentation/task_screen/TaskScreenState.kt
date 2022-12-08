@@ -2,7 +2,7 @@ package com.realityexpander.tasky.agenda_feature.presentation.task_screen
 
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
-import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.presentation.util.UiText
 import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.Username
 

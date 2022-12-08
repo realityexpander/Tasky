@@ -32,8 +32,8 @@ import com.realityexpander.tasky.agenda_feature.presentation.reminder_screen.Rem
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
-import com.realityexpander.tasky.core.presentation.common.util.UiText
-import com.realityexpander.tasky.core.presentation.common.util.getStringSafe
+import com.realityexpander.tasky.core.presentation.util.UiText
+import com.realityexpander.tasky.core.presentation.util.getStringSafe
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.util.UuidStr

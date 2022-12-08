@@ -5,7 +5,7 @@ import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
-import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.presentation.util.UiText
 import java.time.ZonedDateTime
 
 sealed interface AgendaScreenEvent {
