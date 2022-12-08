@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.core.presentation.common.util
+package com.realityexpander.tasky.core.presentation.util
 
 import android.content.Context
 import android.os.Parcelable

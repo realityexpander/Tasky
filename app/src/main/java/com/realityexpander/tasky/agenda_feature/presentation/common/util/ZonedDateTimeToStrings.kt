@@ -3,7 +3,7 @@ package com.realityexpander.tasky.agenda_feature.util
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.presentation.util.UiText
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 

@@ -2,7 +2,7 @@ package com.realityexpander.tasky.agenda_feature.presentation.task_screen
 
 import androidx.compose.ui.text.TextStyle
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.presentation.util.UiText
 import java.time.ZonedDateTime
 
 enum class ShowAlertDialogActionType(val title: UiText) {

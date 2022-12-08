@@ -24,7 +24,7 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_password
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_statusMessage
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_username
-import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.presentation.util.UiText
 import com.realityexpander.tasky.core.util.Exceptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*

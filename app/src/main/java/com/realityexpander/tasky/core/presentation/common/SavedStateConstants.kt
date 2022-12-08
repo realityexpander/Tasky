@@ -27,7 +27,7 @@ object SavedStateConstants {
     const val SAVED_STATE_agendaItemIdForMenu                    = "agendaItemIdForMenu"
     const val SAVED_STATE_agendaItems                            = "agendaItems"
     const val SAVED_STATE_selectedDayIndex                       = "selectedDayIndex"
-    const val SAVED_STATE_currentDate                            = "selectedDate"
+    const val SAVED_STATE_selectedDate                            = "selectedDate"
 
     // Event screen
     const val SAVED_STATE_addAttendeeDialogErrorMessage          = "addAttendeeDialogErrorMessage"

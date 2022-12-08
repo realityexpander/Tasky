@@ -11,6 +11,9 @@
     <string name="back_description">Der Rücken</string>
     <string name="remove_description">Entfernen</string>
 
+    <!-- general messages -->
+    <string name="no_internet">📡 Netzwerk offline</string>
+
     <!--    Login Screen -->
     <string name="login_title">Willkommen zurück!</string>
     <string name="login_not_a_member_sign_up">HABEN SIE KEIN KONTO\? ANMELDEN</string>
@@ -108,6 +111,7 @@
     <string name="agenda_choose_current_date_dialog_title">Wählen Sie das Startdatum für die Agendawoche aus</string>
     <string name="agenda_choose_current_date_dialog_today_button_text">Heute</string>
     <string name="agenda_isDone_icon_description">Abgeschlossen angeben</string>
+    <string name="agenda_empty_list">Keine Tagesordnungspunkte für diesen Tag</string>
 
     <string name="description_title_marker">Titelmarkierung für Meetings</string>
 
