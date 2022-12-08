@@ -27,7 +27,12 @@ class TaskyApplication: Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
 
-        // • Start the periodic SyncAgenda Worker (Clear the old one first)
+        startSyncAgendaWorkerConstraints()
+        startRefreshAgendaWeekWorkerConstraints()
+    }
+
+    // • Start the periodic SyncAgenda Worker (Clear the old one first)
+    fun startSyncAgendaWorkerConstraints() {
         val syncAgendaWorkerConstraints: Constraints = Constraints.Builder().apply {
             setRequiredNetworkType(NetworkType.CONNECTED)
             setRequiresBatteryNotLow(true)
@@ -42,13 +47,16 @@ class TaskyApplication: Application(), Configuration.Provider {
         WorkManager.getInstance(applicationContext).pruneWork()
         WorkManager.getInstance(applicationContext)
             .enqueue(workRequest)
+    }
 
-        // • Start the one-time Refresh 'Agenda Week' Worker
+    // • Start the one-time Refresh 'Agenda Week' Worker
+    fun startRefreshAgendaWeekWorkerConstraints() {
         val refreshAgendaWeekConstraints: Constraints = Constraints.Builder().apply {
             setRequiredNetworkType(NetworkType.CONNECTED)
         }.build()
         val data = Data.Builder()
-            .putString(RefreshAgendaWeekWorker.PARAMETER_START_DATE,
+            .putString(
+                RefreshAgendaWeekWorker.PARAMETER_START_DATE,
                 ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toString()
             )
             .build()
@@ -68,6 +76,5 @@ class TaskyApplication: Application(), Configuration.Provider {
                 ExistingWorkPolicy.REPLACE,
                 agendaWeekWorkRequest
             )
-
     }
 }
