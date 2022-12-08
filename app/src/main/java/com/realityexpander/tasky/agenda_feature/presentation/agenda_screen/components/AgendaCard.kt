@@ -36,6 +36,7 @@ import com.realityexpander.tasky.core.util.authToken
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.math.roundToInt
 
 @Composable
 fun AgendaCard(
@@ -175,6 +176,24 @@ fun AgendaCard(
                     .padding(end = DP.extraSmall)
                     .align(Alignment.End)
             )
+
+            // • Progress indicator for (for Events only)
+            toDateTime?.let {
+                if(zonedDateTimeNow.isAfter(fromDateTime) && zonedDateTimeNow.isBefore(toDateTime)) {
+                    Text(
+                        text = "In Progress: " +
+                                (100 - ( ( (toDateTime.toEpochSecond() - zonedDateTimeNow.toEpochSecond()).toFloat()
+                                  / (toDateTime.toEpochSecond() - fromDateTime.toEpochSecond()).toFloat() )*100))
+                                    .roundToInt() + "% Complete",
+                        textAlign = TextAlign.End,
+                        style = MaterialTheme.typography.subtitle1,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = DP.extraSmall)
+                            .align(Alignment.End)
+                    )
+                }
+            }
         }
     }
 }
