@@ -531,6 +531,176 @@ fun AgendaScreenContent(
                 .tinyHeight()
         )
 
+        // • SHOW AGENDA ITEMS LIST
+        if(agendaItems.isNotEmpty()) {
+            LazyColumn(
+                state = scrollState,
+                modifier = Modifier
+                    .background(color = MaterialTheme.colors.surface)
+                    .fillMaxSize()
+                    .padding(start = DP.tiny, end = DP.tiny)
+
+            ) {
+                val sortedAgendaItems = agendaItems.sortedBy { agendaItem ->
+                    agendaItem.startTime
+                }
+                val agendaItemsBeforeNow = sortedAgendaItems.filter { agendaItem ->
+                    agendaItem.startTime.isBefore(ZonedDateTime.now())
+                }
+                val agendaItemsAfterNow = sortedAgendaItems.filter { agendaItem ->
+                    agendaItem.startTime.isAfter(ZonedDateTime.now())
+                }
+
+                fun isToday() = (
+                        currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).year ==
+                                ZonedDateTime.now().year
+                                && currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear ==
+                                ZonedDateTime.now().dayOfYear
+                        )
+
+                if (!isToday() || (isToday() && agendaItemsBeforeNow.isNotEmpty())) {
+                    item("before_spacer_for_today") {
+                        Spacer(modifier = Modifier
+                            .height(14.dp)
+                            .fillMaxWidth()
+                        )
+                    }
+                }
+
+                itemsIndexed(items = agendaItemsBeforeNow) { index, agendaItem ->
+                    Box {
+
+                        AgendaCard(
+                            modifier = Modifier
+                                .padding(start = DP.tiny, end = DP.tiny)
+                                .clickable {
+                                    onActionForAgendaItem(
+                                        AgendaItemAction.OPEN_DETAILS,
+                                        agendaItem,
+                                        onAction
+                                    )
+                                },
+                            agendaItem = agendaItem,
+                            authInfo = state.authInfo,
+                            onToggleCompleted = {
+                                if (agendaItem is AgendaItem.Task) {
+                                    onAction(SetTaskCompleted(agendaItem, !agendaItem.isDone))
+                                }
+                            },
+                            onEdit = {
+                                onActionForAgendaItem(
+                                    AgendaItemAction.EDIT,
+                                    agendaItem,
+                                    onAction
+                                )
+                            },
+                            onDelete = {
+                                onActionForAgendaItem(
+                                    AgendaItemAction.DELETE,
+                                    agendaItem,
+                                    onAction
+                                )
+                            }
+                        ) {
+                            onActionForAgendaItem(
+                                AgendaItemAction.OPEN_DETAILS,
+                                agendaItem,
+                                onAction
+                            )
+                        }
+                    }
+                    if (index < agendaItemsBeforeNow.size - 1
+                    ) {
+                        Spacer(modifier = Modifier.smallHeight())
+                    }
+                }
+
+                // • TIME NEEDLE - only show on today (present day)
+                if (isToday()) {
+                    item("time_needle") {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(0.dp)
+                                .height(14.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(2.dp)
+                                    .background(color = MaterialTheme.colors.onSurface.copy(alpha = 0.9f))
+                                    .align(Alignment.Center)
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.Circle,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.onSurface,
+                                modifier = Modifier
+                                    .size(14.dp)
+                                    .align(Alignment.CenterStart)
+                            )
+
+                        }
+                    }
+                } else {
+                    if (agendaItemsBeforeNow.isNotEmpty()) {
+                        item("time_needle") {
+                            Spacer(modifier = Modifier.smallHeight())
+                        }
+                    }
+                }
+
+                itemsIndexed(items = agendaItemsAfterNow) { index, agendaItem ->
+                    Box {
+
+                        AgendaCard(
+                            modifier = Modifier
+                                .padding(start = DP.tiny, end = DP.tiny)
+                                .clickable {
+                                    onActionForAgendaItem(
+                                        AgendaItemAction.OPEN_DETAILS,
+                                        agendaItem,
+                                        onAction
+                                    )
+                                },
+                            agendaItem = agendaItem,
+                            authInfo = state.authInfo,
+                            onToggleCompleted = {
+                                if (agendaItem is AgendaItem.Task) {
+                                    onAction(SetTaskCompleted(agendaItem, !agendaItem.isDone))
+                                }
+                            },
+                            onEdit = {
+                                onActionForAgendaItem(
+                                    AgendaItemAction.EDIT,
+                                    agendaItem,
+                                    onAction
+                                )
+                            },
+                            onDelete = {
+                                onActionForAgendaItem(
+                                    AgendaItemAction.DELETE,
+                                    agendaItem,
+                                    onAction
+                                )
+                            }
+                        ) {
+                            onActionForAgendaItem(
+                                AgendaItemAction.OPEN_DETAILS,
+                                agendaItem,
+                                onAction
+                            )
+                        }
+                    }
+                    if (index < agendaItemsAfterNow.size - 1) {
+                        Spacer(modifier = Modifier.smallHeight())
+                    }
+                }
+            }
+        }
+
+        ////// STATUS ///////
+
         // • Empty Agenda Indicator
         val showEmptyIndicator = remember { mutableStateOf(false) }
         LaunchedEffect(agendaItems.isEmpty()) {
@@ -541,208 +711,36 @@ fun AgendaScreenContent(
                 showEmptyIndicator.value = true
             }
         }
-        AnimatedVisibility(
-            visible = showEmptyIndicator.value,
-            exit = ExitTransition.None,
+        Box(
+            contentAlignment = Alignment.TopCenter,
             modifier = Modifier
-                .fillMaxWidth()
-                .background(color = MaterialTheme.colors.surface)
-                .padding(start = DP.small, top = DP.small)
-        ) {
-            Text(
-                text = "No agenda items for this day",
-                style = MaterialTheme.typography.h5,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.onSurface.copy( alpha=0.5f),
-                textAlign = TextAlign.Start,
-                modifier = Modifier
-                    .background(color = MaterialTheme.colors.surface)
-                    .fillMaxWidth()
-            )
-        }
-
-        // • SHOW AGENDA ITEMS LIST
-        LazyColumn(
-            state = scrollState,
-            modifier = Modifier
-                .background(color = MaterialTheme.colors.surface)
                 .fillMaxSize()
-                .padding(start = DP.tiny, end = DP.tiny)
-
+                .background(color = MaterialTheme.colors.surface)
         ) {
-            val sortedAgendaItems = agendaItems.sortedBy { agendaItem ->
-                agendaItem.startTime
-            }
-            val agendaItemsBeforeNow = sortedAgendaItems.filter { agendaItem ->
-                agendaItem.startTime.isBefore(ZonedDateTime.now())
-            }
-            val agendaItemsAfterNow = sortedAgendaItems.filter { agendaItem ->
-                agendaItem.startTime.isAfter(ZonedDateTime.now())
-            }
 
-            fun isToday() = (
-                    currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).year ==
-                    ZonedDateTime.now().year
-                    && currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear ==
-                    ZonedDateTime.now().dayOfYear
-                )
-
-            if (!isToday() || (isToday() && agendaItemsBeforeNow.isNotEmpty())) {
-                item("before_spacer_for_today") {
-                    Spacer(modifier = Modifier
-                        .height(14.dp)
+            Column {
+                AnimatedVisibility(
+                    visible = showEmptyIndicator.value,
+                    exit = ExitTransition.None,
+                    modifier = Modifier
                         .fillMaxWidth()
+                        .background(color = MaterialTheme.colors.surface)
+                        .padding(start = DP.small, top = DP.small)
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    Text(
+                        text = "No agenda items for this day",
+                        style = MaterialTheme.typography.h5,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.60f),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .background(color = MaterialTheme.colors.surface)
+                            .fillMaxWidth()
                     )
                 }
             }
-
-            itemsIndexed(items = agendaItemsBeforeNow) { index, agendaItem ->
-                Box {
-
-                    AgendaCard(
-                        modifier = Modifier
-                            .padding(start = DP.tiny, end = DP.tiny)
-                            .clickable {
-                                onActionForAgendaItem(
-                                    AgendaItemAction.OPEN_DETAILS,
-                                    agendaItem,
-                                    onAction
-                                )
-                            },
-                        agendaItem = agendaItem,
-                        authInfo = state.authInfo,
-                        onToggleCompleted = {
-                            if (agendaItem is AgendaItem.Task) {
-                                onAction(SetTaskCompleted(agendaItem, !agendaItem.isDone))
-                            }
-                        },
-                        onEdit = {
-                            onActionForAgendaItem(
-                                AgendaItemAction.EDIT,
-                                agendaItem,
-                                onAction
-                            )
-                        },
-                        onDelete = {
-                            onActionForAgendaItem(
-                                AgendaItemAction.DELETE,
-                                agendaItem,
-                                onAction
-                            )
-                        }
-                    ) {
-                        onActionForAgendaItem(
-                            AgendaItemAction.OPEN_DETAILS,
-                            agendaItem,
-                            onAction
-                        )
-                    }
-                }
-                if (index < agendaItemsBeforeNow.size - 1
-                ) {
-                    Spacer(modifier = Modifier.smallHeight())
-                }
-            }
-
-            // • TIME NEEDLE - only show on today (present day)
-            if (isToday()) {
-                item("time_needle") {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(0.dp)
-                            .height(14.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(2.dp)
-                                .background(color = MaterialTheme.colors.onSurface.copy(alpha = 0.9f))
-                                .align(Alignment.Center)
-                        )
-                        Icon(
-                            imageVector = Icons.Filled.Circle,
-                            contentDescription = null,
-                            tint = MaterialTheme.colors.onSurface,
-                            modifier = Modifier
-                                .size(14.dp)
-                                .align(Alignment.CenterStart)
-                        )
-
-                    }
-                }
-            } else {
-                if (agendaItemsBeforeNow.isNotEmpty()) {
-                    item("time_needle") {
-                        Spacer(modifier = Modifier.smallHeight())
-                    }
-                }
-            }
-
-            itemsIndexed(items = agendaItemsAfterNow) { index, agendaItem ->
-                Box {
-
-                    AgendaCard(
-                        modifier = Modifier
-                            .padding(start = DP.tiny, end = DP.tiny)
-                            .clickable {
-                                onActionForAgendaItem(
-                                    AgendaItemAction.OPEN_DETAILS,
-                                    agendaItem,
-                                    onAction
-                                )
-                            },
-                        agendaItem = agendaItem,
-                        authInfo = state.authInfo,
-                        onToggleCompleted = {
-                            if (agendaItem is AgendaItem.Task) {
-                                onAction(SetTaskCompleted(agendaItem, !agendaItem.isDone))
-                            }
-                        },
-                        onEdit = {
-                            onActionForAgendaItem(
-                                AgendaItemAction.EDIT,
-                                agendaItem,
-                                onAction
-                            )
-                        },
-                        onDelete = {
-                            onActionForAgendaItem(
-                                AgendaItemAction.DELETE,
-                                agendaItem,
-                                onAction
-                            )
-                        }
-                    ) {
-                        onActionForAgendaItem(
-                            AgendaItemAction.OPEN_DETAILS,
-                            agendaItem,
-                            onAction
-                        )
-                    }
-                }
-                if (index < agendaItemsAfterNow.size - 1) {
-                    Spacer(modifier = Modifier.smallHeight())
-                }
-            }
         }
-
-        ////// STATUS ///////
-//
-//            state.errorMessage.getOrNull?.let { errorMessage ->
-//                Spacer(modifier = Modifier.smallHeight())
-//                Text(
-//                    text = "Error: $errorMessage",
-//                    color = Color.Red,
-//                )
-//                Spacer(modifier = Modifier.extraSmallHeight())
-//            }
-//            state.statusMessage.getOrNull?.let { message ->
-//                Spacer(modifier = Modifier.extraSmallHeight())
-//                Text(text = message)
-//                Spacer(modifier = Modifier.extraSmallHeight())
-//            }
-//
 
     }
 
