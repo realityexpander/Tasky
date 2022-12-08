@@ -339,6 +339,23 @@ fun AgendaScreenContent(
         }
     }
 
+    // Timer to update the time needle every second
+    val zonedDateTimeNow = remember { mutableStateOf(ZonedDateTime.now()) }
+    val timer = remember { Timer() }
+    val timerTask = remember { object : TimerTask() {
+        override fun run() {
+            zonedDateTimeNow.value = ZonedDateTime.now()
+        }
+    } }
+    DisposableEffect(true) {
+        timer.scheduleAtFixedRate(timerTask, 0, 1000)
+
+        onDispose {
+            timerTask.cancel()
+            timer.cancel()
+        }
+    }
+
     // • MAIN CONTAINER
     Column(
         modifier = Modifier
@@ -549,10 +566,10 @@ fun AgendaScreenContent(
                     agendaItem.startTime
                 }
                 val agendaItemsBeforeNow = sortedAgendaItems.filter { agendaItem ->
-                    agendaItem.startTime.isBefore(ZonedDateTime.now())
+                    agendaItem.startTime.isBefore(zonedDateTimeNow.value)
                 }
                 val agendaItemsAfterNow = sortedAgendaItems.filter { agendaItem ->
-                    agendaItem.startTime.isAfter(ZonedDateTime.now())
+                    agendaItem.startTime.isAfter(zonedDateTimeNow.value)
                 }
 
                 fun isToday() = (
@@ -604,7 +621,8 @@ fun AgendaScreenContent(
                                     agendaItem,
                                     onAction
                                 )
-                            }
+                            },
+                            zonedDateTimeNow = zonedDateTimeNow.value
                         ) {
                             onActionForAgendaItem(
                                 AgendaItemAction.OPEN_DETAILS,
@@ -687,7 +705,8 @@ fun AgendaScreenContent(
                                     agendaItem,
                                     onAction
                                 )
-                            }
+                            },
+                            zonedDateTimeNow = zonedDateTimeNow.value
                         ) {
                             onActionForAgendaItem(
                                 AgendaItemAction.OPEN_DETAILS,
@@ -705,7 +724,7 @@ fun AgendaScreenContent(
 
         ////// STATUS ///////
 
-        // • Empty Agenda Indicator
+        // • EMPTY AGENDA INDICATOR
         val showEmptyIndicator = remember { mutableStateOf(false) }
         LaunchedEffect(agendaItems.isEmpty()) {
             showEmptyIndicator.value = false
