@@ -89,7 +89,7 @@ class AgendaViewModel @Inject constructor(
         state.copy(
             agendaItems = items,
             selectedDayIndex = selectedDayIndex,
-            currentDate = currentDate ?: ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS),
+            weekStartDate = currentDate ?: ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS),
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AgendaState())
 
@@ -157,14 +157,14 @@ class AgendaViewModel @Inject constructor(
             is ShowChooseCurrentDateDialog -> {
                 _agendaState.update {
                     it.copy(
-                        chooseCurrentDateDialog = uiEvent.currentDate,
+                        chooseWeekStartDateDialog = uiEvent.currentDate,
                     )
                 }
             }
             is CancelChooseCurrentDateDialog -> {
                 _agendaState.update {
                     it.copy(
-                        chooseCurrentDateDialog = null,
+                        chooseWeekStartDateDialog = null,
                     )
                 }
             }

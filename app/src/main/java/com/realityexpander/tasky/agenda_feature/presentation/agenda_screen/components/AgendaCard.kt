@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.presentation.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,8 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -38,6 +37,7 @@ import com.realityexpander.tasky.core.util.authToken
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.math.roundToInt
 
 @Composable
 fun AgendaCard(
@@ -51,11 +51,11 @@ fun AgendaCard(
     isTitleCrossedOut: Boolean = false,
     isCompleted: Boolean = false,
     onToggleCompleted: () -> Unit = {},
-    setMenuPositionCallback: (LayoutCoordinates) -> Unit = {},
     itemTypeName: String? = "",
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
     onViewDetails: () -> Unit = {},
+    zonedDateTimeNow: ZonedDateTime = ZonedDateTime.now(),
 ) {
     Box(
         modifier = modifier
@@ -65,7 +65,7 @@ fun AgendaCard(
             .background(color = backgroundColor)
             .padding(12.dp)
     ) {
-        Column() {
+        Column {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -80,7 +80,12 @@ fun AgendaCard(
                         imageVector = if (isCompleted)
                                 Icons.Filled.TaskAlt // √ with CircleOutline
                             else
-                                Icons.Filled.RadioButtonUnchecked,  // Circle outline
+                                if (zonedDateTimeNow.isAfter(fromDateTime)
+                                    && toDateTime?.let { zonedDateTimeNow.isBefore(toDateTime) } == true
+                                )
+                                    Icons.Filled.PlayForWork // Down arrow in a half circle to indicate that the item is in progress
+                                else
+                                    Icons.Filled.RadioButtonUnchecked, // Circle outline
                         contentDescription = stringResource(R.string.agenda_isDone_icon_description),
                         tint = textColor,
                         modifier = Modifier
@@ -143,7 +148,6 @@ fun AgendaCard(
                                 .offset(y = DP.micro)
                                 .padding(end = DP.tiny)
                                 .size(28.dp)
-                                .onGloballyPositioned { setMenuPositionCallback(it) }
                                 .clickable {
                                     isExpanded = !isExpanded
                                 }
@@ -173,6 +177,24 @@ fun AgendaCard(
                     .padding(end = DP.extraSmall)
                     .align(Alignment.End)
             )
+
+            // • Progress indicator for (for Events only)
+            toDateTime?.let {
+                AnimatedVisibility(zonedDateTimeNow.isAfter(fromDateTime) && zonedDateTimeNow.isBefore(toDateTime)) {
+                    Text(
+                        text = "In Progress: " +
+                                (100 - ( ( (toDateTime.toEpochSecond() - zonedDateTimeNow.toEpochSecond()).toFloat()
+                                  / (toDateTime.toEpochSecond() - fromDateTime.toEpochSecond()).toFloat() )*100))
+                                    .roundToInt() + "% Complete",
+                        textAlign = TextAlign.End,
+                        style = MaterialTheme.typography.subtitle1,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = DP.extraSmall)
+                            .align(Alignment.End)
+                    )
+                }
+            }
         }
     }
 }
@@ -183,10 +205,10 @@ fun AgendaCard(
     modifier: Modifier = Modifier,
     agendaItem: AgendaItem,
     authInfo: AuthInfo,
-    setMenuPositionCallback: (LayoutCoordinates) -> Unit = {},
     onToggleCompleted: () -> Unit = {},
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
+    zonedDateTimeNow: ZonedDateTime? = null,
     onViewDetails: () -> Unit = {},
 ) {
     when(agendaItem) {
@@ -198,11 +220,11 @@ fun AgendaCard(
                 fromDateTime = agendaItem.from,
                 toDateTime = agendaItem.to,
                 isTitleCrossedOut = !isUserIdGoingAsAttendee(authInfo.userId, agendaItem.attendees),
-                setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
                 onEdit = onEdit,
                 onDelete = onDelete,
                 onViewDetails = onViewDetails,
+                zonedDateTimeNow = zonedDateTimeNow ?: ZonedDateTime.now(),
             )
         is AgendaItem.Task ->
             AgendaCard(
@@ -214,7 +236,6 @@ fun AgendaCard(
                 fromDateTime = agendaItem.time,
                 isCompleted = agendaItem.isDone,
                 onToggleCompleted = onToggleCompleted,
-                setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
                 onEdit = onEdit,
                 onDelete = onDelete,
@@ -228,7 +249,6 @@ fun AgendaCard(
                 title = agendaItem.title,
                 description = agendaItem.description,
                 fromDateTime = agendaItem.time,
-                setMenuPositionCallback = setMenuPositionCallback,
                 itemTypeName = agendaItem::class.java.simpleName,
                 onEdit = onEdit,
                 onDelete = onDelete,

@@ -10,9 +10,9 @@ import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.agenda_feature.presentation.reminder_screen.ReminderScreenEvent.*
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
-import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants
 import com.realityexpander.tasky.core.presentation.util.UiText
+import com.realityexpander.tasky.core.util.withCurrentHourMinute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -27,20 +27,21 @@ class ReminderViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     private val agendaRepository: IAgendaRepository,
     private val savedStateHandle: SavedStateHandle,
-    private val validateEmail: ValidateEmail
 ) : ViewModel() {
 
     // Get savedStateHandle (after process death)
     private val errorMessage: UiText? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage]
-    private val isEditable: Boolean =
-        savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] ?: false
     private val editMode: EditMode? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_editMode]
 
     // Get params from savedStateHandle (from another screen)
     private val initialReminderId: ReminderId? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_initialReminderId]
+    private val isEditable: Boolean =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] ?: false
+    private val startDate: ZonedDateTime =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_startDate] ?: ZonedDateTime.now()
 
     private val _state = MutableStateFlow(
         ReminderScreenState(
@@ -75,15 +76,14 @@ class ReminderViewModel @Inject constructor(
                     reminder = initialReminderId?.let { reminderId ->
                         agendaRepository.getReminder(reminderId)
                     }
-                        ?:
-                        // If `initialReminderId` is null, then create a new Reminder.
-                        // • CREATE A NEW Reminder
-                        AgendaItem.Reminder(
+                    // If `initialReminderId` is null, then create a new Reminder.
+                    // • CREATE A NEW Reminder
+                    ?: AgendaItem.Reminder(
                             id = UUID.randomUUID().toString(),
                             title = "Title of New Reminder",
                             description = "Description of New Reminder",
-                            time = ZonedDateTime.now().plusHours(1),
-                            remindAt = ZonedDateTime.now().plusMinutes(30),
+                            time = startDate.withCurrentHourMinute().plusHours(1),
+                            remindAt = startDate.withCurrentHourMinute().plusMinutes(30), //ZonedDateTime.now(),ZonedDateTime.now().plusMinutes(30),
                         )
                 )
             }

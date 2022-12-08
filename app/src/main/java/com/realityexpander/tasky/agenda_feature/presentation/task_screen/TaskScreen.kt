@@ -34,10 +34,10 @@ import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScr
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
-import com.realityexpander.tasky.core.presentation.util.UiText
-import com.realityexpander.tasky.core.presentation.util.getStringSafe
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.realityexpander.tasky.core.presentation.util.UiText
+import com.realityexpander.tasky.core.presentation.util.getStringSafe
 import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
@@ -50,6 +50,8 @@ fun TaskScreen(
     initialTaskId: UuidStr? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     isEditable: Boolean = false,
+    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
+    startDate : ZonedDateTime? = ZonedDateTime.now(),
     navigator: DestinationsNavigator,
     viewModel: TaskViewModel = hiltViewModel(),
 ) {

@@ -18,8 +18,8 @@ data class AgendaState(
     val isProgressVisible: Boolean = false,
     val errorMessage: UiText? = null,
 
-    val currentDate: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS),
-    val chooseCurrentDateDialog: ZonedDateTime? = null,
+    val weekStartDate: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS),
+    val chooseWeekStartDateDialog: ZonedDateTime? = null,
     val selectedDayIndex: Int? = null,
 
     val agendaItems: List<AgendaItem> = emptyList<AgendaItem>(),

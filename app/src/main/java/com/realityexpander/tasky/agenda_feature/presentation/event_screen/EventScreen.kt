@@ -48,10 +48,10 @@ import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.data.isAvailable
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
-import com.realityexpander.tasky.core.presentation.util.UiText
-import com.realityexpander.tasky.core.presentation.util.getStringSafe
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.realityexpander.tasky.core.presentation.util.UiText
+import com.realityexpander.tasky.core.presentation.util.getStringSafe
 import com.realityexpander.tasky.core.util.UPLOAD_IMAGE_MAX_SIZE
 import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.coroutines.launch
@@ -65,6 +65,8 @@ fun EventScreen(
     initialEventId: UuidStr? = null,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     isEditable: Boolean = false,
+    @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
+    startDate : ZonedDateTime? = ZonedDateTime.now(),
     navigator: DestinationsNavigator,
     viewModel: EventViewModel = hiltViewModel(),
 ) {
@@ -77,6 +79,7 @@ fun EventScreen(
             oneTimeEvent = oneTimeEvent,
             onAction = viewModel::sendEvent,
             navigator = navigator,
+            startDate = startDate ?: ZonedDateTime.now(),
         )
     }
 
@@ -107,6 +110,7 @@ fun AddEventScreenContent(
     oneTimeEvent: OneTimeEvent?,
     onAction: (EventScreenEvent) -> Unit,
     navigator: DestinationsNavigator,
+    startDate: ZonedDateTime,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -650,7 +654,7 @@ fun AddEventScreenContent(
                 // • FROM TIME/DATE ROW
                 TimeDateRow(
                     title = stringResource(R.string.event_from),
-                    date = state.event?.from ?: ZonedDateTime.now(),
+                    date = state.event?.from ?: startDate,
                     isEditable = isEditable && isUserEventCreator,
                     onEditDate = {
                         onAction(
@@ -672,7 +676,7 @@ fun AddEventScreenContent(
                 // • TO TIME/DATE ROW
                 TimeDateRow(
                     title = stringResource(R.string.event_to),
-                    date = state.event?.to ?: ZonedDateTime.now(),
+                    date = state.event?.to ?: startDate,
                     isEditable = isEditable && isUserEventCreator,
                     onEditDate = {
                         onAction(
@@ -693,7 +697,7 @@ fun AddEventScreenContent(
 
                 // • REMIND AT ROW
                 RemindAtRow(
-                    fromDateTime = state.event?.from ?: ZonedDateTime.now(),
+                    fromDateTime = state.event?.from ?: startDate,
                     remindAtDateTime = state.event?.remindAt ?: ZonedDateTime.now(),
                     isEditable = isEditable,
                     isDropdownMenuVisible = state.editMode is EditMode.ChooseRemindAtDateTime,
@@ -1010,9 +1014,10 @@ fun Preview() {
                     ),
                 )
             ),
+            oneTimeEvent = null,
             onAction = { println("ACTION: $it") },
             navigator = EmptyDestinationsNavigator,
-            oneTimeEvent = null,
+            startDate = ZonedDateTime.now(),
         )
     }
 }
