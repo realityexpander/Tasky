@@ -48,7 +48,7 @@ class AgendaViewModel @Inject constructor(
     private val _selectedDayIndex = MutableStateFlow(selectedDayIndex)
 
     val connectivityState = connectivityObserver.observe().mapLatest { it }
-    private var oldConnectivityStatus = IConnectivityObserver.Status.Available
+    private var prevConnectivityStatus = IConnectivityObserver.Status.Available
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class) // for .flatMapLatest, .flattenMerge
     private val _agendaItems =
@@ -119,7 +119,7 @@ class AgendaViewModel @Inject constructor(
         // When connectivity is restored, Sync offline changes & Pull Agenda for today from remote
         viewModelScope.launch {
             connectivityState.collect { status ->
-                if(status != oldConnectivityStatus
+                if(status != prevConnectivityStatus
                     && status == IConnectivityObserver.Status.Available
                 ) {
                     withContext(Dispatchers.IO) {
@@ -129,7 +129,7 @@ class AgendaViewModel @Inject constructor(
                         )
                     }
                 }
-                oldConnectivityStatus = status
+                prevConnectivityStatus = status
             }
         }
     }
