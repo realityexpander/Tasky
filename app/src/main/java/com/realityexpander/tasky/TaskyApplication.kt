@@ -6,6 +6,8 @@ import androidx.work.*
 import com.realityexpander.tasky.agenda_feature.data.common.workers.RefreshAgendaWeekWorker
 import com.realityexpander.tasky.agenda_feature.data.common.workers.SyncAgendaWorker
 import dagger.hilt.android.HiltAndroidApp
+import logcat.AndroidLogcatLogger
+import logcat.LogPriority
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
@@ -26,6 +28,9 @@ class TaskyApplication: Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+
+        // Log all priorities in debug builds, no-op in release builds.
+        AndroidLogcatLogger.installOnDebuggableApp(this, minPriority = LogPriority.VERBOSE)
 
         startSyncAgendaWorkerConstraints()
         startRefreshAgendaWeekWorkerConstraints()
