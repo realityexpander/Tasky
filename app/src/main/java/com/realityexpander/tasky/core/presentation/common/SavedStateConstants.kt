@@ -22,12 +22,13 @@ object SavedStateConstants {
     const val SAVED_STATE_isLoaded                               = "isLoaded"
     const val SAVED_STATE_isEditable                             = "isEditable"
     const val SAVED_STATE_editMode                               = "editMode"
+    const val SAVED_STATE_startDate                              = "startDate"
 
     // Agenda screen
     const val SAVED_STATE_agendaItemIdForMenu                    = "agendaItemIdForMenu"
     const val SAVED_STATE_agendaItems                            = "agendaItems"
     const val SAVED_STATE_selectedDayIndex                       = "selectedDayIndex"
-    const val SAVED_STATE_selectedDate                            = "selectedDate"
+    const val SAVED_STATE_selectedDate                           = "selectedDate"
 
     // Event screen
     const val SAVED_STATE_addAttendeeDialogErrorMessage          = "addAttendeeDialogErrorMessage"
@@ -35,8 +36,8 @@ object SavedStateConstants {
     const val SAVED_STATE_initialEventId                         = "initialEventId"
 
     // Task screen
-    const val SAVED_STATE_initialTaskId                         = "initialTaskId"
+    const val SAVED_STATE_initialTaskId                          = "initialTaskId"
 
     // Reminder screen
-    const val SAVED_STATE_initialReminderId                     = "initialReminderId"
+    const val SAVED_STATE_initialReminderId                      = "initialReminderId"
 }

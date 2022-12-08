@@ -47,6 +47,7 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.common.util.TaskId
+import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
@@ -153,16 +154,16 @@ fun AgendaScreenContent(
     val scope = rememberCoroutineScope()
 
     val agendaItems = state.agendaItems
-    val currentDate = state.currentDate
+    val weekStartDate = state.weekStartDate
     val selectedDayIndex = state.selectedDayIndex
 
     // Create days of the week for top of screen
     val daysInitialsAndDayOfWeek =
-        remember(currentDate.dayOfYear) {   // initial of day of week, day of month
+        remember(weekStartDate.dayOfYear) {   // initial of day of week, day of month
             val days = mutableListOf<Pair<String, Int>>() // initial of day of week, day of month
 
             for (i in 0..5) {
-                val date = currentDate.plusDays(i.toLong())
+                val date = weekStartDate.plusDays(i.toLong())
                 val dayOfWeek =
                     date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
                 days += Pair(dayOfWeek.first().toString(), date.dayOfMonth)
@@ -172,8 +173,8 @@ fun AgendaScreenContent(
         }
 
     // Display month name
-    val month = remember(currentDate.month) {
-        currentDate.month.getDisplayName(TextStyle.FULL, Locale.getDefault()).uppercase()
+    val month = remember(weekStartDate.month) {
+        weekStartDate.month.getDisplayName(TextStyle.FULL, Locale.getDefault()).uppercase()
     }
 
     fun navigateToLoginScreen() {
@@ -195,9 +196,11 @@ fun AgendaScreenContent(
 
     fun navigateToEventScreen(eventId: EventId?, isEditable: Boolean = false) {
         navigator.navigate(
+            // create new event
             EventScreenDestination(
                 initialEventId = eventId,  // create new event
                 isEditable = isEditable,
+                startDate = getDateForDayOffset(weekStartDate, selectedDayIndex ?: 0),
             )
         ) {
             launchSingleTop = true
@@ -210,6 +213,7 @@ fun AgendaScreenContent(
             TaskScreenDestination(
                 initialTaskId = taskId,  // create new task
                 isEditable = isEditable,
+                startDate = getDateForDayOffset(weekStartDate, selectedDayIndex ?: 0),
             )
         ) {
             launchSingleTop = true
@@ -222,6 +226,7 @@ fun AgendaScreenContent(
             ReminderScreenDestination(
                 initialReminderId = reminderId,  // create new reminder
                 isEditable = isEditable,
+                startDate = getDateForDayOffset(weekStartDate, selectedDayIndex ?: 0),
             )
         ) {
             launchSingleTop = true
@@ -362,7 +367,7 @@ fun AgendaScreenContent(
                         .alignByBaseline()
                         .align(Alignment.CenterVertically)
                         .clickable {
-                            onAction(ShowChooseCurrentDateDialog(state.currentDate))
+                            onAction(ShowChooseCurrentDateDialog(state.weekStartDate))
                         }
                 )
                 Icon(
@@ -372,7 +377,7 @@ fun AgendaScreenContent(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .clickable {
-                            onAction(ShowChooseCurrentDateDialog(state.currentDate))
+                            onAction(ShowChooseCurrentDateDialog(state.weekStartDate))
                         }
                 )
             }
@@ -496,7 +501,7 @@ fun AgendaScreenContent(
 
         // • SHOW TODAY'S DATE
         val selectedDayIndexDayOfYear =
-            state.currentDate
+            state.weekStartDate
                 .plusDays(selectedDayIndex?.toLong() ?: 0)
                 .dayOfYear
         val nowDayOfYear = ZonedDateTime.now().dayOfYear
@@ -507,7 +512,7 @@ fun AgendaScreenContent(
                 nowDayOfYear + 1 -> stringResource(R.string.agenda_tomorrow)
                 nowDayOfYear - 1 -> stringResource(R.string.agenda_yesterday)
                 else -> {
-                    val date = currentDate.plusDays((selectedDayIndex ?: 0).toLong())
+                    val date = weekStartDate.plusDays((selectedDayIndex ?: 0).toLong())
                     val dayOfWeek =
                         date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
                     val dayOfMonth = date.dayOfMonth.toString()
@@ -551,9 +556,9 @@ fun AgendaScreenContent(
                 }
 
                 fun isToday() = (
-                        currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).year ==
+                        weekStartDate.plusDays(selectedDayIndex?.toLong() ?: 0).year ==
                                 ZonedDateTime.now().year
-                                && currentDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear ==
+                                && weekStartDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear ==
                                 ZonedDateTime.now().dayOfYear
                         )
 
@@ -872,10 +877,10 @@ fun AgendaScreenContent(
     }
 
     // • SELECT CURRENT DATE FOR AGENDA
-    var pickedDate by remember(currentDate) { mutableStateOf(currentDate) }
+    var pickedDate by remember(weekStartDate) { mutableStateOf(weekStartDate) }
     val dateDialogState = rememberMaterialDialogState()
-    LaunchedEffect(state.chooseCurrentDateDialog) {
-        state.chooseCurrentDateDialog?.let {
+    LaunchedEffect(state.chooseWeekStartDateDialog) {
+        state.chooseWeekStartDateDialog?.let {
             dateDialogState.show()
         }
     }
@@ -906,7 +911,7 @@ fun AgendaScreenContent(
         }
     ) {
         datepicker(
-            initialDate = currentDate.toLocalDate(),
+            initialDate = weekStartDate.toLocalDate(),
             title = stringResource(id = R.string.agenda_choose_current_date_dialog_title),
         ) {
             pickedDate = it.atTime(0, 0, 0, 0).toZonedDateTime()

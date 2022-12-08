@@ -13,6 +13,7 @@ import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants
 import com.realityexpander.tasky.core.presentation.util.UiText
+import com.realityexpander.tasky.core.util.withCurrentHourMinute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -33,8 +34,6 @@ class EventViewModel @Inject constructor(
     // Get savedStateHandle (after process death)
     private val errorMessage: UiText? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage]
-    private val isEditable: Boolean =
-        savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] ?: false
     private val editMode: EditMode? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_editMode]
     private val addAttendeeDialogErrorMessage: UiText? =
@@ -45,6 +44,10 @@ class EventViewModel @Inject constructor(
     // Get params from savedStateHandle (from another screen)
     private val initialEventId: EventId? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_initialEventId]
+    private val isEditable: Boolean =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] ?: false
+    private val startDate: ZonedDateTime =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_startDate] ?: ZonedDateTime.now()
 
     private val _state = MutableStateFlow(
         EventScreenState(
@@ -76,6 +79,7 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { _state ->
                 val authInfo = authRepository.getAuthInfo()
+
                 _state.copy(
                     isLoaded = true, // only after state is initialized
                     isProgressVisible = false,
@@ -91,9 +95,9 @@ class EventViewModel @Inject constructor(
                             id = UUID.randomUUID().toString(),
                             title = "Title of New Event",
                             description = "Description of New Event",
-                            from = ZonedDateTime.now(),
-                            to = ZonedDateTime.now().plusHours(1),
-                            remindAt = ZonedDateTime.now().plusMinutes(30),
+                            from = startDate.withCurrentHourMinute(),
+                            to = startDate.withCurrentHourMinute().plusHours(1),
+                            remindAt = startDate.withCurrentHourMinute().plusMinutes(30),
                             host = authInfo?.userId,
                             isUserEventCreator = true,
                             photos = emptyList(),

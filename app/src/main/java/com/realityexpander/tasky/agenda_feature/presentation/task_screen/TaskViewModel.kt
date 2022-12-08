@@ -10,9 +10,9 @@ import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.*
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
-import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants
 import com.realityexpander.tasky.core.presentation.util.UiText
+import com.realityexpander.tasky.core.util.withCurrentHourMinute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -27,20 +27,21 @@ class TaskViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     private val agendaRepository: IAgendaRepository,
     private val savedStateHandle: SavedStateHandle,
-    private val validateEmail: ValidateEmail
 ) : ViewModel() {
 
     // Get savedStateHandle (after process death)
     private val errorMessage: UiText? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage]
-    private val isEditable: Boolean =
-        savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] ?: false
     private val editMode: EditMode? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_editMode]
 
     // Get params from savedStateHandle (from another screen)
     private val initialTaskId: TaskId? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_initialTaskId]
+    private val isEditable: Boolean =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] ?: false
+    private val startDate: ZonedDateTime =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_startDate] ?: ZonedDateTime.now()
 
     private val _state = MutableStateFlow(
         TaskScreenState(
@@ -83,8 +84,8 @@ class TaskViewModel @Inject constructor(
                             id = UUID.randomUUID().toString(),
                             title = "Title of New Task",
                             description = "Description of New Task",
-                            time = ZonedDateTime.now().plusHours(1),
-                            remindAt = ZonedDateTime.now().plusMinutes(30),
+                            time = startDate.withCurrentHourMinute().plusHours(1),
+                            remindAt = startDate.withCurrentHourMinute().plusMinutes(30),
                             isDone = false,
                         )
                 )
