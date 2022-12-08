@@ -10,6 +10,9 @@
     <!-- general descriptions -->
     <string name="back_description">Der Rücken</string>
     <string name="remove_description">Entfernen</string>
+    
+    <!-- general messages -->
+    <string name="no_internet">📡 Netzwerk offline</string>
 
     <!--    Login Screen -->
     <string name="login_title">Willkommen zurück!</string>

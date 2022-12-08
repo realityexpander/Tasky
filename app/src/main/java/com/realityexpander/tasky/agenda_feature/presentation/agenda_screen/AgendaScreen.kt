@@ -85,7 +85,7 @@ fun AgendaScreen(
     val state by viewModel.agendaState.collectAsState()
     val oneTimeEvent by viewModel.oneTimeEvent.collectAsState(null)
     val connectivityState by viewModel.connectivityState.collectAsState(
-        initial = IConnectivityObserver.Status.Unavailable // must start unavailable
+        initial = IConnectivityObserver.Status.Unavailable // must start as Unavailable
     )
 
     AgendaScreenContent(
@@ -126,7 +126,7 @@ fun AgendaScreen(
                 .background(Color.Transparent)
         ) {
             Text(
-                text = stringResource(id = R.string.no_internet),
+                text = stringResource(R.string.no_internet),
                 color = Color.Black,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
@@ -531,7 +531,7 @@ fun AgendaScreenContent(
                 .tinyHeight()
         )
 
-        // • Empty Indicator
+        // • Empty Agenda Indicator
         val showEmptyIndicator = remember { mutableStateOf(false) }
         LaunchedEffect(agendaItems.isEmpty()) {
             showEmptyIndicator.value = false

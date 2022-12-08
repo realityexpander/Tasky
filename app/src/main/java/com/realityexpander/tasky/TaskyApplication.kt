@@ -32,7 +32,7 @@ class TaskyApplication: Application(), Configuration.Provider {
     }
 
     // • Start the periodic SyncAgenda Worker (Clear the old one first)
-    fun startSyncAgendaWorkerConstraints() {
+    private fun startSyncAgendaWorkerConstraints() {
         val syncAgendaWorkerConstraints: Constraints = Constraints.Builder().apply {
             setRequiredNetworkType(NetworkType.CONNECTED)
             setRequiresBatteryNotLow(true)
@@ -50,7 +50,7 @@ class TaskyApplication: Application(), Configuration.Provider {
     }
 
     // • Start the one-time Refresh 'Agenda Week' Worker
-    fun startRefreshAgendaWeekWorkerConstraints() {
+    private fun startRefreshAgendaWeekWorkerConstraints() {
         val refreshAgendaWeekConstraints: Constraints = Constraints.Builder().apply {
             setRequiredNetworkType(NetworkType.CONNECTED)
         }.build()

@@ -10,6 +10,9 @@
     <!-- general descriptions -->
     <string name="back_description">atrás</string>
     <string name="remove_description">Remover</string>
+    
+    <!-- general messages -->
+    <string name="no_internet">📡 Red fuera de línea</string>
 
     <!--    Login Screen -->
     <string name="login_title">¡Bienvenido de nuevo!</string>

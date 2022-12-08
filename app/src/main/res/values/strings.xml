@@ -11,6 +11,9 @@
     <string name="back_description">Back</string>
     <string name="remove_description">Remove</string>
 
+    <!-- general messages -->
+    <string name="no_internet">📡 Network Offline</string>
+
     <!--    Login Screen -->
     <string name="login_title">Welcome Back!</string>
     <string name="login_not_a_member_sign_up">DON\'T HAVE AN ACCOUNT? SIGN UP</string>
@@ -217,6 +220,5 @@
     <string name="reminder_error_delete_reminder">Error deleting Reminder</string>
     <string name="reminder_message_reminder_saved">Reminder Saved</string>
     <string name="reminder_message_reminder_deleted_success">Reminder successfully deleted</string>
-    <string name="no_internet">Network Offline</string>
 
 </resources>
