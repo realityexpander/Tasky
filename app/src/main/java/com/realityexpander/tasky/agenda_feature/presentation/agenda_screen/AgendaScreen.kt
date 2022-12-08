@@ -6,6 +6,7 @@ import android.view.ViewTreeObserver
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -517,7 +518,6 @@ fun AgendaScreenContent(
             },
             style = MaterialTheme.typography.h3,
             fontWeight = FontWeight.Bold,
-
             color = MaterialTheme.colors.onSurface,
             modifier = Modifier
                 .fillMaxWidth()
@@ -530,6 +530,36 @@ fun AgendaScreenContent(
                 .background(color = MaterialTheme.colors.surface)
                 .tinyHeight()
         )
+
+        // • Empty Indicator
+        val showEmptyIndicator = remember { mutableStateOf(false) }
+        LaunchedEffect(agendaItems.isEmpty()) {
+            showEmptyIndicator.value = false
+
+            if (agendaItems.isEmpty()) {
+                delay(500)
+                showEmptyIndicator.value = true
+            }
+        }
+        AnimatedVisibility(
+            visible = showEmptyIndicator.value,
+            exit = ExitTransition.None,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colors.surface)
+                .padding(start = DP.small, top = DP.small)
+        ) {
+            Text(
+                text = "No agenda items for this day",
+                style = MaterialTheme.typography.h5,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.onSurface.copy( alpha=0.5f),
+                textAlign = TextAlign.Start,
+                modifier = Modifier
+                    .background(color = MaterialTheme.colors.surface)
+                    .fillMaxWidth()
+            )
+        }
 
         // • SHOW AGENDA ITEMS LIST
         LazyColumn(
