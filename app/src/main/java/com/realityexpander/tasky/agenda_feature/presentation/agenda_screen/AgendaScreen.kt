@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.view.ViewTreeObserver
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -30,6 +31,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
@@ -38,6 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import com.realityexpander.observeconnectivity.IConnectivityObserver
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
@@ -62,6 +65,7 @@ import com.realityexpander.tasky.destinations.TaskScreenDestination
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 import java.time.format.TextStyle
@@ -79,6 +83,9 @@ fun AgendaScreen(
 ) {
     val state by viewModel.agendaState.collectAsState()
     val oneTimeEvent by viewModel.oneTimeEvent.collectAsState(null)
+    val connectivityState by viewModel.connectivityState.collectAsState(
+        initial = IConnectivityObserver.Status.Unavailable // must start unavailable
+    )
 
     AgendaScreenContent(
         state = state,
@@ -91,11 +98,44 @@ fun AgendaScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = .5f))
+                .background(Color.Black.copy(alpha = .25f))
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center)
             )
+        }
+    }
+
+    // Offline? Show delayed warning in case starting up
+    val showBanner = remember { mutableStateOf(false) }
+    LaunchedEffect(connectivityState) {
+        showBanner.value = false
+
+        if (connectivityState == IConnectivityObserver.Status.Lost
+            || connectivityState == IConnectivityObserver.Status.Unavailable
+        ) {
+            delay(1000)
+            showBanner.value = true
+        }
+    }
+    AnimatedVisibility(showBanner.value) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Transparent)
+        ) {
+            Text(
+                text = stringResource(id = R.string.no_internet),
+                color = Color.Black,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .background(Color.Red.copy(alpha = .5f))
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+
+                )
         }
     }
 }
@@ -955,8 +995,8 @@ fun AgendaScreenPreview() {
                 isLoaded = true,
             ),
             onAction = { println("ACTION: $it") },
-            navigator = EmptyDestinationsNavigator,
             oneTimeEvent = null,
+            navigator = EmptyDestinationsNavigator,
         )
     }
 }

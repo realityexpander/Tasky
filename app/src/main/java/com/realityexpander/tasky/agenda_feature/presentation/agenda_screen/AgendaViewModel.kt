@@ -3,6 +3,7 @@ package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.realityexpander.observeconnectivity.IConnectivityObserver
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
@@ -15,13 +16,10 @@ import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_currentDate
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
-import com.realityexpander.tasky.core.presentation.common.util.UiText
+import com.realityexpander.tasky.core.presentation.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.yield
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -34,6 +32,7 @@ class AgendaViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     private val agendaRepository: IAgendaRepository,
     private val savedStateHandle: SavedStateHandle,
+    private val connectivityObserver: IConnectivityObserver
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)
@@ -46,6 +45,9 @@ class AgendaViewModel @Inject constructor(
 
     private val _currentDate = MutableStateFlow(selectedDate)
     private val _selectedDayIndex = MutableStateFlow(selectedDayIndex)
+
+    val connectivityState = connectivityObserver.observe().mapLatest { it }
+    private var oldConnectivityStatus = IConnectivityObserver.Status.Available
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class) // for .flatMapLatest, .flattenMerge
     private val _agendaItems =
@@ -111,6 +113,23 @@ class AgendaViewModel @Inject constructor(
 //            if(agendaState.value.agendaItems.isEmpty()) { // if no items for today, make some fake ones
 //                createFakeAgendaItems(agendaRepository)
 //            }
+        }
+
+        // When connectivity is restored, Sync offline changes & Pull Agenda for today from remote
+        viewModelScope.launch {
+            connectivityState.collect { status ->
+                if(status != oldConnectivityStatus
+                    && status == IConnectivityObserver.Status.Available
+                ) {
+                    withContext(Dispatchers.IO) {
+                        agendaRepository.syncAgenda()
+                        agendaRepository.getAgendaForDayFlow(
+                            ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+                        )
+                    }
+                }
+                oldConnectivityStatus = status
+            }
         }
     }
 
