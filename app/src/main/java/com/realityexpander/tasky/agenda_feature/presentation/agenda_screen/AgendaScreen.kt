@@ -198,7 +198,7 @@ fun AgendaScreenContent(
         navigator.navigate(
             // create new event
             EventScreenDestination(
-                initialEventId = eventId,  // create new event
+                initialEventId = eventId,  // null = create new event
                 isEditable = isEditable,
                 startDate = getDateForDayOffset(weekStartDate, selectedDayIndex ?: 0),
             )
@@ -211,7 +211,7 @@ fun AgendaScreenContent(
     fun navigateToTaskScreen(taskId: TaskId?, isEditable: Boolean = false) {
         navigator.navigate(
             TaskScreenDestination(
-                initialTaskId = taskId,  // create new task
+                initialTaskId = taskId,  // null = create new task
                 isEditable = isEditable,
                 startDate = getDateForDayOffset(weekStartDate, selectedDayIndex ?: 0),
             )
@@ -224,7 +224,7 @@ fun AgendaScreenContent(
     fun navigateToReminderScreen(reminderId: ReminderId?, isEditable: Boolean = false) {
         navigator.navigate(
             ReminderScreenDestination(
-                initialReminderId = reminderId,  // create new reminder
+                initialReminderId = reminderId,  // null = create new reminder
                 isEditable = isEditable,
                 startDate = getDateForDayOffset(weekStartDate, selectedDayIndex ?: 0),
             )
