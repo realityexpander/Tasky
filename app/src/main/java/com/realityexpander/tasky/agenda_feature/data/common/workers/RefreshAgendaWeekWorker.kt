@@ -20,6 +20,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import logcat.logcat
 import java.time.ZonedDateTime
 
 // Worker to refresh Agenda data for 10 days around the `startDate`
@@ -31,9 +32,9 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-//        Log.d("RefreshAgendaWeekWorker.doWork()",  // leave this here for debugging
-//                " attemptedRuns: ${workerParams.runAttemptCount}" +
-//                " startDate: ${workerParams.inputData.getString(PARAMETER_START_DATE)}")
+        logcat { "RefreshAgendaWeekWorker.doWork()" +  // leave this here for debugging
+                " attemptedRuns: ${workerParams.runAttemptCount}" +
+                " startDate: ${workerParams.inputData.getString(PARAMETER_START_DATE)}" }
 
         val startDate = workerParams.inputData.getString(PARAMETER_START_DATE)?.let {
             getDateForDayOffset(ZonedDateTime.parse(it), 0)
