@@ -1,7 +1,7 @@
 package com.realityexpander.tasky.di
 
 import android.content.Context
-import com.realityexpander.observeconnectivity.ConnectivityObserverImpl
+import com.realityexpander.tasky.core.util.ConnectivityObserver.ConnectivityObserverImpl
 import com.realityexpander.observeconnectivity.IConnectivityObserver
 import dagger.Module
 import dagger.Provides

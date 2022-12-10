@@ -13,6 +13,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ModificationTypeForSync
 import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.core.presentation.util.UiText
+import com.realityexpander.tasky.core.util.ConnectivityObserver.ConnectivityObserverImpl.Companion.isInternetAvailable
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -36,10 +37,10 @@ class AgendaRepositoryImpl @Inject constructor(
 
     override suspend fun getAgendaForDay(dateTime: ZonedDateTime): List<AgendaItem> {
         // Sequential DB queries - left for reference
-//        val events = eventRepository.getEventsForDay(dateTime)
-//        val tasks = taskRepository.getTasksForDay(dateTime)
-//        val reminders = reminderRepository.getRemindersForDay(dateTime)
-//        return events + tasks + reminders
+        // val events = eventRepository.getEventsForDay(dateTime)
+        // val tasks = taskRepository.getTasksForDay(dateTime)
+        // val reminders = reminderRepository.getRemindersForDay(dateTime)
+        // return events + tasks + reminders
 
         // run DB queries in parallel
         return supervisorScope {
@@ -52,8 +53,10 @@ class AgendaRepositoryImpl @Inject constructor(
     }
 
     override fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>> {
-        CoroutineScope(Dispatchers.IO).launch {
-            updateLocalAgendaDayFromRemote(dateTime)
+        if(isInternetAvailable) {
+            CoroutineScope(Dispatchers.IO).launch {
+                updateLocalAgendaDayFromRemote(dateTime)
+            }
         }
 
         return flow {
@@ -157,7 +160,7 @@ class AgendaRepositoryImpl @Inject constructor(
     // ALL SYNC ITEMS WILL ATTEMPT TO UPLOAD.
     override suspend fun syncAgenda(): ResultUiText<Void> {
         val syncItems = syncRepository.getSyncItems()
-        if (syncItems.isEmpty()) {
+        if (!isInternetAvailable && syncItems.isEmpty()) {
             return ResultUiText.Success(null)
         }
 
