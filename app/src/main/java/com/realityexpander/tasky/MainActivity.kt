@@ -71,16 +71,12 @@ class MainActivity : ComponentActivity() {
 //        }
         super.onCreate(savedInstanceState)
 
-        // Create Alarm notification channel
         createAlarmNotificationChannel()
 
         // Check for Alarm Intent
-        if (intent?.getBooleanExtra("com.realityexpander.tasky.ALARM_TRIGGERED", false) == true) {
-            showAlarmNotification(
-                intent.getStringExtra("TITLE") ?: "Tasky",
-                intent.getStringExtra("MESSAGE") ?: "Alarm Triggered",
-                intent.getLongExtra("FROM_DATETIME_MILLIS", ZonedDateTime.now().toUtcMillis()),
-            )
+        if (intent?.getBooleanExtra("com.realityexpander.tasky.ALARM_TRIGGER", false) == true) {
+            logcat { "From onCreate: Alarm Triggered" }
+            onNewIntent(intent)
         }
 
         // Main app

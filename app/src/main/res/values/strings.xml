@@ -220,5 +220,7 @@
     <string name="reminder_error_delete_reminder">Error deleting Reminder</string>
     <string name="reminder_message_reminder_saved">Reminder Saved</string>
     <string name="reminder_message_reminder_deleted_success">Reminder successfully deleted</string>
+    <string name="agenda_sync_refresh_worker_human_readable_notification_channel">Refresh Agenda Week Worker</string>
+    <string name="agenda_sync_sync_worker_human_readable_notification_channel">Sync Agenda Worker</string>
 
 </resources>

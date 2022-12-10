@@ -65,7 +65,7 @@ class SyncAgendaWorker @AssistedInject constructor(
     init {
         val channel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
-            WORKER_NAME,
+            context.getString(R.string.agenda_sync_sync_worker_human_readable_notification_channel),
             NotificationManager.IMPORTANCE_LOW,
         )
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
