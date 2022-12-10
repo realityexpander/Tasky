@@ -11,6 +11,7 @@ interface ITaskRepository {
     suspend fun getTasksForDay(zonedDateTime: ZonedDateTime): List<AgendaItem.Task>
     fun getTasksForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<AgendaItem.Task>>
     suspend fun getTask(taskId: TaskId, isLocalOnly: Boolean = false): AgendaItem.Task?
+    fun getTasksForRemindAtDateTimeRangeFlow(from: ZonedDateTime, to: ZonedDateTime): Flow<List<AgendaItem.Task>>
 
     suspend fun updateTask(task: AgendaItem.Task, isRemoteOnly: Boolean = false): ResultUiText<Void>
 

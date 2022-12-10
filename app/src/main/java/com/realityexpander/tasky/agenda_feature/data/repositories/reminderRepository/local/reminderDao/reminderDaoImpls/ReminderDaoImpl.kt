@@ -18,6 +18,40 @@ interface ReminderDaoImpl : IReminderDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     override suspend fun createReminder(reminder: ReminderEntity)
 
+    // • READ
+
+    @Query("SELECT * FROM reminders WHERE id = :reminderId")
+    override suspend fun getReminderById(reminderId: ReminderId): ReminderEntity?
+
+    @Query("SELECT * FROM reminders")
+    override suspend fun getReminders(): List<ReminderEntity>
+
+    @Query("SELECT * FROM reminders")
+    override fun getRemindersFlow(): Flow<List<ReminderEntity>>
+
+    @Query(getRemindersForDayQuery)
+    override suspend fun getRemindersForDay(zonedDateTime: ZonedDateTime): List<ReminderEntity>  // note: ZonedDateTime gets converted to UTC EpochSeconds for storage in the DB.
+
+    @Query(getRemindersForDayQuery)
+    override fun getRemindersForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<ReminderEntity>>  // note: ZonedDateTime gets converted to UTC EpochSeconds for storage in the DB.
+
+    @Query(
+        """
+        SELECT * FROM reminders 
+            WHERE ( ( `remindAt` >= :startDateTime) AND (`remindAt` < :endDateTime) ) -- remindAt starts this day
+                
+        """)
+    override fun getLocalRemindersForRemindAtDateTimeRangeFlow(
+        startDateTime: ZonedDateTime,
+        endDateTime: ZonedDateTime
+    ): Flow<List<ReminderEntity>>
+
+
+    // • UPDATE
+
+    @Update
+    override suspend fun updateReminder(reminder: ReminderEntity): Int
+
 
     // • UPSERT
 
@@ -36,30 +70,6 @@ interface ReminderDaoImpl : IReminderDao {
     }
 
 
-    // • READ
-
-    @Query("SELECT * FROM reminders WHERE id = :reminderId")
-    override suspend fun getReminderById(reminderId: ReminderId): ReminderEntity?
-
-    @Query("SELECT * FROM reminders")
-    override suspend fun getReminders(): List<ReminderEntity>
-
-    @Query("SELECT * FROM reminders")
-    override fun getRemindersFlow(): Flow<List<ReminderEntity>>
-
-    @Query(getRemindersForDayQuery)
-    override suspend fun getRemindersForDay(zonedDateTime: ZonedDateTime): List<ReminderEntity>  // note: ZonedDateTime gets converted to UTC EpochSeconds for storage in the DB.
-
-    @Query(getRemindersForDayQuery)
-    override fun getRemindersForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<ReminderEntity>>  // note: ZonedDateTime gets converted to UTC EpochSeconds for storage in the DB.
-
-
-    // • UPDATE
-
-    @Update
-    override suspend fun updateReminder(reminder: ReminderEntity): Int
-
-
     // • DELETE
 
     @Delete
@@ -75,7 +85,12 @@ interface ReminderDaoImpl : IReminderDao {
     override suspend fun clearAllReminders(): Int
 
     // Deletes all SYNCED reminders for the given day.
-    @Query(deleteRemindersForDayQuery)
+    @Query(
+        """
+        DELETE FROM reminders WHERE 
+            isSynced = 1
+            AND ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- reminder starts this today
+        """)
     override suspend fun clearAllSyncedRemindersForDay(zonedDateTime: ZonedDateTime): Int
 
     companion object {
@@ -85,13 +100,6 @@ interface ReminderDaoImpl : IReminderDao {
             SELECT * FROM reminders 
                 WHERE ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- reminder starts this day
                 
-            """
-
-        const val deleteRemindersForDayQuery =
-            """
-            DELETE FROM reminders WHERE 
-                isSynced = 1
-                AND ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- reminder starts this today
             """
     }
 }

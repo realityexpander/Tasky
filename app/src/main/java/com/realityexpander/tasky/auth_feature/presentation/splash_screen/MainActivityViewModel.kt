@@ -66,6 +66,8 @@ class MainActivityViewModel @Inject constructor(
         }
     }
 
+
+
 }
 
 // to scale the splash screen if XML/SVG:

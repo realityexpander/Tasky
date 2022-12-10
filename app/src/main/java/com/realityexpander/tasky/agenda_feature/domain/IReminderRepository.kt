@@ -11,6 +11,7 @@ interface IReminderRepository {
     suspend fun getRemindersForDay(zonedDateTime: ZonedDateTime): List<AgendaItem.Reminder>
     fun getRemindersForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<AgendaItem.Reminder>>
     suspend fun getReminder(reminderId: ReminderId, isLocalOnly: Boolean = false): AgendaItem.Reminder?
+    fun getRemindersForRemindAtDateTimeRangeFlow(from: ZonedDateTime, to: ZonedDateTime): Flow<List<AgendaItem.Reminder>>
 
     suspend fun updateReminder(reminder: AgendaItem.Reminder, isRemoteOnly: Boolean = false): ResultUiText<Void>
 

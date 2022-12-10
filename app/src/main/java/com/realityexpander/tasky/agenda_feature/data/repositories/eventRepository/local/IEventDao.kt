@@ -15,6 +15,7 @@ interface IEventDao {
     suspend fun getEventById(eventId: EventId): EventEntity?
     suspend fun getEvents(): List<EventEntity>
     fun getEventsFlow(): Flow<List<EventEntity>>
+    fun getLocalEventsForRemindAtDateTimeRangeFlow(startDateTime: ZonedDateTime, endDateTime: ZonedDateTime): Flow<List<EventEntity>>
 
     suspend fun updateEvent(event: EventEntity): Int
 

@@ -15,6 +15,7 @@ interface ITaskDao {
     suspend fun getTaskById(taskId: TaskId): TaskEntity?
     suspend fun getTasks(): List<TaskEntity>
     fun getTasksFlow(): Flow<List<TaskEntity>>
+    fun getTasksForRemindAtDateTimeRangeFlow(startDateTime: ZonedDateTime, endDateTime: ZonedDateTime): Flow<List<TaskEntity>>
 
     suspend fun updateTask(task: TaskEntity): Int
 

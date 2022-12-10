@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls
+package com.realityexpander.eventy.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls
 
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
@@ -70,14 +70,22 @@ class EventRepositoryImpl(
         return eventDao.getEventById(eventId)?.toDomain()
     }
 
+    override fun getEventsForRemindAtDateTimeRangeFlow(from: ZonedDateTime, to: ZonedDateTime): Flow<List<AgendaItem.Event>> {
+        return eventDao.getLocalEventsForRemindAtDateTimeRangeFlow(from, to).map { eventEntities ->
+            eventEntities.map { eventEntity ->
+                eventEntity.toDomain()
+            }
+        }
+    }
+
     // • UPDATE / UPSERT
 
     override suspend fun updateEvent(event: AgendaItem.Event, isRemoteOnly: Boolean): ResultUiText<AgendaItem.Event> {
         return try {
             if(!isRemoteOnly) {
                 eventDao.updateEvent(event.copy(isSynced = false).toEntity())  // optimistic update
-                syncRepository.addUpdatedSyncItem(event)
             }
+            syncRepository.addUpdatedSyncItem(event)
 
             val response =
                 eventApi.updateEvent(

@@ -129,6 +129,28 @@ class AgendaRepositoryImpl @Inject constructor(
 
     }
 
+    override fun getLocalAgendaItemsRemindAtForDateTimeRangeFlow(
+        startDateTime: ZonedDateTime,
+        endDateTime: ZonedDateTime
+    ): Flow<List<AgendaItem>> {
+        return flow {
+            try {
+                emitAll(combine(
+                    taskRepository.getTasksForRemindAtDateTimeRangeFlow(startDateTime, endDateTime),
+                    eventRepository.getEventsForRemindAtDateTimeRangeFlow(startDateTime, endDateTime),
+                    reminderRepository.getRemindersForRemindAtDateTimeRangeFlow(startDateTime, endDateTime)
+                ) { tasks,
+                    events,
+                    reminders ->
+                    events + tasks + reminders
+                })
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // don't send error to user, just log it (silent fail is ok here)
+            }
+        }
+    }
+
     // Upload local changes (made while offline) to remote
     // Note: ResultUiText.Success is returned even if there are no changes to sync.
     // Note: ResultUiText.Error is returned if there are changes to sync, and ANY sync item fails.

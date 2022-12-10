@@ -54,6 +54,14 @@ class TaskRepositoryImpl(
         }
     }
 
+    override fun getTasksForRemindAtDateTimeRangeFlow(from: ZonedDateTime, to: ZonedDateTime): Flow<List<AgendaItem.Task>> {
+        return taskDao.getTasksForRemindAtDateTimeRangeFlow(from, to).map { taskEntities ->
+            taskEntities.map { taskEntity ->
+                taskEntity.toDomain()
+            }
+        }
+    }
+
     override suspend fun getTask(taskId: TaskId, isLocalOnly: Boolean): AgendaItem.Task? {
         return taskDao.getTaskById(taskId)?.toDomain()
     }
@@ -62,8 +70,8 @@ class TaskRepositoryImpl(
         return try {
             if(!isRemoteOnly) {
                 taskDao.updateTask(task.copy(isSynced = false).toEntity())  // save to local DB first
-                syncRepository.addUpdatedSyncItem(task)
             }
+            syncRepository.addUpdatedSyncItem(task)
 
             val result = taskApi.updateTask(task.toDTO())
             if(result.isSuccess) {

@@ -13,6 +13,7 @@ abstract class AgendaItem {
     abstract val title: String
     abstract val description: String
     abstract val startTime: ZonedDateTime  // for sorting in Agenda
+    abstract val remindAtTime: ZonedDateTime
 
     @Parcelize
     data class Event(
@@ -25,6 +26,7 @@ abstract class AgendaItem {
         override var startTime: ZonedDateTime = from, // for sorting in Agenda
         val to: ZonedDateTime,
         val remindAt: ZonedDateTime,
+        override var remindAtTime: ZonedDateTime = remindAt,
 
         val host: UserId? = null,
         val isUserEventCreator: Boolean = false,
@@ -40,11 +42,13 @@ abstract class AgendaItem {
         override val id: UuidStr,
         override val title: String,
         override val description: String,
-        val remindAt: ZonedDateTime,
         val isSynced: Boolean = false,
 
         val time: ZonedDateTime,
         override var startTime: ZonedDateTime = time, // for sorting in Agenda
+        val remindAt: ZonedDateTime,
+        override var remindAtTime: ZonedDateTime = remindAt,
+
         val isDone: Boolean = false,
     ) : AgendaItem(), Parcelable
 
@@ -58,5 +62,6 @@ abstract class AgendaItem {
         val time: ZonedDateTime,
         override var startTime: ZonedDateTime = time, // for sorting in Agenda
         val remindAt: ZonedDateTime,
+        override var remindAtTime: ZonedDateTime = remindAt,
     ) : AgendaItem(), Parcelable
 }

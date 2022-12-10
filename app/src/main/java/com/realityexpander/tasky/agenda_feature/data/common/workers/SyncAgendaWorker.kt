@@ -4,7 +4,6 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
@@ -17,6 +16,7 @@ import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.delay
+import logcat.logcat
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
@@ -31,7 +31,7 @@ class SyncAgendaWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
 
-        Log.d("SyncAgendaWorker", "SyncAgendaWorker.doWork()attemptedRuns: ${workerParams.runAttemptCount}")
+        logcat { "SyncAgendaWorker.doWork()attemptedRuns: ${workerParams.runAttemptCount}" }
         showNotification(createNotification())
 
         // Push up local changes to remote

@@ -1,5 +1,9 @@
 package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Paint
 import android.view.ViewTreeObserver
@@ -53,6 +57,7 @@ import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.Agend
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.UserAcronymCircle
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
+import com.realityexpander.tasky.agenda_feature.presentation.common.enums.toAgendaItemType
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.toZonedDateTime
 import com.realityexpander.tasky.agenda_feature.presentation.components.AgendaCard
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
@@ -60,6 +65,8 @@ import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.DaySelected
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.realityexpander.tasky.core.util.toUtcMillis
+import com.realityexpander.tasky.core.util.toZonedDateTime
 import com.realityexpander.tasky.destinations.EventScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import com.realityexpander.tasky.destinations.ReminderScreenDestination
@@ -320,6 +327,9 @@ fun AgendaScreenContent(
                     ), Toast.LENGTH_SHORT
                 ).show()
             }
+            is OneTimeEvent.SetAllAgendaItemAlarms -> {
+                setAllAgendaItemAlarms(context, oneTimeEvent.agendaItems)
+            }
             null -> {}
         }
     }
@@ -342,11 +352,13 @@ fun AgendaScreenContent(
     // Timer to update the time needle every second
     val zonedDateTimeNow = remember { mutableStateOf(ZonedDateTime.now()) }
     val timer = remember { Timer() }
-    val timerTask = remember { object : TimerTask() {
-        override fun run() {
-            zonedDateTimeNow.value = ZonedDateTime.now()
+    val timerTask = remember {
+        object : TimerTask() {
+            override fun run() {
+                zonedDateTimeNow.value = ZonedDateTime.now()
+            }
         }
-    } }
+    }
     DisposableEffect(true) {
         timer.scheduleAtFixedRate(timerTask, 0, 1000)
 
@@ -553,7 +565,7 @@ fun AgendaScreenContent(
         )
 
         // • SHOW AGENDA ITEMS LIST
-        if(agendaItems.isNotEmpty()) {
+        if (agendaItems.isNotEmpty()) {
             LazyColumn(
                 state = scrollState,
                 modifier = Modifier
@@ -575,15 +587,18 @@ fun AgendaScreenContent(
                 fun isToday() = (
                         weekStartDate.plusDays(selectedDayIndex?.toLong() ?: 0).year ==
                                 ZonedDateTime.now().year
-                                && weekStartDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear ==
+                                && weekStartDate.plusDays(
+                            selectedDayIndex?.toLong() ?: 0
+                        ).dayOfYear ==
                                 ZonedDateTime.now().dayOfYear
                         )
 
                 if (!isToday() || (isToday() && agendaItemsBeforeNow.isNotEmpty())) {
                     item("before_spacer_for_today") {
-                        Spacer(modifier = Modifier
-                            .height(14.dp)
-                            .fillMaxWidth()
+                        Spacer(
+                            modifier = Modifier
+                                .height(14.dp)
+                                .fillMaxWidth()
                         )
                     }
                 }
@@ -997,6 +1012,155 @@ fun onActionForAgendaItem(
     }
 }
 
+fun setAllAgendaItemAlarms(
+    context: Context,
+    agendaItems: List<AgendaItem>,
+) {
+    cancelAllPreviousAlarms(context) {
+
+        val alarmPendingIntents = mutableListOf<PendingIntent>()
+        val agendaItemsWithUpcomingRemindAtAlarm =
+            agendaItems.filter {
+                it.remindAtTime.toUtcMillis() >= ZonedDateTime.now().toUtcMillis()
+            }
+        agendaItemsWithUpcomingRemindAtAlarm.forEachIndexed { alarmIndex, agendaItem ->
+            val pendingIntent = createAgendaItemAlarmPendingIntent(context, agendaItem, alarmIndex)
+            pendingIntent.let {
+                alarmPendingIntents.add(it)
+            }
+        }
+
+        if (agendaItemsWithUpcomingRemindAtAlarm.isEmpty()) {
+            return@cancelAllPreviousAlarms
+        }
+
+        //save all previous PendingIntent to another new PendingIntent
+        PendingIntent.getBroadcast(
+            context,
+            0,
+            Intent(context, MainActivity::class.java).also {
+                it.putExtra(
+                    "PREVIOUS_INTENTS_FOR_ALARMS",
+                    arrayOf<PendingIntent>(*alarmPendingIntents.toTypedArray())
+                )
+                it.putStringArrayListExtra(
+                    "ALARM_TITLES",
+                    agendaItemsWithUpcomingRemindAtAlarm.map { agendaItem ->
+                        when (agendaItem) {
+                            is AgendaItem.Event -> agendaItem.title
+                            is AgendaItem.Task -> agendaItem.title
+                            is AgendaItem.Reminder -> agendaItem.title
+                            else -> {
+                                "UNKNOWN_AGENDA_ITEM_TYPE"
+                            }
+                        }
+                    }.toList().toCollection(ArrayList())
+                )
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    }
+
+}
+
+fun createAgendaItemAlarmPendingIntent(
+    context: Context,
+    agendaItem: AgendaItem,
+    alarmId: Int,
+): PendingIntent {
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+    val alarmTime = agendaItem.remindAtTime.toUtcMillis()
+    val alarmPendingIntent = createAlarmPendingIntent(context, alarmId, agendaItem)
+
+    println("createAgendaItemAlarmPendingIntent ${agendaItem.title}, alarmTime: ${alarmTime.toZonedDateTime()}, alarmId: $alarmId")
+
+//    alarmManager.setExactAndAllowWhileIdle(
+    alarmManager.setExact(
+        AlarmManager.RTC_WAKEUP,
+        alarmTime,
+        alarmPendingIntent
+    )
+
+    return alarmPendingIntent
+}
+
+fun createAlarmPendingIntent(
+    context: Context,
+    alarmId: Int,
+    agendaItem: AgendaItem,
+): PendingIntent {
+    val alarmIntent = Intent(context, MainActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        putExtra("ALARM_TRIGGERED", true) // todo remove
+        putExtra("ALARM_ID", alarmId)
+        putExtra("AGENDA_ITEM_ID", agendaItem.id)
+        putExtra("AGENDA_ITEM_TYPE", agendaItem.toAgendaItemType().typeNameStr)
+        putExtra("TITLE", agendaItem.title)
+        putExtra("DESCRIPTION", agendaItem.description)
+        putExtra("FROM_DATETIME_UTC_MILLIS", agendaItem.startTime.toUtcMillis())
+        action = "com.realityexpander.tasky.ALARM_TRIGGER"
+        setClass(context, MainActivity::class.java)
+    }
+
+    println("Set Alarm intent: $alarmIntent, alarmId: $alarmId, remindAtTime: ${agendaItem.remindAtTime}")
+//    return PendingIntent.getBroadcast(
+//        context,
+//        alarmId,
+//        alarmIntent,
+//        PendingIntent.FLAG_UPDATE_CURRENT
+//    )
+    return PendingIntent.getActivity(
+        context,
+        alarmId,
+        alarmIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT
+    )
+}
+
+fun cancelAllPreviousAlarms(
+    context: Context,
+    onAllPreviousAlarmsCancelled: () -> Unit = {},
+) {
+    //acquire the dedicated PendingIntent
+    val pendingIntentAllPrevious = PendingIntent.getBroadcast(
+        context,
+        0,
+        Intent(context, MainActivity::class.java),
+        PendingIntent.FLAG_NO_CREATE
+    )
+
+    println("cancelAllPreviousAlarms pendingIntentAllPrevious=$pendingIntentAllPrevious")
+    if (pendingIntentAllPrevious != null) {
+        try {
+            pendingIntentAllPrevious.send(
+                context,
+                0,
+                null,
+                { pendingIntent, intent, resultCode, resultData, resultExtras ->
+
+                    val previousIntents =
+                        intent.getParcelableArrayExtra("PREVIOUS_INTENTS_FOR_ALARMS")
+                    previousIntents?.forEachIndexed { index, previousIntent ->
+                        //alarm will cancel when the corresponding PendingIntent cancel
+                        (previousIntent as PendingIntent).cancel()
+
+                        println(
+                            "cancelAllPreviousAlarms: cancel() item=" +
+                                    "${intent.getStringArrayListExtra("ALARM_TITLES")?.get(index)}"
+                        )
+                    }
+
+                    onAllPreviousAlarmsCancelled()
+                },
+                null
+            )
+            pendingIntentAllPrevious.cancel()
+        } catch (e: PendingIntent.CanceledException) {
+            e.printStackTrace()
+        }
+    } else onAllPreviousAlarmsCancelled()
+}
 
 @Composable
 @Preview(

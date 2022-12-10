@@ -78,6 +78,17 @@ class ReminderRepositoryImpl(
         return reminderDao.getReminderById(reminderId)?.toDomain()
     }
 
+    override fun getRemindersForRemindAtDateTimeRangeFlow(
+        from: ZonedDateTime,
+        to: ZonedDateTime
+    ): Flow<List<AgendaItem.Reminder>> {
+        return reminderDao.getLocalRemindersForRemindAtDateTimeRangeFlow(from, to).map { reminderEntities ->
+            reminderEntities.map { reminderEntity ->
+                reminderEntity.toDomain()
+            }
+        }
+    }
+
     override suspend fun updateReminder(reminder: AgendaItem.Reminder, isRemoteOnly: Boolean): ResultUiText<Void> {
         return try {
             if(!isRemoteOnly) {

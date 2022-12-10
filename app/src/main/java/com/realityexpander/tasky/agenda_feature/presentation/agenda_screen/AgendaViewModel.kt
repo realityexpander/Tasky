@@ -132,6 +132,25 @@ class AgendaViewModel @Inject constructor(
                 prevConnectivityStatus = status
             }
         }
+
+        // Set Alarms for Agenda Items for coming week
+        viewModelScope.launch {
+
+            agendaRepository.getLocalAgendaItemsRemindAtForDateTimeRangeFlow(
+                ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS),
+                ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).plusWeeks(1)
+            )
+                .collect { agendaItems ->
+                    //viewModelScope.launch {
+                    delay(500)
+                        _oneTimeEvent.emit(OneTimeEvent.SetAllAgendaItemAlarms(agendaItems))
+                    //}
+                }
+        }
+
+//        viewModelScope.launch {
+//            _oneTimeEvent.tryEmit(OneTimeEvent.SetAllAgendaItemAlarms(agendaItems))
+//        }
     }
 
     fun sendEvent(event: AgendaScreenEvent) {
@@ -331,6 +350,9 @@ class AgendaViewModel @Inject constructor(
             }
             is OneTimeEvent.NavigateToOpenReminder -> {
                 _oneTimeEvent.emit(OneTimeEvent.NavigateToOpenReminder(uiEvent.reminderId))
+            }
+            is OneTimeEvent.SetAllAgendaItemAlarms -> {
+                _oneTimeEvent.emit(OneTimeEvent.SetAllAgendaItemAlarms(uiEvent.agendaItems))
             }
         }
     }

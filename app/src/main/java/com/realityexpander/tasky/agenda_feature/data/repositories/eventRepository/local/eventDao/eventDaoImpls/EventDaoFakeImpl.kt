@@ -43,6 +43,13 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         return getAllEventsFlowInFakeDatabase()
     }
 
+    override fun getLocalEventsForRemindAtDateTimeRangeFlow(
+        startDateTime: ZonedDateTime,
+        endDateTime: ZonedDateTime
+    ): Flow<List<EventEntity>> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getEventById(eventId: EventId): EventEntity? {
         return getEventByIdInFakeDatabase(eventId)
     }

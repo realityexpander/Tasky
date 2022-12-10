@@ -15,6 +15,7 @@ interface IReminderDao {
     suspend fun getReminderById(reminderId: ReminderId): ReminderEntity?
     suspend fun getReminders(): List<ReminderEntity>
     fun getRemindersFlow(): Flow<List<ReminderEntity>>
+    fun getLocalRemindersForRemindAtDateTimeRangeFlow(startDateTime: ZonedDateTime, endDateTime: ZonedDateTime): Flow<List<ReminderEntity>>
 
     suspend fun updateReminder(reminder: ReminderEntity): Int
 
