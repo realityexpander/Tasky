@@ -107,8 +107,9 @@ fun startSyncAgendaWorker(applicationContext: Context) {
             .addTag(SyncAgendaWorker.WORKER_NAME)
             .addTag(TASKY_WORKERS_TAG)
             .build()
-    WorkManager.getInstance(applicationContext).cancelAllWorkByTag(SyncAgendaWorker.WORKER_NAME)
-    WorkManager.getInstance(applicationContext).pruneWork()
-    WorkManager.getInstance(applicationContext)
-        .enqueue(workRequest)
+    WorkManager.getInstance(applicationContext).apply {
+        cancelAllWorkByTag(SyncAgendaWorker.WORKER_NAME)
+        pruneWork()
+        enqueue(workRequest)
+    }
 }

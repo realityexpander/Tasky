@@ -99,6 +99,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
             .setSmallIcon(R.drawable.ic_notification_sync_agenda_small_icon_foreground)
             .setColor(ResourcesCompat.getColor(context.resources, R.color.tasky_green, null))
             .setLargeIcon(ResourcesCompat.getDrawable(context.resources, R.drawable.tasky_logo_for_splash, null)?.toBitmap(100,100))
+            .setAutoCancel(true)
             .build()
     }
 }
