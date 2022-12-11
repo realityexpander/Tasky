@@ -13,6 +13,7 @@
 
     <!-- general messages -->
     <string name="no_internet">📡 Network Offline</string>
+    <string name="error_no_internet">No Internet connectivity</string>
 
     <!--    Login Screen -->
     <string name="login_title">Welcome Back!</string>
@@ -181,7 +182,7 @@
     <string name="attendee_add_attendee_api_error">Api Error - Attendee object expected and not found</string>
     <string name="attendee_remove_attendee_dialog_remove_button">REMOVE</string>
 
-    <!--    Agenda Sync -->
+    <!--    Workers - Sync & Refresh -->
     <string name="agenda_sync_error">Failed to sync agenda</string>
     <string name="error_syncing_agenda">Error Syncing Agenda</string>
     <string name="error_sync_failed">Sync Failed</string>
@@ -224,6 +225,7 @@
     <string name="reminder_message_reminder_deleted_success">Reminder successfully deleted</string>
 
     <!--    Notifications -->
-    <string name="notifications_alarm_remind_at_subtext">Agenda item starting soon</string>
+    <string name="notifications_alarm_remind_at_subtext">%1$s starting soon</string>
+    <string name="agenda_notifications_complete_task_button">Complete Task</string>
 
 </resources>

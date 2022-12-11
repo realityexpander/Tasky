@@ -5,12 +5,14 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />\
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 
-    <!-- using android:theme="@style/Theme.App.Starting" will use the splash screen theme -->
     <application
             android:name=".TaskyApplication"
             android:allowBackup="true"
@@ -41,11 +43,29 @@
                     android:value="" />
         </activity>
 
+        <!-- For WorkManager setup -->
         <provider
                 android:name="androidx.startup.InitializationProvider"
                 android:authorities="${applicationId}.androidx-startup"
                 tools:node="remove">
         </provider>
+
+        <!-- Receives the alarm broadcast, which creates the notification -->
+        <receiver android:name=".core.presentation.broadcastReceivers.AlarmBroadcastReceiver"/>
+
+        <!-- Receives the "On Completed" broadcast from notification (isDone) -->
+        <receiver android:name=".core.presentation.broadcastReceivers.CompleteTaskBroadcastReceiver"/>
+
+        <!-- Receives the "phone booted" broadcast, so we can setup the alarms that are cancelled at shutdown -->
+        <receiver android:name=".core.presentation.broadcastReceivers.RebootBroadcastReceiver"
+                android:enabled="true"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
 
     </application>
 

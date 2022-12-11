@@ -13,6 +13,7 @@
 
     <!-- general messages -->
     <string name="no_internet">📡 Netzwerk offline</string>
+    <string name="error_no_internet">Keine Internetverbindung</string>
 
     <!--    Login Screen -->
     <string name="login_title">Willkommen zurück!</string>
@@ -112,7 +113,6 @@
     <string name="agenda_choose_current_date_dialog_today_button_text">Heute</string>
     <string name="agenda_isDone_icon_description">Abgeschlossen angeben</string>
     <string name="agenda_empty_list">Keine Tagesordnungspunkte für diesen Tag</string>
-
     <string name="description_title_marker">Titelmarkierung für Meetings</string>
 
     <!--    Event screen -->
@@ -182,13 +182,15 @@
     <string name="attendee_add_attendee_api_error">API-Fehler – Teilnehmerobjekt erwartet und nicht gefunden</string>
     <string name="attendee_remove_attendee_dialog_remove_button">LÖSCHEN</string>
 
-    <!--    Agenda Sync -->
+    <!--    Workers - Sync & Refresh -->
     <string name="agenda_sync_error">Agenda konnte nicht synchronisiert werden</string>
     <string name="error_syncing_agenda">Fehler beim Synchronisieren der Agenda</string>
     <string name="error_sync_failed">Synchronisierung fehlgeschlagen</string>
     <string name="agenda_sync_notification_title">Tasky Synchronisierungsagenda…</string>
     <string name="agenda_sync_notification_content_text">Agenda für letzte Woche und diese Woche synchronisieren</string>
     <string name="agenda_sync_uploading_items_text">Hochladen von Tagesordnungspunkten, die offline erstellt wurden</string>
+    <string name="agenda_sync_refresh_worker_human_readable_notification_channel">Worker der Agendawoche aktualisieren</string>
+    <string name="agenda_sync_sync_worker_human_readable_notification_channel">Agenda-Worker synchronisieren</string>
 
     <!--    Task screen -->
     <string name="task_description_close">Aufgabenbildschirm schließen</string>
@@ -221,5 +223,9 @@
     <string name="reminder_error_delete_reminder">Fehler beim Löschen der Erinnerung</string>
     <string name="reminder_message_reminder_saved">Erinnerung gespeichert</string>
     <string name="reminder_message_reminder_deleted_success">Erinnerung erfolgreich gelöscht</string>
+
+    <!--    Notifications -->
+    <string name="notifications_alarm_remind_at_subtext">%1$s beginnt bald</string>
+    <string name="agenda_notifications_complete_task_button">Erledige Aufgabe</string>
 
 </resources>

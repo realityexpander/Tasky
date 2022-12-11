@@ -8,9 +8,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.work.HiltWorker
-import androidx.work.CoroutineWorker
-import androidx.work.ForegroundInfo
-import androidx.work.WorkerParameters
+import androidx.work.*
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
@@ -22,6 +20,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import logcat.logcat
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
+import java.util.concurrent.TimeUnit
 
 // Worker to refresh Agenda data for 10 days around the `startDate`
 @HiltWorker
@@ -69,8 +69,8 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
     }
 
     companion object {
-        const val WORKER_NAME = "REFRESH_AGENDA_WEEK_WORKER"
         const val NOTIFICATION_ID = 100001
+        const val WORKER_NAME = "REFRESH_AGENDA_WEEK_WORKER"
         const val NOTIFICATION_CHANNEL_ID = NOTIFICATION_SYNC_WORKER_CHANNEL_ID
 
         const val PARAMETER_START_DATE = "startDate"
@@ -101,4 +101,34 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
             .setLargeIcon(ResourcesCompat.getDrawable(context.resources, R.drawable.tasky_logo_for_splash, null)?.toBitmap(100,100))
             .build()
     }
+}
+
+// • Start the one-time Refresh 'Agenda Week' Worker
+fun startRefreshAgendaWeekWorker(applicationContext: Context) {
+    val refreshAgendaWeekConstraints: Constraints = Constraints.Builder().apply {
+        setRequiredNetworkType(NetworkType.CONNECTED)
+    }.build()
+    val data = Data.Builder()
+        .putString(
+            RefreshAgendaWeekWorker.PARAMETER_START_DATE,
+            ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toString()
+        )
+        .build()
+    val name = RefreshAgendaWeekWorker.WORKER_NAME
+    val agendaWeekWorkRequest =
+        OneTimeWorkRequestBuilder<RefreshAgendaWeekWorker>()
+            .setConstraints(refreshAgendaWeekConstraints)
+            .setInputData(data)
+            .addTag(name)
+            .addTag("For 10 days around ${data.getString(RefreshAgendaWeekWorker.PARAMETER_START_DATE)}")
+            .addTag(TASKY_WORKERS_TAG)
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.MINUTES)
+            .build()
+    WorkManager.getInstance(applicationContext)
+        .enqueueUniqueWork(
+            name,
+            ExistingWorkPolicy.REPLACE,
+            agendaWeekWorkRequest
+        )
 }

@@ -132,7 +132,7 @@ class AgendaRepositoryImpl @Inject constructor(
 
     }
 
-    override fun getLocalAgendaItemsRemindAtForDateTimeRangeFlow(
+    override fun getLocalAgendaItemsWithRemindAtInDateTimeRangeFlow(
         startDateTime: ZonedDateTime,
         endDateTime: ZonedDateTime
     ): Flow<List<AgendaItem>> {

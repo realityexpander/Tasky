@@ -23,8 +23,8 @@ import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.realityexpander.tasky.auth_feature.presentation.splash_screen.MainActivityViewModel
 import com.realityexpander.tasky.core.data.settings.AppSettingsSerializer
 import com.realityexpander.tasky.core.data.settings.saveSettingsInitialized
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtAlarmNotificationManager
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtAlarmNotificationManager.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManager
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManager.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.util.dumpIntentExtras
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
@@ -47,16 +47,18 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainActivityViewModel by viewModels()
 
+    var isAlreadyRefreshed = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
-//        if (false) {
+//        if (true) {
 //            waitForDebugger() // leave for testing process death
 //        }
         super.onCreate(savedInstanceState)
 
-        RemindAtAlarmNotificationManager.createNotificationChannel(this)
+        RemindAtNotificationManager.createNotificationChannel(this)
 
         // Check for Alarm Intent
-        if (intent?.getBooleanExtra(ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER, false) == true) {
+        if (intent?.action == ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER) {
             logcat { "From onCreate: Alarm Triggered" }
             onNewIntent(intent)
         }
@@ -126,16 +128,39 @@ class MainActivity : ComponentActivity() {
         exitProcess(0)
     }
 
+    // leave for reference // todo remove soon
+//    override fun onStart() {
+//        super.onStart()
+//
+//        logcat { "onStart(): starting Tasky workers" }
+//        startSyncAgendaWorker(applicationContext)
+//
+//        // Start the "week refresh" worker only once per app session
+//        if (!isAlreadyRefreshed) {
+//            logcat { "onStart(): starting RefreshAgendaWeekWorker" }
+//            startRefreshAgendaWeekWorker(applicationContext)
+//            isAlreadyRefreshed = true
+//        }
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//
+//        // Don't run workers when app is in background - is this a good idea?
+//        logcat { "onPause() - cancelling Tasky workers" }
+//        WorkManager.getInstance(applicationContext).cancelAllWorkByTag(TASKY_WORKERS_TAG)
+//    }
+
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
 
         logcat { "onNewIntent: $intent" }
-
         intent?.dumpIntentExtras()
 
-        // Handle Alarm Manager
+        // Handle Alarm Notification
         if (intent?.action == ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER) {
-            RemindAtAlarmNotificationManager.showNotification(this, intent)
+            RemindAtNotificationManager.showNotification(this, intent)
         }
     }
+
 }

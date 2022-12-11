@@ -1,5 +1,6 @@
 package com.realityexpander.eventy.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls
 
+import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEntity
@@ -13,6 +14,7 @@ import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.util.UiText
+import com.realityexpander.tasky.core.util.ConnectivityObserver.ConnectivityObserverImpl.Companion.isInternetAvailable
 import com.realityexpander.tasky.core.util.rethrowIfCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -33,6 +35,8 @@ class EventRepositoryImpl(
                 eventDao.createEvent(event.copy(isSynced = false).toEntity())  // save to local DB first
                 syncRepository.addCreatedSyncItem(event)
             }
+
+            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             val response = eventApi.createEvent(event.toEventDTOCreate())
 
@@ -84,8 +88,10 @@ class EventRepositoryImpl(
         return try {
             if(!isRemoteOnly) {
                 eventDao.updateEvent(event.copy(isSynced = false).toEntity())  // optimistic update
+                syncRepository.addUpdatedSyncItem(event)
             }
-            syncRepository.addUpdatedSyncItem(event)
+
+            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             val response =
                 eventApi.updateEvent(
@@ -125,6 +131,8 @@ class EventRepositoryImpl(
         return try {
             eventDao.deleteEvent(event.toEntity())
             syncRepository.addDeletedSyncItem(event)
+
+            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             // Attempt to delete on server
             val response = eventApi.deleteEvent(event.toEventDTOUpdate())

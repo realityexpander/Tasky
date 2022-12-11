@@ -4,14 +4,18 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Parcelable
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
-import com.realityexpander.tasky.agenda_feature.presentation.common.enums.toAgendaItemType
+import com.realityexpander.tasky.core.presentation.broadcastReceivers.AlarmBroadcastReceiver
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManager.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManager.ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManager.ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID
 import com.realityexpander.tasky.core.util.toUtcMillis
 import com.realityexpander.tasky.core.util.toZonedDateTime
 import logcat.logcat
 import java.time.ZonedDateTime
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtAlarmNotificationManager as Notifications
+import java.time.temporal.ChronoUnit
 
 interface IRemindAtAlarmManager {
 
@@ -28,69 +32,63 @@ interface IRemindAtAlarmManager {
 
 object RemindAtAlarmManager : IRemindAtAlarmManager {
 
-    private const val CURRENT_ALARM_PENDING_INTENTS = "CURRENT_ALARM_PENDING_INTENTS"
-    private const val CURRENT_ALARM_TITLES = "CURRENT_ALARM_TITLES"
+    private const val CURRENT_ALARMS_PENDING_INTENTS = "CURRENT_ALARMS_PENDING_INTENTS"
+    private const val CURRENT_ALARMS_TITLES = "CURRENT_ALARMS_TITLES"
 
-    private const val REMIND_AT_ALARM_SUPERVISOR_REQUEST_CODE = 0
+    private const val REMIND_AT_ALARM_SUPERVISOR_REQUEST_CODE = 1
 
     override fun setAlarmsForAgendaItems(
         context: Context,
         agendaItems: List<AgendaItem>
     ) {
+        logcat { "setAlarmsForAgendaItems: agendaItems = $agendaItems" }
+
         // Only include upcoming `Remind At` items (RemindAt is in the future)
-        val futureItems =
+        val futureAgendaItems =
             agendaItems.filter {
-                it.remindAtTime.toUtcMillis() >= ZonedDateTime.now().toUtcMillis()
+                it.remindAtTime.toUtcMillis() >= ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS).toUtcMillis()
             }
 
-        if (futureItems.isEmpty()) {
+        if (futureAgendaItems.isEmpty()) {
             return
         }
 
-        // Create an Alarm PendingIntent for each AgendaItem's RemindAt time
+        // Create an "Alarm PendingIntent" for each AgendaItem's `.remindAt` time
         val alarmPendingIntents = mutableListOf<PendingIntent>()
-        futureItems.forEachIndexed { alarmIndex, agendaItem ->
-            val pendingIntent =
-                createAlarmPendingIntentForAgendaItem(context, agendaItem, alarmIndex + 1)
-            pendingIntent.let {
-                alarmPendingIntents.add(it)
-            }
+        futureAgendaItems.forEachIndexed { alarmIndex, agendaItem ->
+            val newAlarmPendingIntent =
+                createAlarmPendingIntentAndSetAlarm(context, agendaItem, alarmIndex)
+            alarmPendingIntents.add(newAlarmPendingIntent)
         }
 
-        // Save all current Alarm PendingIntents to an "Alarm Supervisor" PendingIntent
-        //   that will be used to cancel all alarms, when needed.
+        // Save all current "Alarm PendingIntents" to this "Alarm Supervisor PendingIntent"
+        //   - used to cancel all alarms, when needed.
         PendingIntent.getBroadcast(
             context,
             REMIND_AT_ALARM_SUPERVISOR_REQUEST_CODE,
             Intent(context, MainActivity::class.java).also {
                 it.putExtra(
-                    CURRENT_ALARM_PENDING_INTENTS,
+                    CURRENT_ALARMS_PENDING_INTENTS,
                     arrayOf<PendingIntent>(*alarmPendingIntents.toTypedArray())
                 )
                 it.putStringArrayListExtra( // for debugging
-                    CURRENT_ALARM_TITLES,
-                    futureItems.map { agendaItem ->
-                        when (agendaItem) {
-                            is AgendaItem.Event -> agendaItem.title
-                            is AgendaItem.Task -> agendaItem.title
-                            is AgendaItem.Reminder -> agendaItem.title
-                            else -> {
-                                "UNKNOWN_AGENDA_ITEM_TYPE"
-                            }
-                        }
+                    CURRENT_ALARMS_TITLES,
+                    futureAgendaItems.map { agendaItem ->
+                        agendaItem.title
                     }.toList().toCollection(ArrayList())
                 )
             },
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
     }
 
-    // Based on: https://stackoverflow.com/questions/4315611/android-get-all-pendingintents-set-with-alarmmanager
     override fun cancelAllAlarms(
         context: Context,
-        onFinished: () -> Unit,
+        onFinished: () -> Unit,  // optional callback
     ) {
-        // Acquire the Alarm Supervisor PendingIntent with all the current Alarms PendingIntents.
+        // Based on: https://stackoverflow.com/questions/4315611/android-get-all-pendingintents-set-with-alarmmanager
+
+        // Acquire the "Alarm Supervisor PendingIntent" that contains all the current "Alarm PendingIntents".
         val alarmSupervisorPendingIntent = PendingIntent.getBroadcast(
             context,
             0,
@@ -104,15 +102,16 @@ object RemindAtAlarmManager : IRemindAtAlarmManager {
                 // Send the "cancel Alarm" command to each Alarm PendingIntent in the Supervisor PendingIntent.
                 alarmSupervisorPendingIntent.send(
                     context,
-                    0,
+                    REMIND_AT_ALARM_SUPERVISOR_REQUEST_CODE,
                     null,
-                    // This "onFinished" Lambda is called to cancel all supervised Alarm PendingIntents.
+                    // This "onFinished" Handler Lambda cancels all supervised Alarm PendingIntents.
                     { _, alarmSupervisorIntent, _, _, _ ->
 
+                        // Get all the supervised Alarm PendingIntents from the Alarm Supervisor Intent.
                         val currentAlarmIntents =
-                            alarmSupervisorIntent.getParcelableArrayExtra(CURRENT_ALARM_PENDING_INTENTS)
+                            alarmSupervisorIntent.getParcelableArrayExtra(CURRENT_ALARMS_PENDING_INTENTS)
                         currentAlarmIntents?.forEachIndexed { index, alarmIntent ->
-                            logcat { "cancelAllAlarms: cancel() item=${alarmSupervisorIntent.getStringArrayListExtra(CURRENT_ALARM_TITLES)?.get(index)}" }
+                            logcat { "cancelAllAlarms: cancel() item=${alarmSupervisorIntent.getStringArrayListExtra(CURRENT_ALARMS_TITLES)?.get(index)}" }
 
                             // Cancel each Alarm PendingIntent.
                             (alarmIntent as PendingIntent).cancel()
@@ -122,7 +121,7 @@ object RemindAtAlarmManager : IRemindAtAlarmManager {
                     },
                     null
                 )
-                alarmSupervisorPendingIntent.cancel()
+                alarmSupervisorPendingIntent.cancel() // runs the "onFinished" Handler Lambda that cancels all supervised Alarm PendingIntents.
             } catch (e: PendingIntent.CanceledException) {
                 e.printStackTrace()
             }
@@ -130,55 +129,46 @@ object RemindAtAlarmManager : IRemindAtAlarmManager {
             onFinished()
     }
 
-    private fun createAlarmPendingIntentForAgendaItem(
+    private fun createAlarmPendingIntentAndSetAlarm(
         context: Context,
         agendaItem: AgendaItem,
         alarmId: Int,
     ): PendingIntent {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val alarmTime = agendaItem.remindAtTime.toUtcMillis()
-        val alarmPendingIntent = createAlarmPendingIntent(context, alarmId, agendaItem)
-
-        logcat { "createAgendaItemAlarmPendingIntent ${agendaItem.title}, alarmTime: ${alarmTime.toZonedDateTime()}, alarmId: $alarmId" }
-
-        // Set the Alarm
-//    alarmManager.setExactAndAllowWhileIdle(
-        alarmManager.setExact(
-            AlarmManager.RTC_WAKEUP,
-            alarmTime,
-            alarmPendingIntent
-        )
-
-        return alarmPendingIntent
-    }
-
-    private fun createAlarmPendingIntent(
-        context: Context,
-        alarmId: Int,
-        agendaItem: AgendaItem,
-    ): PendingIntent {
-        val alarmIntent = Intent(context, MainActivity::class.java).apply {
-//            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            putExtra(Notifications.ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID, alarmId)
-            putExtra(Notifications.ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_ID, agendaItem.id)
-            putExtra(Notifications.ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_TYPE, agendaItem.toAgendaItemType().typeNameStr)
-            putExtra(Notifications.ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_TITLE, agendaItem.title)
-            putExtra(Notifications.ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_DESCRIPTION, agendaItem.description)
-            putExtra(Notifications.ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_START_DATETIME_UTC_MILLIS, agendaItem.startTime.toUtcMillis())
-            action = Notifications.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
-            setClass(context, MainActivity::class.java)
+        val alarmBroadcastReceiverIntent = Intent(context, AlarmBroadcastReceiver::class.java).apply {
+            putExtra(ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM, agendaItem as Parcelable)
+            putExtra(ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID, alarmId)
+            action = ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
         }
 
-        logcat("Tasky RemindAt Alarm") { "Set Alarm intent: $alarmIntent, alarmId: $alarmId, remindAtTime: ${agendaItem.remindAtTime}" }
+        val broadcastAlarmPendingIntent =
+            PendingIntent.getBroadcast(
+                context,
+                alarmId,
+                alarmBroadcastReceiverIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
 
-        return PendingIntent.getActivity(
-            context,
-            alarmId,
-            alarmIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
+        val mainActivityIntent = Intent(context, MainActivity::class.java)
+        val mainActivityPendingIntent =
+            PendingIntent.getActivity(
+                context,
+                alarmId,
+                mainActivityIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        val alarmClockInfo =
+            AlarmManager.AlarmClockInfo(
+                agendaItem.remindAtTime.toUtcMillis(),
+                mainActivityPendingIntent
+            )
+
+        logcat { "createAgendaItemAlarmPendingIntent ${agendaItem.title}, alarmTime: ${alarmClockInfo.triggerTime.toZonedDateTime()}, alarmId: $alarmId" }
+
+        // Set the Alarm.
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setAlarmClock(alarmClockInfo, broadcastAlarmPendingIntent)
+
+        return broadcastAlarmPendingIntent
     }
 }
 

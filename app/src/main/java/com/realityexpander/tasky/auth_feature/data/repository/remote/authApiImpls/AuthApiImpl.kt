@@ -6,6 +6,7 @@ import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import com.realityexpander.tasky.core.data.remote.utils.getErrorBodyMessage
 import com.realityexpander.tasky.core.util.*
+import com.realityexpander.tasky.core.util.ConnectivityObserver.ConnectivityObserverImpl.Companion.isInternetAvailable
 import retrofit2.HttpException
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
@@ -20,6 +21,10 @@ class AuthApiImpl @Inject constructor (
         email: Email,
         password: Password
     ): AuthInfoDTO {
+
+        if(!isInternetAvailable)
+            throw Exceptions.NetworkException("No internet connection")
+
         try {
             val response =
                 taskyApi.login(ApiCredentialsDTO(email = email, password = password))
@@ -68,6 +73,8 @@ class AuthApiImpl @Inject constructor (
         email: Email,
         password: Password
     ) {
+        if(!isInternetAvailable) return
+
         try {
             val response =
                 taskyApi.register(
@@ -106,6 +113,8 @@ class AuthApiImpl @Inject constructor (
     }
 
     override suspend fun authenticate(): Boolean {
+        if(!isInternetAvailable) return false
+
         try {
             // Use the current user's AuthToken from the IAuthApi companion object
             val response = taskyApi.authenticate()
@@ -141,6 +150,7 @@ class AuthApiImpl @Inject constructor (
 
     override suspend fun authenticateAuthToken(authToken: AuthToken?): Boolean {
         authToken ?: return false
+        if(!isInternetAvailable) return false
 
         try {
             val response =
@@ -171,6 +181,8 @@ class AuthApiImpl @Inject constructor (
     }
 
     override suspend fun logout() {
+        if(!isInternetAvailable) return
+
         try {
             taskyApi.logout()
         } catch (e: Exceptions.NetworkException) {

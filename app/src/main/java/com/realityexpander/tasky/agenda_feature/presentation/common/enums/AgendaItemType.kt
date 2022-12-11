@@ -23,6 +23,17 @@ fun AgendaItem.toAgendaItemType(): AgendaItemType {
     }
 }
 
+fun AgendaItem.toAgendaItemTypeStr(): String {
+    return when (this) {
+        is AgendaItem.Task -> AgendaItemType.Task.typeNameStr
+        is AgendaItem.Reminder -> AgendaItemType.Reminder.typeNameStr
+        is AgendaItem.Event -> AgendaItemType.Event.typeNameStr
+        else -> {
+            throw Exception("AgendaItem.toAgendaItemTypeStr() - unknown AgendaItem type")
+        }
+    }
+}
+
 fun String.toAgendaItemType(): AgendaItemType {
     return when (this) {
         AgendaItemType.Task.typeNameStr -> AgendaItemType.Task

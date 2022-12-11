@@ -136,13 +136,13 @@ class AgendaViewModel @Inject constructor(
         // Set Alarms for Agenda Items for coming week
         viewModelScope.launch {
 
-            agendaRepository.getLocalAgendaItemsRemindAtForDateTimeRangeFlow(
+            agendaRepository.getLocalAgendaItemsWithRemindAtInDateTimeRangeFlow(
                 ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS),
                 ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).plusWeeks(1)
             )
+                .debounce(500)
                 .collect { agendaItems ->
                     //viewModelScope.launch {
-                    delay(500)
                         _oneTimeEvent.emit(OneTimeEvent.SetAllAgendaItemAlarms(agendaItems))
                     //}
                 }

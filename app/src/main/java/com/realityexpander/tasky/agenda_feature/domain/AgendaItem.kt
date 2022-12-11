@@ -7,7 +7,7 @@ import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.parcelize.Parcelize
 import java.time.ZonedDateTime
 
-abstract class AgendaItem {
+abstract class AgendaItem : java.io.Serializable {
 
     abstract val id: UuidStr
     abstract val title: String
@@ -35,7 +35,7 @@ abstract class AgendaItem {
 
         val photos: List<Photo> = emptyList(),
         val deletedPhotoIds: List<PhotoId> = emptyList(),  // only used for EventDTO.Update
-    ) : AgendaItem(), Parcelable
+    ) : AgendaItem(), Parcelable, java.io.Serializable
 
     @Parcelize
     data class Task(
@@ -50,7 +50,7 @@ abstract class AgendaItem {
         override var remindAtTime: ZonedDateTime = remindAt,
 
         val isDone: Boolean = false,
-    ) : AgendaItem(), Parcelable
+    ) : AgendaItem(), Parcelable, java.io.Serializable
 
     @Parcelize
     data class Reminder(
@@ -63,5 +63,5 @@ abstract class AgendaItem {
         override var startTime: ZonedDateTime = time, // for sorting in Agenda
         val remindAt: ZonedDateTime,
         override var remindAtTime: ZonedDateTime = remindAt,
-    ) : AgendaItem(), Parcelable
+    ) : AgendaItem(), Parcelable, java.io.Serializable
 }

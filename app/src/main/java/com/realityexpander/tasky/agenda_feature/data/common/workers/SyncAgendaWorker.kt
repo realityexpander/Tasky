@@ -8,8 +8,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.work.HiltWorker
-import androidx.work.CoroutineWorker
-import androidx.work.WorkerParameters
+import androidx.work.*
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
@@ -19,6 +18,7 @@ import kotlinx.coroutines.delay
 import logcat.logcat
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
+import java.util.concurrent.TimeUnit
 
 // Worker to synchronize offline actions for the Agenda for the current day
 //   & download any new items for the current day.
@@ -92,4 +92,23 @@ class SyncAgendaWorker @AssistedInject constructor(
             .setAutoCancel(true)
             .build()
     }
+}
+
+// • Start the periodic SyncAgenda Worker (Clear the old one first)
+fun startSyncAgendaWorker(applicationContext: Context) {
+    val syncAgendaWorkerConstraints: Constraints = Constraints.Builder().apply {
+        setRequiredNetworkType(NetworkType.CONNECTED)
+        setRequiresBatteryNotLow(true)
+    }.build()
+    val workRequest =
+        PeriodicWorkRequestBuilder<SyncAgendaWorker>(15, TimeUnit.MINUTES)
+            .setConstraints(syncAgendaWorkerConstraints)
+            .setInitialDelay(2, TimeUnit.MINUTES)
+            .addTag(SyncAgendaWorker.WORKER_NAME)
+            .addTag(TASKY_WORKERS_TAG)
+            .build()
+    WorkManager.getInstance(applicationContext).cancelAllWorkByTag(SyncAgendaWorker.WORKER_NAME)
+    WorkManager.getInstance(applicationContext).pruneWork()
+    WorkManager.getInstance(applicationContext)
+        .enqueue(workRequest)
 }

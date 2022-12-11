@@ -5,6 +5,7 @@ import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.PendingIntent.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -21,21 +22,23 @@ import androidx.core.app.NotificationManagerCompat
 import com.realityexpander.tasky.BuildConfig
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.toAgendaItemType
+import com.realityexpander.tasky.agenda_feature.presentation.common.enums.toAgendaItemTypeStr
+import com.realityexpander.tasky.core.presentation.broadcastReceivers.CompleteTaskBroadcastReceiver
 import com.realityexpander.tasky.core.presentation.util.getBitmapFromVectorDrawable
 import com.realityexpander.tasky.core.util.UuidStr
 import com.realityexpander.tasky.core.util.toIntegerHashCodeOfUUIDString
 import com.realityexpander.tasky.core.util.toUtcMillis
 import com.realityexpander.tasky.core.util.toZonedDateTime
 import logcat.logcat
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
 
 
-interface IRemindAtAlarmNotificationManager {
+interface IRemindAtNotificationManager {
 
     fun showNotification(
         context: Context,
@@ -45,28 +48,29 @@ interface IRemindAtAlarmNotificationManager {
     fun createNotificationChannel(context: Context)
 }
 
-object RemindAtAlarmNotificationManager : IRemindAtAlarmNotificationManager {
-    private const val ALARM_NOTIFICATION_CHANNEL_ID =
+object RemindAtNotificationManager : IRemindAtNotificationManager {
+
+    // Notification Channel
+    const val ALARM_NOTIFICATION_CHANNEL_ID =
         "ALARM_NOTIFICATION_CHANNEL_ID"
     private const val ALARM_NOTIFICATION_CHANNEL_NAME =
         "'Remind At' Alarms"
     private const val ALARM_NOTIFICATION_CHANNEL_DESCRIPTION =
         "Alarm Notifications for 'Remind At' setting"
 
+    // Intent Actions
     const val ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER =
         "${BuildConfig.APPLICATION_ID}.ALARM_TRIGGER"
+    const val ALARM_NOTIFICATION_INTENT_ACTION_COMPLETE_TASK =
+        "${BuildConfig.APPLICATION_ID}.COMPLETE_TASK"
+
+    // Intent Extras
     const val ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID =
         "ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID"
-    const val ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_ID =
-        "ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_ID"
-    const val ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_TYPE =
-        "ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_TYPE"
-    const val ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_TITLE =
-        "ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_TITLE"
-    const val ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_DESCRIPTION =
-        "ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_DESCRIPTION"
-    const val ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_START_DATETIME_UTC_MILLIS =
-        "ALARM_NOTIFICATION_INTENT_EXTRA_START_DATETIME_UTC_MILLIS"
+    const val ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM =
+        "ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM"
+    const val ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ID =
+        "ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ID"
 
     override fun createNotificationChannel(context: Context) {
         // Register the channel with the system
@@ -87,25 +91,26 @@ object RemindAtAlarmNotificationManager : IRemindAtAlarmNotificationManager {
         alarmIntent: Intent
     ) {
         alarmIntent.apply {
-            showNotification(
-                context,
-                itemUuidStr = getStringExtra(ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_ID)
-                    ?: "",
-                agendaItemType = getStringExtra(ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_TYPE)
-                    ?: "Task",
-                title = getStringExtra(ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_TITLE)
-                    ?: "Tasky",
-                description = getStringExtra(ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_DESCRIPTION)
-                    ?: "Alarm Triggered",
-                startDateTimeUtcMillis = getLongExtra(
-                    ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM_START_DATETIME_UTC_MILLIS,
-                    ZonedDateTime.now().toUtcMillis()
-                ),
-            )
+            val agendaItem = getParcelableExtra(ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM) as? AgendaItem
+
+            agendaItem?.let { item ->
+                createNotification(
+                    context,
+                    alarmId = alarmIntent.getIntExtra(ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID, 0),
+                    agendaItemTypeStr = item.toAgendaItemTypeStr(),
+                    itemUuidStr = item.id,
+                    title = item.title,
+                    description = item.description,
+                    startDateTimeUtcMillis = item.startTime.toUtcMillis()
+                )
+            }
         }
+
+        // After notification is shown, cancel the alarm.
         clearAlarm(context, alarmIntent)
     }
 
+    //////////////////////////////////
     ////// HELPER FUNCTIONS //////////
 
     // Clear this alarm Intent from the AlarmManager
@@ -121,30 +126,34 @@ object RemindAtAlarmNotificationManager : IRemindAtAlarmNotificationManager {
         )
     }
 
-    private fun showNotification(
+    private fun createNotification(
         context: Context,
+        alarmId: Int,
+        agendaItemTypeStr: String,
         itemUuidStr: UuidStr = UUID.randomUUID().toString(),
-        agendaItemType: String = "Task",
         title: String,
         description: String,
         startDateTimeUtcMillis: Long,
     ) {
-        logcat { "showAlarmNotification: $title, $description, from=${startDateTimeUtcMillis.toZonedDateTime()}" }
+        logcat { "showAlarmNotification: $title, $description, startDateTime=${startDateTimeUtcMillis.toZonedDateTime()}" }
 
-        val bitmap = getInfoCardBitmap(
-            agendaItemType,
+        val completeTaskAction: NotificationCompat.Action? =
+            createActionForCompleteTask(context, itemUuidStr, alarmId, agendaItemTypeStr)
+
+        val infoCardBitmap = getInfoCardBitmap(
             context,
+            agendaItemTypeStr,
             title,
+            description,
             startDateTimeUtcMillis,
-            description
         )
 
         val notification = NotificationCompat.Builder(context, ALARM_NOTIFICATION_CHANNEL_ID)
-            .setChannelId(ALARM_NOTIFICATION_CHANNEL_ID)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setStyle(NotificationCompat.BigPictureStyle().also {
                 it.setBigContentTitle(title)
-                it.bigPicture(bitmap)
+                it.bigPicture(infoCardBitmap)
                 it.bigLargeIcon(context.getBitmapFromVectorDrawable(R.drawable.tasky_logo_for_splash))
             })
             .setSmallIcon(R.drawable.ic_notification_reminder_foreground)
@@ -155,18 +164,25 @@ object RemindAtAlarmNotificationManager : IRemindAtAlarmNotificationManager {
                     DateTimeFormatter.ofPattern("hh:mm a")
                 )
             )
-            .setSubText(context.getString(R.string.notifications_alarm_remind_at_subtext))
+            .setSubText(context.getString(R.string.notifications_alarm_remind_at_subtext, agendaItemTypeStr))
             .setShowWhen(true)
             .setWhen(startDateTimeUtcMillis)
             .setUsesChronometer(true)
             .setChronometerCountDown(true)
             .setOnlyAlertOnce(true)
             .setAutoCancel(true)
-            .setContentIntent(Intent(context, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
-            }.let { intent ->
-                PendingIntent.getActivity(context, 0, intent, 0)
-            })
+            .addAction(completeTaskAction)
+            .setContentIntent(
+                Intent(context, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }.let { intent ->
+                    PendingIntent.getActivity(
+                        context,
+                        alarmId,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE //0
+                    )
+                })
             .build()
 
         with(NotificationManagerCompat.from(context)) {
@@ -194,12 +210,46 @@ object RemindAtAlarmNotificationManager : IRemindAtAlarmNotificationManager {
         }
     }
 
-    private fun getInfoCardBitmap(
-        agendaItemType: String,
+    private fun createActionForCompleteTask(
         context: Context,
+        itemUuidStr: UuidStr,
+        alarmId: Int,
+        agendaItemType: String
+    ): NotificationCompat.Action? {
+        // Setup action to create "Complete task" button
+        val completeTaskIntent =
+            Intent(context, CompleteTaskBroadcastReceiver::class.java).apply {
+                putExtra(ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ID, itemUuidStr)
+                action = ALARM_NOTIFICATION_INTENT_ACTION_COMPLETE_TASK
+            }
+        val completeTaskPendingIntent: PendingIntent =
+            getBroadcast(
+                context,
+                alarmId,
+                completeTaskIntent,
+                FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
+            )
+        val completeTaskAction: NotificationCompat.Action? =
+            if (agendaItemType == AgendaItemType.Task.typeNameStr) {
+                NotificationCompat.Action
+                    .Builder(
+                        0,
+                        context.getString(R.string.agenda_notifications_complete_task_button),
+                        completeTaskPendingIntent
+                    ).build()
+            } else {
+                null
+            }
+
+        return completeTaskAction
+    }
+
+    private fun getInfoCardBitmap(
+        context: Context,
+        agendaItemTypeStr: String,
         title: String,
-        fromDateTimeUtcMillis: Long,
-        description: String
+        description: String,
+        startDateTimeUtcMillis: Long,
     ): Bitmap? {
         val width = 400
         val height = 300
@@ -215,7 +265,7 @@ object RemindAtAlarmNotificationManager : IRemindAtAlarmNotificationManager {
         // Setup colors depending on Card Type
         var backgroundColor = Color.WHITE
         var textColor = Color.BLACK
-        when (agendaItemType.toAgendaItemType()) {
+        when (agendaItemTypeStr.toAgendaItemType()) {
             AgendaItemType.Event -> {
                 backgroundColor = context.resources.getColor(R.color.tasky_green, null)
                 textColor = Color.WHITE
@@ -231,14 +281,16 @@ object RemindAtAlarmNotificationManager : IRemindAtAlarmNotificationManager {
             else -> context.resources.getColor(R.color.tasky_green, null)
         }
 
+        val offsetYForTask = if (agendaItemTypeStr == AgendaItemType.Task.typeNameStr) 25 else 0
+
         // Make rounded corners (Card)
         paint.color = backgroundColor
         paint.isAntiAlias = true
         paint.style = Paint.Style.FILL
         paint.strokeWidth = 10f
         canvas.drawRoundRect(
-            0f, 50f,
-            width.toFloat(), height.toFloat() - 50f,
+            0f, 50f + offsetYForTask,
+            width.toFloat(), height.toFloat() - (50f + offsetYForTask),
             30f, 30f,
             paint
         )
@@ -247,18 +299,21 @@ object RemindAtAlarmNotificationManager : IRemindAtAlarmNotificationManager {
         paint.color = textColor
         paint.textSize = 24f
 
+        val offsetY2ForTask = if (agendaItemTypeStr == AgendaItemType.Task.typeNameStr) 15 else 0
+
         // Draw the description text on the Canvas
         canvas.drawTextBlock(
             "🔘 $title\n" +
                     "• Starting at ${
-                        fromDateTimeUtcMillis.toZonedDateTime()
+                        startDateTimeUtcMillis.toZonedDateTime()
                             .format(DateTimeFormatter.ofPattern("h:mm a, E MMM d"))
                     }" + "\n\n" +
                     "• $description",
-            20f, 70f, width, height, paint
+            20f, 70f + offsetY2ForTask, width, height, paint
         )
         return bitmap
     }
+
     // Draw a block of text that wraps words to the next line if they are too long
     private fun Canvas.drawTextBlock(
         text: String,

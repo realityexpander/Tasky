@@ -331,7 +331,7 @@ fun AgendaScreenContent(
         }
     }
 
-    // Check keyboard open/closed (how to make this a function?)
+    // Check keyboard open/closed (how to make this a function?) // todo remove soon
     val view = LocalView.current
     var isKeyboardOpen by remember { mutableStateOf(false) }
     DisposableEffect(view) {

@@ -4,6 +4,7 @@ import com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEnt
 import com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEntityDomain.toEntity
 import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
+import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.IReminderApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.ISyncRepository
@@ -11,6 +12,7 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IReminderRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.core.presentation.util.UiText
+import com.realityexpander.tasky.core.util.ConnectivityObserver.ConnectivityObserverImpl.Companion.isInternetAvailable
 import com.realityexpander.tasky.core.util.rethrowIfCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -31,6 +33,8 @@ class ReminderRepositoryImpl(
                 reminderDao.createReminder(reminder.copy(isSynced = false).toEntity())
                 syncRepository.addCreatedSyncItem(reminder)
             }
+
+            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             val result = reminderApi.createReminder(reminder.toDTO())
             if(result.isSuccess) {
@@ -94,8 +98,10 @@ class ReminderRepositoryImpl(
             if(!isRemoteOnly) {
                 // save to local DB first
                 reminderDao.updateReminder(reminder.copy(isSynced = false).toEntity())
+                syncRepository.addUpdatedSyncItem(reminder)
             }
-            syncRepository.addUpdatedSyncItem(reminder)
+
+            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             val result = reminderApi.updateReminder(reminder.toDTO()) // no payload from server for this
             if(result.isSuccess) {
@@ -117,6 +123,8 @@ class ReminderRepositoryImpl(
         return try {
             reminderDao.deleteReminderById(reminder.id)
             syncRepository.addDeletedSyncItem(reminder)
+
+            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             // Attempt to delete on server
             val response = reminderApi.deleteReminder(reminder.id)
