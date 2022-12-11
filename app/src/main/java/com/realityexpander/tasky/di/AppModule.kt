@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.room.Room
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.realityexpander.eventy.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls.EventRepositoryImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls.EventRepositoryImpl
 import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
 import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.reminderRepositoryImpls.ReminderRepositoryImpl
 import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.reminderApiImpls.ReminderApiImpl

@@ -147,10 +147,6 @@ class AgendaViewModel @Inject constructor(
                     //}
                 }
         }
-
-//        viewModelScope.launch {
-//            _oneTimeEvent.tryEmit(OneTimeEvent.SetAllAgendaItemAlarms(agendaItems))
-//        }
     }
 
     fun sendEvent(event: AgendaScreenEvent) {

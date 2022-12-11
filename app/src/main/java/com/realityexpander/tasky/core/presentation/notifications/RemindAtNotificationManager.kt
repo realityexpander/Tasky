@@ -26,6 +26,7 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.toAgendaItemType
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.toAgendaItemTypeStr
+import com.realityexpander.tasky.agenda_feature.domain.IRemindAtNotificationManager
 import com.realityexpander.tasky.core.presentation.broadcastReceivers.CompleteTaskBroadcastReceiver
 import com.realityexpander.tasky.core.presentation.util.getBitmapFromVectorDrawable
 import com.realityexpander.tasky.core.util.UuidStr
@@ -36,17 +37,6 @@ import logcat.logcat
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-
-
-interface IRemindAtNotificationManager {
-
-    fun showNotification(
-        context: Context,
-        alarmIntent: Intent
-    )
-
-    fun createNotificationChannel(context: Context)
-}
 
 object RemindAtNotificationManager : IRemindAtNotificationManager {
 

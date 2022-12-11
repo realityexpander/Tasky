@@ -3,13 +3,11 @@ package com.realityexpander.tasky.core.util.ConnectivityObserver
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
-import android.net.NetworkCapabilities
 import com.realityexpander.observeconnectivity.IConnectivityObserver
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import logcat.logcat
 
 class ConnectivityObserverImpl(
     private val context: Context
@@ -34,45 +32,6 @@ class ConnectivityObserverImpl(
                 }
                 return false
             }
-
-        var isWifiAvailable = false
-            private set
-    }
-
-    init {
-        connectivityManager.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) {
-                super.onAvailable(network)
-
-                logcat { "onAvailable" }
-
-                val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
-                networkCapabilities?.apply {
-                    val isInternetCapabilitiesAvailable =
-                        hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                    isWifiAvailable =
-                        hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                    val isCellularAvailable =
-                        hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                    val isEthernetAvailable =
-                        hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-                    val isMetered =
-                        hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED)
-                    val isRoaming =
-                        hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_ROAMING)
-                    val isBackgroundDataRestricted =
-                        hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_RESTRICTED)
-                    val isNotConstrained =
-                        hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_CONGESTED)
-                    val isNotVpn =
-                        hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)
-                    val isNotRestricted =
-                        hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_RESTRICTED)
-                    val isNotSuspended =
-                        hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_SUSPENDED)
-                }
-            }
-        })
     }
 
     override fun observe(): Flow<IConnectivityObserver.Status> {
