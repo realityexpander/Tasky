@@ -72,7 +72,7 @@ object RemindAtAlarmManager : IRemindAtAlarmManager {
 
     override fun cancelAllAlarms(
         context: Context,
-        onFinished: () -> Unit,  // optional callback
+        onFinished: () -> Unit,  // optional callback after all alarms are cancelled.
     ) {
         // Based on: https://stackoverflow.com/questions/4315611/android-get-all-pendingintents-set-with-alarmmanager
 
@@ -116,6 +116,9 @@ object RemindAtAlarmManager : IRemindAtAlarmManager {
         } else
             onFinished()
     }
+
+    //////////////////////////////////////
+    ////////// HELPER FUNCTIONS //////////
 
     private fun createAlarmPendingIntentAndSetAlarm(
         context: Context,
