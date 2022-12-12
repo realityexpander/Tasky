@@ -125,29 +125,6 @@ class MainActivity : ComponentActivity() {
         exitProcess(0)
     }
 
-    // leave for reference // todo remove soon
-//    override fun onStart() {
-//        super.onStart()
-//
-//        logcat { "onStart(): starting Tasky workers" }
-//        startSyncAgendaWorker(applicationContext)
-//
-//        // Start the "week refresh" worker only once per app session
-//        if (!isAlreadyRefreshed) {
-//            logcat { "onStart(): starting RefreshAgendaWeekWorker" }
-//            startRefreshAgendaWeekWorker(applicationContext)
-//            isAlreadyRefreshed = true
-//        }
-//    }
-//
-//    override fun onPause() {
-//        super.onPause()
-//
-//        // Don't run workers when app is in background - is this a good idea?
-//        logcat { "onPause() - cancelling Tasky workers" }
-//        WorkManager.getInstance(applicationContext).cancelAllWorkByTag(TASKY_WORKERS_TAG)
-//    }
-
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
 
