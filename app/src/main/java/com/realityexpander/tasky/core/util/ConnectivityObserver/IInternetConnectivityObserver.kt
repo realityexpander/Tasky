@@ -4,9 +4,21 @@ import kotlinx.coroutines.flow.Flow
 
 interface IInternetConnectivityObserver {
 
-    fun observe(): Flow<Status>
+    val onlineStateFlow: Flow<OnlineStatus>
 
-    enum class Status {
+    fun connectivityFlow(): Flow<ConnectivityStatus>
+
+    enum class OnlineStatus {
+        ONLINE,
+        OFFLINE
+    }
+
+    enum class InternetReachabilityStatus {
+        REACHABLE,
+        UNREACHABLE,
+    }
+
+    enum class ConnectivityStatus {
         Available, Unavailable, Losing, Lost
     }
 }

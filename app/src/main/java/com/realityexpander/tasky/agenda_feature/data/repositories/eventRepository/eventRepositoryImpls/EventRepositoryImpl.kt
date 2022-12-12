@@ -14,7 +14,7 @@ import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.util.UiText
-import com.realityexpander.tasky.core.util.ConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetAvailable
+import com.realityexpander.tasky.core.util.ConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetReachable
 import com.realityexpander.tasky.core.util.rethrowIfCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -36,7 +36,7 @@ class EventRepositoryImpl(
                 syncRepository.addCreatedSyncItem(event)
             }
 
-            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
+            if(!isInternetReachable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             val response = eventApi.createEvent(event.toEventDTOCreate())
 
@@ -91,7 +91,7 @@ class EventRepositoryImpl(
                 syncRepository.addUpdatedSyncItem(event)
             }
 
-            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
+            if(!isInternetReachable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             val response =
                 eventApi.updateEvent(
@@ -132,7 +132,7 @@ class EventRepositoryImpl(
             eventDao.deleteEvent(event.toEntity())
             syncRepository.addDeletedSyncItem(event)
 
-            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
+            if(!isInternetReachable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             // Attempt to delete on server
             val response = eventApi.deleteEvent(event.toEventDTOUpdate())

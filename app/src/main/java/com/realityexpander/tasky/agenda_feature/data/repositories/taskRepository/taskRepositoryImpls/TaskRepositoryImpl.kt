@@ -12,7 +12,7 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.ITaskRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.core.presentation.util.UiText
-import com.realityexpander.tasky.core.util.ConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetAvailable
+import com.realityexpander.tasky.core.util.ConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetReachable
 import com.realityexpander.tasky.core.util.rethrowIfCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -33,7 +33,7 @@ class TaskRepositoryImpl(
                 syncRepository.addCreatedSyncItem(task)
             }
 
-            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
+            if(!isInternetReachable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             val result = taskApi.createTask(task.toDTO())
             if(result.isSuccess) {
@@ -83,7 +83,7 @@ class TaskRepositoryImpl(
                 syncRepository.addUpdatedSyncItem(task)
             }
 
-            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
+            if(!isInternetReachable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             val result = taskApi.updateTask(task.toDTO())
             if(result.isSuccess) {
@@ -116,7 +116,7 @@ class TaskRepositoryImpl(
             taskDao.deleteTaskById(task.id)
             syncRepository.addDeletedSyncItem(task)
 
-            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
+            if(!isInternetReachable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             // Attempt to delete on server
             val result = taskApi.deleteTask(task.id)

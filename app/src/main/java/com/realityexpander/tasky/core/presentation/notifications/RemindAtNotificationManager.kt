@@ -23,10 +23,10 @@ import com.realityexpander.tasky.BuildConfig
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
+import com.realityexpander.tasky.agenda_feature.domain.IRemindAtNotificationManager
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.toAgendaItemType
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.toAgendaItemTypeStr
-import com.realityexpander.tasky.agenda_feature.domain.IRemindAtNotificationManager
 import com.realityexpander.tasky.core.presentation.broadcastReceivers.CompleteTaskBroadcastReceiver
 import com.realityexpander.tasky.core.presentation.util.getBitmapFromVectorDrawable
 import com.realityexpander.tasky.core.util.UuidStr
@@ -293,7 +293,7 @@ object RemindAtNotificationManager : IRemindAtNotificationManager {
 
         // Draw the description text on the Canvas
         canvas.drawTextBlock(
-            "🔘 $title\n" +
+            "⏰ $title\n" +
                     "• Starting at ${
                         startDateTimeUtcMillis.toZonedDateTime()
                             .format(DateTimeFormatter.ofPattern("h:mm a, E MMM d"))

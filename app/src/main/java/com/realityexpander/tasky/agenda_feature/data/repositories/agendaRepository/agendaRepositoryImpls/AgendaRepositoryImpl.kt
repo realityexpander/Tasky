@@ -13,7 +13,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ModificationTypeForSync
 import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.core.presentation.util.UiText
-import com.realityexpander.tasky.core.util.ConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetAvailable
+import com.realityexpander.tasky.core.util.ConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetReachable
 import com.realityexpander.tasky.core.util.Email
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +36,7 @@ class AgendaRepositoryImpl @Inject constructor(
     // • AGENDA
 
     override suspend fun getAgendaForDay(dateTime: ZonedDateTime): List<AgendaItem> {
-        // Sequential DB queries - left for reference
+        // Sequential DB queries - LEFT FOR REFERENCE
         // val events = eventRepository.getEventsForDay(dateTime)
         // val tasks = taskRepository.getTasksForDay(dateTime)
         // val reminders = reminderRepository.getRemindersForDay(dateTime)
@@ -53,7 +53,7 @@ class AgendaRepositoryImpl @Inject constructor(
     }
 
     override fun getAgendaForDayFlow(dateTime: ZonedDateTime): Flow<List<AgendaItem>> {
-        if(isInternetAvailable) {
+        if(isInternetReachable) {
             CoroutineScope(Dispatchers.IO).launch {
                 updateLocalAgendaDayFromRemote(dateTime)
             }
@@ -80,39 +80,67 @@ class AgendaRepositoryImpl @Inject constructor(
     override suspend fun updateLocalAgendaDayFromRemote(dateTime: ZonedDateTime): ResultUiText<Unit> {
         try {
             // Get fresh data
-            val result = agendaApi.getAgenda(dateTime)
+            val agendaResult = agendaApi.getAgenda(dateTime)
 
-            if (result.isSuccess) {
-                val agenda = result.getOrNull()
+            if (agendaResult.isSuccess) {
+                val agenda = agendaResult.getOrNull()
 
+
+//                // old way (LEAVE FOR REFERENCE)
+//                agenda?.events?.forEach { event ->
+//                    val result2 =
+//                        eventRepository.upsertEventLocally(event.toDomain())
+//                    if (result2 is ResultUiText.Error) {
+//                        throw IllegalStateException(result2.message.asStrOrNull())
+//                    }
+//                }
+
+                // • Events - Insert fresh data locally in parallel
                 eventRepository.clearEventsForDayLocally(dateTime)
-                // Insert fresh data locally
-                agenda?.events?.forEach { event ->
-                    val result2 =
-                        eventRepository.upsertEventLocally(event.toDomain())
-                    if (result2 is ResultUiText.Error) {
-                        throw IllegalStateException(result2.message.asStrOrNull())
+                agenda?.events?.map { event ->
+                    supervisorScope {
+                        async {
+                            val upsertResult =
+                                eventRepository.upsertEventLocally(event.toDomain())
+                            if (upsertResult is ResultUiText.Error) {
+                                throw IllegalStateException(upsertResult.message.asStrOrNull())
+                            }
+                        }
                     }
+                }?.map {
+                    it.await()
                 }
 
+                // • Tasks - Insert fresh data locally in parallel
                 taskRepository.clearTasksForDayLocally(dateTime)
-                // Insert fresh data locally
-                agenda?.tasks?.forEach { task ->
-                    val result2 =
-                        taskRepository.upsertTaskLocally(task.toDomain())
-                    if (result2 is ResultUiText.Error) {
-                        throw IllegalStateException(result2.message.asStrOrNull())
+                agenda?.tasks?.map { task ->
+                    supervisorScope {
+                        async {
+                            val upsertResult =
+                                taskRepository.upsertTaskLocally(task.toDomain())
+                            if (upsertResult is ResultUiText.Error) {
+                                throw IllegalStateException(upsertResult.message.asStrOrNull())
+                            }
+                        }
                     }
+                }?.map {
+                    it.await()
                 }
 
+                // • Reminders - Insert fresh data locally in parallel
                 reminderRepository.clearRemindersForDayLocally(dateTime)
-                // Insert fresh data locally
-                agenda?.reminders?.forEach { reminder ->
-                    val result2 =
-                        reminderRepository.upsertReminderLocally(reminder.toDomain())
-                    if (result2 is ResultUiText.Error) {
-                        throw IllegalStateException(result2.message.asStrOrNull())
+                agenda?.reminders?.map { reminder ->
+                    supervisorScope {
+                        async {
+                            val upsertResult =
+                                reminderRepository.upsertReminderLocally(reminder.toDomain())
+                            if (upsertResult is ResultUiText.Error) {
+                                throw IllegalStateException(upsertResult.message.asStrOrNull())
+                            }
+                        }
                     }
+                }?.map {
+                    it.await()
                 }
 
                 return ResultUiText.Success(Unit)
@@ -157,10 +185,10 @@ class AgendaRepositoryImpl @Inject constructor(
     // Upload local changes (made while offline) to remote
     // Note: ResultUiText.Success is returned even if there are no changes to sync.
     // Note: ResultUiText.Error is returned if there are changes to sync, and ANY sync item fails.
-    // ALL SYNC ITEMS WILL ATTEMPT TO UPLOAD.
+    // THIS WILL ATTEMPT TO UPLOAD ALL SYNC ITEMS.
     override suspend fun syncAgenda(): ResultUiText<Void> {
         val syncItems = syncRepository.getSyncItems()
-        if (!isInternetAvailable && syncItems.isEmpty()) {
+        if (!isInternetReachable && syncItems.isEmpty()) {
             return ResultUiText.Success(null)
         }
 

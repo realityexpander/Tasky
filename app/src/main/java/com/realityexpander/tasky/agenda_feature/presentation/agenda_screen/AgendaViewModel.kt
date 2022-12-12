@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
+import com.realityexpander.observeconnectivity.IInternetConnectivityObserver.OnlineStatus
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
@@ -27,6 +28,7 @@ import java.time.temporal.ChronoUnit
 import java.util.*
 import javax.inject.Inject
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class AgendaViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
@@ -47,8 +49,7 @@ class AgendaViewModel @Inject constructor(
     private val _currentDate = MutableStateFlow(selectedDate)
     private val _selectedDayIndex = MutableStateFlow(selectedDayIndex)
 
-    val connectivityState = connectivityObserver.observe().mapLatest { it }
-    private var prevConnectivityStatus = IInternetConnectivityObserver.Status.Available
+    val onlineState = connectivityObserver.onlineStateFlow.mapLatest { it }
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class) // for .flatMapLatest, .flattenMerge
     private val _agendaItems =
@@ -96,6 +97,16 @@ class AgendaViewModel @Inject constructor(
     private val _oneTimeEvent = MutableSharedFlow<OneTimeEvent>()
     val oneTimeEvent = _oneTimeEvent.asSharedFlow()
 
+    private val _zonedDateTimeNow = MutableStateFlow<ZonedDateTime>(ZonedDateTime.now())
+    val zonedDateTimeNow = _zonedDateTimeNow.asStateFlow()
+    private val timer = Timer()
+    private val timerTask =
+        object : TimerTask() {
+            override fun run() {
+                _zonedDateTimeNow.value = ZonedDateTime.now()
+            }
+        }
+
     init {
         viewModelScope.launch {
             yield() // wait for other init code to run
@@ -118,10 +129,8 @@ class AgendaViewModel @Inject constructor(
 
         // When connectivity is restored, Sync offline changes & Pull Agenda for today from remote
         viewModelScope.launch {
-            connectivityState.collect { status ->
-                if(status != prevConnectivityStatus
-                    && status == IInternetConnectivityObserver.Status.Available
-                ) {
+            onlineState.collect { status ->
+                if(status == OnlineStatus.ONLINE) {
                     withContext(Dispatchers.IO) {
                         agendaRepository.syncAgenda()
                         agendaRepository.getAgendaForDayFlow(
@@ -129,24 +138,32 @@ class AgendaViewModel @Inject constructor(
                         )
                     }
                 }
-                prevConnectivityStatus = status
             }
         }
 
-        // Set Alarms for Agenda Items for coming week
+        // Set Alarms for all Agenda Items in coming week
         viewModelScope.launch {
-
             agendaRepository.getLocalAgendaItemsWithRemindAtInDateTimeRangeFlow(
-                ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS),
-                ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).plusWeeks(1)
-            )
+                    ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS),
+                    ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).plusWeeks(1)
+                )
                 .debounce(500)
                 .collect { agendaItems ->
-                    //viewModelScope.launch {
-                        _oneTimeEvent.emit(OneTimeEvent.SetAllAgendaItemAlarms(agendaItems))
-                    //}
+                    _oneTimeEvent.emit(OneTimeEvent.SetAllAgendaItemAlarms(agendaItems))
                 }
         }
+
+        // Start ZonedDateTimeNow real-time Update Tick Timer
+        timer.scheduleAtFixedRate(timerTask, 0, 1000)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+
+        // Cancel ZonedDateTimeNow Timer
+        timerTask.cancel()
+        timer.cancel()
+
     }
 
     fun sendEvent(event: AgendaScreenEvent) {

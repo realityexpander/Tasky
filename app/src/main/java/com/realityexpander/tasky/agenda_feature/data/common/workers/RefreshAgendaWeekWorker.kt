@@ -11,9 +11,8 @@ import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.supervisorScope
 import logcat.logcat
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
@@ -39,16 +38,28 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
 
         // Fetch/Refresh the previous and coming week's Agenda items
         val success =
-            (START_DAY_OFFSET..END_DAY_OFFSET).map { dayOffset ->
-                if (dayOffset != 0) { // don't refresh the current day
-                    val date = getDateForDayOffset(startDate, dayOffset)
-                    return@map CoroutineScope(Dispatchers.IO).async {
-                        agendaRepository.updateLocalAgendaDayFromRemote(date)
-                    }
-                }
 
-                CoroutineScope(Dispatchers.IO).async {
-                    ResultUiText.Success(Unit)
+            // old way - (LEAVE FOR REFERENCE)
+//            if (dayOffset != 0) { // don't refresh the current day
+//                val date = getDateForDayOffset(startDate, dayOffset)
+//                return@map CoroutineScope(Dispatchers.IO).async {
+//                    agendaRepository.updateLocalAgendaDayFromRemote(date)
+//                }
+//            }
+//            CoroutineScope(Dispatchers.IO).async {
+//                ResultUiText.Success(Unit)
+//            }
+
+            supervisorScope {
+                (START_DAY_OFFSET..END_DAY_OFFSET).map { dayOffset ->
+                    async {
+                        if (dayOffset != 0) { // don't refresh the current day
+                           val date = getDateForDayOffset(startDate, dayOffset)
+                            return@async agendaRepository.updateLocalAgendaDayFromRemote(date)
+                        }
+
+                        ResultUiText.Success(Unit)// default success for the current day.
+                    }
                 }
             }
             //.awaitAll()  // will cancel all if any of the `async`s fail (LEAVE FOR REFERENCE)

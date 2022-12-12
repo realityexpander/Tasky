@@ -12,7 +12,7 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IReminderRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import com.realityexpander.tasky.core.presentation.util.UiText
-import com.realityexpander.tasky.core.util.ConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetAvailable
+import com.realityexpander.tasky.core.util.ConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetReachable
 import com.realityexpander.tasky.core.util.rethrowIfCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -34,7 +34,7 @@ class ReminderRepositoryImpl(
                 syncRepository.addCreatedSyncItem(reminder)
             }
 
-            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
+            if(!isInternetReachable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             val result = reminderApi.createReminder(reminder.toDTO())
             if(result.isSuccess) {
@@ -101,7 +101,7 @@ class ReminderRepositoryImpl(
                 syncRepository.addUpdatedSyncItem(reminder)
             }
 
-            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
+            if(!isInternetReachable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             val result = reminderApi.updateReminder(reminder.toDTO()) // no payload from server for this
             if(result.isSuccess) {
@@ -124,7 +124,7 @@ class ReminderRepositoryImpl(
             reminderDao.deleteReminderById(reminder.id)
             syncRepository.addDeletedSyncItem(reminder)
 
-            if(!isInternetAvailable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
+            if(!isInternetReachable) return ResultUiText.Error(UiText.Res(R.string.error_no_internet))
 
             // Attempt to delete on server
             val response = reminderApi.deleteReminder(reminder.id)

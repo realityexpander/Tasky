@@ -86,14 +86,19 @@ fun AgendaScreen(
 ) {
     val state by viewModel.agendaState.collectAsState()
     val oneTimeEvent by viewModel.oneTimeEvent.collectAsState(null)
-    val connectivityState by viewModel.connectivityState.collectAsState(
-        initial = IInternetConnectivityObserver.Status.Unavailable // must start as Unavailable
+//    val connectivityState by viewModel.connectivityState.collectAsState(
+//        initial = IInternetConnectivityObserver.Status.Unavailable // must start as Unavailable
+//    )
+    val connectivityState by viewModel.onlineState.collectAsState(
+        initial = IInternetConnectivityObserver.OnlineStatus.OFFLINE // must start as Offline
     )
+    val zonedDateTimeNow by viewModel.zonedDateTimeNow.collectAsState()
 
     AgendaScreenContent(
         state = state,
         onAction = viewModel::sendEvent,
         oneTimeEvent = oneTimeEvent,
+        zonedDateTimeNow = zonedDateTimeNow,
         navigator = navigator,
     )
 
@@ -110,18 +115,19 @@ fun AgendaScreen(
     }
 
     // Offline? Show delayed warning in case starting up
-    val showOfflineBanner = remember { mutableStateOf(false) }
+    val isOfflineBannerVisible = remember { mutableStateOf(false) }
     LaunchedEffect(connectivityState) {
-        showOfflineBanner.value = false
+        isOfflineBannerVisible.value = false
 
-        if (connectivityState == IInternetConnectivityObserver.Status.Lost
-            || connectivityState == IInternetConnectivityObserver.Status.Unavailable
+//        if (connectivityState == IInternetConnectivityObserver.Status.Lost
+//            || connectivityState == IInternetConnectivityObserver.Status.Unavailable
+        if (connectivityState == IInternetConnectivityObserver.OnlineStatus.OFFLINE
         ) {
             delay(1000)
-            showOfflineBanner.value = true
+            isOfflineBannerVisible.value = true
         }
     }
-    AnimatedVisibility(showOfflineBanner.value) {
+    AnimatedVisibility(isOfflineBannerVisible.value) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -148,6 +154,7 @@ fun AgendaScreenContent(
     state: AgendaState,
     onAction: (AgendaScreenEvent) -> Unit,
     oneTimeEvent: OneTimeEvent?,
+    zonedDateTimeNow: ZonedDateTime,
     navigator: DestinationsNavigator,
 ) {
     val focusManager = LocalFocusManager.current
@@ -343,25 +350,6 @@ fun AgendaScreenContent(
 
         onDispose {
             view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
-        }
-    }
-
-    // Timer to update the time needle every second
-    val zonedDateTimeNow = remember { mutableStateOf(ZonedDateTime.now()) }
-    val timer = remember { Timer() }
-    val timerTask = remember {
-        object : TimerTask() {
-            override fun run() {
-                zonedDateTimeNow.value = ZonedDateTime.now()
-            }
-        }
-    }
-    DisposableEffect(true) {
-        timer.scheduleAtFixedRate(timerTask, 0, 1000)
-
-        onDispose {
-            timerTask.cancel()
-            timer.cancel()
         }
     }
 
@@ -575,10 +563,10 @@ fun AgendaScreenContent(
                     agendaItem.startTime
                 }
                 val agendaItemsBeforeNow = sortedAgendaItems.filter { agendaItem ->
-                    agendaItem.startTime.isBefore(zonedDateTimeNow.value)
+                    agendaItem.startTime.isBefore(zonedDateTimeNow)
                 }
                 val agendaItemsAfterNow = sortedAgendaItems.filter { agendaItem ->
-                    agendaItem.startTime.isAfter(zonedDateTimeNow.value)
+                    agendaItem.startTime.isAfter(zonedDateTimeNow)
                 }
 
                 fun isToday() = (
@@ -634,7 +622,7 @@ fun AgendaScreenContent(
                                     onAction
                                 )
                             },
-                            zonedDateTimeNow = zonedDateTimeNow.value
+                            zonedDateTimeNow = zonedDateTimeNow
                         ) {
                             onActionForAgendaItem(
                                 AgendaItemAction.OPEN_DETAILS,
@@ -718,7 +706,7 @@ fun AgendaScreenContent(
                                     onAction
                                 )
                             },
-                            zonedDateTimeNow = zonedDateTimeNow.value
+                            zonedDateTimeNow = zonedDateTimeNow
                         ) {
                             onActionForAgendaItem(
                                 AgendaItemAction.OPEN_DETAILS,
@@ -1058,6 +1046,7 @@ fun AgendaScreenPreview() {
             ),
             onAction = { println("ACTION: $it") },
             oneTimeEvent = null,
+            zonedDateTimeNow = ZonedDateTime.now(),
             navigator = EmptyDestinationsNavigator,
         )
     }
