@@ -172,28 +172,24 @@ object AppModule {
             }
         }
 
+        val okHttpClientBuilder = OkHttpClient.Builder()
+            .dispatcher(dispatcher)
+            .addInterceptor(addHeadersInterceptor)
+            .connectTimeout(1, TimeUnit.MINUTES)
+            .callTimeout(1, TimeUnit.MINUTES)
+            .readTimeout(1, TimeUnit.MINUTES)
+            .writeTimeout(1, TimeUnit.MINUTES)
+
         return if(BuildConfig.DEBUG) {
             val logging = HttpLoggingInterceptor(jsonPrettyPrinter)
             logging.level = HttpLoggingInterceptor.Level.BODY
             //logging.level = HttpLoggingInterceptor.Level.HEADERS
 
-            OkHttpClient.Builder()
-                .dispatcher(dispatcher)
-                .addInterceptor(addHeadersInterceptor)
+            okHttpClientBuilder
                 .addInterceptor(logging)
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .callTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(1, TimeUnit.MINUTES)
-                .writeTimeout(1, TimeUnit.MINUTES)
                 .build()
         } else {
-            OkHttpClient.Builder()
-                .dispatcher(dispatcher)
-                .addInterceptor(addHeadersInterceptor)
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .callTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(1, TimeUnit.MINUTES)
-                .writeTimeout(1, TimeUnit.MINUTES)
+            okHttpClientBuilder
                 .build()
         }
     }
