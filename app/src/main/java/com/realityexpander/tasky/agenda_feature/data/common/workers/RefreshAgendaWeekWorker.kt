@@ -60,7 +60,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
                             return@async agendaRepository.updateLocalAgendaDayFromRemote(date)
                         }
 
-                        ResultUiText.Success(Unit)// default success for the current day.
+                        ResultUiText.Success(Unit)// default `Success` for the current day.
                     }
                 }
             }
@@ -96,7 +96,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return ForegroundInfo(
-            NOTIFICATION_ID,
+            RefreshAgendaWeekWorker.NOTIFICATION_ID,
             workerNotifications.createNotification(
                 title = context.getString(R.string.agenda_sync_notification_title),
                 description = context.getString(R.string.agenda_sync_notification_content_text),
