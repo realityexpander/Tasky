@@ -53,7 +53,7 @@ sealed interface AgendaScreenEvent {
         // • Event - Navigate to Create/Open/Edit Event Screen
         object NavigateToCreateEvent : AgendaScreenEvent, OneTimeEvent
         data class NavigateToOpenEvent(val eventId: EventId) : AgendaScreenEvent, OneTimeEvent
-        data class NavigateToEditEvent(val eventId: EventId) : AgendaScreenEvent, OneTimeEvent        // • Event - Navigate to Create/Open/Edit Event Screen
+        data class NavigateToEditEvent(val eventId: EventId) : AgendaScreenEvent, OneTimeEvent  // • Event - Navigate to Create/Open/Edit Event Screen
 
         // • Task - Navigate to Create/Open/Edit Task Screen
         object NavigateToCreateTask : AgendaScreenEvent, OneTimeEvent
