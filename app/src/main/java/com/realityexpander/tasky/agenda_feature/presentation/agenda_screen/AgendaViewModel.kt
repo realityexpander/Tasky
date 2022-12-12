@@ -70,7 +70,6 @@ class AgendaViewModel @Inject constructor(
                 errorMessage = errorMessage,
                 selectedDayIndex = selectedDayIndex,
             ))
-
     val agendaState = combine(
         _agendaState,
         _currentDate,
