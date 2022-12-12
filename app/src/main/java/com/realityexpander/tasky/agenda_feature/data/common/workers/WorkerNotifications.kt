@@ -13,10 +13,7 @@ import com.realityexpander.tasky.agenda_feature.domain.IWorkerNotifications
 class WorkerNotificationsImpl(val context: Context): IWorkerNotifications {
 
     init {
-        createNotificationChannel(
-            WORKER_NOTIFICATION_CHANNEL_ID,
-            WORKER_NOTIFICATION_CHANNEL_DESCRIPTION,
-        )
+        createNotificationChannel()
     }
 
     override fun createNotification(
@@ -57,13 +54,10 @@ class WorkerNotificationsImpl(val context: Context): IWorkerNotifications {
     /////////////////////////////
     //// HELPERS ////////////////
 
-    private fun createNotificationChannel(
-        channelId: String,
-        channelDescription: String
-    ) {
+    private fun createNotificationChannel() {
         val channel = NotificationChannel(
-            channelId,
-            channelDescription,
+            WORKER_NOTIFICATION_CHANNEL_ID,
+            WORKER_NOTIFICATION_CHANNEL_DESCRIPTION,
             NotificationManager.IMPORTANCE_LOW,
         )
         val notificationManager =
