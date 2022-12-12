@@ -3,15 +3,16 @@ package com.realityexpander.tasky.core.util.ConnectivityObserver
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
-import com.realityexpander.observeconnectivity.IConnectivityObserver
+import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import logcat.logcat
 
-class ConnectivityObserverImpl(
+class InternetConnectivityObserverImpl(
     private val context: Context
-): IConnectivityObserver {
+): IInternetConnectivityObserver {
 
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -23,9 +24,12 @@ class ConnectivityObserverImpl(
             get() {
                 val runtime = Runtime.getRuntime()
                 try {
-                    val ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8")
+                    logcat { "isInternetAvailable() - Checking internet availability with a ping..." }
+                    // send ping to 8.8.8.8, wait max 800ms for reply
+                    val ipProcess = runtime.exec("/system/bin/ping -W 800 -c 1 8.8.8.8")
 
                     val exitValue = ipProcess.waitFor()
+                    logcat { "isInternetAvailable() - Connectivity Available=${exitValue==0}" }
                     return (exitValue == 0)
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -34,32 +38,43 @@ class ConnectivityObserverImpl(
             }
     }
 
-    override fun observe(): Flow<IConnectivityObserver.Status> {
+    override fun observe(): Flow<IInternetConnectivityObserver.Status> {
 
         return callbackFlow {
 
             val callback = object : ConnectivityManager.NetworkCallback() {
                     override fun onAvailable(network: Network) {
                         super.onAvailable(network)
-                        trySend(IConnectivityObserver.Status.Available)
-                        //launch { send(ConnectivityObserver.Status.Available) } // can also use `offer`
+
+                        logcat { "NetworkCallback - onAvailable" }
+                        if(isInternetAvailable)
+                            trySend(IInternetConnectivityObserver.Status.Available)
+                            //launch { send(ConnectivityObserver.Status.Available) } // can also use `offer`
+                        else
+                            trySend(IInternetConnectivityObserver.Status.Unavailable)
                     }
 
                     override fun onLosing(network: Network, maxMsToLive: Int) {
                         super.onLosing(network, maxMsToLive)
-                        trySend(IConnectivityObserver.Status.Losing)
+
+                        logcat { "NetworkCallback - onLosing" }
+                        trySend(IInternetConnectivityObserver.Status.Losing)
                         //launch { send(ConnectivityObserver.Status.Losing) }
                     }
 
                     override fun onLost(network: Network) {
                         super.onLost(network)
-                        trySend(IConnectivityObserver.Status.Lost)
+
+                        logcat { "NetworkCallback - onLost" }
+                        trySend(IInternetConnectivityObserver.Status.Lost)
                         //launch { send(ConnectivityObserver.Status.Lost) }
                     }
 
                     override fun onUnavailable() {
                         super.onUnavailable()
-                        trySend(IConnectivityObserver.Status.Unavailable)
+
+                        logcat { "NetworkCallback - onUnavailable" }
+                        trySend(IInternetConnectivityObserver.Status.Unavailable)
                         //launch { send(ConnectivityObserver.Status.Unavailable) }
                     }
                 }

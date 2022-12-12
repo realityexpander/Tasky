@@ -1,8 +1,8 @@
 package com.realityexpander.tasky.di
 
 import android.content.Context
-import com.realityexpander.tasky.core.util.ConnectivityObserver.ConnectivityObserverImpl
-import com.realityexpander.observeconnectivity.IConnectivityObserver
+import com.realityexpander.tasky.core.util.ConnectivityObserver.InternetConnectivityObserverImpl
+import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +18,7 @@ object ConnectivityObserverModule {
     @Singleton
     fun provideConnectivityObserverProd(
         @ApplicationContext context: Context
-    ): IConnectivityObserver {
-        return ConnectivityObserverImpl(context)
+    ): IInternetConnectivityObserver {
+        return InternetConnectivityObserverImpl(context)
     }
 }

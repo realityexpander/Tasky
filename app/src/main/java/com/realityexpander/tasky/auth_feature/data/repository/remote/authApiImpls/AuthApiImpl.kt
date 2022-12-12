@@ -6,7 +6,7 @@ import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import com.realityexpander.tasky.core.data.remote.utils.getErrorBodyMessage
 import com.realityexpander.tasky.core.util.*
-import com.realityexpander.tasky.core.util.ConnectivityObserver.ConnectivityObserverImpl.Companion.isInternetAvailable
+import com.realityexpander.tasky.core.util.ConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetAvailable
 import retrofit2.HttpException
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException

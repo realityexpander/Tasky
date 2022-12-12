@@ -3,7 +3,7 @@ package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.realityexpander.observeconnectivity.IConnectivityObserver
+import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
@@ -32,7 +32,7 @@ class AgendaViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     private val agendaRepository: IAgendaRepository,
     private val savedStateHandle: SavedStateHandle,
-    private val connectivityObserver: IConnectivityObserver
+    private val connectivityObserver: IInternetConnectivityObserver
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)
@@ -48,7 +48,7 @@ class AgendaViewModel @Inject constructor(
     private val _selectedDayIndex = MutableStateFlow(selectedDayIndex)
 
     val connectivityState = connectivityObserver.observe().mapLatest { it }
-    private var prevConnectivityStatus = IConnectivityObserver.Status.Available
+    private var prevConnectivityStatus = IInternetConnectivityObserver.Status.Available
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class) // for .flatMapLatest, .flattenMerge
     private val _agendaItems =
@@ -120,7 +120,7 @@ class AgendaViewModel @Inject constructor(
         viewModelScope.launch {
             connectivityState.collect { status ->
                 if(status != prevConnectivityStatus
-                    && status == IConnectivityObserver.Status.Available
+                    && status == IInternetConnectivityObserver.Status.Available
                 ) {
                     withContext(Dispatchers.IO) {
                         agendaRepository.syncAgenda()

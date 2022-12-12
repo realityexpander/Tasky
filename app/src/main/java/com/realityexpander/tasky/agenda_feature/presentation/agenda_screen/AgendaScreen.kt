@@ -41,7 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.realityexpander.observeconnectivity.IConnectivityObserver
+import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
@@ -87,7 +87,7 @@ fun AgendaScreen(
     val state by viewModel.agendaState.collectAsState()
     val oneTimeEvent by viewModel.oneTimeEvent.collectAsState(null)
     val connectivityState by viewModel.connectivityState.collectAsState(
-        initial = IConnectivityObserver.Status.Unavailable // must start as Unavailable
+        initial = IInternetConnectivityObserver.Status.Unavailable // must start as Unavailable
     )
 
     AgendaScreenContent(
@@ -114,8 +114,8 @@ fun AgendaScreen(
     LaunchedEffect(connectivityState) {
         showOfflineBanner.value = false
 
-        if (connectivityState == IConnectivityObserver.Status.Lost
-            || connectivityState == IConnectivityObserver.Status.Unavailable
+        if (connectivityState == IInternetConnectivityObserver.Status.Lost
+            || connectivityState == IInternetConnectivityObserver.Status.Unavailable
         ) {
             delay(1000)
             showOfflineBanner.value = true

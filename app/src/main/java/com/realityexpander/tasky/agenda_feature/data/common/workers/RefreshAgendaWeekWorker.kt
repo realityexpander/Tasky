@@ -1,10 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.data.common.workers
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
-import androidx.core.app.NotificationCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.work.HiltWorker
@@ -35,6 +31,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
         logcat { "RefreshAgendaWeekWorker.doWork()" +  // leave this here for debugging
                 " attemptedRuns: ${workerParams.runAttemptCount}" +
                 " startDate: ${workerParams.inputData.getString(PARAMETER_START_DATE)}" }
+        workerParams.log()
 
         val startDate = workerParams.inputData.getString(PARAMETER_START_DATE)?.let {
             getDateForDayOffset(ZonedDateTime.parse(it), 0)
@@ -71,7 +68,6 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
     companion object {
         const val NOTIFICATION_ID = 100001
         const val WORKER_NAME = "REFRESH_AGENDA_WEEK_WORKER"
-        const val NOTIFICATION_CHANNEL_ID = NOTIFICATION_SYNC_WORKER_CHANNEL_ID
 
         const val PARAMETER_START_DATE = "startDate"
         const val START_DAY_OFFSET = -5
@@ -79,28 +75,33 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
     }
 
     init {
-        val channel = NotificationChannel(
-            NOTIFICATION_CHANNEL_ID,
-            context.getString(R.string.agenda_sync_refresh_worker_human_readable_notification_channel),
-            NotificationManager.IMPORTANCE_LOW,
+        WorkerNotifications.createNotificationChannel(
+            context,
+            WORKER_NOTIFICATION_CHANNEL_ID,
+            context.getString(R.string.agenda_sync_refresh_worker_human_readable_notification_channel)
         )
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
-        return ForegroundInfo(NOTIFICATION_ID, createNotification())
-    }
-
-    private fun createNotification(): Notification {
-        return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle(context.getString(R.string.agenda_sync_notification_title))
-            .setContentText(context.getString(R.string.agenda_sync_notification_content_text))
-            .setSmallIcon(R.drawable.ic_notification_sync_agenda_small_icon_foreground)
-            .setColor(ResourcesCompat.getColor(context.resources, R.color.tasky_green, null))
-            .setLargeIcon(ResourcesCompat.getDrawable(context.resources, R.drawable.tasky_logo_for_splash, null)?.toBitmap(100,100))
-            .setAutoCancel(true)
-            .build()
+        return ForegroundInfo(
+            NOTIFICATION_ID,
+            WorkerNotifications.createNotification(
+                context,
+                title = context.getString(R.string.agenda_sync_notification_title),
+                description = context.getString(R.string.agenda_sync_notification_content_text),
+                icon = R.drawable.ic_notification_sync_agenda_small_icon_foreground,
+                iconTintColor = ResourcesCompat.getColor(
+                    context.resources,
+                    R.color.tasky_green,
+                    null
+                ),
+                largeIcon = ResourcesCompat.getDrawable(
+                    context.resources,
+                    R.drawable.tasky_logo_for_splash,
+                    null
+                )?.toBitmap(100,100)
+            )
+        )
     }
 }
 
