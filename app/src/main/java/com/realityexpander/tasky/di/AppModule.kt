@@ -79,6 +79,9 @@ const val USE_FAKE_REPOSITORY = false
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    //////////////////////////////////////////
+    // Remind At Alarms & Notifications
+
     @Provides
     @Singleton
     fun provideRemindAtAlarmManager(@ApplicationContext context: Context): IRemindAtAlarmManager {
@@ -91,11 +94,17 @@ object AppModule {
         return RemindAtNotificationManagerImpl(context)
     }
 
+    ///////////////////////////////////////////
+    // Worker Notifications
+
     @Provides
     @Singleton
     fun provideWorkerNotifications(@ApplicationContext context: Context): IWorkerNotifications {
         return WorkerNotificationsImpl(context)
     }
+
+    ///////////////////////////////////////////
+    // Serialization for  (& JSON Pretty Print)
 
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
@@ -105,10 +114,14 @@ object AppModule {
         val json = Json {
             ignoreUnknownKeys = true
             isLenient = true
+            prettyPrint = true
         }
 
         return json.asConverterFactory(contentType)
     }
+
+    ///////////////////////////////////////////
+    // Networking (OkHttp & Retrofit)
 
     @Provides
     @Singleton
@@ -194,6 +207,9 @@ object AppModule {
         }
     }
 
+    ///////////////////////////////////////////
+    // Tasky API
+
     @Provides
     @Singleton
     fun provideTaskyApi(
@@ -205,7 +221,7 @@ object AppModule {
         return Retrofit.Builder()
             .baseUrl(TaskyApi.BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(converterFactory)
+            .addConverterFactory(converterFactory)  // for serialization
             .build()
             .create()
     }
