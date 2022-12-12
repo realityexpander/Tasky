@@ -3,8 +3,8 @@ package com.realityexpander.tasky.core.presentation.broadcastReceivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManager
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManager.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -19,6 +19,6 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
             return
         }
 
-        RemindAtNotificationManager.showNotification(context, alarmIntent)
+        RemindAtNotificationManagerImpl.showNotification(context, alarmIntent)
     }
 }

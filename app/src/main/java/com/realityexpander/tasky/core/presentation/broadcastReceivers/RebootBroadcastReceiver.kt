@@ -4,8 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls.AgendaRepositoryImpl
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtAlarmManager.cancelAllAlarms
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtAlarmManager.setAlarmsForAgendaItems
+import com.realityexpander.tasky.agenda_feature.domain.IRemindAtAlarmManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
@@ -21,6 +20,9 @@ class RebootBroadcastReceiver : BroadcastReceiver() {
     @Inject
     lateinit var repository: AgendaRepositoryImpl
 
+    @Inject
+    lateinit var remindAtAlarmManager: IRemindAtAlarmManager
+
     override fun onReceive(context: Context?, intent: Intent?) {
         context ?: return
         intent ?: return
@@ -35,11 +37,11 @@ class RebootBroadcastReceiver : BroadcastReceiver() {
                             ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).plusDays(14)
                         ).first()
 
-                    setAlarmsForAgendaItems(context, agendaItems)
+                    remindAtAlarmManager.setAlarmsForAgendaItems(agendaItems)
                 }
             }
             Intent.ACTION_SHUTDOWN -> {
-                cancelAllAlarms(context) // just in case
+                remindAtAlarmManager.cancelAllAlarms() // just to be symmetrical
             }
         }
     }

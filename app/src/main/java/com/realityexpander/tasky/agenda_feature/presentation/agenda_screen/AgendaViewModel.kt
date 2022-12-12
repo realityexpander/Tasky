@@ -7,10 +7,7 @@ import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
 import com.realityexpander.observeconnectivity.IInternetConnectivityObserver.OnlineStatus
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
-import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
-import com.realityexpander.tasky.agenda_feature.domain.Attendee
-import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
-import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
+import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
@@ -34,7 +31,8 @@ class AgendaViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     private val agendaRepository: IAgendaRepository,
     private val savedStateHandle: SavedStateHandle,
-    private val connectivityObserver: IInternetConnectivityObserver
+    private val connectivityObserver: IInternetConnectivityObserver,
+    private val remindAtAlarmManager: IRemindAtAlarmManager
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)
@@ -97,6 +95,7 @@ class AgendaViewModel @Inject constructor(
     private val _oneTimeEvent = MutableSharedFlow<OneTimeEvent>()
     val oneTimeEvent = _oneTimeEvent.asSharedFlow()
 
+    // Tick timer to update the time needle
     private val _zonedDateTimeNow = MutableStateFlow<ZonedDateTime>(ZonedDateTime.now())
     val zonedDateTimeNow = _zonedDateTimeNow.asStateFlow()
     private val timer = Timer()
@@ -149,7 +148,10 @@ class AgendaViewModel @Inject constructor(
                 )
                 .debounce(500)
                 .collect { agendaItems ->
-                    _oneTimeEvent.emit(OneTimeEvent.SetAllAgendaItemAlarms(agendaItems))
+//                    _oneTimeEvent.emit(OneTimeEvent.SetAllAgendaItemAlarms(agendaItems))
+                    remindAtAlarmManager.cancelAllAlarms {
+                        remindAtAlarmManager.setAlarmsForAgendaItems(agendaItems)
+                    }
                 }
         }
 
@@ -364,9 +366,12 @@ class AgendaViewModel @Inject constructor(
             is OneTimeEvent.NavigateToOpenReminder -> {
                 _oneTimeEvent.emit(OneTimeEvent.NavigateToOpenReminder(uiEvent.reminderId))
             }
-            is OneTimeEvent.SetAllAgendaItemAlarms -> {
-                _oneTimeEvent.emit(OneTimeEvent.SetAllAgendaItemAlarms(uiEvent.agendaItems))
-            }
+//            is OneTimeEvent.SetAllAgendaItemAlarms -> {
+////                remindAtAlarmManager.cancelAllAlarms {
+////                    remindAtAlarmManager.setAlarmsForAgendaItems(uiEvent.agendaItems)
+////                }
+////                _oneTimeEvent.emit(OneTimeEvent.SetAllAgendaItemAlarms(uiEvent.agendaItems))
+//            }
         }
     }
 

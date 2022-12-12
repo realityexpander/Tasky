@@ -9,24 +9,28 @@ import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IRemindAtAlarmManager
 import com.realityexpander.tasky.core.presentation.broadcastReceivers.AlarmBroadcastReceiver
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManager.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManager.ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManager.ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID
 import com.realityexpander.tasky.core.util.toUtcMillis
 import com.realityexpander.tasky.core.util.toZonedDateTime
 import logcat.logcat
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
+import javax.inject.Inject
 
-object RemindAtAlarmManager : IRemindAtAlarmManager {
+class RemindAtAlarmManagerImpl @Inject constructor(
+    val context: Context,
+) : IRemindAtAlarmManager {
 
-    private const val CURRENT_ALARMS_PENDING_INTENTS = "CURRENT_ALARMS_PENDING_INTENTS"
-    private const val CURRENT_ALARMS_TITLES = "CURRENT_ALARMS_TITLES"
+    companion object {
+        private const val CURRENT_ALARMS_PENDING_INTENTS = "CURRENT_ALARMS_PENDING_INTENTS"
+        private const val CURRENT_ALARMS_TITLES = "CURRENT_ALARMS_TITLES"
 
-    private const val REMIND_AT_ALARM_SUPERVISOR_REQUEST_CODE = 1
+        private const val REMIND_AT_ALARM_SUPERVISOR_REQUEST_CODE = 1
+    }
 
     override fun setAlarmsForAgendaItems(
-        context: Context,
         agendaItems: List<AgendaItem>
     ) {
         logcat { "setAlarmsForAgendaItems: agendaItems = $agendaItems" }
@@ -45,7 +49,7 @@ object RemindAtAlarmManager : IRemindAtAlarmManager {
         val alarmPendingIntents = mutableListOf<PendingIntent>()
         futureAgendaItems.forEachIndexed { alarmIndex, agendaItem ->
             val newAlarmPendingIntent =
-                createAlarmPendingIntentAndSetAlarm(context, agendaItem, alarmIndex)
+                createAlarmPendingIntentAndSetAlarm(agendaItem, alarmIndex)
             alarmPendingIntents.add(newAlarmPendingIntent)
         }
 
@@ -71,7 +75,6 @@ object RemindAtAlarmManager : IRemindAtAlarmManager {
     }
 
     override fun cancelAllAlarms(
-        context: Context,
         onFinished: () -> Unit,  // optional callback after all alarms are cancelled.
     ) {
         // Based on: https://stackoverflow.com/questions/4315611/android-get-all-pendingintents-set-with-alarmmanager
@@ -121,7 +124,6 @@ object RemindAtAlarmManager : IRemindAtAlarmManager {
     ////////// HELPER FUNCTIONS //////////
 
     private fun createAlarmPendingIntentAndSetAlarm(
-        context: Context,
         agendaItem: AgendaItem,
         alarmId: Int,
     ): PendingIntent {

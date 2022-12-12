@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.room.Room
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls.EventRepositoryImpl
 import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
 import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.reminderRepositoryImpls.ReminderRepositoryImpl
 import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.reminderApiImpls.ReminderApiImpl
@@ -17,6 +16,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeReposi
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.attendeeRepositoryImpls.AttendeeRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.remote.AttendeeApiImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.remote.IAttendeeApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.eventRepositoryImpls.EventRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.IEventDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.eventApiImpls.EventApiImpl
@@ -30,10 +30,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.ITaskApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.taskApi.taskApiImpls.TaskApiImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.taskRepositoryImpls.TaskRepositoryImpl
-import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
-import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
-import com.realityexpander.tasky.agenda_feature.domain.IReminderRepository
-import com.realityexpander.tasky.agenda_feature.domain.ITaskRepository
+import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryImpl
 import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
@@ -48,6 +45,7 @@ import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import com.realityexpander.tasky.core.data.remote.TaskyApi.Companion.API_KEY
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtAlarmManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -78,6 +76,12 @@ const val USE_FAKE_REPOSITORY = false
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Provides
+    @Singleton
+    fun provideRemindAtAlarmManager(@ApplicationContext context: Context): IRemindAtAlarmManager {
+        return RemindAtAlarmManagerImpl(context)
+    }
 
     @OptIn(ExperimentalSerializationApi::class)
     @Provides

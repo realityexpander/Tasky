@@ -38,7 +38,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 
-object RemindAtNotificationManager : IRemindAtNotificationManager {
+object RemindAtNotificationManagerImpl : IRemindAtNotificationManager {
 
     // Notification Channel
     const val ALARM_NOTIFICATION_CHANNEL_ID =

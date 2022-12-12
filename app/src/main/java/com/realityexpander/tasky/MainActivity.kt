@@ -23,8 +23,8 @@ import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.realityexpander.tasky.auth_feature.presentation.splash_screen.MainActivityViewModel
 import com.realityexpander.tasky.core.data.settings.AppSettingsSerializer
 import com.realityexpander.tasky.core.data.settings.saveSettingsInitialized
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManager
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManager.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.util.dumpIntentExtras
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
 //        }
         super.onCreate(savedInstanceState)
 
-        RemindAtNotificationManager.createNotificationChannel(this)
+        RemindAtNotificationManagerImpl.createNotificationChannel(this)
 
         // Check for Alarm Intent
         if (intent?.action == ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER) {
@@ -159,7 +159,7 @@ class MainActivity : ComponentActivity() {
 
         // Handle Alarm Notification
         if (intent?.action == ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER) {
-            RemindAtNotificationManager.showNotification(this, intent)
+            RemindAtNotificationManagerImpl.showNotification(this, intent)
         }
     }
 

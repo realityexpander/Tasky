@@ -65,6 +65,6 @@ sealed interface AgendaScreenEvent {
         data class NavigateToOpenReminder(val reminderId: TaskId) : AgendaScreenEvent, OneTimeEvent
         data class NavigateToEditReminder(val reminderId: TaskId) : AgendaScreenEvent, OneTimeEvent
 
-        data class SetAllAgendaItemAlarms(val agendaItems: List<AgendaItem>) : AgendaScreenEvent, OneTimeEvent
+//        data class SetAllAgendaItemAlarms(val agendaItems: List<AgendaItem>) : AgendaScreenEvent, OneTimeEvent
     }
 }

@@ -57,8 +57,6 @@ import com.realityexpander.tasky.agenda_feature.presentation.common.util.toZoned
 import com.realityexpander.tasky.agenda_feature.presentation.components.AgendaCard
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtAlarmManager
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtAlarmManager.cancelAllAlarms
 import com.realityexpander.tasky.core.presentation.theme.DaySelected
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
@@ -329,11 +327,11 @@ fun AgendaScreenContent(
                     ), Toast.LENGTH_SHORT
                 ).show()
             }
-            is OneTimeEvent.SetAllAgendaItemAlarms -> {
-                cancelAllAlarms(context) {
-                    RemindAtAlarmManager.setAlarmsForAgendaItems(context, agendaItems)
-                }
-            }
+//            is OneTimeEvent.SetAllAgendaItemAlarms -> {
+//                cancelAllAlarms(context) {
+//                    RemindAtAlarmManagerImpl.setAlarmsForAgendaItems(context, agendaItems)
+//                }
+//            }
             null -> {}
         }
     }
