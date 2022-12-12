@@ -6,12 +6,14 @@ import android.content.Intent
 import com.realityexpander.tasky.agenda_feature.domain.IRemindAtNotificationManager
 import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.Companion.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class AlarmBroadcastReceiver(
-    private val remindAtNotificationManager: IRemindAtNotificationManager
-) : BroadcastReceiver() {
+class AlarmBroadcastReceiver() : BroadcastReceiver() {
+
+    @Inject
+    lateinit var remindAtNotificationManager: IRemindAtNotificationManager
 
     override fun onReceive(context: Context?, alarmIntent: Intent?) {
         alarmIntent ?: return

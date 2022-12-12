@@ -24,10 +24,6 @@ class MainActivityViewModel @Inject constructor(
     private val _splashState = MutableStateFlow(SplashState())
     val splashState = _splashState.asStateFlow()
 
-    init {
-        remindAtNotificationManager.createNotificationChannel()
-    }
-
     fun onIntentReceived(intent: Intent?) {
         intent ?: return
 

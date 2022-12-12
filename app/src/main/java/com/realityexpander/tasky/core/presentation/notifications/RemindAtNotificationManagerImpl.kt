@@ -40,6 +40,10 @@ import java.util.*
 
 class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificationManager {
 
+    init {
+        createNotificationChannel()
+    }
+
     companion object {
         // Notification Channel
         const val ALARM_NOTIFICATION_CHANNEL_ID =
@@ -322,18 +326,21 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
         val textPaint = TextPaint(paint)
         textPaint.textSize = 20f
         textPaint.isAntiAlias = true
+        val paddingEnd = 40
 
         val textLayout = StaticLayout.Builder
-            .obtain(text, 0, text.length, textPaint, width - 30)
+            .obtain(text, 0, text.length, textPaint, width - paddingEnd)
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
             .setLineSpacing(0f, 1f)
             .setIncludePad(false)
+            .setEllipsizedWidth(width - paddingEnd)
             .setMaxLines(
-                if (agendaItemTypeStr.toAgendaItemType() == AgendaItemType.Task) 2 else 4
+                if (agendaItemTypeStr.toAgendaItemType() == AgendaItemType.Task) 5 else 7
             )
             .setEllipsize(TextUtils.TruncateAt.END)
             .build()
 
+        logcat { "textLayout.height = ${textLayout.height}" }
         this.save()
         this.translate(x, y)
         textLayout.draw(this)
