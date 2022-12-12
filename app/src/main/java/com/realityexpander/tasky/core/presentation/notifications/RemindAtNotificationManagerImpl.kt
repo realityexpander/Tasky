@@ -16,6 +16,7 @@ import android.graphics.Paint
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
+import android.text.TextUtils
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -290,6 +291,8 @@ class RemindAtNotificationManagerImpl @Inject constructor(
 
         val offsetY2ForTask = if (agendaItemTypeStr == AgendaItemType.Task.typeNameStr) 15 else 0
 
+        val descriptionText = if (description.isBlank()) "<No description>" else description
+
         // Draw the description text on the Canvas
         canvas.drawTextBlock(
             "⏰ $title\n" +
@@ -297,7 +300,7 @@ class RemindAtNotificationManagerImpl @Inject constructor(
                         startDateTimeUtcMillis.toZonedDateTime()
                             .format(DateTimeFormatter.ofPattern("h:mm a, E MMM d"))
                     }\n\n" +
-                    "• $description",
+                    "• $descriptionText",
             20f,
             70f + offsetY2ForTask,
             width,
@@ -326,6 +329,8 @@ class RemindAtNotificationManagerImpl @Inject constructor(
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
             .setLineSpacing(0f, 1f)
             .setIncludePad(false)
+            .setMaxLines(4)
+            .setEllipsize(TextUtils.TruncateAt.END)
             .build()
 
         this.save()
