@@ -1,24 +1,20 @@
 package com.realityexpander.tasky.agenda_feature.data.common.workers
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
-import android.util.Log
-import androidx.core.app.NotificationCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.work.HiltWorker
-import androidx.work.CoroutineWorker
-import androidx.work.WorkerParameters
+import androidx.work.*
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.delay
+import logcat.logcat
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
+import java.util.concurrent.TimeUnit
 
 // Worker to synchronize offline actions for the Agenda for the current day
 //   & download any new items for the current day.
@@ -31,8 +27,26 @@ class SyncAgendaWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
 
-        Log.d("SyncAgendaWorker", "SyncAgendaWorker.doWork()attemptedRuns: ${workerParams.runAttemptCount}")
-        showNotification(createNotification())
+        logcat { "SyncAgendaWorker.doWork() attemptedRuns: ${workerParams.runAttemptCount}" }
+        workerParams.log()
+
+        WorkerNotifications.showNotification(
+            context,
+            WorkerNotifications.createNotification(
+                context,
+                title = context.getString(R.string.agenda_sync_notification_title),
+                description = context.getString(R.string.agenda_sync_uploading_items_text),
+                icon = R.drawable.ic_notification_sync_upload_foreground,
+                iconTintColor = ResourcesCompat.getColor(
+                    context.resources,
+                    R.color.tasky_green, null),
+                largeIcon = ResourcesCompat.getDrawable(
+                    context.resources,
+                    R.drawable.tasky_logo_for_splash, null
+                )?.toBitmap(100,100)
+            ),
+            SyncAgendaWorker.NOTIFICATION_ID
+        )
 
         // Push up local changes to remote
         val resultSyncAgenda = agendaRepository.syncAgenda()
@@ -44,14 +58,14 @@ class SyncAgendaWorker @AssistedInject constructor(
             )
 
             delay(3000) // prevent flashing notification
-            clearNotification()
+            WorkerNotifications.clearNotification(context, NOTIFICATION_ID)
 
             return when (resultUpdateLocalAgenda) {
                 is ResultUiText.Success -> Result.success()
                 is ResultUiText.Error -> Result.failure()
             }
         }
-        clearNotification()
+        WorkerNotifications.clearNotification(context, NOTIFICATION_ID)
 
         return Result.failure()
     }
@@ -59,37 +73,33 @@ class SyncAgendaWorker @AssistedInject constructor(
     companion object {
         const val WORKER_NAME = "SYNC_AGENDA_WORKER"
         const val NOTIFICATION_ID = 100002
-        const val NOTIFICATION_CHANNEL_ID = NOTIFICATION_SYNC_WORKER_CHANNEL_ID
     }
 
     init {
-        val channel = NotificationChannel(
-            NOTIFICATION_CHANNEL_ID,
-            WORKER_NAME,
-            NotificationManager.IMPORTANCE_LOW,
+        WorkerNotifications.createNotificationChannel(
+            context,
+            WORKER_NOTIFICATION_CHANNEL_ID,
+            context.getString(R.string.agenda_sync_sync_worker_human_readable_notification_channel)
         )
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
     }
+}
 
-    private fun showNotification(notification: Notification) {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(NOTIFICATION_ID, notification)
-    }
-
-    private fun clearNotification() {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancel(NOTIFICATION_ID)
-    }
-
-    private fun createNotification(): Notification {
-        return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle(context.getString(R.string.agenda_sync_notification_title))
-            .setContentText(context.getString(R.string.agenda_sync_uploading_items_text))
-            .setSmallIcon(R.drawable.ic_notification_sync_upload_foreground)
-            .setColor(ResourcesCompat.getColor(context.resources, R.color.tasky_green, null))
-            .setLargeIcon(ResourcesCompat.getDrawable(context.resources, R.drawable.tasky_logo_for_splash, null)?.toBitmap(100,100))
-            .setAutoCancel(true)
+// • Start the periodic SyncAgenda Worker (Clear the old one first)
+fun startSyncAgendaWorker(applicationContext: Context) {
+    val syncAgendaWorkerConstraints: Constraints = Constraints.Builder().apply {
+        setRequiredNetworkType(NetworkType.CONNECTED)
+        setRequiresBatteryNotLow(true)
+    }.build()
+    val workRequest =
+        PeriodicWorkRequestBuilder<SyncAgendaWorker>(15, TimeUnit.MINUTES)
+            .setConstraints(syncAgendaWorkerConstraints)
+            .setInitialDelay(2, TimeUnit.MINUTES)
+            .addTag(SyncAgendaWorker.WORKER_NAME)
+            .addTag(TASKY_WORKERS_TAG)
             .build()
+    WorkManager.getInstance(applicationContext).apply {
+        cancelAllWorkByTag(SyncAgendaWorker.WORKER_NAME)
+        pruneWork()
+        enqueue(workRequest)
     }
 }

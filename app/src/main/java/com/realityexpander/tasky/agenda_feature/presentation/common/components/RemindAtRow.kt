@@ -24,6 +24,7 @@ import com.realityexpander.tasky.agenda_feature.util.toTimeDifferenceHumanReadab
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.common.modifiers.smallWidth
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 @Composable
 fun ColumnScope.RemindAtRow(
@@ -103,31 +104,31 @@ fun ColumnScope.RemindAtRow(
                 MenuItem(
                     title = "10 minutes before",
                     onClick = {
-                        onSaveRemindAtDateTime(fromDateTime.minusMinutes(10))
+                        onSaveRemindAtDateTime(fromDateTime.minusMinutes(10).truncatedTo(ChronoUnit.SECONDS))
                     },
                 )
                 MenuItem(
                     title = "30 minutes before",
                     onClick = {
-                        onSaveRemindAtDateTime(fromDateTime.minusMinutes(30))
+                        onSaveRemindAtDateTime(fromDateTime.minusMinutes(30).truncatedTo(ChronoUnit.SECONDS))
                     },
                 )
                 MenuItem(
                     title = "1 hour before",
                     onClick = {
-                        onSaveRemindAtDateTime(fromDateTime.minusHours(1))
+                        onSaveRemindAtDateTime(fromDateTime.minusHours(1).truncatedTo(ChronoUnit.SECONDS))
                     },
                 )
                 MenuItem(
                     title = "6 hours before",
                     onClick = {
-                        onSaveRemindAtDateTime(fromDateTime.minusHours(6))
+                        onSaveRemindAtDateTime(fromDateTime.minusHours(6).truncatedTo(ChronoUnit.SECONDS))
                     },
                 )
                 MenuItem(
                     title = "1 day before",
                     onClick = {
-                        onSaveRemindAtDateTime(fromDateTime.minusDays(1))
+                        onSaveRemindAtDateTime(fromDateTime.minusDays(1).truncatedTo(ChronoUnit.SECONDS))
                     },
                 )
             }

@@ -43,7 +43,8 @@ interface TaskDaoImpl : ITaskDao {
 
     @Query("SELECT * FROM tasks")
     override suspend fun getTasks(): List<TaskEntity>
-//
+
+    //
     @Query("SELECT * FROM tasks")
     override fun getTasksFlow(): Flow<List<TaskEntity>>
 
@@ -52,6 +53,16 @@ interface TaskDaoImpl : ITaskDao {
 
     @Query(getTasksForDayQuery)
     override fun getTasksForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<TaskEntity>>  // note: ZonedDateTime gets converted to UTC EpochSeconds for storage in the DB.
+
+    @Query(
+        """
+        SELECT * FROM tasks WHERE 
+            ( `remindAt` >= :startDateTime) AND (`remindAt` < :endDateTime) -- remindAt starts within DateTime range
+        """)
+    override fun getTasksForRemindAtDateTimeRangeFlow(
+        startDateTime: ZonedDateTime,
+        endDateTime: ZonedDateTime
+    ): Flow<List<TaskEntity>>  // note: ZonedDateTime gets converted to UTC EpochSeconds for storage in the DB.
 
 
     // • UPDATE
@@ -75,7 +86,12 @@ interface TaskDaoImpl : ITaskDao {
     override suspend fun clearAllTasks(): Int
 
     // Deletes all SYNCED tasks for the given day.
-    @Query(deleteTasksForDayQuery)
+    @Query(
+        """
+        DELETE FROM tasks WHERE
+           isSynced = 1
+           AND ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `time` start this today
+        """)
     override suspend fun clearAllSyncedTasksForDay(zonedDateTime: ZonedDateTime): Int
 
     companion object {
@@ -83,15 +99,8 @@ interface TaskDaoImpl : ITaskDao {
         const val getTasksForDayQuery =
             """
             SELECT * FROM tasks WHERE 
-                    ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- task starts this day
+                ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- task starts this day
                 
-            """
-
-        const val deleteTasksForDayQuery =
-            """
-            DELETE FROM tasks WHERE
-               isSynced = 1
-               AND ( ( `time` >= :zonedDateTime) AND (`time` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `time` start this today
             """
     }
 }

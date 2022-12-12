@@ -30,10 +30,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.ITaskApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.taskApi.taskApiImpls.TaskApiImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.taskRepositoryImpls.TaskRepositoryImpl
-import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
-import com.realityexpander.tasky.agenda_feature.domain.IEventRepository
-import com.realityexpander.tasky.agenda_feature.domain.IReminderRepository
-import com.realityexpander.tasky.agenda_feature.domain.ITaskRepository
+import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryImpl
 import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
@@ -48,6 +45,7 @@ import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import com.realityexpander.tasky.core.data.remote.TaskyApi.Companion.API_KEY
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtAlarmManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -78,6 +76,12 @@ const val USE_FAKE_REPOSITORY = false
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Provides
+    @Singleton
+    fun provideRemindAtAlarmManager(@ApplicationContext context: Context): IRemindAtAlarmManager {
+        return RemindAtAlarmManagerImpl(context)
+    }
 
     @OptIn(ExperimentalSerializationApi::class)
     @Provides

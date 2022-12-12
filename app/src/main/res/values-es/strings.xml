@@ -13,6 +13,7 @@
 
     <!-- general messages -->
     <string name="no_internet">📡 Red fuera de línea</string>
+    <string name="error_no_internet">Sin conectividad a Internet</string>
 
     <!--    Login Screen -->
     <string name="login_title">¡Bienvenido de nuevo!</string>
@@ -112,7 +113,6 @@
     <string name="agenda_choose_current_date_dialog_today_button_text">Este Día</string>
     <string name="agenda_isDone_icon_description">Indicar completado</string>
     <string name="agenda_empty_list">No hay puntos de agenda para este día</string>
-
     <string name="description_title_marker">Marcador de título de reunión</string>
 
     <!--    Event screen -->
@@ -182,13 +182,15 @@
     <string name="attendee_add_attendee_api_error">Error de Api: se esperaba un objeto de asistente y no se encontró</string>
     <string name="attendee_remove_attendee_dialog_remove_button">RETIRAR</string>
 
-    <!--    Agenda Sync -->
+    <!--    Workers - Sync & Refresh -->
     <string name="agenda_sync_error">No se pudo sincronizar la agenda</string>
     <string name="error_syncing_agenda">Error al sincronizar la agenda</string>
     <string name="error_sync_failed">Sincronización fallida</string>
     <string name="agenda_sync_notification_title">Tasky sincronizando agenda…</string>
     <string name="agenda_sync_notification_content_text">Sincronizando Agenda de la semana pasada y esta semana</string>
     <string name="agenda_sync_uploading_items_text">Cargar elementos de la agenda creados sin conexión</string>
+    <string name="agenda_sync_refresh_worker_human_readable_notification_channel">Actualizar Agenda Semana Trabajador</string>
+    <string name="agenda_sync_sync_worker_human_readable_notification_channel">Trabajador de agenda de sincronización</string>
 
     <!--    Task screen -->
     <string name="task_description_close">Cerrar pantalla de tareas</string>
@@ -221,5 +223,9 @@
     <string name="reminder_error_delete_reminder">Error al eliminar el recordatorio</string>
     <string name="reminder_message_reminder_saved">Recordatorio guardado</string>
     <string name="reminder_message_reminder_deleted_success">Recordatorio eliminado con éxito</string>
+
+    <!--    Notifications -->
+    <string name="notifications_alarm_remind_at_subtext">%1$s comenzando pronto</string>
+    <string name="agenda_notifications_complete_task_button">Tarea completa</string>
 
 </resources>

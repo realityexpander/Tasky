@@ -23,4 +23,6 @@ data class TaskDTO(
 
     @Transient
     override val startTime: ZonedDateTime = time.toZonedDateTime(), // for sorting in Agenda
+    @Transient
+    override val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime(),
 ) : AgendaItem()

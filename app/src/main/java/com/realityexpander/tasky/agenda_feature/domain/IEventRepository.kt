@@ -11,6 +11,7 @@ interface IEventRepository {
     suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<AgendaItem.Event>
     fun getEventsForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<AgendaItem.Event>>
     suspend fun getEvent(eventId: EventId, isLocalOnly: Boolean = false): AgendaItem.Event?
+    fun getEventsForRemindAtDateTimeRangeFlow(from: ZonedDateTime, to: ZonedDateTime): Flow<List<AgendaItem.Event>>
 
     suspend fun updateEvent(event: AgendaItem.Event, isRemoteOnly: Boolean = false): ResultUiText<AgendaItem.Event>
 

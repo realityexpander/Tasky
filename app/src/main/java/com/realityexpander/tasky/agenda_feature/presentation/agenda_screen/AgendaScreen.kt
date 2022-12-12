@@ -41,7 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.realityexpander.observeconnectivity.IConnectivityObserver
+import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
@@ -84,14 +84,19 @@ fun AgendaScreen(
 ) {
     val state by viewModel.agendaState.collectAsState()
     val oneTimeEvent by viewModel.oneTimeEvent.collectAsState(null)
-    val connectivityState by viewModel.connectivityState.collectAsState(
-        initial = IConnectivityObserver.Status.Unavailable // must start as Unavailable
+//    val connectivityState by viewModel.connectivityState.collectAsState(
+//        initial = IInternetConnectivityObserver.Status.Unavailable // must start as Unavailable
+//    )
+    val connectivityState by viewModel.onlineState.collectAsState(
+        initial = IInternetConnectivityObserver.OnlineStatus.OFFLINE // must start as Offline
     )
+    val zonedDateTimeNow by viewModel.zonedDateTimeNow.collectAsState()
 
     AgendaScreenContent(
         state = state,
         onAction = viewModel::sendEvent,
         oneTimeEvent = oneTimeEvent,
+        zonedDateTimeNow = zonedDateTimeNow,
         navigator = navigator,
     )
 
@@ -108,18 +113,19 @@ fun AgendaScreen(
     }
 
     // Offline? Show delayed warning in case starting up
-    val showOfflineBanner = remember { mutableStateOf(false) }
+    val isOfflineBannerVisible = remember { mutableStateOf(false) }
     LaunchedEffect(connectivityState) {
-        showOfflineBanner.value = false
+        isOfflineBannerVisible.value = false
 
-        if (connectivityState == IConnectivityObserver.Status.Lost
-            || connectivityState == IConnectivityObserver.Status.Unavailable
+//        if (connectivityState == IInternetConnectivityObserver.Status.Lost
+//            || connectivityState == IInternetConnectivityObserver.Status.Unavailable
+        if (connectivityState == IInternetConnectivityObserver.OnlineStatus.OFFLINE
         ) {
             delay(1000)
-            showOfflineBanner.value = true
+            isOfflineBannerVisible.value = true
         }
     }
-    AnimatedVisibility(showOfflineBanner.value) {
+    AnimatedVisibility(isOfflineBannerVisible.value) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -146,6 +152,7 @@ fun AgendaScreenContent(
     state: AgendaState,
     onAction: (AgendaScreenEvent) -> Unit,
     oneTimeEvent: OneTimeEvent?,
+    zonedDateTimeNow: ZonedDateTime,
     navigator: DestinationsNavigator,
 ) {
     val focusManager = LocalFocusManager.current
@@ -320,11 +327,16 @@ fun AgendaScreenContent(
                     ), Toast.LENGTH_SHORT
                 ).show()
             }
+//            is OneTimeEvent.SetAllAgendaItemAlarms -> {
+//                cancelAllAlarms(context) {
+//                    RemindAtAlarmManagerImpl.setAlarmsForAgendaItems(context, agendaItems)
+//                }
+//            }
             null -> {}
         }
     }
 
-    // Check keyboard open/closed (how to make this a function?)
+    // Check keyboard open/closed (how to make this a function?) // todo remove soon
     val view = LocalView.current
     var isKeyboardOpen by remember { mutableStateOf(false) }
     DisposableEffect(view) {
@@ -336,23 +348,6 @@ fun AgendaScreenContent(
 
         onDispose {
             view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
-        }
-    }
-
-    // Timer to update the time needle every second
-    val zonedDateTimeNow = remember { mutableStateOf(ZonedDateTime.now()) }
-    val timer = remember { Timer() }
-    val timerTask = remember { object : TimerTask() {
-        override fun run() {
-            zonedDateTimeNow.value = ZonedDateTime.now()
-        }
-    } }
-    DisposableEffect(true) {
-        timer.scheduleAtFixedRate(timerTask, 0, 1000)
-
-        onDispose {
-            timerTask.cancel()
-            timer.cancel()
         }
     }
 
@@ -553,7 +548,7 @@ fun AgendaScreenContent(
         )
 
         // • SHOW AGENDA ITEMS LIST
-        if(agendaItems.isNotEmpty()) {
+        if (agendaItems.isNotEmpty()) {
             LazyColumn(
                 state = scrollState,
                 modifier = Modifier
@@ -566,24 +561,27 @@ fun AgendaScreenContent(
                     agendaItem.startTime
                 }
                 val agendaItemsBeforeNow = sortedAgendaItems.filter { agendaItem ->
-                    agendaItem.startTime.isBefore(zonedDateTimeNow.value)
+                    agendaItem.startTime.isBefore(zonedDateTimeNow)
                 }
                 val agendaItemsAfterNow = sortedAgendaItems.filter { agendaItem ->
-                    agendaItem.startTime.isAfter(zonedDateTimeNow.value)
+                    agendaItem.startTime.isAfter(zonedDateTimeNow)
                 }
 
                 fun isToday() = (
                         weekStartDate.plusDays(selectedDayIndex?.toLong() ?: 0).year ==
                                 ZonedDateTime.now().year
-                                && weekStartDate.plusDays(selectedDayIndex?.toLong() ?: 0).dayOfYear ==
+                                && weekStartDate.plusDays(
+                            selectedDayIndex?.toLong() ?: 0
+                        ).dayOfYear ==
                                 ZonedDateTime.now().dayOfYear
                         )
 
                 if (!isToday() || (isToday() && agendaItemsBeforeNow.isNotEmpty())) {
                     item("before_spacer_for_today") {
-                        Spacer(modifier = Modifier
-                            .height(14.dp)
-                            .fillMaxWidth()
+                        Spacer(
+                            modifier = Modifier
+                                .height(14.dp)
+                                .fillMaxWidth()
                         )
                     }
                 }
@@ -622,7 +620,7 @@ fun AgendaScreenContent(
                                     onAction
                                 )
                             },
-                            zonedDateTimeNow = zonedDateTimeNow.value
+                            zonedDateTimeNow = zonedDateTimeNow
                         ) {
                             onActionForAgendaItem(
                                 AgendaItemAction.OPEN_DETAILS,
@@ -706,7 +704,7 @@ fun AgendaScreenContent(
                                     onAction
                                 )
                             },
-                            zonedDateTimeNow = zonedDateTimeNow.value
+                            zonedDateTimeNow = zonedDateTimeNow
                         ) {
                             onActionForAgendaItem(
                                 AgendaItemAction.OPEN_DETAILS,
@@ -997,7 +995,6 @@ fun onActionForAgendaItem(
     }
 }
 
-
 @Composable
 @Preview(
     showBackground = true,
@@ -1047,6 +1044,7 @@ fun AgendaScreenPreview() {
             ),
             onAction = { println("ACTION: $it") },
             oneTimeEvent = null,
+            zonedDateTimeNow = ZonedDateTime.now(),
             navigator = EmptyDestinationsNavigator,
         )
     }

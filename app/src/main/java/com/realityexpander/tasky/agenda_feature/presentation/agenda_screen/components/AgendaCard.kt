@@ -181,12 +181,16 @@ fun AgendaCard(
 
             // • Progress indicator for (for Events only)
             toDateTime?.let {
-                AnimatedVisibility(zonedDateTimeNow.isAfter(fromDateTime) && zonedDateTimeNow.isBefore(toDateTime)) {
+                AnimatedVisibility(
+            zonedDateTimeNow.isAfter(fromDateTime)
+                    && zonedDateTimeNow.isBefore(toDateTime)
+                ) {
+                    val timeNow = (zonedDateTimeNow.toEpochSecond() - fromDateTime.toEpochSecond()).toFloat()
+                    val totalTime = (toDateTime.toEpochSecond() - fromDateTime.toEpochSecond()).toFloat()
+                    val percentComplete = ((timeNow / totalTime )*100).roundToInt()
+
                     Text(
-                        text = "In Progress: " +
-                                ( ( (zonedDateTimeNow.toEpochSecond() - fromDateTime.toEpochSecond()).toFloat()
-                                  / (toDateTime.toEpochSecond() - fromDateTime.toEpochSecond()).toFloat() )*100)
-                                    .roundToInt() + "% Complete",
+                        text = "In Progress: $percentComplete% Complete",
                         textAlign = TextAlign.End,
                         style = MaterialTheme.typography.subtitle1,
                         modifier = Modifier

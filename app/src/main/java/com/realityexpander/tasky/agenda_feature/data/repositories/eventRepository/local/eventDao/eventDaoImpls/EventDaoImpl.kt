@@ -35,6 +35,16 @@ interface EventDaoImpl : IEventDao {
     @Query(getEventsForDayQuery)
     override fun getEventsForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<EventEntity>>  // note: ZonedDateTime gets converted to UTC EpochSeconds for storage in the DB.
 
+    @Query(
+        """
+        SELECT * FROM events WHERE  
+            ( `remindAt` >= :startDateTime) AND (`remindAt` < :endDateTime) -- remindAt starts within range
+        """
+    )
+    override fun getLocalEventsForRemindAtDateTimeRangeFlow(
+        startDateTime: ZonedDateTime,
+        endDateTime: ZonedDateTime
+    ): Flow<List<EventEntity>>
 
     // • UPDATE
 
@@ -73,7 +83,13 @@ interface EventDaoImpl : IEventDao {
     override suspend fun clearAllEvents(): Int
 
     // Deletes all SYNCED events for the given day.
-    @Query(deleteEventsForDayQuery)
+    @Query(
+        """
+        DELETE FROM events WHERE
+            isSynced = 1
+            AND
+            ( ( `from` >= :zonedDateTime) AND (`from`   < :zonedDateTime + ${com.realityexpander.tasky.core.util.DAY_IN_SECONDS}) ) -- event starts within day)
+        """)
     override suspend fun clearAllSyncedEventsForDay(zonedDateTime: ZonedDateTime): Int
 
     companion object {
@@ -92,22 +108,6 @@ interface EventDaoImpl : IEventDao {
                   --    OR
                   --      ( ( `from` <= :zonedDateTime) AND (`to`   > :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event straddles day     
                 )
-            """
-
-        const val deleteEventsForDayQuery =
-            """
-            DELETE FROM events WHERE 
-                isSynced = 1
-                AND 
-                ( ( `from` >= :zonedDateTime) AND (`from`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event starts within day
-                    
-                  --      ( ( `from` >= :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event fits within day
-                  --    OR
-                  --      ( ( `from` >  :zonedDateTime) AND (`from` < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `from` starts on day
-                  --    OR
-                  --      ( ( `to`   >  :zonedDateTime) AND (`to`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- `to` ends on day
-                  --    OR
-                  --      ( ( `from` <= :zonedDateTime) AND (`to`   > :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event straddles today     
             """
     }
 }

@@ -2,18 +2,21 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.eventReposito
 
 import com.realityexpander.tasky.agenda_feature.common.util.AttendeeId
 import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
+import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.util.*
 import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.UtcMillis
 import com.realityexpander.tasky.core.util.UuidStr
+import com.realityexpander.tasky.core.util.toZonedDateTime
 import kotlinx.serialization.*
+import java.time.ZonedDateTime
 
-abstract class EventDTO {
+abstract class EventDTO : AgendaItem() {
 
     // Core information for all Event DTOs
-    abstract val id: UuidStr
-    abstract val title: String
-    abstract val description: String
+//    abstract val id: UuidStr
+//    abstract val title: String
+//    abstract val description: String
     abstract val remindAt: UtcMillis
     abstract val from: UtcMillis
     abstract val to: UtcMillis
@@ -32,7 +35,14 @@ abstract class EventDTO {
 
         @Transient  // This field is used to store Local URI's for photos to upload.
         val photos: List<PhotoDTO.Local> = emptyList(),  // only local URI's are stored here
+
+        // Unused fields
+        @Transient
+        override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
+        @Transient
+        override val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime()
     ) : EventDTO()
+
 
     @Serializable
     data class Update(  // output only
@@ -54,7 +64,13 @@ abstract class EventDTO {
         val deletedPhotoIds: List<PhotoId> = emptyList(),
 
         @Transient
-        val photos: List<PhotoDTO.Local> = emptyList(), // only local URI's are stored here
+        val photos: List<PhotoDTO.Local> = emptyList(), // Local URI's are stored here for uploading
+
+        // Unused fields
+        @Transient
+        override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
+        @Transient
+        override val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime()
     ) : EventDTO()
 
     @Serializable
@@ -74,5 +90,11 @@ abstract class EventDTO {
 
         // Note: Returns complete Photo objects (not Ids)
         val photos: List<PhotoDTO.Remote> = emptyList(),  // NOTE: Only Remote photos are returned
+
+        // Unused fields
+        @Transient
+        override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
+        @Transient
+        override val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime()
     ) : EventDTO()
 }
