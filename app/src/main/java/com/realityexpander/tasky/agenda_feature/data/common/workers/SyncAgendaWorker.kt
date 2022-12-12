@@ -49,7 +49,7 @@ class SyncAgendaWorker @AssistedInject constructor(
             SyncAgendaWorker.NOTIFICATION_ID
         )
 
-        // Push up local changes to remote
+        // Push local changes up to remote
         val resultSyncAgenda = agendaRepository.syncAgenda()
         if(resultSyncAgenda is ResultUiText.Success) {
 
@@ -72,27 +72,27 @@ class SyncAgendaWorker @AssistedInject constructor(
     }
 
     companion object {
-        const val WORKER_NAME = "SYNC_AGENDA_WORKER"
-        const val NOTIFICATION_ID = 100002
-    }
-}
+        private const val WORKER_NAME = "SYNC_AGENDA_WORKER"
+        private const val NOTIFICATION_ID = 100002
 
-// • Start the periodic SyncAgenda Worker (Clear the old one first)
-fun startSyncAgendaWorker(applicationContext: Context) {
-    val syncAgendaWorkerConstraints: Constraints = Constraints.Builder().apply {
-        setRequiredNetworkType(NetworkType.CONNECTED)
-        setRequiresBatteryNotLow(true)
-    }.build()
-    val workRequest =
-        PeriodicWorkRequestBuilder<SyncAgendaWorker>(15, TimeUnit.MINUTES)
-            .setConstraints(syncAgendaWorkerConstraints)
-            .setInitialDelay(2, TimeUnit.MINUTES)
-            .addTag(SyncAgendaWorker.WORKER_NAME)
-            .addTag(TASKY_WORKERS_TAG)
-            .build()
-    WorkManager.getInstance(applicationContext).apply {
-        cancelAllWorkByTag(SyncAgendaWorker.WORKER_NAME)
-        pruneWork()
-        enqueue(workRequest)
+        // • Start the periodic SyncAgenda Worker (Clear the old one first)
+        fun startWorker(applicationContext: Context) {
+            val syncAgendaWorkerConstraints: Constraints = Constraints.Builder().apply {
+                setRequiredNetworkType(NetworkType.CONNECTED)
+                setRequiresBatteryNotLow(true)
+            }.build()
+            val workRequest =
+                PeriodicWorkRequestBuilder<SyncAgendaWorker>(15, TimeUnit.MINUTES)
+                    .setConstraints(syncAgendaWorkerConstraints)
+                    .setInitialDelay(2, TimeUnit.MINUTES)
+                    .addTag(SyncAgendaWorker.WORKER_NAME)
+                    .addTag(TASKY_WORKERS_TAG)
+                    .build()
+            WorkManager.getInstance(applicationContext).apply {
+                cancelAllWorkByTag(SyncAgendaWorker.WORKER_NAME)
+                pruneWork()
+                enqueue(workRequest)
+            }
+        }
     }
 }

@@ -3,8 +3,8 @@ package com.realityexpander.tasky
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.realityexpander.tasky.agenda_feature.data.common.workers.startRefreshAgendaWeekWorker
-import com.realityexpander.tasky.agenda_feature.data.common.workers.startSyncAgendaWorker
+import com.realityexpander.tasky.agenda_feature.data.common.workers.RefreshAgendaWeekWorker
+import com.realityexpander.tasky.agenda_feature.data.common.workers.SyncAgendaWorker
 import dagger.hilt.android.HiltAndroidApp
 import logcat.AndroidLogcatLogger
 import logcat.LogPriority
@@ -31,7 +31,9 @@ class TaskyApplication: Application(), Configuration.Provider {
         AndroidLogcatLogger.installOnDebuggableApp(this, minPriority = LogPriority.VERBOSE)
 
         logcat { "TaskyApplication.onCreate(): starting Tasky workers" }
-        startSyncAgendaWorker(applicationContext)
-        startRefreshAgendaWeekWorker(applicationContext)
+//        startSyncAgendaWorker(applicationContext)
+//        startRefreshAgendaWeekWorker(applicationContext)
+        SyncAgendaWorker.startWorker(applicationContext)
+        RefreshAgendaWeekWorker.startWorker(applicationContext)
     }
 }
