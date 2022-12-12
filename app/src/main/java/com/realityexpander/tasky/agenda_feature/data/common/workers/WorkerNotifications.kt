@@ -8,26 +8,29 @@ import android.graphics.Bitmap
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
+import com.realityexpander.tasky.agenda_feature.domain.IWorkerNotifications
+import javax.inject.Inject
 
-object WorkerNotifications {
+class WorkerNotificationsImpl @Inject constructor(
+    val context: Context
+): IWorkerNotifications {
 
-    fun createNotificationChannel(
-        context: Context,
-        channel: String,
+    override fun createNotificationChannel(
+        channelId: String,
         channelDescription: String
     ) {
         val channel = NotificationChannel(
-            channel,
+            channelId,
             channelDescription,
             NotificationManager.IMPORTANCE_LOW,
         )
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         notificationManager.createNotificationChannel(channel)
     }
 
-    fun createNotification(
-        context: Context,
+    override fun createNotification(
         title: String,
         description: String,
         @DrawableRes icon: Int,
@@ -44,20 +47,20 @@ object WorkerNotifications {
             .build()
     }
 
-    fun showNotification(
-        context: Context,
+    override fun showNotification(
         notification: Notification,
         notificationId: Int
     ) {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(notificationId, notification)
     }
 
-    fun clearNotification(
-        context: Context,
+    override fun clearNotification(
         notificationId: Int
     ) {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(notificationId)
     }
 }

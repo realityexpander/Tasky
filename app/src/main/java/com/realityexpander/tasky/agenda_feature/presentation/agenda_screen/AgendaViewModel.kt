@@ -366,12 +366,6 @@ class AgendaViewModel @Inject constructor(
             is OneTimeEvent.NavigateToOpenReminder -> {
                 _oneTimeEvent.emit(OneTimeEvent.NavigateToOpenReminder(uiEvent.reminderId))
             }
-//            is OneTimeEvent.SetAllAgendaItemAlarms -> {
-////                remindAtAlarmManager.cancelAllAlarms {
-////                    remindAtAlarmManager.setAlarmsForAgendaItems(uiEvent.agendaItems)
-////                }
-////                _oneTimeEvent.emit(OneTimeEvent.SetAllAgendaItemAlarms(uiEvent.agendaItems))
-//            }
         }
     }
 

@@ -36,33 +36,38 @@ import com.realityexpander.tasky.core.util.toZonedDateTime
 import logcat.logcat
 import java.time.format.DateTimeFormatter
 import java.util.*
+import javax.inject.Inject
 
 
-object RemindAtNotificationManagerImpl : IRemindAtNotificationManager {
+class RemindAtNotificationManagerImpl @Inject constructor(
+    val context: Context
+) : IRemindAtNotificationManager {
 
-    // Notification Channel
-    const val ALARM_NOTIFICATION_CHANNEL_ID =
-        "ALARM_NOTIFICATION_CHANNEL_ID"
-    private const val ALARM_NOTIFICATION_CHANNEL_NAME =
-        "'Remind At' Alarms"
-    private const val ALARM_NOTIFICATION_CHANNEL_DESCRIPTION =
-        "Alarm Notifications for 'Remind At' setting"
+    companion object {
+        // Notification Channel
+        const val ALARM_NOTIFICATION_CHANNEL_ID =
+            "ALARM_NOTIFICATION_CHANNEL_ID"
+        private const val ALARM_NOTIFICATION_CHANNEL_NAME =
+            "'Remind At' Alarms"
+        private const val ALARM_NOTIFICATION_CHANNEL_DESCRIPTION =
+            "Alarm Notifications for 'Remind At' setting"
 
-    // Intent Actions
-    const val ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER =
-        "${BuildConfig.APPLICATION_ID}.ALARM_TRIGGER"
-    const val ALARM_NOTIFICATION_INTENT_ACTION_COMPLETE_TASK =
-        "${BuildConfig.APPLICATION_ID}.COMPLETE_TASK"
+        // Intent Actions
+        const val ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER =
+            "${BuildConfig.APPLICATION_ID}.ALARM_TRIGGER"
+        const val ALARM_NOTIFICATION_INTENT_ACTION_COMPLETE_TASK =
+            "${BuildConfig.APPLICATION_ID}.COMPLETE_TASK"
 
-    // Intent Extras
-    const val ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID =
-        "ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID"
-    const val ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM =
-        "ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM"
-    const val ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ID =
-        "ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ID"
+        // Intent Extras
+        const val ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID =
+            "ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID"
+        const val ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM =
+            "ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM"
+        const val ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ID =
+            "ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ID"
+    }
 
-    override fun createNotificationChannel(context: Context) {
+    override fun createNotificationChannel() {
         // Register the channel with the system
         val channel = NotificationChannel(
             ALARM_NOTIFICATION_CHANNEL_ID,
@@ -77,7 +82,6 @@ object RemindAtNotificationManagerImpl : IRemindAtNotificationManager {
     }
 
     override fun showNotification(
-        context: Context,
         alarmIntent: Intent
     ) {
         alarmIntent.apply {
@@ -85,7 +89,6 @@ object RemindAtNotificationManagerImpl : IRemindAtNotificationManager {
 
             agendaItem?.let { item ->
                 createNotification(
-                    context,
                     alarmId = alarmIntent.getIntExtra(ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID, 0),
                     agendaItemTypeStr = item.toAgendaItemTypeStr(),
                     itemUuidStr = item.id,
@@ -97,14 +100,14 @@ object RemindAtNotificationManagerImpl : IRemindAtNotificationManager {
         }
 
         // After notification is shown, cancel the alarm.
-        clearAlarm(context, alarmIntent)
+        clearAlarm(alarmIntent)
     }
 
     //////////////////////////////////
     ////// HELPER FUNCTIONS //////////
 
     // Clear this alarm Intent from the AlarmManager
-    private fun clearAlarm(context: Context, alarmIntent: Intent) {
+    private fun clearAlarm(alarmIntent: Intent) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.cancel(
             PendingIntent.getActivity(
@@ -117,7 +120,6 @@ object RemindAtNotificationManagerImpl : IRemindAtNotificationManager {
     }
 
     private fun createNotification(
-        context: Context,
         alarmId: Int,
         agendaItemTypeStr: String,
         itemUuidStr: UuidStr = UUID.randomUUID().toString(),
@@ -131,7 +133,6 @@ object RemindAtNotificationManagerImpl : IRemindAtNotificationManager {
             createActionForCompleteTask(context, itemUuidStr, alarmId, agendaItemTypeStr)
 
         val infoCardBitmap = getInfoCardBitmap(
-            context,
             agendaItemTypeStr,
             title,
             description,
@@ -235,7 +236,6 @@ object RemindAtNotificationManagerImpl : IRemindAtNotificationManager {
     }
 
     private fun getInfoCardBitmap(
-        context: Context,
         agendaItemTypeStr: String,
         title: String,
         description: String,
@@ -297,10 +297,15 @@ object RemindAtNotificationManagerImpl : IRemindAtNotificationManager {
                     "• Starting at ${
                         startDateTimeUtcMillis.toZonedDateTime()
                             .format(DateTimeFormatter.ofPattern("h:mm a, E MMM d"))
-                    }" + "\n\n" +
+                    }\n\n" +
                     "• $description",
-            20f, 70f + offsetY2ForTask, width, height, paint
+            20f,
+            70f + offsetY2ForTask,
+            width,
+            height,
+            paint
         )
+
         return bitmap
     }
 

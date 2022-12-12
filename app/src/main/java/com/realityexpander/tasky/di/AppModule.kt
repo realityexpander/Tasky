@@ -8,6 +8,7 @@ import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRe
 import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.reminderRepositoryImpls.ReminderRepositoryImpl
 import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.reminderApiImpls.ReminderApiImpl
 import com.realityexpander.tasky.BuildConfig
+import com.realityexpander.tasky.agenda_feature.data.common.workers.WorkerNotificationsImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.TaskyDatabase
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls.AgendaRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.AgendaApiImpl
@@ -46,6 +47,7 @@ import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import com.realityexpander.tasky.core.data.remote.TaskyApi.Companion.API_KEY
 import com.realityexpander.tasky.core.presentation.notifications.RemindAtAlarmManagerImpl
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -81,6 +83,18 @@ object AppModule {
     @Singleton
     fun provideRemindAtAlarmManager(@ApplicationContext context: Context): IRemindAtAlarmManager {
         return RemindAtAlarmManagerImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRemindAtNotificationManager(@ApplicationContext context: Context): IRemindAtNotificationManager {
+        return RemindAtNotificationManagerImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkerNotifications(@ApplicationContext context: Context): IWorkerNotifications {
+        return WorkerNotificationsImpl(context)
     }
 
     @OptIn(ExperimentalSerializationApi::class)

@@ -8,6 +8,7 @@ import androidx.work.*
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
+import com.realityexpander.tasky.agenda_feature.domain.IWorkerNotifications
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -23,7 +24,8 @@ import java.util.concurrent.TimeUnit
 class RefreshAgendaWeekWorker @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted val workerParams: WorkerParameters,
-    val agendaRepository: IAgendaRepository,
+    private val agendaRepository: IAgendaRepository,
+    private val workerNotifications: IWorkerNotifications
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -86,8 +88,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
     }
 
     init {
-        WorkerNotifications.createNotificationChannel(
-            context,
+        workerNotifications.createNotificationChannel(
             WORKER_NOTIFICATION_CHANNEL_ID,
             context.getString(R.string.agenda_sync_refresh_worker_human_readable_notification_channel)
         )
@@ -96,8 +97,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return ForegroundInfo(
             NOTIFICATION_ID,
-            WorkerNotifications.createNotification(
-                context,
+            workerNotifications.createNotification(
                 title = context.getString(R.string.agenda_sync_notification_title),
                 description = context.getString(R.string.agenda_sync_notification_content_text),
                 icon = R.drawable.ic_notification_sync_agenda_small_icon_foreground,

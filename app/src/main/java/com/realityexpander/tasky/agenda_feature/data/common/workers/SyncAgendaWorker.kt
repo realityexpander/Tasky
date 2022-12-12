@@ -7,6 +7,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.*
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
+import com.realityexpander.tasky.agenda_feature.domain.IWorkerNotifications
 import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -22,7 +23,8 @@ import java.util.concurrent.TimeUnit
 class SyncAgendaWorker @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted val workerParams: WorkerParameters,
-    val agendaRepository: IAgendaRepository
+    val agendaRepository: IAgendaRepository,
+    private val workerNotifications: IWorkerNotifications
 ): CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -30,10 +32,8 @@ class SyncAgendaWorker @AssistedInject constructor(
         logcat { "SyncAgendaWorker.doWork() attemptedRuns: ${workerParams.runAttemptCount}" }
         workerParams.log()
 
-        WorkerNotifications.showNotification(
-            context,
-            WorkerNotifications.createNotification(
-                context,
+        workerNotifications.showNotification(
+            workerNotifications.createNotification(
                 title = context.getString(R.string.agenda_sync_notification_title),
                 description = context.getString(R.string.agenda_sync_uploading_items_text),
                 icon = R.drawable.ic_notification_sync_upload_foreground,
@@ -58,14 +58,14 @@ class SyncAgendaWorker @AssistedInject constructor(
             )
 
             delay(3000) // prevent flashing notification
-            WorkerNotifications.clearNotification(context, NOTIFICATION_ID)
+            workerNotifications.clearNotification(NOTIFICATION_ID)
 
             return when (resultUpdateLocalAgenda) {
                 is ResultUiText.Success -> Result.success()
                 is ResultUiText.Error -> Result.failure()
             }
         }
-        WorkerNotifications.clearNotification(context, NOTIFICATION_ID)
+        workerNotifications.clearNotification(NOTIFICATION_ID)
 
         return Result.failure()
     }
@@ -76,8 +76,7 @@ class SyncAgendaWorker @AssistedInject constructor(
     }
 
     init {
-        WorkerNotifications.createNotificationChannel(
-            context,
+        workerNotifications.createNotificationChannel(
             WORKER_NOTIFICATION_CHANNEL_ID,
             context.getString(R.string.agenda_sync_sync_worker_human_readable_notification_channel)
         )
