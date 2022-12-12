@@ -73,14 +73,13 @@ class SyncAgendaWorker @AssistedInject constructor(
 
     companion object {
         const val WORKER_NAME = "SYNC_AGENDA_WORKER"
-        const val WORKER_NOTIFICATION_CHANNEL_ID = WORKER_NAME + "_CHANNEL_ID"
         const val NOTIFICATION_ID = 100002
     }
 
     init {
         workerNotifications.createNotificationChannel(
             WORKER_NOTIFICATION_CHANNEL_ID,
-            context.getString(R.string.agenda_sync_sync_worker_human_readable_notification_channel)
+            WORKER_NOTIFICATION_CHANNEL_DESCRIPTION
         )
     }
 }

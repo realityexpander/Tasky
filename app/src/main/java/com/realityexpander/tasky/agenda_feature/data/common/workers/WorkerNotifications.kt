@@ -38,7 +38,7 @@ class WorkerNotificationsImpl @Inject constructor(
         @ColorInt iconTintColor: Int,
         largeIcon: Bitmap?,
     ): Notification {
-        return NotificationCompat.Builder(context, WORKER_NOTIFICATION_CHANNEL_ID)
+        return NotificationCompat.Builder(context, channelId)
             .setContentTitle(title)
             .setContentText(description)
             .setSmallIcon(icon)

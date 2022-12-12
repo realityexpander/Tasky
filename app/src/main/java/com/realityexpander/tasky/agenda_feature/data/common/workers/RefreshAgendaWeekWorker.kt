@@ -79,9 +79,8 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
     }
 
     companion object {
-        const val NOTIFICATION_ID = 100001
         const val WORKER_NAME = "REFRESH_AGENDA_WEEK_WORKER"
-        const val WORKER_NOTIFICATION_CHANNEL_ID = WORKER_NAME + "_CHANNEL_ID"
+        const val NOTIFICATION_ID = 100001
 
         const val PARAMETER_START_DATE = "startDate"
         const val START_DAY_OFFSET = -5
@@ -91,7 +90,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
     init {
         workerNotifications.createNotificationChannel(
             WORKER_NOTIFICATION_CHANNEL_ID,
-            context.getString(R.string.agenda_sync_refresh_worker_human_readable_notification_channel)
+            WORKER_NOTIFICATION_CHANNEL_DESCRIPTION
         )
     }
 
