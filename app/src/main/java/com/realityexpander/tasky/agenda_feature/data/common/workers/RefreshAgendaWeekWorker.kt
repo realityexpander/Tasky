@@ -81,6 +81,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
     companion object {
         const val NOTIFICATION_ID = 100001
         const val WORKER_NAME = "REFRESH_AGENDA_WEEK_WORKER"
+        const val WORKER_NOTIFICATION_CHANNEL_ID = WORKER_NAME + "_CHANNEL_ID"
 
         const val PARAMETER_START_DATE = "startDate"
         const val START_DAY_OFFSET = -5
@@ -98,6 +99,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
         return ForegroundInfo(
             RefreshAgendaWeekWorker.NOTIFICATION_ID,
             workerNotifications.createNotification(
+                WORKER_NOTIFICATION_CHANNEL_ID,
                 title = context.getString(R.string.agenda_sync_notification_title),
                 description = context.getString(R.string.agenda_sync_notification_content_text),
                 icon = R.drawable.ic_notification_sync_agenda_small_icon_foreground,

@@ -13,6 +13,7 @@ interface IWorkerNotifications {
     )
 
     fun createNotification(
+        channelId: String,
         title: String,
         description: String,
         @DrawableRes icon: Int,

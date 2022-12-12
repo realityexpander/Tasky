@@ -34,6 +34,7 @@ class SyncAgendaWorker @AssistedInject constructor(
 
         workerNotifications.showNotification(
             workerNotifications.createNotification(
+                WORKER_NOTIFICATION_CHANNEL_ID,
                 title = context.getString(R.string.agenda_sync_notification_title),
                 description = context.getString(R.string.agenda_sync_uploading_items_text),
                 icon = R.drawable.ic_notification_sync_upload_foreground,
@@ -72,6 +73,7 @@ class SyncAgendaWorker @AssistedInject constructor(
 
     companion object {
         const val WORKER_NAME = "SYNC_AGENDA_WORKER"
+        const val WORKER_NOTIFICATION_CHANNEL_ID = WORKER_NAME + "_CHANNEL_ID"
         const val NOTIFICATION_ID = 100002
     }
 
