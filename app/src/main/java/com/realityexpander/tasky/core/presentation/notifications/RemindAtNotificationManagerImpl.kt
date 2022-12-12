@@ -37,11 +37,8 @@ import com.realityexpander.tasky.core.util.toZonedDateTime
 import logcat.logcat
 import java.time.format.DateTimeFormatter
 import java.util.*
-import javax.inject.Inject
 
-class RemindAtNotificationManagerImpl @Inject constructor(
-    val context: Context
-) : IRemindAtNotificationManager {
+class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificationManager {
 
     companion object {
         // Notification Channel
@@ -301,6 +298,7 @@ class RemindAtNotificationManagerImpl @Inject constructor(
                             .format(DateTimeFormatter.ofPattern("h:mm a, E MMM d"))
                     }\n\n" +
                     "• $descriptionText",
+            agendaItemTypeStr,
             20f,
             70f + offsetY2ForTask,
             width,
@@ -314,6 +312,7 @@ class RemindAtNotificationManagerImpl @Inject constructor(
     // Draw a block of text that wraps words to the next line if they are too long
     private fun Canvas.drawTextBlock(
         text: String,
+        agendaItemTypeStr: String,
         x: Float,
         y: Float,
         width: Int,
@@ -329,7 +328,9 @@ class RemindAtNotificationManagerImpl @Inject constructor(
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
             .setLineSpacing(0f, 1f)
             .setIncludePad(false)
-            .setMaxLines(4)
+            .setMaxLines(
+                if (agendaItemTypeStr.toAgendaItemType() == AgendaItemType.Task) 2 else 4
+            )
             .setEllipsize(TextUtils.TruncateAt.END)
             .build()
 

@@ -75,13 +75,6 @@ class SyncAgendaWorker @AssistedInject constructor(
         const val WORKER_NAME = "SYNC_AGENDA_WORKER"
         const val NOTIFICATION_ID = 100002
     }
-
-    init {
-        workerNotifications.createNotificationChannel(
-            WORKER_NOTIFICATION_CHANNEL_ID,
-            WORKER_NOTIFICATION_CHANNEL_DESCRIPTION
-        )
-    }
 }
 
 // • Start the periodic SyncAgenda Worker (Clear the old one first)

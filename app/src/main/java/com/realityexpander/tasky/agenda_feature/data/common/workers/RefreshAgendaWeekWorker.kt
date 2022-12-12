@@ -87,13 +87,6 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
         const val END_DAY_OFFSET = 5
     }
 
-    init {
-        workerNotifications.createNotificationChannel(
-            WORKER_NOTIFICATION_CHANNEL_ID,
-            WORKER_NOTIFICATION_CHANNEL_DESCRIPTION
-        )
-    }
-
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return ForegroundInfo(
             RefreshAgendaWeekWorker.NOTIFICATION_ID,

@@ -7,11 +7,6 @@ import androidx.annotation.DrawableRes
 
 interface IWorkerNotifications {
 
-    fun createNotificationChannel(
-        channelId: String,
-        channelDescription: String
-    )
-
     fun createNotification(
         channelId: String,
         title: String,

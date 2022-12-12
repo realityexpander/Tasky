@@ -9,25 +9,14 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import com.realityexpander.tasky.agenda_feature.domain.IWorkerNotifications
-import javax.inject.Inject
 
-class WorkerNotificationsImpl @Inject constructor(
-    val context: Context
-): IWorkerNotifications {
+class WorkerNotificationsImpl(val context: Context): IWorkerNotifications {
 
-    override fun createNotificationChannel(
-        channelId: String,
-        channelDescription: String
-    ) {
-        val channel = NotificationChannel(
-            channelId,
-            channelDescription,
-            NotificationManager.IMPORTANCE_LOW,
+    init {
+        createNotificationChannel(
+            WORKER_NOTIFICATION_CHANNEL_ID,
+            WORKER_NOTIFICATION_CHANNEL_DESCRIPTION,
         )
-        val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        notificationManager.createNotificationChannel(channel)
     }
 
     override fun createNotification(
@@ -63,5 +52,23 @@ class WorkerNotificationsImpl @Inject constructor(
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(notificationId)
+    }
+
+    /////////////////////////////
+    //// HELPERS ////////////////
+
+    private fun createNotificationChannel(
+        channelId: String,
+        channelDescription: String
+    ) {
+        val channel = NotificationChannel(
+            channelId,
+            channelDescription,
+            NotificationManager.IMPORTANCE_LOW,
+        )
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        notificationManager.createNotificationChannel(channel)
     }
 }
