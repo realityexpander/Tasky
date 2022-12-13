@@ -27,7 +27,6 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IRemindAtNotificationManager
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.toAgendaItemType
-import com.realityexpander.tasky.agenda_feature.presentation.common.enums.toAgendaItemTypeStr
 import com.realityexpander.tasky.core.presentation.broadcastReceivers.CompleteTaskBroadcastReceiver
 import com.realityexpander.tasky.core.presentation.util.getBitmapFromVectorDrawable
 import com.realityexpander.tasky.core.util.UuidStr
@@ -77,7 +76,7 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
             agendaItem?.let { item ->
                 createNotification(
                     alarmId = alarmIntent.getIntExtra(ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID, 0),
-                    agendaItemTypeStr = item.toAgendaItemTypeStr(),
+                    agendaItem = item,
                     itemUuidStr = item.id,
                     title = item.title,
                     description = item.description,
@@ -122,7 +121,7 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
 
     private fun createNotification(
         alarmId: Int,
-        agendaItemTypeStr: String,
+        agendaItem: AgendaItem,
         itemUuidStr: UuidStr = UUID.randomUUID().toString(),
         title: String,
         description: String,
@@ -131,10 +130,10 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
         logcat { "showAlarmNotification: $title, $description, startDateTime=${startDateTimeUtcMillis.toZonedDateTime()}" }
 
         val completeTaskAction: NotificationCompat.Action? =
-            createActionForCompleteTask(context, itemUuidStr, alarmId, agendaItemTypeStr)
+            createActionForCompleteTask(context, itemUuidStr, alarmId, agendaItem)
 
-        val infoCardBitmap = getInfoCardBitmap(
-            agendaItemTypeStr,
+        val infoCardBitmap = createInfoCardBitmap(
+            agendaItem,
             title,
             description,
             startDateTimeUtcMillis,
@@ -156,7 +155,9 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
                     DateTimeFormatter.ofPattern("hh:mm a")
                 )
             )
-            .setSubText(context.getString(R.string.notifications_alarm_remind_at_subtext, agendaItemTypeStr))
+            .setSubText(context.getString(R.string.notifications_alarm_remind_at_subtext,
+                agendaItem
+            ))
             .setShowWhen(true)
             .setWhen(startDateTimeUtcMillis)
             .setUsesChronometer(true)
@@ -206,7 +207,7 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
         context: Context,
         itemUuidStr: UuidStr,
         alarmId: Int,
-        agendaItemType: String
+        agendaItem: AgendaItem
     ): NotificationCompat.Action? {
         // Setup action to create "Complete task" button
         val completeTaskIntent =
@@ -222,7 +223,7 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
                 FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
             )
         val completeTaskAction: NotificationCompat.Action? =
-            if (agendaItemType == AgendaItemType.Task.typeNameStr) {
+            if (agendaItem.toAgendaItemType() == AgendaItemType.Task) {
                 NotificationCompat.Action
                     .Builder(
                         0,
@@ -236,8 +237,8 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
         return completeTaskAction
     }
 
-    private fun getInfoCardBitmap(
-        agendaItemTypeStr: String,
+    private fun createInfoCardBitmap(
+        agendaItem: AgendaItem,
         title: String,
         description: String,
         startDateTimeUtcMillis: Long,
@@ -256,7 +257,7 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
         // Setup colors depending on Card Type
         var backgroundColor = Color.WHITE
         var textColor = Color.BLACK
-        when (agendaItemTypeStr.toAgendaItemType()) {
+        when (agendaItem.toAgendaItemType()) {
             AgendaItemType.Event -> {
                 backgroundColor = context.resources.getColor(R.color.tasky_green, null)
                 textColor = Color.WHITE
@@ -272,9 +273,9 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
             else -> context.resources.getColor(R.color.tasky_green, null)
         }
 
-        val offsetYForTask = if (agendaItemTypeStr == AgendaItemType.Task.typeNameStr) 25 else 0
+        val offsetYForTask = if (agendaItem.toAgendaItemType() == AgendaItemType.Task) 25 else 0
 
-        // Make rounded corners (Card)
+        // Make rounded corner Card
         paint.color = backgroundColor
         paint.isAntiAlias = true
         paint.style = Paint.Style.FILL
@@ -289,12 +290,10 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
         // Set up for drawing text
         paint.color = textColor
         paint.textSize = 24f
-
-        val offsetY2ForTask = if (agendaItemTypeStr == AgendaItemType.Task.typeNameStr) 15 else 0
-
+        val offsetY2ForTask = if (agendaItem.toAgendaItemType() == AgendaItemType.Task) 15 else 0
         val descriptionText = if (description.isBlank()) "<No description>" else description
 
-        // Draw the description text on the Canvas
+        // Draw the `title`, `startTime` & `description` text
         canvas.drawTextBlock(
             "⏰ $title\n" +
                     "• Starting at ${
@@ -302,7 +301,7 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
                             .format(DateTimeFormatter.ofPattern("h:mm a, E MMM d"))
                     }\n\n" +
                     "• $descriptionText",
-            agendaItemTypeStr,
+            agendaItem.toAgendaItemType().typeNameStr,
             20f,
             70f + offsetY2ForTask,
             width,
