@@ -327,11 +327,6 @@ fun AgendaScreenContent(
                     ), Toast.LENGTH_SHORT
                 ).show()
             }
-//            is OneTimeEvent.SetAllAgendaItemAlarms -> {
-//                cancelAllAlarms(context) {
-//                    RemindAtAlarmManagerImpl.setAlarmsForAgendaItems(context, agendaItems)
-//                }
-//            }
             null -> {}
         }
     }

@@ -8,6 +8,7 @@ import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRe
 import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.reminderRepositoryImpls.ReminderRepositoryImpl
 import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.reminderApiImpls.ReminderApiImpl
 import com.realityexpander.tasky.BuildConfig
+import com.realityexpander.tasky.agenda_feature.data.common.workers.WorkerNotificationsImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.TaskyDatabase
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls.AgendaRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.AgendaApiImpl
@@ -46,6 +47,7 @@ import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import com.realityexpander.tasky.core.data.remote.TaskyApi.Companion.API_KEY
 import com.realityexpander.tasky.core.presentation.notifications.RemindAtAlarmManagerImpl
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -77,11 +79,32 @@ const val USE_FAKE_REPOSITORY = false
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    //////////////////////////////////////////
+    // Remind At Alarms & Notifications
+
     @Provides
     @Singleton
     fun provideRemindAtAlarmManager(@ApplicationContext context: Context): IRemindAtAlarmManager {
         return RemindAtAlarmManagerImpl(context)
     }
+
+    @Provides
+    @Singleton
+    fun provideRemindAtNotificationManager(@ApplicationContext context: Context): IRemindAtNotificationManager {
+        return RemindAtNotificationManagerImpl(context)
+    }
+
+    ///////////////////////////////////////////
+    // Worker Notifications
+
+    @Provides
+    @Singleton
+    fun provideWorkerNotifications(@ApplicationContext context: Context): IWorkerNotifications {
+        return WorkerNotificationsImpl(context)
+    }
+
+    ///////////////////////////////////////////
+    // Serialization for  (& JSON Pretty Print)
 
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
@@ -91,10 +114,14 @@ object AppModule {
         val json = Json {
             ignoreUnknownKeys = true
             isLenient = true
+            prettyPrint = true
         }
 
         return json.asConverterFactory(contentType)
     }
+
+    ///////////////////////////////////////////
+    // Networking (OkHttp & Retrofit)
 
     @Provides
     @Singleton
@@ -158,31 +185,30 @@ object AppModule {
             }
         }
 
+        val okHttpClientBuilder = OkHttpClient.Builder()
+            .dispatcher(dispatcher)
+            .addInterceptor(addHeadersInterceptor)
+            .connectTimeout(1, TimeUnit.MINUTES)
+            .callTimeout(1, TimeUnit.MINUTES)
+            .readTimeout(1, TimeUnit.MINUTES)
+            .writeTimeout(1, TimeUnit.MINUTES)
+
         return if(BuildConfig.DEBUG) {
             val logging = HttpLoggingInterceptor(jsonPrettyPrinter)
             logging.level = HttpLoggingInterceptor.Level.BODY
             //logging.level = HttpLoggingInterceptor.Level.HEADERS
 
-            OkHttpClient.Builder()
-                .dispatcher(dispatcher)
-                .addInterceptor(addHeadersInterceptor)
+            okHttpClientBuilder
                 .addInterceptor(logging)
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .callTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(1, TimeUnit.MINUTES)
-                .writeTimeout(1, TimeUnit.MINUTES)
                 .build()
         } else {
-            OkHttpClient.Builder()
-                .dispatcher(dispatcher)
-                .addInterceptor(addHeadersInterceptor)
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .callTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(1, TimeUnit.MINUTES)
-                .writeTimeout(1, TimeUnit.MINUTES)
+            okHttpClientBuilder
                 .build()
         }
     }
+
+    ///////////////////////////////////////////
+    // Tasky API
 
     @Provides
     @Singleton
@@ -195,7 +221,7 @@ object AppModule {
         return Retrofit.Builder()
             .baseUrl(TaskyApi.BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(converterFactory)
+            .addConverterFactory(converterFactory)  // for serialization
             .build()
             .create()
     }

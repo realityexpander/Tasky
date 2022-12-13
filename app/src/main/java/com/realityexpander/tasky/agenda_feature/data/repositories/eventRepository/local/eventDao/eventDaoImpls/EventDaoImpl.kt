@@ -88,7 +88,7 @@ interface EventDaoImpl : IEventDao {
         DELETE FROM events WHERE
             isSynced = 1
             AND
-            ( ( `from` >= :zonedDateTime) AND (`from`   < :zonedDateTime + ${com.realityexpander.tasky.core.util.DAY_IN_SECONDS}) ) -- event starts within day)
+            ( ( `from` >= :zonedDateTime) AND (`from`   < :zonedDateTime + ${DAY_IN_SECONDS}) ) -- event starts within day)
         """)
     override suspend fun clearAllSyncedEventsForDay(zonedDateTime: ZonedDateTime): Int
 

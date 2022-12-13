@@ -8,33 +8,47 @@ import android.graphics.Bitmap
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
+import com.realityexpander.tasky.agenda_feature.domain.IWorkerNotifications
 
-object WorkerNotifications {
+class WorkerNotificationsImpl(val context: Context): IWorkerNotifications {
 
-    fun createNotificationChannel(
-        context: Context,
-        channel: String,
-        channelDescription: String
-    ) {
-        val channel = NotificationChannel(
-            channel,
-            channelDescription,
-            NotificationManager.IMPORTANCE_LOW,
-        )
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        notificationManager.createNotificationChannel(channel)
+    init {
+        createNotificationChannel()
     }
 
-    fun createNotification(
-        context: Context,
+    override fun showNotification(
+        channelId: String,
+        notificationId: Int,
+        title: String,
+        description: String,
+        @DrawableRes icon: Int,
+        @ColorInt iconTintColor: Int,
+        largeIcon: Bitmap?,
+    ) {
+        val notification =
+            createNotification(
+                channelId,
+                title,
+                description,
+                icon,
+                iconTintColor,
+                largeIcon
+            )
+
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(notificationId, notification)
+    }
+
+    override fun createNotification(
+        channelId: String,
         title: String,
         description: String,
         @DrawableRes icon: Int,
         @ColorInt iconTintColor: Int,
         largeIcon: Bitmap?,
     ): Notification {
-        return NotificationCompat.Builder(context, WORKER_NOTIFICATION_CHANNEL_ID)
+        return NotificationCompat.Builder(context, channelId)
             .setContentTitle(title)
             .setContentText(description)
             .setSmallIcon(icon)
@@ -44,20 +58,26 @@ object WorkerNotifications {
             .build()
     }
 
-    fun showNotification(
-        context: Context,
-        notification: Notification,
+    override fun clearNotification(
         notificationId: Int
     ) {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(notificationId, notification)
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(notificationId)
     }
 
-    fun clearNotification(
-        context: Context,
-        notificationId: Int
-    ) {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancel(notificationId)
+    /////////////////////////////
+    //// HELPERS ////////////////
+
+    private fun createNotificationChannel() {
+        val channel = NotificationChannel(
+            WORKER_NOTIFICATION_CHANNEL_ID,
+            WORKER_NOTIFICATION_CHANNEL_DESCRIPTION,
+            NotificationManager.IMPORTANCE_LOW,
+        )
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        notificationManager.createNotificationChannel(channel)
     }
 }

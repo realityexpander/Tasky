@@ -6,7 +6,7 @@ import android.content.Intent
 import androidx.core.app.NotificationManagerCompat
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls.AgendaRepositoryImpl
 import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl
-import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.ALARM_NOTIFICATION_INTENT_ACTION_COMPLETE_TASK
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.Companion.ALARM_NOTIFICATION_INTENT_ACTION_COMPLETE_TASK
 import com.realityexpander.tasky.core.util.UuidStr
 import com.realityexpander.tasky.core.util.toIntegerHashCodeOfUUIDString
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,6 +40,7 @@ class CompleteTaskBroadcastReceiver : BroadcastReceiver() {
         }
 
         // Cancel the notification
-        NotificationManagerCompat.from(context).cancel(null, agendaItemId.toIntegerHashCodeOfUUIDString())
+        NotificationManagerCompat.from(context)
+            .cancel(null, agendaItemId.toIntegerHashCodeOfUUIDString())
     }
 }

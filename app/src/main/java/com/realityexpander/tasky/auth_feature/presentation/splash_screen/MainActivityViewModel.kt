@@ -1,9 +1,12 @@
 package com.realityexpander.tasky.auth_feature.presentation.splash_screen
 
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.realityexpander.tasky.agenda_feature.domain.IRemindAtNotificationManager
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
+import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.Companion.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
 import com.realityexpander.tasky.core.util.Exceptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,10 +18,23 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
+    private val remindAtNotificationManager : IRemindAtNotificationManager
 ) : ViewModel() {
 
     private val _splashState = MutableStateFlow(SplashState())
     val splashState = _splashState.asStateFlow()
+
+    fun onIntentReceived(intent: Intent?) {
+        intent ?: return
+
+        // Guard if the intent is not an "Alarm Trigger" intent
+        if (intent.action != ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER) {
+            return
+        }
+
+        // App only handles "Alarm Trigger" intents
+        remindAtNotificationManager.showNotification(intent)
+    }
 
     fun onSetAuthInfo(authInfo: AuthInfo?) {
         viewModelScope.launch {
@@ -65,9 +81,6 @@ class MainActivityViewModel @Inject constructor(
             }
         }
     }
-
-
-
 }
 
 // to scale the splash screen if XML/SVG:
