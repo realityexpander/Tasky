@@ -119,6 +119,10 @@ class AgendaViewModel @Inject constructor(
                 )
             }
 
+            // • Start workers for Syncing and Week Refresh
+//            yield()
+            _oneTimeEvent.emit(OneTimeEvent.StartWorkers)
+
 //            yield() // wait for database to load  // leave for testing for now // todo remove
 //            if(agendaState.value.agendaItems.isEmpty()) { // if no items for today, make some fake ones
 //                createFakeAgendaItems(agendaRepository)
@@ -229,6 +233,7 @@ class AgendaViewModel @Inject constructor(
             }
             is Logout -> {
                 viewModelScope.launch {
+                    _oneTimeEvent.emit(OneTimeEvent.StopWorkers)
                     agendaRepository.clearAllEventsLocally()
                     authRepository.logout()
 
