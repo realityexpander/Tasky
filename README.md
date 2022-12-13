@@ -34,6 +34,8 @@ Task manager similar to a lite version of Google Calendar
       consistently, and transactionally.
     - [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager) - 
       Schedule automatically repeating or guarantee one-time background processing.
+    - [Room Database](https://developer.android.com/topic/libraries/architecture/room) -
+      SQL-based database.
 - [Material Components for Android](https://github.com/material-components/material-components-android)
     - Modular and customizable Material Design UI components for Android.
 - [Accompanist](https://github.com/google/accompanist)
