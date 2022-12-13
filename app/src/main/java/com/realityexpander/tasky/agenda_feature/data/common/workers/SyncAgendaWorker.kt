@@ -17,8 +17,8 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 
-// Worker to synchronize offline actions for the Agenda for the current day
-//   & download any new items for the current day.
+// Worker to synchronize "offline actions" & download any new/updated items
+//   for the Agenda for the current day.
 @HiltWorker
 class SyncAgendaWorker @AssistedInject constructor(
     @Assisted val context: Context,
