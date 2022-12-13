@@ -83,6 +83,7 @@ class MainActivityViewModel @Inject constructor(
     }
 }
 
+// NOTE: LEAVE FOR REFERENCE
 // to scale the splash screen if XML/SVG:
 // put <path> inside a group as so:
 // <group
