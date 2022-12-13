@@ -7,6 +7,16 @@ import androidx.annotation.DrawableRes
 
 interface IWorkerNotifications {
 
+    fun showNotification(
+        channelId: String,
+        notificationId: Int,
+        title: String,
+        description: String,
+        @DrawableRes icon: Int,
+        @ColorInt iconTintColor: Int,
+        largeIcon: Bitmap?,
+    )
+
     fun createNotification(
         channelId: String,
         title: String,
@@ -15,11 +25,6 @@ interface IWorkerNotifications {
         @ColorInt iconTintColor: Int,
         largeIcon: Bitmap?,
     ): Notification
-
-    fun showNotification(
-        notification: Notification,
-        notificationId: Int
-    )
 
     fun clearNotification(
         notificationId: Int

@@ -33,20 +33,18 @@ class SyncAgendaWorker @AssistedInject constructor(
         workerParams.log()
 
         workerNotifications.showNotification(
-            workerNotifications.createNotification(
-                WORKER_NOTIFICATION_CHANNEL_ID,
-                title = context.getString(R.string.agenda_sync_notification_title),
-                description = context.getString(R.string.agenda_sync_uploading_items_text),
-                icon = R.drawable.ic_notification_sync_upload_foreground,
-                iconTintColor = ResourcesCompat.getColor(
-                    context.resources,
-                    R.color.tasky_green, null),
-                largeIcon = ResourcesCompat.getDrawable(
-                    context.resources,
-                    R.drawable.tasky_logo_for_splash, null
-                )?.toBitmap(100,100)
-            ),
-            SyncAgendaWorker.NOTIFICATION_ID
+            channelId = WORKER_NOTIFICATION_CHANNEL_ID,
+            notificationId = SyncAgendaWorker.NOTIFICATION_ID,
+            title = context.getString(R.string.agenda_sync_notification_title),
+            description = context.getString(R.string.agenda_sync_uploading_items_text),
+            icon = R.drawable.ic_notification_sync_upload_foreground,
+            iconTintColor = ResourcesCompat.getColor(
+                context.resources,
+                R.color.tasky_green, null),
+            largeIcon = ResourcesCompat.getDrawable(
+                context.resources,
+                R.drawable.tasky_logo_for_splash, null
+            )?.toBitmap(100,100)
         )
 
         // Push local changes up to remote

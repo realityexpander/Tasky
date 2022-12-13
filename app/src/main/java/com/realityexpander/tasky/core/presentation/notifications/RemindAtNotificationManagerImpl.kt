@@ -68,20 +68,6 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
             "ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ID"
     }
 
-    override fun createNotificationChannel() {
-        // Register the channel with the system
-        val channel = NotificationChannel(
-            ALARM_NOTIFICATION_CHANNEL_ID,
-            ALARM_NOTIFICATION_CHANNEL_NAME,
-            NotificationManager.IMPORTANCE_HIGH,
-        ).apply {
-            description = ALARM_NOTIFICATION_CHANNEL_DESCRIPTION
-        }
-        val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-    }
-
     override fun showNotification(
         alarmIntent: Intent
     ) {
@@ -106,6 +92,20 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
 
     //////////////////////////////////
     ////// HELPER FUNCTIONS //////////
+
+    private fun createNotificationChannel() {
+        // Register the channel with the system
+        val channel = NotificationChannel(
+            ALARM_NOTIFICATION_CHANNEL_ID,
+            ALARM_NOTIFICATION_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            description = ALARM_NOTIFICATION_CHANNEL_DESCRIPTION
+        }
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+    }
 
     // Clear this alarm Intent from the AlarmManager
     private fun clearAlarm(alarmIntent: Intent) {

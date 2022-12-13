@@ -7,6 +7,4 @@ interface IRemindAtNotificationManager {
     fun showNotification(
         alarmIntent: Intent
     )
-
-    fun createNotificationChannel()
 }

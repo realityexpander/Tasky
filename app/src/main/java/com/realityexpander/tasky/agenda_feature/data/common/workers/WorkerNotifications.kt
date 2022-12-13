@@ -16,6 +16,30 @@ class WorkerNotificationsImpl(val context: Context): IWorkerNotifications {
         createNotificationChannel()
     }
 
+    override fun showNotification(
+        channelId: String,
+        notificationId: Int,
+        title: String,
+        description: String,
+        @DrawableRes icon: Int,
+        @ColorInt iconTintColor: Int,
+        largeIcon: Bitmap?,
+    ) {
+        val notification =
+            createNotification(
+                channelId,
+                title,
+                description,
+                icon,
+                iconTintColor,
+                largeIcon
+            )
+
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(notificationId, notification)
+    }
+
     override fun createNotification(
         channelId: String,
         title: String,
@@ -32,15 +56,6 @@ class WorkerNotificationsImpl(val context: Context): IWorkerNotifications {
             .setLargeIcon(largeIcon)
             .setAutoCancel(true)
             .build()
-    }
-
-    override fun showNotification(
-        notification: Notification,
-        notificationId: Int
-    ) {
-        val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(notificationId, notification)
     }
 
     override fun clearNotification(
