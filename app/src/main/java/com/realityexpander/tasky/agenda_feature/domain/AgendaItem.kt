@@ -8,11 +8,6 @@ import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.parcelize.Parcelize
 import java.time.ZonedDateTime
 
-//    abstract val id: UuidStr
-//    abstract val title: String
-//    abstract val description: String
-//    abstract val remindAt: ZonedDateTime
-
 abstract class AbstractAgendaItem {
     abstract val id: UuidStr
     abstract val title: String
@@ -21,12 +16,9 @@ abstract class AbstractAgendaItem {
 
 abstract class AgendaItem :
     AbstractAgendaItem(),
-    HasTimeAsZonedDateTime, 
+    UsesZonedDateTime,
     HasStartTime
 {
-
-//    abstract val startTime: ZonedDateTime  // for sorting in Agenda
-
     @Parcelize
     data class Event(
         override val id: UuidStr,
@@ -76,11 +68,11 @@ abstract class AgendaItem :
     ) : AgendaItem(), Parcelable
 }
 
-interface HasTimeAsZonedDateTime {
+interface UsesZonedDateTime {
     val remindAt: ZonedDateTime
 }
 
-interface HasTimeAsEpochMilli {
+interface UsesEpochMilli {
     val remindAt: EpochMilli
 }
 

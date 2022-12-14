@@ -3,15 +3,14 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.eventReposito
 import com.realityexpander.tasky.agenda_feature.common.util.AttendeeId
 import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
 import com.realityexpander.tasky.agenda_feature.domain.AbstractAgendaItem
-import com.realityexpander.tasky.agenda_feature.domain.HasTimeAsEpochMilli
+import com.realityexpander.tasky.agenda_feature.domain.UsesEpochMilli
 import com.realityexpander.tasky.agenda_feature.util.*
 import com.realityexpander.tasky.core.util.*
 import kotlinx.serialization.*
 
-abstract class EventDTO : AbstractAgendaItem(), HasTimeAsEpochMilli {
+abstract class EventDTO : AbstractAgendaItem(), UsesEpochMilli {
 
     // Core information for all Event DTO Types
-//    abstract val remindAtMilli: EpochMilli
     abstract val from: EpochMilli
     abstract val to: EpochMilli
 
@@ -21,7 +20,6 @@ abstract class EventDTO : AbstractAgendaItem(), HasTimeAsEpochMilli {
         override val title: String,
         override val description: String,
 
-//        @SerialName("remindAt")
         override val remindAt: EpochMilli,
         override val from: EpochMilli,
         override val to: EpochMilli,
@@ -31,12 +29,6 @@ abstract class EventDTO : AbstractAgendaItem(), HasTimeAsEpochMilli {
 
         @Transient  // This field is used to store Local URI's for photos to upload.
         val photos: List<PhotoDTO.Local> = emptyList(),  // only local URI's are stored here
-
-        // Transient fields (won't send to server)
-//        @Transient
-//        override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
-//        @Transient
-//        override val remindAt: ZonedDateTime = remindAtMilli.toZonedDateTime() // (useful for debugging)
     ) : EventDTO()
 
 
@@ -46,7 +38,6 @@ abstract class EventDTO : AbstractAgendaItem(), HasTimeAsEpochMilli {
         override val title: String,
         override val description: String,
 
-//        @SerialName("remindAt")
         override val remindAt: EpochMilli,
         override val from: EpochMilli,
         override val to: EpochMilli,
@@ -63,12 +54,6 @@ abstract class EventDTO : AbstractAgendaItem(), HasTimeAsEpochMilli {
 
         @Transient
         val photos: List<PhotoDTO.Local> = emptyList(), // Local URI's are stored here for uploading
-
-        // Transient fields (won't send to server)
-//        @Transient
-//        override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
-//        @Transient
-//        override val remindAt: ZonedDateTime = remindAtMilli.toZonedDateTime() // (useful for debugging)
     ) : EventDTO()
 
     @Serializable
@@ -78,7 +63,6 @@ abstract class EventDTO : AbstractAgendaItem(), HasTimeAsEpochMilli {
         override val title: String,
         override val description: String,
 
-//        @JsonNames("remindAt") // json input field name
         override val remindAt: EpochMilli,
         override val from: EpochMilli,
         override val to: EpochMilli,
@@ -91,11 +75,5 @@ abstract class EventDTO : AbstractAgendaItem(), HasTimeAsEpochMilli {
 
         // Note: Returns complete Photo objects (not Ids)
         val photos: List<PhotoDTO.Remote> = emptyList(),  // NOTE: Only Remote photos are returned
-
-        // Transient fields (won't come from server)
-//        @Transient
-//        override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
-//        @Transient
-//        override val remindAt: ZonedDateTime = remindAtMilli.toZonedDateTime() // (useful for debugging)
     ) : EventDTO()
 }

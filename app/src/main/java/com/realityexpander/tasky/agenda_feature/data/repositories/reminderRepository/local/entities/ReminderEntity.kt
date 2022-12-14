@@ -3,7 +3,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepos
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.realityexpander.tasky.agenda_feature.domain.AbstractAgendaItem
-import com.realityexpander.tasky.agenda_feature.domain.HasTimeAsZonedDateTime
+import com.realityexpander.tasky.agenda_feature.domain.UsesZonedDateTime
 import com.realityexpander.tasky.core.util.UuidStr
 import java.time.ZonedDateTime
 
@@ -18,8 +18,4 @@ data class ReminderEntity(
     val time: ZonedDateTime,
 
     val isSynced: Boolean = false,
-) : AbstractAgendaItem(), HasTimeAsZonedDateTime {
-
-//    @Ignore
-//    override val startTime: ZonedDateTime = time
-}
+) : AbstractAgendaItem(), UsesZonedDateTime

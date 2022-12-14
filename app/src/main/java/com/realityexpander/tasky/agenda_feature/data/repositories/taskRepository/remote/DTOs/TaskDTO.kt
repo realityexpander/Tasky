@@ -2,7 +2,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.taskRepositor
 
 import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.domain.AbstractAgendaItem
-import com.realityexpander.tasky.agenda_feature.domain.HasTimeAsEpochMilli
+import com.realityexpander.tasky.agenda_feature.domain.UsesEpochMilli
 import com.realityexpander.tasky.core.util.EpochMilli
 import kotlinx.serialization.*
 
@@ -25,4 +25,4 @@ data class TaskDTO(
 //    override val startTime: ZonedDateTime = time.toZonedDateTime(), // for sorting in Agenda
 //    @Transient
 //    override val remindAt: ZonedDateTime = remindAtMilli.toZonedDateTime(), // for debugging
-) : AbstractAgendaItem(), HasTimeAsEpochMilli
+) : AbstractAgendaItem(), UsesEpochMilli
