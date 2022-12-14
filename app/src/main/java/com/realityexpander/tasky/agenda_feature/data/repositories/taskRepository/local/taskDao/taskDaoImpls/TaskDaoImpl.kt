@@ -57,8 +57,9 @@ interface TaskDaoImpl : ITaskDao {
     @Query(
         """
         SELECT * FROM tasks WHERE 
-            ( `remindAt` >= :startDateTime) AND (`remindAt` < :endDateTime) -- remindAt starts within DateTime range
-        """)
+            ( remindAt >= :startDateTime) AND (remindAt < :endDateTime) -- remindAt starts within DateTime range
+        """
+    )
     override fun getTasksForRemindAtDateTimeRangeFlow(
         startDateTime: ZonedDateTime,
         endDateTime: ZonedDateTime

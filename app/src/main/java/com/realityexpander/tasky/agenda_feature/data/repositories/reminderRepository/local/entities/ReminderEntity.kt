@@ -2,18 +2,20 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepos
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.realityexpander.tasky.agenda_feature.domain.AbstractAgendaItem
+import com.realityexpander.tasky.agenda_feature.domain.UsesZonedDateTime
 import com.realityexpander.tasky.core.util.UuidStr
 import java.time.ZonedDateTime
 
 @Entity(tableName = "reminders")
 data class ReminderEntity(
     @PrimaryKey(autoGenerate = false)
-    val id: UuidStr,
+    override val id: UuidStr,
 
-    val title: String,
-    val description: String,
-    val remindAt: ZonedDateTime,
+    override val title: String,
+    override val description: String,
+    override val remindAt: ZonedDateTime,
     val time: ZonedDateTime,
 
-    val isSynced: Boolean = false
-)
+    val isSynced: Boolean = false,
+) : AbstractAgendaItem(), UsesZonedDateTime

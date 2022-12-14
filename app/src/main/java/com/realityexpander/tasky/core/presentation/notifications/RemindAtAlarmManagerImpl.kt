@@ -12,7 +12,7 @@ import com.realityexpander.tasky.core.presentation.broadcastReceivers.AlarmBroad
 import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.Companion.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
 import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.Companion.ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM
 import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.Companion.ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID
-import com.realityexpander.tasky.core.util.toUtcMillis
+import com.realityexpander.tasky.core.util.toEpochMilli
 import com.realityexpander.tasky.core.util.toZonedDateTime
 import logcat.logcat
 import java.time.ZonedDateTime
@@ -38,7 +38,7 @@ class RemindAtAlarmManagerImpl @Inject constructor(
         // Only include upcoming `Remind At` items (RemindAt is in the future)
         val futureAgendaItems =
             agendaItems.filter {
-                it.remindAtTime.toUtcMillis() >= ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS).toUtcMillis()
+                it.remindAt.toEpochMilli() >= ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS).toEpochMilli()
             }
 
         if (futureAgendaItems.isEmpty()) {
@@ -151,7 +151,7 @@ class RemindAtAlarmManagerImpl @Inject constructor(
             )
         val alarmClockInfo =
             AlarmManager.AlarmClockInfo(
-                agendaItem.remindAtTime.toUtcMillis(),
+                agendaItem.remindAt.toEpochMilli(),
                 mainActivityPendingIntent
             )
 

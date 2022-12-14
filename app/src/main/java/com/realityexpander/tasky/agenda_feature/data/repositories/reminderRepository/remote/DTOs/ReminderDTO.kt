@@ -1,23 +1,19 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.DTOs
 
 import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
-import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
-import com.realityexpander.tasky.core.util.UtcMillis
-import com.realityexpander.tasky.core.util.toZonedDateTime
+import com.realityexpander.tasky.agenda_feature.domain.AbstractAgendaItem
+import com.realityexpander.tasky.agenda_feature.domain.UsesEpochMilli
+import com.realityexpander.tasky.core.util.EpochMilli
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import java.time.ZonedDateTime
 
 @Serializable
-data class ReminderDTO(
+@OptIn(ExperimentalSerializationApi::class) // for JsonNames
+data class ReminderDTO constructor(
     override val id: ReminderId,
     override val title: String,
     override val description: String,
-    val remindAt: UtcMillis,
-    val time: UtcMillis,
 
-    @Transient
-    override val startTime: ZonedDateTime = time.toZonedDateTime(), // for sorting in Agenda
-    @Transient
-    override val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime(),
-) : AgendaItem()
+    override val remindAt: EpochMilli,
+    val time: EpochMilli,
+) : AbstractAgendaItem(), UsesEpochMilli

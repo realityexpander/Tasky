@@ -1,4 +1,4 @@
-package com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.local
+package com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local
 
 import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.entities.ReminderEntity

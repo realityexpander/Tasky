@@ -9,7 +9,7 @@ import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
 import com.realityexpander.tasky.core.util.UserId
-import com.realityexpander.tasky.core.util.toUtcMillis
+import com.realityexpander.tasky.core.util.toEpochMilli
 import com.realityexpander.tasky.core.util.toZonedDateTime
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
@@ -92,9 +92,9 @@ fun AgendaItem.Event.toEventDTOCreate(): EventDTO.Create {
         id = id,
         title = title,
         description = description,
-        from = from.toUtcMillis(),
-        to = to.toUtcMillis(),
-        remindAt = remindAt.toUtcMillis(),
+        from = from.toEpochMilli(),
+        to = to.toEpochMilli(),
+        remindAt = remindAt.toEpochMilli(),
         attendeeIds = attendees.map { attendee ->
             attendee.id
         },
@@ -111,9 +111,9 @@ fun AgendaItem.Event.toEventDTOUpdate(authUserId: UserId? = null): EventDTO.Upda
         id = id,
         title = title,
         description = description,
-        from = from.toUtcMillis(),
-        to = to.toUtcMillis(),
-        remindAt = remindAt.toUtcMillis(),
+        from = from.toEpochMilli(),
+        to = to.toEpochMilli(),
+        remindAt = remindAt.toEpochMilli(),
         isGoing = isUserIdGoingAsAttendee(authUserId, attendees),
         attendeeIds = attendees.map { attendee ->
             attendee.id
@@ -132,9 +132,9 @@ fun AgendaItem.Event.toEventDTOResponse(): EventDTO.Response {
         id = id,
         title = title,
         description = description,
-        from = from.toUtcMillis(),
-        to = to.toUtcMillis(),
-        remindAt = remindAt.toUtcMillis(),
+        from = from.toEpochMilli(),
+        to = to.toEpochMilli(),
+        remindAt = remindAt.toEpochMilli(),
         photos = photos
             .map { it.toDTO() }
             .filterIsInstance<PhotoDTO.Remote>(),        // guarantee only respond with Remote photos

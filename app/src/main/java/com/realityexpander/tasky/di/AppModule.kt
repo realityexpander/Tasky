@@ -2,9 +2,9 @@ package com.realityexpander.tasky.di
 
 import android.content.Context
 import androidx.room.Room
-import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
-import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.reminderRepositoryImpls.ReminderRepositoryImpl
-import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.reminderApiImpls.ReminderApiImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
+import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.reminderRepositoryImpls.ReminderRepositoryImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.reminderApiImpls.ReminderApiImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.TaskyDatabase
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls.AgendaRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.AgendaApiImpl

@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.entities.ReminderEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.DTOs.ReminderDTO
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
-import com.realityexpander.tasky.core.util.toUtcMillis
+import com.realityexpander.tasky.core.util.toEpochMilli
 import com.realityexpander.tasky.core.util.toZonedDateTime
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
@@ -51,8 +51,8 @@ fun AgendaItem.Reminder.toDTO(): ReminderDTO {
         id = id,
         title = title,
         description = description,
-        time = time.toUtcMillis(),
-        remindAt = remindAt.toUtcMillis(),
+        time = time.toEpochMilli(),
+        remindAt = remindAt.toEpochMilli(),
     )
 }
 

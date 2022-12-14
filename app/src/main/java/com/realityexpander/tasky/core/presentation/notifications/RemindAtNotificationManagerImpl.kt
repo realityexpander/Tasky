@@ -30,8 +30,8 @@ import com.realityexpander.tasky.agenda_feature.presentation.common.enums.toAgen
 import com.realityexpander.tasky.core.presentation.broadcastReceivers.CompleteTaskBroadcastReceiver
 import com.realityexpander.tasky.core.presentation.util.getBitmapFromVectorDrawable
 import com.realityexpander.tasky.core.util.UuidStr
+import com.realityexpander.tasky.core.util.toEpochMilli
 import com.realityexpander.tasky.core.util.toIntegerHashCodeOfUUIDString
-import com.realityexpander.tasky.core.util.toUtcMillis
 import com.realityexpander.tasky.core.util.toZonedDateTime
 import logcat.logcat
 import java.time.format.DateTimeFormatter
@@ -80,7 +80,7 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
                     itemUuidStr = item.id,
                     title = item.title,
                     description = item.description,
-                    startDateTimeUtcMillis = item.startTime.toUtcMillis()
+                    startDateTimeUtcMillis = item.startTime.toEpochMilli()
                 )
             }
         }

@@ -2,56 +2,45 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.eventReposito
 
 import com.realityexpander.tasky.agenda_feature.common.util.AttendeeId
 import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
-import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
+import com.realityexpander.tasky.agenda_feature.domain.AbstractAgendaItem
+import com.realityexpander.tasky.agenda_feature.domain.UsesEpochMilli
 import com.realityexpander.tasky.agenda_feature.util.*
-import com.realityexpander.tasky.core.util.UserId
-import com.realityexpander.tasky.core.util.UtcMillis
-import com.realityexpander.tasky.core.util.UuidStr
-import com.realityexpander.tasky.core.util.toZonedDateTime
+import com.realityexpander.tasky.core.util.*
 import kotlinx.serialization.*
-import java.time.ZonedDateTime
 
-abstract class EventDTO : AgendaItem() {
+abstract class EventDTO : AbstractAgendaItem(), UsesEpochMilli {
 
-    // Core information for all Event DTOs
-//    abstract val id: UuidStr
-//    abstract val title: String
-//    abstract val description: String
-    abstract val remindAt: UtcMillis
-    abstract val from: UtcMillis
-    abstract val to: UtcMillis
+    // Core information for all Event DTO Types
+    abstract val from: EpochMilli
+    abstract val to: EpochMilli
 
     @Serializable
-    data class Create(  // output only
+    data class Create(  // POST only
         override val id: UuidStr,
         override val title: String,
         override val description: String,
-        override val remindAt: UtcMillis,
-        override val from: UtcMillis,
-        override val to: UtcMillis,
+
+        override val remindAt: EpochMilli,
+        override val from: EpochMilli,
+        override val to: EpochMilli,
 
         @Required  // forces write of empty list -> []   (instead of no field written)
         val attendeeIds: List<AttendeeId> = emptyList(),
 
         @Transient  // This field is used to store Local URI's for photos to upload.
         val photos: List<PhotoDTO.Local> = emptyList(),  // only local URI's are stored here
-
-        // Unused fields
-        @Transient
-        override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
-        @Transient
-        override val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime()
     ) : EventDTO()
 
 
     @Serializable
-    data class Update(  // output only
+    data class Update(  // PUT only
         override val id: UuidStr,
         override val title: String,
         override val description: String,
-        override val remindAt: UtcMillis,
-        override val from: UtcMillis,
-        override val to: UtcMillis,
+
+        override val remindAt: EpochMilli,
+        override val from: EpochMilli,
+        override val to: EpochMilli,
 
         @Required
         val isGoing : Boolean,  // ONLY used to set `isGoing` status for `UpdateEventDTO`, not used anywhere else in app.
@@ -60,27 +49,23 @@ abstract class EventDTO : AgendaItem() {
         val attendeeIds: List<AttendeeId> = emptyList(),
 
         @Required
-        @SerialName("deletedPhotoKeys") // output to json
+        @SerialName("deletedPhotoKeys") // json output field name
         val deletedPhotoIds: List<PhotoId> = emptyList(),
 
         @Transient
         val photos: List<PhotoDTO.Local> = emptyList(), // Local URI's are stored here for uploading
-
-        // Unused fields
-        @Transient
-        override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
-        @Transient
-        override val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime()
     ) : EventDTO()
 
     @Serializable
-    data class Response(  // input only
+    @OptIn(ExperimentalSerializationApi::class) // for JsonNames
+    data class Response constructor(  // RESPONSE only
         override val id: UuidStr,
         override val title: String,
         override val description: String,
-        override val remindAt: UtcMillis,
-        override val from: UtcMillis,
-        override val to: UtcMillis,
+
+        override val remindAt: EpochMilli,
+        override val from: EpochMilli,
+        override val to: EpochMilli,
 
         val host: UserId,
         val isUserEventCreator: Boolean,
@@ -90,11 +75,5 @@ abstract class EventDTO : AgendaItem() {
 
         // Note: Returns complete Photo objects (not Ids)
         val photos: List<PhotoDTO.Remote> = emptyList(),  // NOTE: Only Remote photos are returned
-
-        // Unused fields
-        @Transient
-        override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
-        @Transient
-        override val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime()
     ) : EventDTO()
 }

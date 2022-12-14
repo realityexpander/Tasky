@@ -1,7 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.reminderDao.reminderDaoImpls
 
 import androidx.room.*
-import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
+import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
 import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.entities.ReminderEntity
 import com.realityexpander.tasky.core.util.DAY_IN_SECONDS
@@ -38,9 +38,10 @@ interface ReminderDaoImpl : IReminderDao {
     @Query(
         """
         SELECT * FROM reminders 
-            WHERE ( ( `remindAt` >= :startDateTime) AND (`remindAt` < :endDateTime) ) -- remindAt starts this day
+            WHERE ( ( remindAt >= :startDateTime) AND (remindAt < :endDateTime) ) -- remindAt starts this day
                 
-        """)
+        """
+    )
     override fun getLocalRemindersForRemindAtDateTimeRangeFlow(
         startDateTime: ZonedDateTime,
         endDateTime: ZonedDateTime

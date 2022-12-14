@@ -1,9 +1,9 @@
-package com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.reminderRepositoryImpls
+package com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.reminderRepositoryImpls
 
 import com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
 import com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEntityDomain.toEntity
-import com.realityexpander.remindery.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
+import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.IReminderApi
