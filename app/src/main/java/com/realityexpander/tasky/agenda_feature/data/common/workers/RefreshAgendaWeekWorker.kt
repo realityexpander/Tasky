@@ -87,7 +87,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
         const val END_DAY_OFFSET = 5
 
         // • Start the one-time 'Refresh Agenda Week' Worker
-        fun startWorker(applicationContext: Context) {
+        fun startWorker(context: Context) {
             val refreshAgendaWeekConstraints: Constraints = Constraints.Builder().apply {
                 setRequiredNetworkType(NetworkType.CONNECTED)
             }.build()
@@ -108,7 +108,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
                     .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                     .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.MINUTES)
                     .build()
-            WorkManager.getInstance(applicationContext)
+            WorkManager.getInstance(context)
                 .enqueueUniqueWork(
                     name,
                     ExistingWorkPolicy.REPLACE,

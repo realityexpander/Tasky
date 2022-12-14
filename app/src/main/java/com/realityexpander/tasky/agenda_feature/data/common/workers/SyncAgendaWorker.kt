@@ -74,7 +74,7 @@ class SyncAgendaWorker @AssistedInject constructor(
         private const val NOTIFICATION_ID = 100002
 
         // • Start the periodic SyncAgenda Worker (Clear the old one first)
-        fun startWorker(applicationContext: Context) {
+        fun startWorker(context: Context) {
             val syncAgendaWorkerConstraints: Constraints = Constraints.Builder().apply {
                 setRequiredNetworkType(NetworkType.CONNECTED)
                 setRequiresBatteryNotLow(true)
@@ -86,7 +86,7 @@ class SyncAgendaWorker @AssistedInject constructor(
                     .addTag(SyncAgendaWorker.WORKER_NAME)
                     .addTag(TASKY_WORKERS_TAG)
                     .build()
-            WorkManager.getInstance(applicationContext).apply {
+            WorkManager.getInstance(context).apply {
                 cancelAllWorkByTag(SyncAgendaWorker.WORKER_NAME)
                 pruneWork()
                 enqueue(workRequest)
