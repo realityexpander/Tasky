@@ -33,11 +33,11 @@ abstract class EventDTO : AgendaItem() {
         @Transient  // This field is used to store Local URI's for photos to upload.
         val photos: List<PhotoDTO.Local> = emptyList(),  // only local URI's are stored here
 
-        // Unused fields for transfer to server (useful for debugging)
+        // Transient fields (won't send to server)
         @Transient
         override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
         @Transient
-        override val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime()
+        val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime() // (useful for debugging)
     ) : EventDTO()
 
 
@@ -63,11 +63,11 @@ abstract class EventDTO : AgendaItem() {
         @Transient
         val photos: List<PhotoDTO.Local> = emptyList(), // Local URI's are stored here for uploading
 
-        // Unused fields for transfer to server (useful for debugging)
+        // Transient fields (won't send to server)
         @Transient
         override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
         @Transient
-        override val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime()
+        val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime() // (useful for debugging)
     ) : EventDTO()
 
     @Serializable
@@ -88,10 +88,10 @@ abstract class EventDTO : AgendaItem() {
         // Note: Returns complete Photo objects (not Ids)
         val photos: List<PhotoDTO.Remote> = emptyList(),  // NOTE: Only Remote photos are returned
 
-        // Unused fields for transfer from server (useful for debugging)
+        // Transient fields (won't come from server)
         @Transient
         override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
         @Transient
-        override val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime()
+        val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime() // (useful for debugging)
     ) : EventDTO()
 }

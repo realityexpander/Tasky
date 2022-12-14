@@ -13,7 +13,6 @@ abstract class AgendaItem : java.io.Serializable {
     abstract val title: String
     abstract val description: String
     abstract val startTime: ZonedDateTime  // for sorting in Agenda
-    abstract val remindAtTime: ZonedDateTime
 
     @Parcelize
     data class Event(
@@ -26,11 +25,9 @@ abstract class AgendaItem : java.io.Serializable {
         override var startTime: ZonedDateTime = from, // for sorting in Agenda
         val to: ZonedDateTime,
         val remindAt: ZonedDateTime,
-        override var remindAtTime: ZonedDateTime = remindAt,
 
         val host: UserId? = null,
         val isUserEventCreator: Boolean = false,
-
         val attendees: List<Attendee> = emptyList(),
 
         val photos: List<Photo> = emptyList(),
@@ -47,7 +44,6 @@ abstract class AgendaItem : java.io.Serializable {
         val time: ZonedDateTime,
         override var startTime: ZonedDateTime = time, // for sorting in Agenda
         val remindAt: ZonedDateTime,
-        override var remindAtTime: ZonedDateTime = remindAt,
 
         val isDone: Boolean = false,
     ) : AgendaItem(), Parcelable, java.io.Serializable
@@ -62,6 +58,5 @@ abstract class AgendaItem : java.io.Serializable {
         val time: ZonedDateTime,
         override var startTime: ZonedDateTime = time, // for sorting in Agenda
         val remindAt: ZonedDateTime,
-        override var remindAtTime: ZonedDateTime = remindAt,
     ) : AgendaItem(), Parcelable, java.io.Serializable
 }
