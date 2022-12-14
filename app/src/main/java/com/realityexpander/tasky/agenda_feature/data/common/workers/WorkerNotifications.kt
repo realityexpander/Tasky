@@ -10,7 +10,9 @@ import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import com.realityexpander.tasky.agenda_feature.domain.IWorkerNotifications
 
-class WorkerNotificationsImpl(val context: Context): IWorkerNotifications {
+class WorkerNotificationsImpl(
+    val context: Context
+): IWorkerNotifications {
 
     init {
         createNotificationChannel()
