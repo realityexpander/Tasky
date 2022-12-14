@@ -4,11 +4,9 @@ import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.domain.AbstractAgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.UsesEpochMilli
 import com.realityexpander.tasky.core.util.EpochMilli
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
 @Serializable
-@OptIn(ExperimentalSerializationApi::class) // for JsonNames
 data class ReminderDTO constructor(
     override val id: ReminderId,
     override val title: String,

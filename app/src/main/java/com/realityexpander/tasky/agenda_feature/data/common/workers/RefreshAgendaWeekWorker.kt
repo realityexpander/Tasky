@@ -9,7 +9,7 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.domain.IWorkerNotifications
-import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
+import com.realityexpander.tasky.core.presentation.util.ResultUiText
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.async

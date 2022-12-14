@@ -9,7 +9,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.remote.ISyncApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.remote.SyncAgendaRequestDTO
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
-import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
+import com.realityexpander.tasky.core.presentation.util.ResultUiText
 import com.realityexpander.tasky.core.presentation.util.UiText
 import javax.inject.Inject
 
