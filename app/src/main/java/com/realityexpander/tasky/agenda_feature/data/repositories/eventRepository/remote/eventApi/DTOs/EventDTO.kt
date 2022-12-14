@@ -58,7 +58,7 @@ abstract class EventDTO : AbstractAgendaItem(), UsesEpochMilli {
 
     @Serializable
     @OptIn(ExperimentalSerializationApi::class) // for JsonNames
-    data class Response constructor(  // server RESPONSE only
+    data class Response constructor(  // RESPONSE only
         override val id: UuidStr,
         override val title: String,
         override val description: String,
