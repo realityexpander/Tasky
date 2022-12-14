@@ -5,7 +5,10 @@ import android.net.Uri
 import com.realityexpander.tasky.core.data.getBytesRecompressed
 import com.realityexpander.tasky.core.util.UPLOAD_IMAGE_MAX_SIZE
 
-fun Uri.isImageSizeTooLargeToUpload(context: Context, maxUploadSize: Int = UPLOAD_IMAGE_MAX_SIZE): Boolean {
+fun Uri.isImageSizeTooLargeToUpload(
+    context: Context,
+    maxUploadSize: Int = UPLOAD_IMAGE_MAX_SIZE
+): Boolean {
     this.getBytesRecompressed(context, maxUploadSize)?.size?.let { size ->
         return size > maxUploadSize
     }
