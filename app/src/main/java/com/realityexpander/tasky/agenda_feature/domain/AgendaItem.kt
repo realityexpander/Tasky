@@ -54,6 +54,7 @@ abstract class AgendaItem :
 
         val isSynced: Boolean = false,
     ) : AgendaItem(), Parcelable
+
     @Parcelize
     data class Reminder(
         override val id: UuidStr,
