@@ -41,7 +41,7 @@ fun TaskDTO.toDomain(): AgendaItem.Task {
         id = id,
         title = title,
         description = description,
-        remindAt = remindAtMilli.toZonedDateTime(),
+        remindAt = remindAt.toZonedDateTime(),
         time = time.toZonedDateTime(),
         isDone = isDone,
         isSynced = true
@@ -55,7 +55,7 @@ fun AgendaItem.Task.toDTO(): TaskDTO {
         title = title,
         description = description,
         time = time.toEpochMilli(),
-        remindAtMilli = remindAt.toEpochMilli(),
+        remindAt = remindAt.toEpochMilli(),
         isDone = isDone,
     )
 }

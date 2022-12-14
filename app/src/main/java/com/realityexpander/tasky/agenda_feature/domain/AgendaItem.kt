@@ -2,18 +2,30 @@ package com.realityexpander.tasky.agenda_feature.domain
 
 import android.os.Parcelable
 import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
+import com.realityexpander.tasky.core.util.EpochMilli
 import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.parcelize.Parcelize
 import java.time.ZonedDateTime
 
-abstract class AgendaItem {
+//    abstract val id: UuidStr
+//    abstract val title: String
+//    abstract val description: String
+//    abstract val remindAt: ZonedDateTime
 
+abstract class AbstractAgendaItem {
     abstract val id: UuidStr
     abstract val title: String
     abstract val description: String
-    abstract val remindAt: ZonedDateTime
-    abstract val startTime: ZonedDateTime  // for sorting in Agenda
+}
+
+abstract class AgendaItem :
+    AbstractAgendaItem(),
+    HasTimeAsZonedDateTime, 
+    HasStartTime
+{
+
+//    abstract val startTime: ZonedDateTime  // for sorting in Agenda
 
     @Parcelize
     data class Event(
@@ -50,7 +62,6 @@ abstract class AgendaItem {
 
         val isSynced: Boolean = false,
     ) : AgendaItem(), Parcelable
-
     @Parcelize
     data class Reminder(
         override val id: UuidStr,
@@ -63,4 +74,16 @@ abstract class AgendaItem {
 
         val isSynced: Boolean = false,
     ) : AgendaItem(), Parcelable
+}
+
+interface HasTimeAsZonedDateTime {
+    val remindAt: ZonedDateTime
+}
+
+interface HasTimeAsEpochMilli {
+    val remindAt: EpochMilli
+}
+
+interface HasStartTime {
+    val startTime: ZonedDateTime
 }

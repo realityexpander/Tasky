@@ -1,10 +1,10 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities
 
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
-import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
+import com.realityexpander.tasky.agenda_feature.domain.AbstractAgendaItem
+import com.realityexpander.tasky.agenda_feature.domain.HasTimeAsZonedDateTime
 import com.realityexpander.tasky.core.util.UuidStr
 import java.time.ZonedDateTime
 
@@ -27,8 +27,8 @@ data class EventEntity constructor(
     val deletedPhotoIds: List<PhotoId> = emptyList(),
 
     val isSynced: Boolean = false,
-) : AgendaItem() {
+) : AbstractAgendaItem(), HasTimeAsZonedDateTime {
 
-    @Ignore
-    override val startTime: ZonedDateTime = from
+//    @Ignore
+//    override val startTime: ZonedDateTime = from
 }

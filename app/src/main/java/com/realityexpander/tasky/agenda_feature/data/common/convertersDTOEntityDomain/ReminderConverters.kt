@@ -39,7 +39,7 @@ fun ReminderDTO.toDomain(): AgendaItem.Reminder {
         id = id,
         title = title,
         description = description,
-        remindAt = remindAtMilli.toZonedDateTime(),
+        remindAt = remindAt.toZonedDateTime(),
         time = time.toZonedDateTime(),
         isSynced = true
     )
@@ -52,7 +52,7 @@ fun AgendaItem.Reminder.toDTO(): ReminderDTO {
         title = title,
         description = description,
         time = time.toEpochMilli(),
-        remindAtMilli = remindAt.toEpochMilli(),
+        remindAt = remindAt.toEpochMilli(),
     )
 }
 

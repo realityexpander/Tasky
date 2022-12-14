@@ -70,7 +70,7 @@ fun EventDTO.toDomain(): AgendaItem.Event {
                 description = description,
                 from = from.toZonedDateTime(),
                 to = to.toZonedDateTime(),
-                remindAt = remindAtMilli.toZonedDateTime(),
+                remindAt = remindAt.toZonedDateTime(),
 
                 host = host,
                 isUserEventCreator = isUserEventCreator,
@@ -94,7 +94,7 @@ fun AgendaItem.Event.toEventDTOCreate(): EventDTO.Create {
         description = description,
         from = from.toEpochMilli(),
         to = to.toEpochMilli(),
-        remindAtMilli = remindAt.toEpochMilli(),
+        remindAt = remindAt.toEpochMilli(),
         attendeeIds = attendees.map { attendee ->
             attendee.id
         },
@@ -113,7 +113,7 @@ fun AgendaItem.Event.toEventDTOUpdate(authUserId: UserId? = null): EventDTO.Upda
         description = description,
         from = from.toEpochMilli(),
         to = to.toEpochMilli(),
-        remindAtMilli = remindAt.toEpochMilli(),
+        remindAt = remindAt.toEpochMilli(),
         isGoing = isUserIdGoingAsAttendee(authUserId, attendees),
         attendeeIds = attendees.map { attendee ->
             attendee.id
@@ -134,7 +134,7 @@ fun AgendaItem.Event.toEventDTOResponse(): EventDTO.Response {
         description = description,
         from = from.toEpochMilli(),
         to = to.toEpochMilli(),
-        remindAtMilli = remindAt.toEpochMilli(),
+        remindAt = remindAt.toEpochMilli(),
         photos = photos
             .map { it.toDTO() }
             .filterIsInstance<PhotoDTO.Remote>(),        // guarantee only respond with Remote photos
