@@ -1,16 +1,42 @@
 package com.realityexpander.tasky.agenda_feature.data.common.typeConverters
 
 import androidx.room.TypeConverter
-import com.realityexpander.tasky.core.util.UtcSeconds
+import com.realityexpander.tasky.core.util.EpochSecond
+import com.realityexpander.tasky.core.util.ZonedDateTimeStr
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+
+class ZonedDateTimeTypeConverter2 {
+    @TypeConverter
+    fun fromZonedDateTime(value: ZonedDateTime?): ZonedDateTimeStr? {  // saves as a String (ZonedDateTime Format) in DB Tables
+        return value?.toInstant()
+            ?.atZone(ZoneOffset.UTC)
+            ?.truncatedTo(ChronoUnit.MINUTES)
+            ?.toString()
+    }
+
+    @TypeConverter
+    fun toZonedDateTime(value: ZonedDateTimeStr?): ZonedDateTime? {   // restores from a String (ZonedDateTime Format) in DB Tables
+        return value?.let {
+            ZonedDateTime.ofInstant(
+                Instant.from(
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm'Z'")
+                        .withZone(ZoneId.of("UTC"))
+                        .parse(value)
+                ),
+                ZoneId.systemDefault()  // convert to current local time zone
+            )
+        }
+    }
+}
 
 class ZonedDateTimeTypeConverter {
     @TypeConverter
-    fun fromZonedDateTime(value: ZonedDateTime?): UtcSeconds? {  // saves as a Long (UTC epochSeconds) in DB Tables
+    fun fromZonedDateTime(value: ZonedDateTime?): EpochSecond? {  // saves as a Long (UTC epochSeconds) in DB Tables
         return value?.toInstant()
             ?.atZone(ZoneOffset.UTC)
             ?.truncatedTo(ChronoUnit.MINUTES)
@@ -18,7 +44,7 @@ class ZonedDateTimeTypeConverter {
     }
 
     @TypeConverter
-    fun toZonedDateTime(value: UtcSeconds?): ZonedDateTime? {   // restores from a Long (UTC epochSeconds) in DB Tables
+    fun toZonedDateTime(value: EpochSecond?): ZonedDateTime? {   // restores from a Long (UTC epochSeconds) in DB Tables
         return value?.let {
             ZonedDateTime.ofInstant(
                 Instant.ofEpochSecond(value),

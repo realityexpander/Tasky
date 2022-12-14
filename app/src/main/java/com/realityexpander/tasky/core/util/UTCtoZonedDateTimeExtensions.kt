@@ -5,11 +5,15 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-fun ZonedDateTime.toUtcMillis(): UtcMillis {
+typealias EpochMilli = Long
+typealias EpochSecond = Long
+typealias ZonedDateTimeStr = String
+
+fun ZonedDateTime.toEpochMilli(): EpochMilli {
     return this.toOffsetDateTime().toInstant().toEpochMilli()
 }
 
-fun UtcMillis.toZonedDateTime(zoneId: String = ZoneId.systemDefault().id): ZonedDateTime {
+fun EpochMilli.toZonedDateTime(zoneId: String = ZoneId.systemDefault().id): ZonedDateTime {
     return ZonedDateTime.ofInstant(
         Instant.ofEpochMilli(this),
         ZoneId.of(zoneId)

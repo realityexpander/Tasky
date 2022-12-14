@@ -7,11 +7,12 @@ import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.parcelize.Parcelize
 import java.time.ZonedDateTime
 
-abstract class AgendaItem : java.io.Serializable {
+abstract class AgendaItem {
 
     abstract val id: UuidStr
     abstract val title: String
     abstract val description: String
+    abstract val remindAt: ZonedDateTime
     abstract val startTime: ZonedDateTime  // for sorting in Agenda
 
     @Parcelize
@@ -22,9 +23,9 @@ abstract class AgendaItem : java.io.Serializable {
         val isSynced: Boolean = false,
 
         val from: ZonedDateTime,
-        override var startTime: ZonedDateTime = from, // for sorting in Agenda
         val to: ZonedDateTime,
-        val remindAt: ZonedDateTime,
+        override val startTime: ZonedDateTime = from, // for sorting in Agenda
+        override val remindAt: ZonedDateTime,
 
         val host: UserId? = null,
         val isUserEventCreator: Boolean = false,
@@ -32,7 +33,7 @@ abstract class AgendaItem : java.io.Serializable {
 
         val photos: List<Photo> = emptyList(),
         val deletedPhotoIds: List<PhotoId> = emptyList(),  // only used for EventDTO.Update
-    ) : AgendaItem(), Parcelable, java.io.Serializable
+    ) : AgendaItem(), Parcelable
 
     @Parcelize
     data class Task(
@@ -42,11 +43,11 @@ abstract class AgendaItem : java.io.Serializable {
         val isSynced: Boolean = false,
 
         val time: ZonedDateTime,
-        override var startTime: ZonedDateTime = time, // for sorting in Agenda
-        val remindAt: ZonedDateTime,
+        override val startTime: ZonedDateTime = time, // for sorting in Agenda
+        override val remindAt: ZonedDateTime,
 
         val isDone: Boolean = false,
-    ) : AgendaItem(), Parcelable, java.io.Serializable
+    ) : AgendaItem(), Parcelable
 
     @Parcelize
     data class Reminder(
@@ -56,7 +57,7 @@ abstract class AgendaItem : java.io.Serializable {
         val isSynced: Boolean = false,
 
         val time: ZonedDateTime,
-        override var startTime: ZonedDateTime = time, // for sorting in Agenda
-        val remindAt: ZonedDateTime,
-    ) : AgendaItem(), Parcelable, java.io.Serializable
+        override val startTime: ZonedDateTime = time, // for sorting in Agenda
+        override val remindAt: ZonedDateTime,
+    ) : AgendaItem(), Parcelable
 }

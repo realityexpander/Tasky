@@ -4,7 +4,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.agendaReposito
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import com.realityexpander.tasky.core.data.remote.utils.cancelExistingApiCallWithSameParameterValue
 import com.realityexpander.tasky.core.util.rethrowIfCancellation
-import com.realityexpander.tasky.core.util.toUtcMillis
+import com.realityexpander.tasky.core.util.toEpochMilli
 import okhttp3.OkHttpClient
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -20,12 +20,12 @@ class AgendaApiImpl @Inject constructor(
             cancelExistingApiCallWithSameParameterValue(
                 okHttpClient,
                 "date",
-                zonedDateTime.toUtcMillis().toString()
+                zonedDateTime.toEpochMilli().toString()
             )
 
             val response = taskyApi.getAgenda(
                 ZonedDateTime.now().zone.id.toString(),
-                zonedDateTime.toUtcMillis()
+                zonedDateTime.toEpochMilli()
             )
 
             if (response.isSuccessful) {

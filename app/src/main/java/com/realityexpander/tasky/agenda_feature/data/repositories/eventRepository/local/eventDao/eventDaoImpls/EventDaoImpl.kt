@@ -38,7 +38,7 @@ interface EventDaoImpl : IEventDao {
     @Query(
         """
         SELECT * FROM events WHERE  
-            ( `remindAt` >= :startDateTime) AND (`remindAt` < :endDateTime) -- remindAt starts within range
+            ( remindAt >= :startDateTime) AND (remindAt < :endDateTime) -- remindAt starts within range
         """
     )
     override fun getLocalEventsForRemindAtDateTimeRangeFlow(

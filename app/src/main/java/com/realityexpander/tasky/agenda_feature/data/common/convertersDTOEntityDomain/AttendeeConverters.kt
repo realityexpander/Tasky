@@ -3,7 +3,7 @@ package com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.AttendeeEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.AttendeeDTO
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
-import com.realityexpander.tasky.core.util.toUtcMillis
+import com.realityexpander.tasky.core.util.toEpochMilli
 import com.realityexpander.tasky.core.util.toZonedDateTime
 
 
@@ -27,7 +27,7 @@ fun Attendee.toDTO() =
         email = email,
         fullName = fullName,
         isGoing = isGoing,
-        remindAt = remindAt?.toUtcMillis(),
+        remindAt = remindAt?.toEpochMilli(),
         photo = photo,
     )
 

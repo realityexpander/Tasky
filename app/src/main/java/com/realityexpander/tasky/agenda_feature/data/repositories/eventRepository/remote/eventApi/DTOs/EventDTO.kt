@@ -4,28 +4,28 @@ import com.realityexpander.tasky.agenda_feature.common.util.AttendeeId
 import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.util.*
-import com.realityexpander.tasky.core.util.UserId
-import com.realityexpander.tasky.core.util.UtcMillis
-import com.realityexpander.tasky.core.util.UuidStr
-import com.realityexpander.tasky.core.util.toZonedDateTime
+import com.realityexpander.tasky.core.util.*
 import kotlinx.serialization.*
+import kotlinx.serialization.json.JsonNames
 import java.time.ZonedDateTime
 
 abstract class EventDTO : AgendaItem() {
 
-    // Core information for all Event DTOs
-    abstract val remindAt: UtcMillis
-    abstract val from: UtcMillis
-    abstract val to: UtcMillis
+    // Core information for all Event DTO Types
+    abstract val from: EpochMilli
+    abstract val to: EpochMilli
+    abstract val remindAtMilli: EpochMilli
 
     @Serializable
     data class Create(  // POST only
         override val id: UuidStr,
         override val title: String,
         override val description: String,
-        override val remindAt: UtcMillis,
-        override val from: UtcMillis,
-        override val to: UtcMillis,
+
+        @SerialName("remindAt")
+        override val remindAtMilli: EpochMilli,
+        override val from: EpochMilli,
+        override val to: EpochMilli,
 
         @Required  // forces write of empty list -> []   (instead of no field written)
         val attendeeIds: List<AttendeeId> = emptyList(),
@@ -37,7 +37,7 @@ abstract class EventDTO : AgendaItem() {
         @Transient
         override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
         @Transient
-        val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime() // (useful for debugging)
+        override val remindAt: ZonedDateTime = remindAtMilli.toZonedDateTime() // (useful for debugging)
     ) : EventDTO()
 
 
@@ -46,9 +46,11 @@ abstract class EventDTO : AgendaItem() {
         override val id: UuidStr,
         override val title: String,
         override val description: String,
-        override val remindAt: UtcMillis,
-        override val from: UtcMillis,
-        override val to: UtcMillis,
+
+        @SerialName("remindAt")
+        override val remindAtMilli: EpochMilli,
+        override val from: EpochMilli,
+        override val to: EpochMilli,
 
         @Required
         val isGoing : Boolean,  // ONLY used to set `isGoing` status for `UpdateEventDTO`, not used anywhere else in app.
@@ -67,17 +69,20 @@ abstract class EventDTO : AgendaItem() {
         @Transient
         override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
         @Transient
-        val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime() // (useful for debugging)
+        override val remindAt: ZonedDateTime = remindAtMilli.toZonedDateTime() // (useful for debugging)
     ) : EventDTO()
 
     @Serializable
-    data class Response(  // server response only
+    @OptIn(ExperimentalSerializationApi::class) // for JsonNames
+    data class Response constructor(  // server RESPONSE only
         override val id: UuidStr,
         override val title: String,
         override val description: String,
-        override val remindAt: UtcMillis,
-        override val from: UtcMillis,
-        override val to: UtcMillis,
+
+        @JsonNames("remindAt") // json input field name
+        override val remindAtMilli: EpochMilli,
+        override val from: EpochMilli,
+        override val to: EpochMilli,
 
         val host: UserId,
         val isUserEventCreator: Boolean,
@@ -92,6 +97,6 @@ abstract class EventDTO : AgendaItem() {
         @Transient
         override val startTime: ZonedDateTime = from.toZonedDateTime(),  // for sorting in Agenda
         @Transient
-        val remindAtTime: ZonedDateTime = remindAt.toZonedDateTime() // (useful for debugging)
+        override val remindAt: ZonedDateTime = remindAtMilli.toZonedDateTime() // (useful for debugging)
     ) : EventDTO()
 }

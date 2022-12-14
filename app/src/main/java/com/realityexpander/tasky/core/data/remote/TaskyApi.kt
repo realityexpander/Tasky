@@ -15,7 +15,7 @@ import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.A
 import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
 import com.realityexpander.tasky.core.util.AuthToken
 import com.realityexpander.tasky.core.util.Email
-import com.realityexpander.tasky.core.util.UtcMillis
+import com.realityexpander.tasky.core.util.EpochMilli
 import com.realityexpander.tasky.core.util.UuidStr
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -61,7 +61,7 @@ interface TaskyApi {
     @GET("agenda")
     suspend fun getAgenda(
         @Query("timezone") timezone: TimeZoneStr,  // ex: "Europe/Berlin"
-        @Query("time") time: UtcMillis,            // epoch millis in UTC timeZone
+        @Query("time") time: EpochMilli,            // epoch millis in UTC timeZone
     ): Response<AgendaDayDTO>
 
     @POST("syncAgenda")
