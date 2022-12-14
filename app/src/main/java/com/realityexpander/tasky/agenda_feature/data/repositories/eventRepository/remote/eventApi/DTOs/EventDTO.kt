@@ -12,9 +12,9 @@ import java.time.ZonedDateTime
 abstract class EventDTO : AgendaItem() {
 
     // Core information for all Event DTO Types
+    abstract val remindAtMilli: EpochMilli
     abstract val from: EpochMilli
     abstract val to: EpochMilli
-    abstract val remindAtMilli: EpochMilli
 
     @Serializable
     data class Create(  // POST only
