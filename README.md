@@ -1,6 +1,7 @@
 # Tasky
 Task manager similar to a lite version of Google Calendar
 
+* Manages schedule across time zones automatically
 
 
 ## 🛠 Built With
