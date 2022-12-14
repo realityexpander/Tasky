@@ -13,16 +13,9 @@ data class TaskDTO(
     override val title: String,
     override val description: String,
 
-//    @SerialName("remindAt")
-//    @JsonNames("remindAt") // json input field name
     override val remindAt: EpochMilli,
     val time: EpochMilli,
 
     @Required
     val isDone: Boolean = false,
-
-//    @Transient
-//    override val startTime: ZonedDateTime = time.toZonedDateTime(), // for sorting in Agenda
-//    @Transient
-//    override val remindAt: ZonedDateTime = remindAtMilli.toZonedDateTime(), // for debugging
 ) : AbstractAgendaItem(), UsesEpochMilli
