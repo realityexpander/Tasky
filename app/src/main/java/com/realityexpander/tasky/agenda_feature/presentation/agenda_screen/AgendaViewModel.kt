@@ -120,7 +120,6 @@ class AgendaViewModel @Inject constructor(
             }
 
             // • Start workers for Syncing and Week Refresh
-//            yield()
             _oneTimeEvent.emit(OneTimeEvent.StartWorkers)
 
 //            yield() // wait for database to load  // leave for testing for now // todo remove
@@ -151,7 +150,6 @@ class AgendaViewModel @Inject constructor(
                 )
                 .debounce(500)
                 .collect { agendaItems ->
-//                    _oneTimeEvent.emit(OneTimeEvent.SetAllAgendaItemAlarms(agendaItems))
                     remindAtAlarmManager.cancelAllAlarms {
                         remindAtAlarmManager.setAlarmsForAgendaItems(agendaItems)
                     }
