@@ -67,9 +67,11 @@ fun main() {
 //
 // For example, if you have a custom type called Date, you should convert it to a long value that
 // represents the number of milliseconds since January 1, 1970, 00:00:00 GMT. Then, Room will use
-// the long value to compare dates in queries. If you don't convert the custom type to a primitive
-// type that Room can compare (like a long), Room will compare the string representation of the
-// custom type, which is not what you want.
+// the long value to compare dates in queries.
+//
+// If you don't convert the custom type to a primitive type that Room can compare numerically
+// (like a string), Room will compare the string representation of the custom type, which is
+// not what you want.
 //
 // https://developer.android.com/training/data-storage/room/referencing-data
 //
