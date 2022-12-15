@@ -43,13 +43,13 @@ interface IAuthApi {
 
         // 1. Check for a valid AuthToken in the IAuthApi Companion object.
         //   2a. If valid, return it.
-        //   2b. If not valid, attempt to get it from the authTokenRetriever (usually an AuthDao fun).
+        //   2b. If not valid, attempt to fetch it from the authTokenRetriever (usually an AuthDao fun).
         //       Set authToken in Companion object, for faster access.
         fun getAuthToken(authTokenRetriever: (suspend () -> AuthToken?)? = null ): AuthToken? {
-            // if valid, return it
+            // 2a - if valid, return it
             IAuthApi.Companion.authToken?.let { return it }
 
-            // Attempt to fetch it
+            // 2b - Attempt to fetch it
             return runBlocking(Dispatchers.IO) {
                 logcat { "AuthToken invalid - Attempt Retrieve AuthToken from repo" }
                 authTokenRetriever?.run {
