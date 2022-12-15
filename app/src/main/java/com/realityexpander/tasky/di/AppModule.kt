@@ -1,11 +1,7 @@
 package com.realityexpander.tasky.di
 
-import android.app.Application
 import android.content.Context
 import androidx.room.Room
-import androidx.work.WorkManager
-import com.realityexpander.tasky.agenda_feature.data.common.workers.RefreshAgendaWeekWorker
-import com.realityexpander.tasky.agenda_feature.data.common.workers.SyncAgendaWorker
 import com.realityexpander.tasky.agenda_feature.data.repositories.TaskyDatabase
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls.AgendaRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.AgendaApiImpl
@@ -55,39 +51,11 @@ import javax.inject.Named
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-
 const val USE_FAKE_REPOSITORY = false
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    /////////// WORK MANAGER ///////////
-
-    @Provides
-    @Singleton
-    @Named("WorkerController")
-    fun provideWorkManager(
-        application: Application
-    ): WorkManager {
-        return WorkManager.getInstance(application)
-    }
-
-    @Provides
-    @Singleton
-    fun provideSyncAgendaWorkerStarter(
-        @ApplicationContext context: Context
-    ): SyncAgendaWorker.WorkerStarter {
-        return SyncAgendaWorker.WorkerStarter(context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideRefreshAgendaWeekWorkerStarter(
-        @ApplicationContext context: Context
-    ): RefreshAgendaWeekWorker.WorkerStarter {
-        return RefreshAgendaWeekWorker.WorkerStarter(context)
-    }
 
     /////////// DATABASE ///////////
 

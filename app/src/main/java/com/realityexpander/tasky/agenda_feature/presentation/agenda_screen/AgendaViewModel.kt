@@ -3,14 +3,10 @@ package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.WorkManager
 import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
 import com.realityexpander.observeconnectivity.IInternetConnectivityObserver.OnlineStatus
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
-import com.realityexpander.tasky.agenda_feature.data.common.workers.RefreshAgendaWeekWorker
-import com.realityexpander.tasky.agenda_feature.data.common.workers.SyncAgendaWorker
-import com.realityexpander.tasky.agenda_feature.data.common.workers.TASKY_WORKERS_TAG
 import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
@@ -29,7 +25,6 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
 import javax.inject.Inject
-import javax.inject.Named
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
@@ -39,9 +34,11 @@ class AgendaViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val connectivityObserver: IInternetConnectivityObserver,
     private val remindAtAlarmManager: IRemindAtAlarmManager,
-    private val syncAgendaWorkerStarter: SyncAgendaWorker.WorkerStarter,
-    private val refreshAgendaWeekWorkerStarter: RefreshAgendaWeekWorker.WorkerStarter,
-    @Named("WorkerController") private val workManager: WorkManager
+//    @Named("SyncAgendaWorkerScheduler")
+//    private val syncAgendaWorkerScheduler: IWorkerScheduler,
+//    @Named("RefreshAgendaWeekWorkerScheduler")
+//    private val refreshAgendaWeekWorkerScheduler: IWorkerScheduler,
+    private val agendaWorkersScheduler: IAgendaWorkersScheduler
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)
@@ -130,10 +127,11 @@ class AgendaViewModel @Inject constructor(
             }
 
             // • Start workers for Syncing and Week Refresh
-            syncAgendaWorkerStarter.startWorker()
-            refreshAgendaWeekWorkerStarter.startWorker()
+//            syncAgendaWorkerScheduler.startWorker()
+//            refreshAgendaWeekWorkerScheduler.startWorker()
+            agendaWorkersScheduler.startAllWorkers()
 
-//            yield() // wait for database to load  // leave for testing for now // todo remove
+//            yield() // wait for database to load  // leave for testing for now // todo add to unit testing
 //            if(agendaState.value.agendaItems.isEmpty()) { // if no items for today, make some fake ones
 //                createFakeAgendaItems(agendaRepository)
 //            }
@@ -242,7 +240,11 @@ class AgendaViewModel @Inject constructor(
             }
             is Logout -> {
                 viewModelScope.launch {
-                    workManager.cancelAllWorkByTag(TASKY_WORKERS_TAG)
+//                    workManager.cancelAllWorkByTag(TASKY_WORKERS_TAG)
+//                    syncAgendaWorkerScheduler.cancelWorker()
+//                    refreshAgendaWeekWorkerScheduler.cancelWorker()
+                    agendaWorkersScheduler.cancelAllWorkers()
+
                     agendaRepository.clearAllAgendaItemsLocally()
                     authRepository.logout()
 
@@ -382,7 +384,7 @@ class AgendaViewModel @Inject constructor(
         }
     }
 
-    // Create Dummy data to pre-populate the Agenda // todo remove later - left for reference
+    // Create Dummy data to pre-populate the Agenda // todo add to unit testing - left for reference
     private fun createFakeAgendaItems(agendaRepository: IAgendaRepository) {
         val today = ZonedDateTime.now()
         val zoneId = ZoneId.systemDefault()
