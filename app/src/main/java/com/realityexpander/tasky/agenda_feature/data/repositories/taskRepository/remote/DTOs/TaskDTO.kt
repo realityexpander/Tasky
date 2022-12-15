@@ -4,10 +4,10 @@ import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.domain.AbstractAgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.UsesEpochMilli
 import com.realityexpander.tasky.core.util.EpochMilli
-import kotlinx.serialization.*
+import kotlinx.serialization.Required
+import kotlinx.serialization.Serializable
 
 @Serializable
-@OptIn(ExperimentalSerializationApi::class) // for JsonNames
 data class TaskDTO(
     override val id: TaskId,
     override val title: String,

@@ -566,7 +566,7 @@ fun AddEventScreenContent(
                                         }
                                     }
 
-                                    photoList?.forEachIndexed { index, photo ->
+                                    photoList?.forEach { photo ->
                                         // • Photo content box
                                         Box(
                                             modifier = Modifier

@@ -2,7 +2,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepos
 
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
-import com.realityexpander.tasky.agenda_feature.domain.ResultUiText
+import com.realityexpander.tasky.core.presentation.util.ResultUiText
 import com.realityexpander.tasky.core.util.Email
 
 interface IAttendeeRepository {

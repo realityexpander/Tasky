@@ -89,9 +89,6 @@ fun AgendaScreen(
 ) {
     val state by viewModel.agendaState.collectAsState()
     val oneTimeEvent by viewModel.oneTimeEvent.collectAsState(null)
-//    val connectivityState by viewModel.connectivityState.collectAsState(
-//        initial = IInternetConnectivityObserver.Status.Unavailable // must start as Unavailable
-//    )
     val connectivityState by viewModel.onlineState.collectAsState(
         initial = IInternetConnectivityObserver.OnlineStatus.OFFLINE // must start as Offline
     )
@@ -122,8 +119,6 @@ fun AgendaScreen(
     LaunchedEffect(connectivityState) {
         isOfflineBannerVisible.value = false
 
-//        if (connectivityState == IInternetConnectivityObserver.Status.Lost
-//            || connectivityState == IInternetConnectivityObserver.Status.Unavailable
         if (connectivityState == IInternetConnectivityObserver.OnlineStatus.OFFLINE
         ) {
             delay(1000)

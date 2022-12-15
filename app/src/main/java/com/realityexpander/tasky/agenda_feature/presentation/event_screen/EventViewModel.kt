@@ -12,6 +12,7 @@ import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventS
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants
+import com.realityexpander.tasky.core.presentation.util.ResultUiText
 import com.realityexpander.tasky.core.presentation.util.UiText
 import com.realityexpander.tasky.core.util.withCurrentHourMinute
 import dagger.hilt.android.lifecycle.HiltViewModel
