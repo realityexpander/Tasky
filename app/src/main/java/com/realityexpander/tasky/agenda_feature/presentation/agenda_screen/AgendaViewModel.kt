@@ -56,6 +56,7 @@ class AgendaViewModel @Inject constructor(
     private val _currentDate = MutableStateFlow(selectedDate)
     private val _selectedDayIndex = MutableStateFlow(selectedDayIndex)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val onlineState = connectivityObserver.onlineStateFlow.mapLatest { it }
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class) // for .flatMapLatest, .flattenMerge
