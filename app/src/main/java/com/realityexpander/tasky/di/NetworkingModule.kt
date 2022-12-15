@@ -70,24 +70,10 @@ object NetworkingModule {
                 val requestBuilder = chain.request().newBuilder()
                     .addHeader("x-api-key", TaskyApi.API_KEY)
 
-                // Check for a valid AuthToken in the IAuthApi Companion object.
-                //   If not valid, attempt to get it from the AuthDao.
-                //   If valid, set it in the IAuthApi Companion object, for faster access.
-////                IAuthApi.authToken ?: run {
-//                val authToken = IAuthApi.getAuthToken {
-////                    val authToken = authDao.getAuthToken() // could take a while.
-////                    if(authToken != null) {
-////                        IAuthApi.setAuthToken(authToken)
-////                    }
-//                    return@getAuthToken authDao.getAuthToken() // could take a while.
-//                }
-
                 // If AuthToken is valid, add it to the request.
-//                IAuthApi.authToken?.let { authToken ->
                 IAuthApi.getAuthToken {
                     authDao.getAuthToken() // could take a while.
                 }?.let { authToken ->
-//                authToken?.let { authToken ->
                     requestBuilder
                         .addHeader("Authorization", createAuthorizationHeader(authToken))
                 }
