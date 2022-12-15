@@ -9,7 +9,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import logcat.logcat
 import javax.inject.Singleton
 
 @Module
@@ -21,8 +20,6 @@ object WorkManagerInitializer : Initializer<WorkManager> {
     override fun create(@ApplicationContext context: Context): WorkManager {
         val configuration = Configuration.Builder().build()
         WorkManager.initialize(context, configuration)
-
-        logcat {"WorkManager initialized by Hilt" }
         return WorkManager.getInstance(context)
     }
 

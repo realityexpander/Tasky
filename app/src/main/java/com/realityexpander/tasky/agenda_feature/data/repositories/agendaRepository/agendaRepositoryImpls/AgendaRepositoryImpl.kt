@@ -287,6 +287,17 @@ class AgendaRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun clearAllAgendaItemsLocally(): ResultUiText<Void> {
+        return if (
+            clearAllEventsLocally() is ResultUiText.Success
+            && clearAllTasksLocally() is ResultUiText.Success
+            && clearAllRemindersLocally() is ResultUiText.Success
+        )
+            ResultUiText.Success(null)
+        else
+            ResultUiText.Error(UiText.Res(R.string.agenda_error, "clearAllAgendaItemsLocally"))
+    }
+
     ///////////////////////////////////////////////
     // • EVENT
 
@@ -388,7 +399,7 @@ class AgendaRepositoryImpl @Inject constructor(
         return reminderRepository.deleteReminder(reminder)
     }
 
-    override suspend fun clearAllRemindersLocal(): ResultUiText<Void> {
+    override suspend fun clearAllRemindersLocally(): ResultUiText<Void> {
         return reminderRepository.clearAllRemindersLocally()
     }
 

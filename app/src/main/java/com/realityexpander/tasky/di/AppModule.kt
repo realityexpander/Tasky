@@ -1,10 +1,11 @@
 package com.realityexpander.tasky.di
 
+import android.app.Application
 import android.content.Context
 import androidx.room.Room
-import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
-import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.reminderRepositoryImpls.ReminderRepositoryImpl
-import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.reminderApiImpls.ReminderApiImpl
+import androidx.work.WorkManager
+import com.realityexpander.tasky.agenda_feature.data.common.workers.RefreshAgendaWeekWorker
+import com.realityexpander.tasky.agenda_feature.data.common.workers.SyncAgendaWorker
 import com.realityexpander.tasky.agenda_feature.data.repositories.TaskyDatabase
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls.AgendaRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.AgendaApiImpl
@@ -17,7 +18,10 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepositor
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.IEventDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.eventApiImpls.EventApiImpl
+import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
+import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.reminderRepositoryImpls.ReminderRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.IReminderApi
+import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.reminderApiImpls.ReminderApiImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.ISyncRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ISyncDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.remote.ISyncApi
@@ -57,6 +61,33 @@ const val USE_FAKE_REPOSITORY = false
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    /////////// WORK MANAGER ///////////
+
+    @Provides
+    @Singleton
+    @Named("WorkerController")
+    fun provideWorkManager(
+        application: Application
+    ): WorkManager {
+        return WorkManager.getInstance(application)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSyncAgendaWorkerStarter(
+        @ApplicationContext context: Context
+    ): SyncAgendaWorker.WorkerStarter {
+        return SyncAgendaWorker.WorkerStarter(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRefreshAgendaWeekWorkerStarter(
+        @ApplicationContext context: Context
+    ): RefreshAgendaWeekWorker.WorkerStarter {
+        return RefreshAgendaWeekWorker.WorkerStarter(context)
+    }
 
     /////////// DATABASE ///////////
 

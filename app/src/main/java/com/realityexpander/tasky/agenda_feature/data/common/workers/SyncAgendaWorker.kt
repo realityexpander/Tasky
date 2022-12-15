@@ -16,6 +16,7 @@ import logcat.logcat
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 // Worker to synchronize "offline actions" & download any new/updated items
 //   for the Agenda for the current day.
@@ -26,6 +27,11 @@ class SyncAgendaWorker @AssistedInject constructor(
     val agendaRepository: IAgendaRepository,
     private val workerNotifications: IWorkerNotifications
 ): CoroutineWorker(context, workerParams) {
+
+    companion object {
+        const val WORKER_NAME = "SYNC_AGENDA_WORKER"
+        private const val NOTIFICATION_ID = 100002
+    }
 
     override suspend fun doWork(): Result {
 
@@ -60,21 +66,22 @@ class SyncAgendaWorker @AssistedInject constructor(
             workerNotifications.clearNotification(NOTIFICATION_ID)
 
             return when (resultUpdateLocalAgenda) {
-                is ResultUiText.Success -> Result.success()
-                is ResultUiText.Error -> Result.failure()
+                is ResultUiText.Success<Unit> -> Result.success()
+                is ResultUiText.Error<Unit> -> Result.failure()
             }
         }
-        workerNotifications.clearNotification(NOTIFICATION_ID)
 
+        workerNotifications.clearNotification(NOTIFICATION_ID)
         return Result.failure()
     }
 
-    companion object {
-        private const val WORKER_NAME = "SYNC_AGENDA_WORKER"
-        private const val NOTIFICATION_ID = 100002
+    // Must use a separate class for the starter bc Dagger doesn't support @AssistedInject
+    class WorkerStarter @Inject constructor(
+        private val context: Context
+    ) : IStartWorker {
 
-        // • Start the periodic SyncAgenda Worker (Clear the old one first)
-        fun startWorker(context: Context) {
+        override fun startWorker() {
+            // • Start the periodic SyncAgenda Worker (Clear the old one first)
             val syncAgendaWorkerConstraints: Constraints = Constraints.Builder().apply {
                 setRequiredNetworkType(NetworkType.CONNECTED)
                 setRequiresBatteryNotLow(true)

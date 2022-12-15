@@ -12,7 +12,7 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.DTOs.TaskDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.ApiCredentialsDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
-import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
+import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi.Companion.createBearerTokenString
 import com.realityexpander.tasky.core.util.AuthToken
 import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.EpochMilli
@@ -48,7 +48,7 @@ interface TaskyApi {
     @GET("authenticate")
     suspend fun authenticateAuthToken(
         authToken: AuthToken?,
-        @Header("Authorization") authorizationHeader: String = createAuthorizationHeader(authToken),
+        @Header("Authorization") authorizationHeader: String = createBearerTokenString(authToken),
     ): Response<Void>
 
     @GET("logout")

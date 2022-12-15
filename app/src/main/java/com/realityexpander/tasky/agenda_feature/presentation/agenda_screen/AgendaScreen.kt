@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.work.WorkManager
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
@@ -49,9 +48,6 @@ import com.realityexpander.tasky.agenda_feature.common.util.EventId
 import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
-import com.realityexpander.tasky.agenda_feature.data.common.workers.RefreshAgendaWeekWorker
-import com.realityexpander.tasky.agenda_feature.data.common.workers.SyncAgendaWorker
-import com.realityexpander.tasky.agenda_feature.data.common.workers.TASKY_WORKERS_TAG
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
@@ -73,7 +69,6 @@ import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import logcat.logcat
 import java.time.ZonedDateTime
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
@@ -317,18 +312,6 @@ fun AgendaScreenContent(
             is OneTimeEvent.NavigateToEditReminder -> {
                 navigateToReminderScreen(oneTimeEvent.reminderId, true)
             }
-
-            // • WORKERS
-            OneTimeEvent.StartWorkers -> {
-                logcat { "OneTimeEvent.StartWorkers: starting Tasky workers" }
-                SyncAgendaWorker.startWorker(context)
-                RefreshAgendaWeekWorker.startWorker(context)
-            }
-            OneTimeEvent.StopWorkers -> {
-                logcat { "OneTimeEvent.StopWorkers: stopping Tasky workers" }
-                WorkManager.getInstance(context).cancelAllWorkByTag(TASKY_WORKERS_TAG)
-            }
-
             is OneTimeEvent.ShowToast -> {
                 Toast.makeText(
                     context,

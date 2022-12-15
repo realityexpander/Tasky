@@ -18,6 +18,7 @@ import logcat.logcat
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 // Worker to refresh Agenda data for 10 days around the `startDate`
 @HiltWorker
@@ -27,6 +28,15 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
     private val agendaRepository: IAgendaRepository,
     private val workerNotifications: IWorkerNotifications
 ) : CoroutineWorker(context, workerParams) {
+
+    companion object {
+        const val WORKER_NAME = "REFRESH_AGENDA_WEEK_WORKER"
+        private const val NOTIFICATION_ID = 100001
+
+        const val PARAMETER_START_DATE = "startDate"
+        const val START_DAY_OFFSET = -5
+        const val END_DAY_OFFSET = 5
+    }
 
     override suspend fun doWork(): Result {
         logcat { "RefreshAgendaWeekWorker.doWork()" +  // leave this here for debugging
@@ -78,16 +88,34 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
         }
     }
 
-    companion object {
-        private const val WORKER_NAME = "REFRESH_AGENDA_WEEK_WORKER"
-        private const val NOTIFICATION_ID = 100001
+    override suspend fun getForegroundInfo(): ForegroundInfo {
+        return ForegroundInfo(
+            RefreshAgendaWeekWorker.NOTIFICATION_ID,
+            workerNotifications.createNotification(
+                channelId = WORKER_NOTIFICATION_CHANNEL_ID,
+                title = context.getString(R.string.agenda_sync_notification_title),
+                description = context.getString(R.string.agenda_sync_notification_content_text),
+                icon = R.drawable.ic_notification_sync_agenda_small_icon_foreground,
+                iconTintColor = ResourcesCompat.getColor(
+                    context.resources,
+                    R.color.tasky_green,
+                    null
+                ),
+                largeIcon = ResourcesCompat.getDrawable(
+                    context.resources,
+                    R.drawable.tasky_logo_for_splash,
+                    null
+                )?.toBitmap(100,100)
+            )
+        )
+    }
 
-        const val PARAMETER_START_DATE = "startDate"
-        const val START_DAY_OFFSET = -5
-        const val END_DAY_OFFSET = 5
+    class WorkerStarter @Inject constructor(
+        private val context: Context
+    ) : IStartWorker {
 
-        // • Start the one-time 'Refresh Agenda Week' Worker
-        fun startWorker(context: Context) {
+        override fun startWorker() {
+            // • Start the one-time 'Refresh Agenda Week' Worker
             val refreshAgendaWeekConstraints: Constraints = Constraints.Builder().apply {
                 setRequiredNetworkType(NetworkType.CONNECTED)
             }.build()
@@ -115,28 +143,5 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
                     agendaWeekWorkRequest
                 )
         }
-    }
-
-    override suspend fun getForegroundInfo(): ForegroundInfo {
-        return ForegroundInfo(
-            RefreshAgendaWeekWorker.NOTIFICATION_ID,
-            workerNotifications.createNotification(
-                channelId = WORKER_NOTIFICATION_CHANNEL_ID,
-                title = context.getString(R.string.agenda_sync_notification_title),
-                description = context.getString(R.string.agenda_sync_notification_content_text),
-                icon = R.drawable.ic_notification_sync_agenda_small_icon_foreground,
-                iconTintColor = ResourcesCompat.getColor(
-                    context.resources,
-                    R.color.tasky_green,
-                    null
-                ),
-                largeIcon = ResourcesCompat.getDrawable(
-                    context.resources,
-                    R.drawable.tasky_logo_for_splash,
-                    null
-                )?.toBitmap(100,100)
-            )
-        )
-
     }
 }

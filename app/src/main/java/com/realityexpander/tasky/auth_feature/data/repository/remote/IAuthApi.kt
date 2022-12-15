@@ -1,12 +1,12 @@
 package com.realityexpander.tasky.auth_feature.data.repository.remote
 
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
-import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
 import com.realityexpander.tasky.core.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import logcat.logcat
 
+@Suppress("RemoveRedundantQualifierName", "RedundantCompanionReference")
 interface IAuthApi {
     suspend fun login(
         email: Email,
@@ -27,6 +27,7 @@ interface IAuthApi {
     )
 
     fun setAuthToken(authToken: AuthToken?) {
+
         IAuthApi.Companion.authToken = authToken
     }
 
@@ -60,11 +61,11 @@ interface IAuthApi {
             }
         }
 
+        fun createBearerTokenString(authToken: String?): String {
+            return "Bearer ${authToken ?: "NULL_AUTH_TOKEN"}"
+        }
+
         var authToken: String? = null
         var authUserId: UserId? = null
-
-        var authorizationHeader: String? = null
-            private set // only allow generating from Companion.authToken
-            get() = createAuthorizationHeader(Companion.authToken)
     }
 }
