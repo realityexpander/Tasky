@@ -5,7 +5,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import com.realityexpander.tasky.BuildConfig
 import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
-import com.realityexpander.tasky.auth_feature.data.repository.remote.util.createAuthorizationHeader
+import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi.Companion.createBearerTokenString
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import dagger.Module
 import dagger.Provides
@@ -75,7 +75,7 @@ object NetworkingModule {
                     authDao.getAuthToken() // if invalid, attempt to fetch AuthToken from the AuthDao
                 }?.let { authToken ->
                     requestBuilder
-                        .addHeader("Authorization", createAuthorizationHeader(authToken))
+                        .addHeader("Authorization", createBearerTokenString(authToken))
                 }
 
                 val request = requestBuilder

@@ -16,6 +16,7 @@ interface IAgendaRepository {
     suspend fun syncAgenda(): ResultUiText<Void>
     suspend fun updateLocalAgendaDayFromRemote(dateTime: ZonedDateTime): ResultUiText<Unit>
     fun getLocalAgendaItemsWithRemindAtInDateTimeRangeFlow(startDateTime: ZonedDateTime, endDateTime: ZonedDateTime): Flow<List<AgendaItem>>
+    suspend fun clearAllAgendaItemsLocally(): ResultUiText<Void>
 
     // • Event Repository
     suspend fun createEvent(event: AgendaItem.Event, isRemoteOnly: Boolean = false): ResultUiText<AgendaItem.Event>
@@ -40,5 +41,5 @@ interface IAgendaRepository {
     suspend fun getReminder(reminderId: ReminderId, isLocalOnly: Boolean = false): AgendaItem.Reminder?
     suspend fun updateReminder(reminder: AgendaItem.Reminder, isRemoteOnly: Boolean = false): ResultUiText<Void>
     suspend fun deleteReminder(reminder: AgendaItem.Reminder): ResultUiText<Void>
-    suspend fun clearAllRemindersLocal(): ResultUiText<Void>
+    suspend fun clearAllRemindersLocally(): ResultUiText<Void>
 }

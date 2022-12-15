@@ -3,10 +3,14 @@ package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkManager
 import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
 import com.realityexpander.observeconnectivity.IInternetConnectivityObserver.OnlineStatus
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
+import com.realityexpander.tasky.agenda_feature.data.common.workers.RefreshAgendaWeekWorker
+import com.realityexpander.tasky.agenda_feature.data.common.workers.SyncAgendaWorker
+import com.realityexpander.tasky.agenda_feature.data.common.workers.TASKY_WORKERS_TAG
 import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
@@ -25,6 +29,7 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Named
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
@@ -33,7 +38,10 @@ class AgendaViewModel @Inject constructor(
     private val agendaRepository: IAgendaRepository,
     private val savedStateHandle: SavedStateHandle,
     private val connectivityObserver: IInternetConnectivityObserver,
-    private val remindAtAlarmManager: IRemindAtAlarmManager
+    private val remindAtAlarmManager: IRemindAtAlarmManager,
+    private val syncAgendaWorkerStarter: SyncAgendaWorker.WorkerStarter,
+    private val refreshAgendaWeekWorkerStarter: RefreshAgendaWeekWorker.WorkerStarter,
+    @Named("WorkerController") private val workManager: WorkManager
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)
@@ -121,7 +129,8 @@ class AgendaViewModel @Inject constructor(
             }
 
             // • Start workers for Syncing and Week Refresh
-            _oneTimeEvent.emit(OneTimeEvent.StartWorkers)
+            syncAgendaWorkerStarter.startWorker()
+            refreshAgendaWeekWorkerStarter.startWorker()
 
 //            yield() // wait for database to load  // leave for testing for now // todo remove
 //            if(agendaState.value.agendaItems.isEmpty()) { // if no items for today, make some fake ones
@@ -232,8 +241,8 @@ class AgendaViewModel @Inject constructor(
             }
             is Logout -> {
                 viewModelScope.launch {
-                    _oneTimeEvent.emit(OneTimeEvent.StopWorkers)
-                    agendaRepository.clearAllEventsLocally()
+                    workManager.cancelAllWorkByTag(TASKY_WORKERS_TAG)
+                    agendaRepository.clearAllAgendaItemsLocally()
                     authRepository.logout()
 
                     _agendaState.update {
