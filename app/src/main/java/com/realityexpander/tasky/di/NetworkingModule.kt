@@ -72,7 +72,7 @@ object NetworkingModule {
 
                 // If AuthToken is valid, add it to the request.
                 IAuthApi.getAuthToken {
-                    authDao.getAuthToken()
+                    authDao.getAuthToken() // if invalid, attempt to fetch AuthToken from the AuthDao
                 }?.let { authToken ->
                     requestBuilder
                         .addHeader("Authorization", createAuthorizationHeader(authToken))
