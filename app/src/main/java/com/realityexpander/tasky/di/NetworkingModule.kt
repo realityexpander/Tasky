@@ -70,18 +70,10 @@ object NetworkingModule {
                 val requestBuilder = chain.request().newBuilder()
                     .addHeader("x-api-key", TaskyApi.API_KEY)
 
-                // Check for a valid AuthToken in the IAuthApi Companion object.
-                //   If not valid, attempt to get it from the AuthDao.
-                //   If valid, set it in the IAuthApi Companion object, for faster access.
-                IAuthApi.authToken ?: run {
-                    val authToken = authDao.getAuthToken() // could take a while.
-                    if(authToken != null) {
-                        IAuthApi.authToken = authToken
-                    }
-                }
-
                 // If AuthToken is valid, add it to the request.
-                IAuthApi.authToken?.let { authToken ->
+                IAuthApi.getAuthToken {
+                    authDao.getAuthToken() // if invalid, attempt to fetch AuthToken from the AuthDao
+                }?.let { authToken ->
                     requestBuilder
                         .addHeader("Authorization", createAuthorizationHeader(authToken))
                 }
@@ -110,8 +102,10 @@ object NetworkingModule {
                 }
                 else print(message)
 
-                if (message.length > 500)
-                    return print("=== more than 500 characters ===")
+                if (message.length > 500) {
+                    print("=== ... ${message.takeLast(message.length - 300)}")
+                    return print("=== ${message.length - 500} more characters ===")
+                }
             }
         }
 
