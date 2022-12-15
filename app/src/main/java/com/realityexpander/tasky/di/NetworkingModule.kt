@@ -103,7 +103,7 @@ object NetworkingModule {
                 else print(message)
 
                 if (message.length > 500) {
-                    print("=== ... ${message.takeLast(message.length - 300)}")
+                    print("=== ...${message.takeLast(message.length - 300)}")
                     return print("=== ${message.length - 500} more characters ===")
                 }
             }
