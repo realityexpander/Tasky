@@ -227,6 +227,7 @@ fun TaskScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight()
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
                 .verticalScroll(rememberScrollState())
         ) col2@{
@@ -383,12 +384,12 @@ fun TaskScreenContent(
             }
 
 
-            // • EVENT TIMES & DATES & JOIN/DELETE/LEAVE (FROM, TO, REMIND AT)
+            // • TASK TIMES & DATES & REMIND AT
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colors.surface)
-                    .padding(start = DP.small, end = DP.small)
+                    .padding(start = DP.small, end = DP.small),
             ) col3@{
 
                 SmallHeightHorizontalDivider()
@@ -439,44 +440,82 @@ fun TaskScreenContent(
                 )
                 SmallHeightHorizontalDivider()
 
-                Spacer(modifier = Modifier.largeHeight())
+//                Spacer(modifier = Modifier.largeHeight())
+//                Spacer(modifier = Modifier.weight(1.0f))
 
-                // • DELETE TASK BUTTON
-                fun ShowAlertDialogActionType.getTitle() = UiText.Res(
-                        R.string.confirm_action_dialog_title_phrase,
-                        context.getStringSafe(title.asResIdOrNull),
-                        context.getString(R.string.agenda_item_type_task)
-                    )
-                fun ShowAlertDialogActionType.getMessage() = UiText.Res(
-                        R.string.confirm_action_dialog_text_phrase,
-                        context.getStringSafe(title.asResIdOrNull).lowercase(),
-                        context.getString(R.string.agenda_item_type_task).lowercase()
-                    )
-                TextButton(
-                    onClick = {
-                            onAction(ShowAlertDialog(
-                                title = ShowAlertDialogActionType.DeleteTask.getTitle(),
-                                message = ShowAlertDialogActionType.DeleteTask.getMessage(),
-                                confirmButtonLabel =  ShowAlertDialogActionType.DeleteTask.title,
-                                onConfirm = {
-                                    onAction(DeleteTask)
-                                }
-                            ))
-                    },
+//                // • DELETE TASK BUTTON
+//                fun ShowAlertDialogActionType.getTitle() = UiText.Res(
+//                        R.string.confirm_action_dialog_title_phrase,
+//                        context.getStringSafe(title.asResIdOrNull),
+//                        context.getString(R.string.agenda_item_type_task)
+//                    )
+//                fun ShowAlertDialogActionType.getMessage() = UiText.Res(
+//                        R.string.confirm_action_dialog_text_phrase,
+//                        context.getStringSafe(title.asResIdOrNull).lowercase(),
+//                        context.getString(R.string.agenda_item_type_task).lowercase()
+//                    )
+//                TextButton(
+//                    onClick = {
+//                            onAction(ShowAlertDialog(
+//                                title = ShowAlertDialogActionType.DeleteTask.getTitle(),
+//                                message = ShowAlertDialogActionType.DeleteTask.getMessage(),
+//                                confirmButtonLabel =  ShowAlertDialogActionType.DeleteTask.title,
+//                                onConfirm = {
+//                                    onAction(DeleteTask)
+//                                }
+//                            ))
+//                    },
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                ) {
+//                    Text(
+//                        stringResource(R.string.task_delete_task),
+//                        style = MaterialTheme.typography.h4,
+//                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
+//                        textAlign = TextAlign.Center,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                    )
+//                }
+//                Spacer(modifier = Modifier.mediumHeight())
+            }
+            Spacer(modifier = Modifier.weight(1.0f))
+
+            // • DELETE TASK BUTTON
+            fun ShowAlertDialogActionType.getTitle() = UiText.Res(
+                R.string.confirm_action_dialog_title_phrase,
+                context.getStringSafe(title.asResIdOrNull),
+                context.getString(R.string.agenda_item_type_task)
+            )
+            fun ShowAlertDialogActionType.getMessage() = UiText.Res(
+                R.string.confirm_action_dialog_text_phrase,
+                context.getStringSafe(title.asResIdOrNull).lowercase(),
+                context.getString(R.string.agenda_item_type_task).lowercase()
+            )
+            TextButton(
+                onClick = {
+                    onAction(ShowAlertDialog(
+                        title = ShowAlertDialogActionType.DeleteTask.getTitle(),
+                        message = ShowAlertDialogActionType.DeleteTask.getMessage(),
+                        confirmButtonLabel =  ShowAlertDialogActionType.DeleteTask.title,
+                        onConfirm = {
+                            onAction(DeleteTask)
+                        }
+                    ))
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    stringResource(R.string.task_delete_task),
+                    style = MaterialTheme.typography.h4,
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
+                    textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                ) {
-                    Text(
-                        stringResource(R.string.task_delete_task),
-                        style = MaterialTheme.typography.h4,
-                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                }
-                Spacer(modifier = Modifier.mediumHeight())
+                )
             }
+            Spacer(modifier = Modifier.mediumHeight())
         }
     }
 
@@ -527,7 +566,7 @@ fun TaskScreenContent(
     group = "Night Mode=false",
     apiLevel = 28,
     widthDp = 400,
-    heightDp = 1200,
+    heightDp = 800,
 )
 @Composable
 fun Preview() {
@@ -560,6 +599,9 @@ fun Preview() {
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     group = "Night Mode=true",
+    apiLevel = 28,
+    widthDp = 400,
+    heightDp = 1200,
 )
 @Composable
 fun Preview_night_mode() {
