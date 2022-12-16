@@ -69,6 +69,7 @@ import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import logcat.logcat
 import java.time.ZonedDateTime
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
@@ -178,6 +179,16 @@ fun AgendaScreenContent(
     val month = remember(weekStartDate.month) {
         weekStartDate.month.getDisplayName(TextStyle.FULL, Locale.getDefault()).uppercase()
     }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+//    errorMessage?.let { message ->
+//        scope.launch {
+//            snackbarHostState.showSnackbar(
+//                message = context.getString(message.asResIdOrNull ?: R.string.error_unknown)
+//            )
+//        }
+//    }
+
 
     fun navigateToLoginScreen() {
         navigator.navigate(
@@ -312,6 +323,8 @@ fun AgendaScreenContent(
             is OneTimeEvent.NavigateToEditReminder -> {
                 navigateToReminderScreen(oneTimeEvent.reminderId, true)
             }
+
+            // • APP MESSAGES
             is OneTimeEvent.ShowToast -> {
                 Toast.makeText(
                     context,
@@ -320,6 +333,33 @@ fun AgendaScreenContent(
                             ?: R.string.error_invalid_string_resource_id
                     ), Toast.LENGTH_SHORT
                 ).show()
+            }
+            is OneTimeEvent.ShowSnackbar -> {
+                scope.launch {
+                    val snackBarResult = snackbarHostState.showSnackbar(
+                        message = context.getString(
+                            oneTimeEvent.message.asResIdOrNull
+                                ?: R.string.error_invalid_string_resource_id
+                        ),
+                        actionLabel = oneTimeEvent.undoAgendaItem?.let { // show undo button if AgendaItem is provided
+                            context.getString(R.string.agenda_undo)
+                        },
+                        SnackbarDuration.Long,
+                    )
+                    when (snackBarResult) {
+                        SnackbarResult.Dismissed -> logcat { "Snackbar dismissed" }
+                        SnackbarResult.ActionPerformed -> {
+                            logcat { "Snackbar action performed - ${oneTimeEvent.undoAgendaItem}" }
+                            oneTimeEvent.undoAgendaItem?.let {
+                                onAction(
+                                    UndoDeleteAgendaItem(
+                                        oneTimeEvent.undoAgendaItem
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
             }
             null -> {}
         }
@@ -924,6 +964,16 @@ fun AgendaScreenContent(
         }
     }
 
+    // Error snackbar
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
+    }
 }
 
 fun onActionForAgendaItem(

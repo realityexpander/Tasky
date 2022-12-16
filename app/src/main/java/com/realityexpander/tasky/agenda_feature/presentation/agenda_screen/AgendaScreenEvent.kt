@@ -32,23 +32,21 @@ sealed interface AgendaScreenEvent {
         val isDone: Boolean,
     ) : AgendaScreenEvent
 
-    // • Errors
-    data class SetErrorMessage(val message: UiText) : AgendaScreenEvent
-    object ClearErrorMessage : AgendaScreenEvent
+    // • Undo
+    data class UndoDeleteAgendaItem(val agendaItem: AgendaItem) : AgendaScreenEvent
 
     // • Stateful One-time events
     sealed interface StatefulOneTimeEvent {
         object ResetScrollTo  : StatefulOneTimeEvent, AgendaScreenEvent
         object ScrollToTop    : StatefulOneTimeEvent, AgendaScreenEvent
         object ScrollToBottom : StatefulOneTimeEvent, AgendaScreenEvent
-        data class ScrollToItemId(
-            val agendaItemId: AgendaItemId
-        ) : StatefulOneTimeEvent, AgendaScreenEvent
+        data class ScrollToItemId(val agendaItemId: AgendaItemId) : StatefulOneTimeEvent, AgendaScreenEvent
     }
 
     // • One Time Events
     sealed interface OneTimeEvent {
         data class ShowToast(val message: UiText) : OneTimeEvent
+        data class ShowSnackbar(val message: UiText, val undoAgendaItem: AgendaItem? = null) : OneTimeEvent
 
         // • Event - Navigate to Create/Open/Edit Event Screen
         object NavigateToCreateEvent : AgendaScreenEvent, OneTimeEvent

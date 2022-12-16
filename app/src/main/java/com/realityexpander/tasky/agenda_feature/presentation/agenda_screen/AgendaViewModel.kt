@@ -277,32 +277,12 @@ class AgendaViewModel @Inject constructor(
                     }
                 }
             }
-            is SetErrorMessage -> {
-                _agendaState.update {
-                    it.copy(
-                        errorMessage = if(uiEvent.message.isRes)
-                            uiEvent.message
-                        else
-                            UiText.Res(R.string.error_unknown, ""),
-                        isProgressVisible = false
-                    )
-                }
-            }
-            is ClearErrorMessage -> {
-                _agendaState.update {
-                    it.copy(
-                        errorMessage = null,
-                        isProgressVisible = false
-                    )
-                }
-            }
             is ShowConfirmDeleteAgendaItemDialog -> {
                 _agendaState.update {
                     it.copy(
                         confirmDeleteAgendaItem = uiEvent.agendaItem
                     )
                 }
-                sendEvent(ClearErrorMessage)
             }
             is DismissConfirmDeleteAgendaItemDialog -> {
                 _agendaState.update {
@@ -337,12 +317,50 @@ class AgendaViewModel @Inject constructor(
                     }
 
                 if(result is ResultUiText.Error) {
-                    sendEvent(SetErrorMessage(result.message))
+                    _oneTimeEvent.emit(OneTimeEvent.ShowSnackbar(result.message))
                 } else {
-                    _oneTimeEvent.emit(OneTimeEvent.ShowToast(UiText.Res(R.string.event_message_event_deleted_success)))
-                    sendEvent(ClearErrorMessage)
+                    _oneTimeEvent.emit(OneTimeEvent.ShowSnackbar(
+                        UiText.Res(R.string.agenda_item_deleted_success),
+                        uiEvent.agendaItem
+                    ))
                 }
                 sendEvent(DismissConfirmDeleteAgendaItemDialog)
+            }
+            is UndoDeleteAgendaItem -> {
+                val result =
+                    when (uiEvent.agendaItem) {
+                        is AgendaItem.Event -> {
+                            if (uiEvent.agendaItem.isUserEventCreator) {
+                                agendaRepository.createEvent(uiEvent.agendaItem)
+                            } else {
+                                _oneTimeEvent.emit(OneTimeEvent.ShowSnackbar(
+                                    UiText.Res(R.string.agenda_undo_event_restored_but_not_rejoined),
+                                ))
+                                // Make a new copy of the Event, but with the logged-in user as the creator.
+                                agendaRepository.createEvent(
+                                    uiEvent.agendaItem.copy(
+                                        id=UUID.randomUUID().toString(),
+                                        host = authRepository.getAuthInfo()?.userId,
+                                        isUserEventCreator = true,
+                                    ))
+                            }
+                        }
+                        is AgendaItem.Task -> {
+                            agendaRepository.createTask(uiEvent.agendaItem)
+                        }
+                        is AgendaItem.Reminder -> {
+                            agendaRepository.createReminder(uiEvent.agendaItem)
+                        }
+                        else -> {
+                            ResultUiText.Error<AgendaItem>(UiText.Res(R.string.error_unknown_agenda_type))
+                        }
+                    }
+
+                if(result is ResultUiText.Error) {
+                    _oneTimeEvent.emit(OneTimeEvent.ShowSnackbar(result.message))
+                } else {
+                    _oneTimeEvent.emit(OneTimeEvent.ShowToast(UiText.Res(R.string.agenda_message_agenda_item_added_success)))
+                }
             }
             is OneTimeEvent.NavigateToCreateEvent -> {
                 _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateEvent)
