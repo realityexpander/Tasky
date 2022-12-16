@@ -2,6 +2,8 @@
 Task manager similar to a lite version of Google Calendar
 
 * Manages schedule across time zones automatically
+* Works offline & automatically syncs across multiple devices
+
 
 
 ## 🛠 Built With
