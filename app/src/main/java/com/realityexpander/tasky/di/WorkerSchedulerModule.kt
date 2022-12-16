@@ -22,22 +22,6 @@ object WorkerSchedulerModule {
 
     @Provides
     @Singleton
-    fun provideAllAgendaWorkersScheduler(
-        @ApplicationContext context: Context,
-        @Named("SyncAgendaWorkerScheduler")
-        syncAgendaWorkerScheduler: IWorkerScheduler,
-        @Named("RefreshAgendaWeekWorkerScheduler")
-        refreshAgendaWeekWorkerScheduler: IWorkerScheduler,
-    ): IAgendaWorkersScheduler {
-        return AgendaWorkersSchedulerImpl(
-            context,
-            syncAgendaWorkerScheduler,
-            refreshAgendaWeekWorkerScheduler
-        )
-    }
-
-    @Provides
-    @Singleton
     @Named("SyncAgendaWorkerScheduler")
     fun provideSyncAgendaWorkerScheduler(
         @ApplicationContext context: Context
@@ -52,5 +36,21 @@ object WorkerSchedulerModule {
         @ApplicationContext context: Context
     ): IWorkerScheduler {
         return RefreshAgendaWeekWorker.WorkerScheduler(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAllAgendaWorkersScheduler(
+        @ApplicationContext context: Context,
+        @Named("SyncAgendaWorkerScheduler")
+        syncAgendaWorkerScheduler: IWorkerScheduler,
+        @Named("RefreshAgendaWeekWorkerScheduler")
+        refreshAgendaWeekWorkerScheduler: IWorkerScheduler,
+    ): IAgendaWorkersScheduler {
+        return AgendaWorkersSchedulerImpl(
+            context,
+            syncAgendaWorkerScheduler,
+            refreshAgendaWeekWorkerScheduler
+        )
     }
 }

@@ -34,10 +34,6 @@ class AgendaViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val connectivityObserver: IInternetConnectivityObserver,
     private val remindAtAlarmManager: IRemindAtAlarmManager,
-//    @Named("SyncAgendaWorkerScheduler")
-//    private val syncAgendaWorkerScheduler: IWorkerScheduler,
-//    @Named("RefreshAgendaWeekWorkerScheduler")
-//    private val refreshAgendaWeekWorkerScheduler: IWorkerScheduler,
     private val agendaWorkersScheduler: IAgendaWorkersScheduler
 ) : ViewModel() {
 
@@ -127,8 +123,6 @@ class AgendaViewModel @Inject constructor(
             }
 
             // • Start workers for Syncing and Week Refresh
-//            syncAgendaWorkerScheduler.startWorker()
-//            refreshAgendaWeekWorkerScheduler.startWorker()
             agendaWorkersScheduler.startAllWorkers()
 
 //            yield() // wait for database to load  // leave for testing for now // todo add to unit testing
@@ -240,11 +234,7 @@ class AgendaViewModel @Inject constructor(
             }
             is Logout -> {
                 viewModelScope.launch {
-//                    workManager.cancelAllWorkByTag(TASKY_WORKERS_TAG)
-//                    syncAgendaWorkerScheduler.cancelWorker()
-//                    refreshAgendaWeekWorkerScheduler.cancelWorker()
                     agendaWorkersScheduler.cancelAllWorkers()
-
                     agendaRepository.clearAllAgendaItemsLocally()
                     authRepository.logout()
 
