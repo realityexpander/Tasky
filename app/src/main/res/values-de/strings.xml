@@ -114,6 +114,10 @@
     <string name="agenda_isDone_icon_description">Abgeschlossen angeben</string>
     <string name="agenda_empty_list">Keine Tagesordnungspunkte für diesen Tag</string>
     <string name="description_title_marker">Titelmarkierung für Meetings</string>
+    <string name="agenda_undo">RÜCKGÄNGIG MACHEN</string>
+    <string name="agenda_undo_event_restored_but_not_rejoined">Ereignis wiederhergestellt, kann aber nicht am ursprünglichen Ereignis teilnehmen.</string>
+    <string name="agenda_message_agenda_item_added_success">Tagesordnungspunkt neu hinzugefügt.</string>
+    <string name="agenda_item_deleted_success">Tagesordnungspunkt erfolgreich gelöscht</string>
 
     <!--    Event screen -->
     <string name="event_description_close">Ereignisbildschirm schließen</string>
@@ -227,5 +231,6 @@
     <!--    Notifications -->
     <string name="notifications_alarm_remind_at_subtext">%1$s beginnt bald</string>
     <string name="agenda_notifications_complete_task_button">Erledige Aufgabe</string>
+
 
 </resources>
