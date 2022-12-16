@@ -218,7 +218,7 @@
     <string name="reminder_edit_reminder_title">Editar título de recordatorio</string>
     <string name="reminder_no_description_set">Sin descripción establecida</string>
     <string name="reminder_time">Tiempo</string>
-    <string name="reminder_delete_reminder">ELIMINAR TAREA</string>
+    <string name="reminder_delete_reminder">ELIMINAR RECORDATORIO</string>
     <string name="reminder_error_save_reminder">Error al guardar el recordatorio: %s</string>
     <string name="reminder_error_delete_reminder">Error al eliminar el recordatorio</string>
     <string name="reminder_message_reminder_saved">Recordatorio guardado</string>

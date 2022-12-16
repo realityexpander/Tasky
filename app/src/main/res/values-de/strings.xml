@@ -218,7 +218,7 @@
     <string name="reminder_edit_reminder_title">Erinnerungstitel bearbeiten</string>
     <string name="reminder_no_description_set">Keine Beschreibung festgelegt</string>
     <string name="reminder_time">Zeit</string>
-    <string name="reminder_delete_reminder">AUFGABE LÖSCHEN</string>
+    <string name="reminder_delete_reminder">ERINNERUNG LÖSCHEN</string>
     <string name="reminder_error_save_reminder">Fehler beim Speichern Erinnerung: %s</string>
     <string name="reminder_error_delete_reminder">Fehler beim Löschen der Erinnerung</string>
     <string name="reminder_message_reminder_saved">Erinnerung gespeichert</string>

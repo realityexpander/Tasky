@@ -218,7 +218,7 @@
     <string name="reminder_edit_reminder_title">Edit Reminder Title</string>
     <string name="reminder_no_description_set">No description set</string>
     <string name="reminder_time">Time</string>
-    <string name="reminder_delete_reminder">DELETE TASK</string>
+    <string name="reminder_delete_reminder">DELETE REMINDER</string>
     <string name="reminder_error_save_reminder">Error saving Reminder: %s</string>
     <string name="reminder_error_delete_reminder">Error deleting Reminder</string>
     <string name="reminder_message_reminder_saved">Reminder Saved</string>
