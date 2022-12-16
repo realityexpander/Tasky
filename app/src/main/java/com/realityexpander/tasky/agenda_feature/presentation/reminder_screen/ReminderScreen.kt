@@ -417,26 +417,25 @@ fun ReminderScreenContent(
                 )
                 SmallHeightHorizontalDivider()
 
-//                Spacer(modifier = Modifier.largeHeight())
             }
             Spacer(modifier = Modifier.weight(1.0f))
 
             // • DELETE REMINDER BUTTON
-            fun ShowAlertDialogActionType.getTitle() = UiText.Res(
+            var showAlertDialogActionDeleteTitle = UiText.Res(
                 R.string.confirm_action_dialog_title_phrase,
-                context.getStringSafe(title.asResIdOrNull),
+                context.getStringSafe(ShowAlertDialogActionType.DeleteReminder.title.asResIdOrNull),
                 context.getString(R.string.agenda_item_type_reminder)
             )
-            fun ShowAlertDialogActionType.getMessage() = UiText.Res(
+            var showAlertDialogActionDeleteMessage = UiText.Res(
                 R.string.confirm_action_dialog_text_phrase,
-                context.getStringSafe(title.asResIdOrNull).lowercase(),
+                context.getStringSafe(ShowAlertDialogActionType.DeleteReminder.title.asResIdOrNull).lowercase(),
                 context.getString(R.string.agenda_item_type_reminder).lowercase()
             )
             TextButton(
                 onClick = {
                     onAction(ShowAlertDialog(
-                        title = ShowAlertDialogActionType.DeleteReminder.getTitle(),
-                        message = ShowAlertDialogActionType.DeleteReminder.getMessage(),
+                        title = showAlertDialogActionDeleteTitle,
+                        message = showAlertDialogActionDeleteMessage,
                         confirmButtonLabel =  ShowAlertDialogActionType.DeleteReminder.title,
                         onConfirm = {
                             onAction(DeleteReminder)

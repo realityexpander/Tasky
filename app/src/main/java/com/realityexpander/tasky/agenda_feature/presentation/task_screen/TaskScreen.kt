@@ -439,64 +439,25 @@ fun TaskScreenContent(
                     }
                 )
                 SmallHeightHorizontalDivider()
-
-//                Spacer(modifier = Modifier.largeHeight())
-//                Spacer(modifier = Modifier.weight(1.0f))
-
-//                // • DELETE TASK BUTTON
-//                fun ShowAlertDialogActionType.getTitle() = UiText.Res(
-//                        R.string.confirm_action_dialog_title_phrase,
-//                        context.getStringSafe(title.asResIdOrNull),
-//                        context.getString(R.string.agenda_item_type_task)
-//                    )
-//                fun ShowAlertDialogActionType.getMessage() = UiText.Res(
-//                        R.string.confirm_action_dialog_text_phrase,
-//                        context.getStringSafe(title.asResIdOrNull).lowercase(),
-//                        context.getString(R.string.agenda_item_type_task).lowercase()
-//                    )
-//                TextButton(
-//                    onClick = {
-//                            onAction(ShowAlertDialog(
-//                                title = ShowAlertDialogActionType.DeleteTask.getTitle(),
-//                                message = ShowAlertDialogActionType.DeleteTask.getMessage(),
-//                                confirmButtonLabel =  ShowAlertDialogActionType.DeleteTask.title,
-//                                onConfirm = {
-//                                    onAction(DeleteTask)
-//                                }
-//                            ))
-//                    },
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                ) {
-//                    Text(
-//                        stringResource(R.string.task_delete_task),
-//                        style = MaterialTheme.typography.h4,
-//                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
-//                        textAlign = TextAlign.Center,
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                    )
-//                }
-//                Spacer(modifier = Modifier.mediumHeight())
             }
             Spacer(modifier = Modifier.weight(1.0f))
 
             // • DELETE TASK BUTTON
-            fun ShowAlertDialogActionType.getTitle() = UiText.Res(
+            val showAlertDialogActionDeleteTitle = UiText.Res(
                 R.string.confirm_action_dialog_title_phrase,
-                context.getStringSafe(title.asResIdOrNull),
+                context.getStringSafe(ShowAlertDialogActionType.DeleteTask.title.asResIdOrNull),
                 context.getString(R.string.agenda_item_type_task)
             )
-            fun ShowAlertDialogActionType.getMessage() = UiText.Res(
+            val showAlertDialogActionDeleteMessage = UiText.Res(
                 R.string.confirm_action_dialog_text_phrase,
-                context.getStringSafe(title.asResIdOrNull).lowercase(),
+                context.getStringSafe(ShowAlertDialogActionType.DeleteTask.title.asResIdOrNull).lowercase(),
                 context.getString(R.string.agenda_item_type_task).lowercase()
             )
             TextButton(
                 onClick = {
                     onAction(ShowAlertDialog(
-                        title = ShowAlertDialogActionType.DeleteTask.getTitle(),
-                        message = ShowAlertDialogActionType.DeleteTask.getMessage(),
+                        title = showAlertDialogActionDeleteTitle,
+                        message = showAlertDialogActionDeleteMessage,
                         confirmButtonLabel =  ShowAlertDialogActionType.DeleteTask.title,
                         onConfirm = {
                             onAction(DeleteTask)

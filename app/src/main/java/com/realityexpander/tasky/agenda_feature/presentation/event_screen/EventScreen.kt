@@ -842,22 +842,22 @@ fun AddEventScreenContent(
                 Spacer(modifier = Modifier.largeHeight())
 
                 // • JOIN/LEAVE/DELETE EVENT BUTTON
-                fun ShowAlertDialogActionType.getTitle() = UiText.Res(
+                val showAlertDialogActionDeleteTitle = UiText.Res(
                         R.string.confirm_action_dialog_title_phrase,
-                        context.getStringSafe(title.asResIdOrNull),
+                        context.getStringSafe(ShowAlertDialogActionType.DeleteEvent.title.asResIdOrNull),
                         context.getString(R.string.agenda_item_type_event)
                     )
-                fun ShowAlertDialogActionType.getMessage() = UiText.Res(
+                val showAlertDialogActionDeleteMessage = UiText.Res(
                         R.string.confirm_action_dialog_text_phrase,
-                        context.getStringSafe(title.asResIdOrNull).lowercase(),
+                        context.getStringSafe(ShowAlertDialogActionType.DeleteEvent.title.asResIdOrNull).lowercase(),
                         context.getString(R.string.agenda_item_type_event).lowercase()
                     )
                 TextButton(
                     onClick = {
                         if (isUserEventCreator)
                             onAction(ShowAlertDialog(
-                                title = ShowAlertDialogActionType.DeleteEvent.getTitle(),
-                                message = ShowAlertDialogActionType.DeleteEvent.getMessage(),
+                                title = showAlertDialogActionDeleteTitle,
+                                message = showAlertDialogActionDeleteMessage,
                                 confirmButtonLabel =  ShowAlertDialogActionType.DeleteEvent.title,
                                 onConfirm = {
                                     onAction(DeleteEvent)

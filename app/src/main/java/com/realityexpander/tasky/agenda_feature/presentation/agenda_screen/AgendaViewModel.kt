@@ -11,7 +11,6 @@ import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
-import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDate
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
 import com.realityexpander.tasky.core.presentation.util.ResultUiText
@@ -41,8 +40,6 @@ class AgendaViewModel @Inject constructor(
     private val selectedDayIndex: Int? =
         savedStateHandle[SAVED_STATE_selectedDayIndex]
 
-    private val errorMessage: UiText? =
-        savedStateHandle[SAVED_STATE_errorMessage]
     private val selectedDate: ZonedDateTime? =
         savedStateHandle[SAVED_STATE_selectedDate] ?: ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
 
@@ -60,7 +57,7 @@ class AgendaViewModel @Inject constructor(
                 getDateForDayOffset(date, dayIndex)
             )
         }
-//        .flattenMerge()  // was not working for some reason...
+        //.flattenMerge()  // was not working for some reason...
         .flatMapLatest { it }
         .debounce(50)
         .distinctUntilChanged()
@@ -70,7 +67,6 @@ class AgendaViewModel @Inject constructor(
         MutableStateFlow(
             AgendaState(
                 // restore state from savedStateHandle after process death
-                errorMessage = errorMessage,
                 selectedDayIndex = selectedDayIndex,
             ))
     val agendaState = combine(
@@ -83,7 +79,7 @@ class AgendaViewModel @Inject constructor(
         selectedDayIndex,
         items  ->
 
-        savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
+//        savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
         savedStateHandle[SAVED_STATE_selectedDayIndex] = selectedDayIndex
         savedStateHandle[SAVED_STATE_selectedDate] = currentDate
 

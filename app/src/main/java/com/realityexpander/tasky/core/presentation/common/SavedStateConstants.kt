@@ -25,8 +25,6 @@ object SavedStateConstants {
     const val SAVED_STATE_startDate                              = "startDate"
 
     // Agenda screen
-    const val SAVED_STATE_agendaItemIdForMenu                    = "agendaItemIdForMenu"
-    const val SAVED_STATE_agendaItems                            = "agendaItems"
     const val SAVED_STATE_selectedDayIndex                       = "selectedDayIndex"
     const val SAVED_STATE_selectedDate                           = "selectedDate"
 
