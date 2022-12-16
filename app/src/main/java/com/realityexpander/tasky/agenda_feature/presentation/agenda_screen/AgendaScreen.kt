@@ -181,14 +181,6 @@ fun AgendaScreenContent(
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
-//    errorMessage?.let { message ->
-//        scope.launch {
-//            snackbarHostState.showSnackbar(
-//                message = context.getString(message.asResIdOrNull ?: R.string.error_unknown)
-//            )
-//        }
-//    }
-
 
     fun navigateToLoginScreen() {
         navigator.navigate(
@@ -250,6 +242,7 @@ fun AgendaScreenContent(
     // Guard against invalid authentication state OR perform logout
     SideEffect {
         if (state.isLoaded && state.authInfo == null) {
+            onAction(Logout)
             navigateToLoginScreen()
         }
     }
