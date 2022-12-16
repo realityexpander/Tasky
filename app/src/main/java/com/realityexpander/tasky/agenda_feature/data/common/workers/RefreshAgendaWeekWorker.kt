@@ -9,6 +9,7 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.domain.IWorkerNotifications
+import com.realityexpander.tasky.agenda_feature.domain.IWorkerScheduler
 import com.realityexpander.tasky.core.presentation.util.ResultUiText
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -110,9 +111,10 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
         )
     }
 
-    class WorkerStarter @Inject constructor(
+    // Must use a separate class for the starter bc Dagger doesn't support @AssistedInject
+    class WorkerScheduler @Inject constructor(
         private val context: Context
-    ) : IStartWorker {
+    ) : IWorkerScheduler {
 
         override fun startWorker() {
             // • Start the one-time 'Refresh Agenda Week' Worker
@@ -132,7 +134,7 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
                     .setInputData(data)
                     .addTag(name)
                     .addTag("For 10 days around ${data.getString(RefreshAgendaWeekWorker.PARAMETER_START_DATE)}")
-                    .addTag(TASKY_WORKERS_TAG)
+                    .addTag(AGENDA_WORKERS_TAG)
                     .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                     .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.MINUTES)
                     .build()
@@ -142,6 +144,10 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
                     ExistingWorkPolicy.REPLACE,
                     agendaWeekWorkRequest
                 )
+        }
+
+        override fun cancelWorker() {
+            WorkManager.getInstance(context).cancelAllWorkByTag(SyncAgendaWorker.WORKER_NAME)
         }
     }
 }

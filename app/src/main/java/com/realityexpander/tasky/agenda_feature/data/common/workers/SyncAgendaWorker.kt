@@ -8,6 +8,7 @@ import androidx.work.*
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.domain.IWorkerNotifications
+import com.realityexpander.tasky.agenda_feature.domain.IWorkerScheduler
 import com.realityexpander.tasky.core.presentation.util.ResultUiText
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -76,9 +77,9 @@ class SyncAgendaWorker @AssistedInject constructor(
     }
 
     // Must use a separate class for the starter bc Dagger doesn't support @AssistedInject
-    class WorkerStarter @Inject constructor(
+    class WorkerScheduler @Inject constructor(
         private val context: Context
-    ) : IStartWorker {
+    ) : IWorkerScheduler {
 
         override fun startWorker() {
             // • Start the periodic SyncAgenda Worker (Clear the old one first)
@@ -91,13 +92,17 @@ class SyncAgendaWorker @AssistedInject constructor(
                     .setConstraints(syncAgendaWorkerConstraints)
                     .setInitialDelay(2, TimeUnit.MINUTES)
                     .addTag(SyncAgendaWorker.WORKER_NAME)
-                    .addTag(TASKY_WORKERS_TAG)
+                    .addTag(AGENDA_WORKERS_TAG)
                     .build()
             WorkManager.getInstance(context).apply {
                 cancelAllWorkByTag(SyncAgendaWorker.WORKER_NAME)
                 pruneWork()
                 enqueue(workRequest)
             }
+        }
+
+        override fun cancelWorker() {
+            WorkManager.getInstance(context).cancelAllWorkByTag(SyncAgendaWorker.WORKER_NAME)
         }
     }
 }
