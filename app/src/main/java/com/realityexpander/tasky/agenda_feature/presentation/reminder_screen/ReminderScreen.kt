@@ -421,12 +421,12 @@ fun ReminderScreenContent(
             Spacer(modifier = Modifier.weight(1.0f))
 
             // • DELETE REMINDER BUTTON
-            var showAlertDialogActionDeleteTitle = UiText.Res(
+            val showAlertDialogActionDeleteTitle = UiText.Res(
                 R.string.confirm_action_dialog_title_phrase,
                 context.getStringSafe(ShowAlertDialogActionType.DeleteReminder.title.asResIdOrNull),
                 context.getString(R.string.agenda_item_type_reminder)
             )
-            var showAlertDialogActionDeleteMessage = UiText.Res(
+            val showAlertDialogActionDeleteMessage = UiText.Res(
                 R.string.confirm_action_dialog_text_phrase,
                 context.getStringSafe(ShowAlertDialogActionType.DeleteReminder.title.asResIdOrNull).lowercase(),
                 context.getString(R.string.agenda_item_type_reminder).lowercase()
