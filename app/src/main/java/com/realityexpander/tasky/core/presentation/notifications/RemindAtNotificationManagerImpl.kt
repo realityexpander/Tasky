@@ -156,7 +156,7 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
                 )
             )
             .setSubText(context.getString(R.string.notifications_alarm_remind_at_subtext,
-                agendaItem
+                agendaItem.toAgendaItemType().typeNameStr
             ))
             .setShowWhen(true)
             .setWhen(startDateTimeUtcMillis)

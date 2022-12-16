@@ -114,6 +114,10 @@
     <string name="agenda_isDone_icon_description">Indicate Completed</string>
     <string name="agenda_empty_list">No agenda items for this day</string>
     <string name="description_title_marker">Title marker</string>
+    <string name="agenda_undo">UNDO</string>
+    <string name="agenda_undo_event_restored_but_not_rejoined">Event restored, but cannot join original event.</string>
+    <string name="agenda_message_agenda_item_added_success">Agenda Item re-added.</string>
+    <string name="agenda_item_deleted_success">Agenda Item successfully deleted</string>
 
     <!--    Event screen -->
     <string name="event_description_close">Close Event screen</string>
@@ -218,7 +222,7 @@
     <string name="reminder_edit_reminder_title">Edit Reminder Title</string>
     <string name="reminder_no_description_set">No description set</string>
     <string name="reminder_time">Time</string>
-    <string name="reminder_delete_reminder">DELETE TASK</string>
+    <string name="reminder_delete_reminder">DELETE REMINDER</string>
     <string name="reminder_error_save_reminder">Error saving Reminder: %s</string>
     <string name="reminder_error_delete_reminder">Error deleting Reminder</string>
     <string name="reminder_message_reminder_saved">Reminder Saved</string>
@@ -227,5 +231,6 @@
     <!--    Notifications -->
     <string name="notifications_alarm_remind_at_subtext">%1$s starting soon</string>
     <string name="agenda_notifications_complete_task_button">Complete Task</string>
+
 
 </resources>

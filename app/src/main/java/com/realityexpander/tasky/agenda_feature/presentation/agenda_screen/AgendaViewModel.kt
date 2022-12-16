@@ -11,7 +11,6 @@ import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
-import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDate
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_selectedDayIndex
 import com.realityexpander.tasky.core.presentation.util.ResultUiText
@@ -41,8 +40,6 @@ class AgendaViewModel @Inject constructor(
     private val selectedDayIndex: Int? =
         savedStateHandle[SAVED_STATE_selectedDayIndex]
 
-    private val errorMessage: UiText? =
-        savedStateHandle[SAVED_STATE_errorMessage]
     private val selectedDate: ZonedDateTime? =
         savedStateHandle[SAVED_STATE_selectedDate] ?: ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
 
@@ -60,7 +57,7 @@ class AgendaViewModel @Inject constructor(
                 getDateForDayOffset(date, dayIndex)
             )
         }
-//        .flattenMerge()  // was not working for some reason...
+        //.flattenMerge()  // was not working for some reason...
         .flatMapLatest { it }
         .debounce(50)
         .distinctUntilChanged()
@@ -70,7 +67,6 @@ class AgendaViewModel @Inject constructor(
         MutableStateFlow(
             AgendaState(
                 // restore state from savedStateHandle after process death
-                errorMessage = errorMessage,
                 selectedDayIndex = selectedDayIndex,
             ))
     val agendaState = combine(
@@ -83,7 +79,7 @@ class AgendaViewModel @Inject constructor(
         selectedDayIndex,
         items  ->
 
-        savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
+//        savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
         savedStateHandle[SAVED_STATE_selectedDayIndex] = selectedDayIndex
         savedStateHandle[SAVED_STATE_selectedDate] = currentDate
 
@@ -277,32 +273,12 @@ class AgendaViewModel @Inject constructor(
                     }
                 }
             }
-            is SetErrorMessage -> {
-                _agendaState.update {
-                    it.copy(
-                        errorMessage = if(uiEvent.message.isRes)
-                            uiEvent.message
-                        else
-                            UiText.Res(R.string.error_unknown, ""),
-                        isProgressVisible = false
-                    )
-                }
-            }
-            is ClearErrorMessage -> {
-                _agendaState.update {
-                    it.copy(
-                        errorMessage = null,
-                        isProgressVisible = false
-                    )
-                }
-            }
             is ShowConfirmDeleteAgendaItemDialog -> {
                 _agendaState.update {
                     it.copy(
                         confirmDeleteAgendaItem = uiEvent.agendaItem
                     )
                 }
-                sendEvent(ClearErrorMessage)
             }
             is DismissConfirmDeleteAgendaItemDialog -> {
                 _agendaState.update {
@@ -337,12 +313,50 @@ class AgendaViewModel @Inject constructor(
                     }
 
                 if(result is ResultUiText.Error) {
-                    sendEvent(SetErrorMessage(result.message))
+                    _oneTimeEvent.emit(OneTimeEvent.ShowSnackbar(result.message))
                 } else {
-                    _oneTimeEvent.emit(OneTimeEvent.ShowToast(UiText.Res(R.string.event_message_event_deleted_success)))
-                    sendEvent(ClearErrorMessage)
+                    _oneTimeEvent.emit(OneTimeEvent.ShowSnackbar(
+                        UiText.Res(R.string.agenda_item_deleted_success),
+                        uiEvent.agendaItem
+                    ))
                 }
                 sendEvent(DismissConfirmDeleteAgendaItemDialog)
+            }
+            is UndoDeleteAgendaItem -> {
+                val result =
+                    when (uiEvent.agendaItem) {
+                        is AgendaItem.Event -> {
+                            if (uiEvent.agendaItem.isUserEventCreator) {
+                                agendaRepository.createEvent(uiEvent.agendaItem)
+                            } else {
+                                _oneTimeEvent.emit(OneTimeEvent.ShowSnackbar(
+                                    UiText.Res(R.string.agenda_undo_event_restored_but_not_rejoined),
+                                ))
+                                // Make a new copy of the Event, but with the logged-in user as the creator.
+                                agendaRepository.createEvent(
+                                    uiEvent.agendaItem.copy(
+                                        id=UUID.randomUUID().toString(),
+                                        host = authRepository.getAuthInfo()?.userId,
+                                        isUserEventCreator = true,
+                                    ))
+                            }
+                        }
+                        is AgendaItem.Task -> {
+                            agendaRepository.createTask(uiEvent.agendaItem)
+                        }
+                        is AgendaItem.Reminder -> {
+                            agendaRepository.createReminder(uiEvent.agendaItem)
+                        }
+                        else -> {
+                            ResultUiText.Error<AgendaItem>(UiText.Res(R.string.error_unknown_agenda_type))
+                        }
+                    }
+
+                if(result is ResultUiText.Error) {
+                    _oneTimeEvent.emit(OneTimeEvent.ShowSnackbar(result.message))
+                } else {
+                    _oneTimeEvent.emit(OneTimeEvent.ShowToast(UiText.Res(R.string.agenda_message_agenda_item_added_success)))
+                }
             }
             is OneTimeEvent.NavigateToCreateEvent -> {
                 _oneTimeEvent.emit(OneTimeEvent.NavigateToCreateEvent)

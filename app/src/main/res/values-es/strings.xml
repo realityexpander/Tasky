@@ -114,6 +114,10 @@
     <string name="agenda_isDone_icon_description">Indicar completado</string>
     <string name="agenda_empty_list">No hay puntos de agenda para este día</string>
     <string name="description_title_marker">Marcador de título de reunión</string>
+    <string name="agenda_undo">DESHACER</string>
+    <string name="agenda_undo_event_restored_but_not_rejoined">Evento restaurado, pero no se puede unir al evento original.</string>
+    <string name="agenda_message_agenda_item_added_success">Se volvió a agregar el punto de la agenda.</string>
+    <string name="agenda_item_deleted_success">Punto de la agenda eliminado con éxito</string>
 
     <!--    Event screen -->
     <string name="event_description_close">Cerrar pantalla de evento</string>
@@ -218,7 +222,7 @@
     <string name="reminder_edit_reminder_title">Editar título de recordatorio</string>
     <string name="reminder_no_description_set">Sin descripción establecida</string>
     <string name="reminder_time">Tiempo</string>
-    <string name="reminder_delete_reminder">ELIMINAR TAREA</string>
+    <string name="reminder_delete_reminder">ELIMINAR RECORDATORIO</string>
     <string name="reminder_error_save_reminder">Error al guardar el recordatorio: %s</string>
     <string name="reminder_error_delete_reminder">Error al eliminar el recordatorio</string>
     <string name="reminder_message_reminder_saved">Recordatorio guardado</string>
@@ -227,5 +231,6 @@
     <!--    Notifications -->
     <string name="notifications_alarm_remind_at_subtext">%1$s comenzando pronto</string>
     <string name="agenda_notifications_complete_task_button">Tarea completa</string>
+
 
 </resources>

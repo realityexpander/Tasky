@@ -114,6 +114,10 @@
     <string name="agenda_isDone_icon_description">Abgeschlossen angeben</string>
     <string name="agenda_empty_list">Keine Tagesordnungspunkte für diesen Tag</string>
     <string name="description_title_marker">Titelmarkierung für Meetings</string>
+    <string name="agenda_undo">RÜCKGÄNGIG MACHEN</string>
+    <string name="agenda_undo_event_restored_but_not_rejoined">Ereignis wiederhergestellt, kann aber nicht am ursprünglichen Ereignis teilnehmen.</string>
+    <string name="agenda_message_agenda_item_added_success">Tagesordnungspunkt neu hinzugefügt.</string>
+    <string name="agenda_item_deleted_success">Tagesordnungspunkt erfolgreich gelöscht</string>
 
     <!--    Event screen -->
     <string name="event_description_close">Ereignisbildschirm schließen</string>
@@ -218,7 +222,7 @@
     <string name="reminder_edit_reminder_title">Erinnerungstitel bearbeiten</string>
     <string name="reminder_no_description_set">Keine Beschreibung festgelegt</string>
     <string name="reminder_time">Zeit</string>
-    <string name="reminder_delete_reminder">AUFGABE LÖSCHEN</string>
+    <string name="reminder_delete_reminder">ERINNERUNG LÖSCHEN</string>
     <string name="reminder_error_save_reminder">Fehler beim Speichern Erinnerung: %s</string>
     <string name="reminder_error_delete_reminder">Fehler beim Löschen der Erinnerung</string>
     <string name="reminder_message_reminder_saved">Erinnerung gespeichert</string>
@@ -227,5 +231,6 @@
     <!--    Notifications -->
     <string name="notifications_alarm_remind_at_subtext">%1$s beginnt bald</string>
     <string name="agenda_notifications_complete_task_button">Erledige Aufgabe</string>
+
 
 </resources>
