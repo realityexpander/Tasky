@@ -577,9 +577,12 @@ fun AgendaScreenContent(
                 .padding(start = DP.tiny, end = DP.tiny)
 
         ) {
-            val sortedAgendaItems = agendaItems.sortedBy { agendaItem ->
-                agendaItem.startTime
-            }
+            val sortedAgendaItems by derivedStateOf {
+                    agendaItems.sortedBy { agendaItem ->
+                        agendaItem.startTime
+                    }
+                }
+
             val agendaItemsBeforeNow = sortedAgendaItems.filter { agendaItem ->
                 agendaItem.startTime.isBefore(zonedDateTimeNow)
             }
