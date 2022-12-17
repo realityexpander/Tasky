@@ -765,9 +765,6 @@ fun AgendaScreenContent(
                 }
             }
         }
-
-        ////// STATUS ///////
-
     }
 
     // • FAB BUTTON
