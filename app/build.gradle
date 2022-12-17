@@ -187,6 +187,9 @@ dependencies {
     // Logging with Logcat
     implementation 'com.squareup.logcat:logcat:0.1'
 
+    // Swipe to refresh
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.27.0"
+
     // For testing
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

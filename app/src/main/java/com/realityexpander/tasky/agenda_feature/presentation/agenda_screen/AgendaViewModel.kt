@@ -33,7 +33,7 @@ class AgendaViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val connectivityObserver: IInternetConnectivityObserver,
     private val remindAtAlarmManager: IRemindAtAlarmManager,
-    private val agendaWorkersScheduler: IAgendaWorkersScheduler
+    private val agendaWorkersScheduler: IAgendaWorkersScheduler,
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)
@@ -165,6 +165,24 @@ class AgendaViewModel @Inject constructor(
         timerTask.cancel()
         timer.cancel()
 
+    }
+
+    fun onSwipeRefresh() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                _agendaState.update {
+                    it.copy(isRefreshing = true)
+                }
+
+                agendaRepository.syncAgenda()
+                agendaRepository.updateLocalAgendaDayFromRemote(
+                    ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+                )
+                _agendaState.update {
+                    it.copy(isRefreshing = false)
+                }
+            }
+        }
     }
 
     fun sendEvent(event: AgendaScreenEvent) {
