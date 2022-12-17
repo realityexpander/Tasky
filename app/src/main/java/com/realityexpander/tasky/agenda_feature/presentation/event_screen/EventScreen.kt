@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
+import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
@@ -58,8 +59,13 @@ import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 import java.util.*
 
+@Destination(
+    route = "user",
+    deepLinks = [
+        DeepLink(uriPattern = "https://realityexpander.com/user/{initialEventId}")
+    ]
+)
 @Composable
-@Destination
 fun EventScreen(
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     initialEventId: UuidStr? = null,

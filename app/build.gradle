@@ -153,7 +153,6 @@ dependencies {
     // WorkManager
     implementation "androidx.work:work-runtime-ktx:$work_manager_version"
     implementation 'androidx.hilt:hilt-work:1.0.0'
-//    implementation "androidx.startup:startup-runtime:1.1.1"
 
     // KotlinX Serialization
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_json_version"
@@ -186,9 +185,6 @@ dependencies {
 
     // Logging with Logcat
     implementation 'com.squareup.logcat:logcat:0.1'
-
-    // Swipe to refresh
-    implementation "com.google.accompanist:accompanist-swiperefresh:0.27.0"
 
     // For testing
     testImplementation 'junit:junit:4.13.2'

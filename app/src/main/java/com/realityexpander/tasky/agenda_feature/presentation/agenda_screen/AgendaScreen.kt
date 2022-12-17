@@ -563,7 +563,7 @@ fun AgendaScreenContent(
             showEmptyIndicator.value = false
 
             if (agendaItems.isEmpty()) {
-                delay(500)
+                delay(400) // to prevent flickering when agenda items are loading
                 showEmptyIndicator.value = true
             }
         }
@@ -587,14 +587,18 @@ fun AgendaScreenContent(
                 agendaItem.startTime.isAfter(zonedDateTimeNow)
             }
 
-            fun isToday() = (
-                    weekStartDate.plusDays(selectedDayIndex?.toLong() ?: 0).year ==
-                            ZonedDateTime.now().year
-                            && weekStartDate.plusDays(
-                        selectedDayIndex?.toLong() ?: 0
-                    ).dayOfYear ==
-                            ZonedDateTime.now().dayOfYear
-                    )
+            fun isToday(): Boolean {
+                val selectedDay = selectedDayIndex?.toLong() ?: 0
+                val yearOfSelectedDay = weekStartDate.plusDays(selectedDay).year
+                val dayNumberOfSelectedDay = weekStartDate.plusDays(selectedDay).dayOfYear
+
+                return (
+                    yearOfSelectedDay == ZonedDateTime.now().year
+                    &&
+                    dayNumberOfSelectedDay == ZonedDateTime.now().dayOfYear
+                )
+
+            }
 
             if (!isToday() || (isToday() && agendaItemsBeforeNow.isNotEmpty())) {
                 item("before_spacer_for_today") {
