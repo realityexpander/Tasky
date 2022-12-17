@@ -169,18 +169,16 @@ class AgendaViewModel @Inject constructor(
 
     fun onSwipeRefresh() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                _agendaState.update {
-                    it.copy(isRefreshing = true)
-                }
+            _agendaState.update {
+                it.copy(isRefreshing = true)
+            }
 
-                agendaRepository.syncAgenda()
-                agendaRepository.updateLocalAgendaDayFromRemote(
-                    ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
-                )
-                _agendaState.update {
-                    it.copy(isRefreshing = false)
-                }
+            agendaRepository.syncAgenda()
+            agendaRepository.updateLocalAgendaDayFromRemote(
+                ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+            )
+            _agendaState.update {
+                it.copy(isRefreshing = false)
             }
         }
     }

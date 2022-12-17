@@ -34,7 +34,7 @@ import com.realityexpander.tasky.core.data.settings.saveAuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.presentation.util.keyboardVisibilityObserver
-import com.realityexpander.tasky.core.util.InternetConnectivityObserver.ShowInternetAvailabilityIndicator
+import com.realityexpander.tasky.core.util.InternetConnectivityObserver.InternetAvailabilityIndicator
 import com.realityexpander.tasky.dataStore
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.RegisterScreenDestination
@@ -66,7 +66,7 @@ fun LoginScreen(
         navigator = navigator,
     )
 
-    ShowInternetAvailabilityIndicator(connectivityState)
+    InternetAvailabilityIndicator(connectivityState)
 }
 
 @Composable

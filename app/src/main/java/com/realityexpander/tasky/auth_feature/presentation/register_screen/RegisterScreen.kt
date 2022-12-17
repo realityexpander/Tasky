@@ -34,7 +34,7 @@ import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.presentation.util.keyboardVisibilityObserver
-import com.realityexpander.tasky.core.util.InternetConnectivityObserver.ShowInternetAvailabilityIndicator
+import com.realityexpander.tasky.core.util.InternetConnectivityObserver.InternetAvailabilityIndicator
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 
 @Composable
@@ -62,7 +62,7 @@ fun RegisterScreen(
         navigator = navigator,
     )
 
-    ShowInternetAvailabilityIndicator(connectivityState)
+    InternetAvailabilityIndicator(connectivityState)
 }
 
 @OptIn(ExperimentalMaterialApi::class)

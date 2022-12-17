@@ -82,7 +82,6 @@ class AgendaRepositoryImpl @Inject constructor(
         try {
             // Get fresh data
             val agendaResult = agendaApi.getAgenda(dateTime)
-
             if (agendaResult.isSuccess) {
                 val agenda = agendaResult.getOrNull()
 
@@ -189,102 +188,113 @@ class AgendaRepositoryImpl @Inject constructor(
     // THIS WILL ATTEMPT TO UPLOAD ALL SYNC ITEMS.
     override suspend fun syncAgenda(): ResultUiText<Void> {
         val syncItems = syncRepository.getSyncItems()
-        if (!isInternetReachable && syncItems.isEmpty()) {
+        if (!isInternetReachable && syncItems.isEmpty()) { // no changes to sync
             return ResultUiText.Success(null)
         }
 
         var isFailure = false
 
-        // Sync the `Create` API calls first...
-        syncItems.forEach { syncItem ->
-            when (syncItem.modificationTypeForSync) {
-                ModificationTypeForSync.Created -> {
-                    val success = when (syncItem.agendaItemTypeForSync) {
-                        AgendaItemTypeForSync.Event -> {
-                            val event = getEvent(
-                                eventId = syncItem.agendaItemId,
-                                isLocalOnly = true
-                            ) ?: return@forEach
-                            createEvent(event = event, isRemoteOnly = true) is ResultUiText.Success
+        withContext(Dispatchers.IO) {
+
+            // Sync the `Create` API calls first...
+            syncItems.forEach { syncItem ->
+                when (syncItem.modificationTypeForSync) {
+                    ModificationTypeForSync.Created -> {
+                        val success = when (syncItem.agendaItemTypeForSync) {
+                            AgendaItemTypeForSync.Event -> {
+                                val event = getEvent(
+                                    eventId = syncItem.agendaItemId,
+                                    isLocalOnly = true
+                                ) ?: return@forEach
+                                createEvent(
+                                    event = event,
+                                    isRemoteOnly = true
+                                ) is ResultUiText.Success
+                            }
+                            AgendaItemTypeForSync.Task -> {
+                                val task = getTask(
+                                    taskId = syncItem.agendaItemId,
+                                    isLocalOnly = true
+                                ) ?: return@forEach
+                                createTask(task = task, isRemoteOnly = true) is ResultUiText.Success
+                            }
+                            AgendaItemTypeForSync.Reminder -> {
+                                val reminder = getReminder(
+                                    reminderId = syncItem.agendaItemId,
+                                    isLocalOnly = true
+                                ) ?: return@forEach
+                                createReminder(
+                                    reminder = reminder,
+                                    isRemoteOnly = true
+                                ) is ResultUiText.Success
+                            }
                         }
-                        AgendaItemTypeForSync.Task -> {
-                            val task = getTask(
-                                taskId = syncItem.agendaItemId,
-                                isLocalOnly = true
-                            ) ?: return@forEach
-                            createTask(task = task, isRemoteOnly = true) is ResultUiText.Success
-                        }
-                        AgendaItemTypeForSync.Reminder -> {
-                            val reminder = getReminder(
-                                reminderId = syncItem.agendaItemId,
-                                isLocalOnly = true
-                            ) ?: return@forEach
-                            createReminder(
-                                reminder = reminder,
-                                isRemoteOnly = true
-                            ) is ResultUiText.Success
+                        if (!success) {
+                            isFailure = true
                         }
                     }
-                    if (!success) {
-                        isFailure = true
+                    else -> {
+                        // do nothing
                     }
                 }
-                else -> {
-                    // do nothing
+            }
+
+            // Sync the `Update` API calls next...
+            syncItems.forEach { syncItem ->
+                when (syncItem.modificationTypeForSync) {
+                    ModificationTypeForSync.Updated -> {
+                        val success = when (syncItem.agendaItemTypeForSync) {
+                            AgendaItemTypeForSync.Event -> {
+                                val event = getEvent(
+                                    eventId = syncItem.agendaItemId,
+                                    isLocalOnly = true
+                                ) ?: return@forEach
+                                updateEvent(
+                                    event = event,
+                                    isRemoteOnly = true
+                                ) is ResultUiText.Success
+                            }
+                            AgendaItemTypeForSync.Task -> {
+                                val task = getTask(
+                                    taskId = syncItem.agendaItemId,
+                                    isLocalOnly = true
+                                ) ?: return@forEach
+                                updateTask(task = task, isRemoteOnly = true) is ResultUiText.Success
+                            }
+                            AgendaItemTypeForSync.Reminder -> {
+                                val reminder = getReminder(
+                                    reminderId = syncItem.agendaItemId,
+                                    isLocalOnly = true
+                                ) ?: return@forEach
+                                updateReminder(
+                                    reminder = reminder,
+                                    isRemoteOnly = true
+                                ) is ResultUiText.Success
+                            }
+                        }
+                        if (!success) {
+                            isFailure = true
+                        }
+                    }
+                    else -> {
+                        // do nothing
+                    }
                 }
+            }
+
+            // Sync the `Delete` last.
+            if (syncRepository.syncDeletedAgendaItems(syncItems) is ResultUiText.Error) {
+                isFailure = true
+            }
+
+            return@withContext if (isFailure) {
+                ResultUiText.Error(UiText.Res(R.string.error_sync_failed))
+            } else {
+                ResultUiText.Success(null)
             }
         }
 
-        // Sync the `Update` API calls next...
-        syncItems.forEach { syncItem ->
-            when (syncItem.modificationTypeForSync) {
-                ModificationTypeForSync.Updated -> {
-                    val success = when (syncItem.agendaItemTypeForSync) {
-                        AgendaItemTypeForSync.Event -> {
-                            val event = getEvent(
-                                eventId = syncItem.agendaItemId,
-                                isLocalOnly = true
-                            ) ?: return@forEach
-                            updateEvent(event = event, isRemoteOnly = true) is ResultUiText.Success
-                        }
-                        AgendaItemTypeForSync.Task -> {
-                            val task = getTask(
-                                taskId = syncItem.agendaItemId,
-                                isLocalOnly = true
-                            ) ?: return@forEach
-                            updateTask(task = task, isRemoteOnly = true) is ResultUiText.Success
-                        }
-                        AgendaItemTypeForSync.Reminder -> {
-                            val reminder = getReminder(
-                                reminderId = syncItem.agendaItemId,
-                                isLocalOnly = true
-                            ) ?: return@forEach
-                            updateReminder(
-                                reminder = reminder,
-                                isRemoteOnly = true
-                            ) is ResultUiText.Success
-                        }
-                    }
-                    if (!success) {
-                        isFailure = true
-                    }
-                }
-                else -> {
-                    // do nothing
-                }
-            }
-        }
-
-        // Sync the `Delete` last.
-        if (syncRepository.syncDeletedAgendaItems(syncItems) is ResultUiText.Error) {
-            isFailure = true
-        }
-
-        return if (isFailure) {
-            ResultUiText.Error(UiText.Res(R.string.error_sync_failed))
-        } else {
-            ResultUiText.Success(null)
-        }
+        return ResultUiText.Error(UiText.Res(R.string.error_sync_failed))
     }
 
     override suspend fun clearAllAgendaItemsLocally(): ResultUiText<Void> {

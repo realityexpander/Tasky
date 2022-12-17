@@ -63,7 +63,7 @@ import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.DaySelected
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
-import com.realityexpander.tasky.core.util.InternetConnectivityObserver.ShowInternetAvailabilityIndicator
+import com.realityexpander.tasky.core.util.InternetConnectivityObserver.InternetAvailabilityIndicator
 import com.realityexpander.tasky.destinations.EventScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import com.realityexpander.tasky.destinations.ReminderScreenDestination
@@ -127,7 +127,7 @@ fun AgendaScreen(
             }
         }
 
-        ShowInternetAvailabilityIndicator(connectivityState)
+        InternetAvailabilityIndicator(connectivityState)
     }
 }
 
@@ -597,7 +597,6 @@ fun AgendaScreenContent(
                     &&
                     dayNumberOfSelectedDay == ZonedDateTime.now().dayOfYear
                 )
-
             }
 
             if (!isToday() || (isToday() && agendaItemsBeforeNow.isNotEmpty())) {
