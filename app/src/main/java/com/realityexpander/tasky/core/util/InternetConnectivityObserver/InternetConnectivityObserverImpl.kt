@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.core.util.ConnectivityObserver
+package com.realityexpander.tasky.core.util.InternetConnectivityObserver
 
 import android.content.Context
 import android.net.ConnectivityManager
