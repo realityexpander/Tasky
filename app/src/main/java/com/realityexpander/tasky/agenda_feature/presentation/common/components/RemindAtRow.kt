@@ -17,12 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.agenda_feature.util.toTimeDifferenceHumanReadable
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.common.modifiers.smallWidth
+import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
@@ -134,5 +136,23 @@ fun ColumnScope.RemindAtRow(
             }
         }
 
+    }
+}
+
+@Composable
+@Preview
+fun RemindAtRowPreview() {
+    TaskyTheme {
+        Column {
+            RemindAtRow(
+                isEditable = true,
+                isDropdownMenuVisible = false,
+                fromDateTime = ZonedDateTime.now(),
+                remindAtDateTime = ZonedDateTime.now().plusMinutes(10),
+                onEditRemindAtDateTime = {},
+                onDismissRequest = {},
+                onSaveRemindAtDateTime = {},
+            )
+        }
     }
 }

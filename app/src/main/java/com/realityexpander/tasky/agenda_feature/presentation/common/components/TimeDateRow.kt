@@ -13,9 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import com.realityexpander.tasky.agenda_feature.util.toShortMonthDayYear
 import com.realityexpander.tasky.agenda_feature.util.toTime12Hour
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
+import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import java.time.ZonedDateTime
 
 @Composable
@@ -101,6 +103,22 @@ fun ColumnScope.TimeDateRow(
                     .clickable(enabled = isEditable) {
                         onEditDate()
                     }
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+fun TimeDateRowPreview() {
+    Column {
+        TaskyTheme() {
+            TimeDateRow(
+                title = "From",
+                date = ZonedDateTime.now(),
+                isEditable = true,
+                onEditDate = {},
+                onEditTime = {},
             )
         }
     }

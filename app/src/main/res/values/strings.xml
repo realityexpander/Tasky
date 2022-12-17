@@ -14,6 +14,7 @@
     <!-- general messages -->
     <string name="no_internet">📡 Network Offline</string>
     <string name="error_no_internet">No Internet connectivity</string>
+    <string name="error_network_error">Network error - %s</string>
 
     <!--    Login Screen -->
     <string name="login_title">Welcome Back!</string>

@@ -14,6 +14,7 @@
     <!-- general messages -->
     <string name="no_internet">📡 Red fuera de línea</string>
     <string name="error_no_internet">Sin conectividad a Internet</string>
+    <string name="error_network_error">Error de red - %s</string>
 
     <!--    Login Screen -->
     <string name="login_title">¡Bienvenido de nuevo!</string>

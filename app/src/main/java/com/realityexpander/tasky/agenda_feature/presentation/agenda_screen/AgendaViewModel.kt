@@ -79,7 +79,6 @@ class AgendaViewModel @Inject constructor(
         selectedDayIndex,
         items  ->
 
-//        savedStateHandle[SAVED_STATE_errorMessage] = state.errorMessage
         savedStateHandle[SAVED_STATE_selectedDayIndex] = selectedDayIndex
         savedStateHandle[SAVED_STATE_selectedDate] = currentDate
 
@@ -121,7 +120,7 @@ class AgendaViewModel @Inject constructor(
             // • Start workers for Syncing and Week Refresh
             agendaWorkersScheduler.startAllWorkers()
 
-//            yield() // wait for database to load  // leave for testing for now // todo add to unit testing
+//            // todo add to unit testing
 //            if(agendaState.value.agendaItems.isEmpty()) { // if no items for today, make some fake ones
 //                createFakeAgendaItems(agendaRepository)
 //            }

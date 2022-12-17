@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
@@ -27,6 +28,7 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.util.UiText
 import com.realityexpander.tasky.core.util.Exceptions
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -38,6 +40,7 @@ class RegisterViewModel @Inject constructor(
     val validateEmail: ValidateEmail,
     val validatePassword: ValidatePassword,
     val validateUsername: ValidateUsername,
+    private val connectivityObserver: IInternetConnectivityObserver,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -70,6 +73,10 @@ class RegisterViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_statusMessage]
     private val errorMessage: UiText? =
         savedStateHandle[SAVED_STATE_errorMessage]
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val onlineState =
+        connectivityObserver.onlineStateFlow.mapLatest { it }
 
     private val _registerState = MutableStateFlow(
         RegisterState(

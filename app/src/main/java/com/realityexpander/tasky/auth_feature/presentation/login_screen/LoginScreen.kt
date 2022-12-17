@@ -1,7 +1,6 @@
 package com.realityexpander.tasky.auth_feature.presentation.login_screen
 
 import android.content.res.Configuration
-import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -17,18 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.auth_feature.presentation.components.EmailField
@@ -36,6 +33,8 @@ import com.realityexpander.tasky.auth_feature.presentation.components.PasswordFi
 import com.realityexpander.tasky.core.data.settings.saveAuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.realityexpander.tasky.core.presentation.util.keyboardVisibilityObserver
+import com.realityexpander.tasky.core.util.InternetConnectivityObserver.ShowInternetAvailabilityIndicator
 import com.realityexpander.tasky.dataStore
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.RegisterScreenDestination
@@ -55,6 +54,9 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val loginState by viewModel.loginState.collectAsState()
+    val connectivityState by viewModel.onlineState.collectAsState(
+        initial = IInternetConnectivityObserver.OnlineStatus.OFFLINE // must start as Offline
+    )
 
     LoginScreenContent(
         username = username,                // passed to/from RegisterScreen (not used in LoginScreen)
@@ -63,6 +65,8 @@ fun LoginScreen(
         onAction = viewModel::sendEvent,
         navigator = navigator,
     )
+
+    ShowInternetAvailabilityIndicator(connectivityState)
 }
 
 @Composable
@@ -76,6 +80,7 @@ fun LoginScreenContent(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val isKeyboardOpen by keyboardVisibilityObserver()
 
     fun performLogin() {
         onAction(LoginEvent.Login(
@@ -122,21 +127,6 @@ fun LoginScreenContent(
     BackHandler(true) {
         // todo: should we ask the user to quit?
         (context as MainActivity).exitApp()
-    }
-
-    // Check keyboard open/closed (how to make this a function?)
-    val view = LocalView.current
-    var isKeyboardOpen by remember { mutableStateOf(false) }
-    DisposableEffect(view) {
-        val listener = ViewTreeObserver.OnGlobalLayoutListener {
-            isKeyboardOpen = ViewCompat.getRootWindowInsets(view)
-                ?.isVisible(WindowInsetsCompat.Type.ime()) ?: true
-        }
-        view.viewTreeObserver.addOnGlobalLayoutListener(listener)
-
-        onDispose {
-            view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
-        }
     }
 
     Column(

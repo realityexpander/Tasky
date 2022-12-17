@@ -60,6 +60,7 @@ import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.DaySelected
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.realityexpander.tasky.core.util.InternetConnectivityObserver.ShowInternetAvailabilityIndicator
 import com.realityexpander.tasky.destinations.EventScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import com.realityexpander.tasky.destinations.ReminderScreenDestination
@@ -110,37 +111,7 @@ fun AgendaScreen(
         }
     }
 
-    // Offline? Show delayed warning in case starting up
-    val isOfflineBannerVisible = remember { mutableStateOf(false) }
-    LaunchedEffect(connectivityState) {
-        isOfflineBannerVisible.value = false
-
-        if (connectivityState == IInternetConnectivityObserver.OnlineStatus.OFFLINE
-        ) {
-            delay(1000)
-            isOfflineBannerVisible.value = true
-        }
-    }
-    AnimatedVisibility(isOfflineBannerVisible.value) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Transparent)
-        ) {
-            Text(
-                text = stringResource(R.string.no_internet),
-                color = Color.Black,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .background(Color.Red.copy(alpha = .5f))
-                    .fillMaxWidth()
-                    .align(Alignment.Center),
-
-                )
-        }
-    }
+    ShowInternetAvailabilityIndicator(connectivityState)
 }
 
 @Composable
@@ -1044,7 +1015,6 @@ fun AgendaScreenPreview() {
                 authInfo = AuthInfo(
                     username = "Chris Athanas",
                 ),
-//                agendaItems = flow {
                 agendaItems =
                 listOf(
                     AgendaItem.Event(

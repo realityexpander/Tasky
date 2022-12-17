@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
@@ -22,6 +23,7 @@ import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SA
 import com.realityexpander.tasky.core.presentation.util.UiText
 import com.realityexpander.tasky.core.util.Exceptions
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -32,10 +34,9 @@ class LoginViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     val validateEmail: ValidateEmail,
     val validatePassword: ValidatePassword,
+    private val connectivityObserver: IInternetConnectivityObserver,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-
-    //private val savedStateHandle: SavedStateHandle = TaskyApplication.savedStateHandle
 
     private val username: String =
         Uri.decode(savedStateHandle[SAVED_STATE_username]) ?: ""
@@ -57,6 +58,10 @@ class LoginViewModel @Inject constructor(
         savedStateHandle[SAVED_STATE_statusMessage]
     private val errorMessage: UiText? =
         savedStateHandle[SAVED_STATE_errorMessage]
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val onlineState =
+        connectivityObserver.onlineStateFlow.mapLatest { it }
 
     private val _loginState = MutableStateFlow(
         LoginState(
@@ -126,6 +131,8 @@ class LoginViewModel @Inject constructor(
             sendEvent(LoginEvent.LoginError(UiText.Res(R.string.error_login_error, e.message ?: "")))
         } catch(e: Exceptions.LoginException) {
             sendEvent(LoginEvent.LoginError(UiText.Res(R.string.error_login_error, e.message ?: "")))
+        } catch (e: Exceptions.NetworkException) {
+            sendEvent(LoginEvent.LoginError(UiText.Res(R.string.error_network_error, e.message ?: "")))
         } catch (e: Exception) {
             sendEvent(LoginEvent.UnknownError(UiText.Res(R.string.error_unknown, e.message ?: "")))
             e.printStackTrace()
