@@ -1015,7 +1015,6 @@ fun AgendaScreenPreview() {
                 authInfo = AuthInfo(
                     username = "Chris Athanas",
                 ),
-//                agendaItems = flow {
                 agendaItems =
                 listOf(
                     AgendaItem.Event(
