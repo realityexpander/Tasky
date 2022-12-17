@@ -16,10 +16,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.getUserAcronym
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightBlue
+import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 
 @Composable
 fun UserAcronymCircle(
@@ -53,5 +55,13 @@ fun UserAcronymCircle(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
+    }
+}
+
+@Composable
+@Preview
+fun UserAcronymCirclePreview() {
+    TaskyTheme {
+        UserAcronymCircle(username = "John Doe")
     }
 }
