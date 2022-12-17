@@ -587,19 +587,17 @@ fun AgendaScreenContent(
                 agendaItem.startTime.isAfter(zonedDateTimeNow)
             }
 
-            fun isToday(): Boolean {
-                val selectedDay = selectedDayIndex?.toLong() ?: 0
-                val yearOfSelectedDay = weekStartDate.plusDays(selectedDay).year
-                val dayNumberOfSelectedDay = weekStartDate.plusDays(selectedDay).dayOfYear
-
-                return (
+            val selectedDay = selectedDayIndex?.toLong() ?: 0
+            val yearOfSelectedDay = weekStartDate.plusDays(selectedDay).year
+            val dayNumberOfSelectedDay = weekStartDate.plusDays(selectedDay).dayOfYear
+            val isToday =
+                (
                     yearOfSelectedDay == ZonedDateTime.now().year
                     &&
                     dayNumberOfSelectedDay == ZonedDateTime.now().dayOfYear
                 )
-            }
 
-            val isTimeNeedleVisible = !isToday() || (isToday() && agendaItemsBeforeNow.isNotEmpty())
+            val isTimeNeedleVisible = !isToday || (isToday && agendaItemsBeforeNow.isNotEmpty())
             if (isTimeNeedleVisible) {
                 item("before_spacer_for_today") {
                     Spacer(
@@ -659,8 +657,8 @@ fun AgendaScreenContent(
                 }
             }
 
-            // • TIME NEEDLE - only show on today (present day)
-            if (isToday()) {
+            // • TIME NEEDLE - only show on today (present day) & if Agenda is not empty
+            if (isToday) {
                 item("time_needle") {
                     Box(
                         modifier = Modifier
