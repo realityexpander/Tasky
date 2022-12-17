@@ -21,7 +21,7 @@ import com.realityexpander.tasky.R
 import kotlinx.coroutines.delay
 
 @Composable
-fun ShowInternetAvailabilityIndicator(connectivityState: IInternetConnectivityObserver.OnlineStatus) {
+fun InternetAvailabilityIndicator(connectivityState: IInternetConnectivityObserver.OnlineStatus) {
     // Offline? Show delayed warning in case starting up
     val isOfflineBannerVisible = remember { mutableStateOf(false) }
     LaunchedEffect(connectivityState) {

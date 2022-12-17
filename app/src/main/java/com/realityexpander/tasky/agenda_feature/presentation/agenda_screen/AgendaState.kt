@@ -15,6 +15,7 @@ data class AgendaState(
 
     val isLoaded: Boolean = false, // true only after init() is called
     val isProgressVisible: Boolean = false,
+    val isRefreshing: Boolean = false,
 
     val weekStartDate: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS),
     val chooseWeekStartDateDialog: ZonedDateTime? = null,

@@ -153,7 +153,6 @@ dependencies {
     // WorkManager
     implementation "androidx.work:work-runtime-ktx:$work_manager_version"
     implementation 'androidx.hilt:hilt-work:1.0.0'
-//    implementation "androidx.startup:startup-runtime:1.1.1"
 
     // KotlinX Serialization
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_json_version"
