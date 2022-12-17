@@ -60,9 +60,9 @@ import java.time.ZonedDateTime
 import java.util.*
 
 @Destination(
-    route = "user",
+    route = "event",
     deepLinks = [
-        DeepLink(uriPattern = "https://realityexpander.com/user/{initialEventId}")
+        DeepLink(uriPattern = "https://realityexpander.com/event/{initialEventId}")
     ]
 )
 @Composable
