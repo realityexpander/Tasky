@@ -599,7 +599,8 @@ fun AgendaScreenContent(
                 )
             }
 
-            if (!isToday() || (isToday() && agendaItemsBeforeNow.isNotEmpty())) {
+            val isTimeNeedleVisible = !isToday() || (isToday() && agendaItemsBeforeNow.isNotEmpty())
+            if (isTimeNeedleVisible) {
                 item("before_spacer_for_today") {
                     Spacer(
                         modifier = Modifier
