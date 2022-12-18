@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
@@ -87,6 +88,35 @@ fun EventScreen(
             navigator = navigator,
             startDate = startDate ?: ZonedDateTime.now(),
         )
+    }
+
+    // Show error messages for deep links
+    state.errorMessage?.let { errorMessage ->
+        if (!state.isLoaded) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Tasky logo image
+                AsyncImage(
+                    model = R.drawable.tasky_logo_for_splash,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(128.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop,
+                )
+
+                Text(
+                    text = errorMessage.get,
+                    style = MaterialTheme.typography.h5,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
     }
 
     if (state.isProgressVisible) {
