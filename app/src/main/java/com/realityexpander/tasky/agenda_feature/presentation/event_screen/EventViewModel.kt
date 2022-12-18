@@ -5,7 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.EventId
-import com.realityexpander.tasky.agenda_feature.domain.*
+import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
+import com.realityexpander.tasky.agenda_feature.domain.Attendee
+import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
+import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.max
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.min
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
@@ -78,40 +81,64 @@ class EventViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _state.update { _state ->
-                val authInfo = authRepository.getAuthInfo()
 
+            val authInfo = authRepository.getAuthInfo()
+            _state.update { _state ->
+                _state.copy(
+                    username = authInfo?.username ?: "",
+                    authInfo = authInfo,
+                )
+            }
+
+            // check for deeplink
+            if (initialEventId != null) {
+                val event = agendaRepository.getEvent(initialEventId)
+
+                // if event is null, show error.
+                event ?: run {
+                    _state.value = _state.value.copy(
+                        isProgressVisible = false,
+                        errorMessage = UiText.Res(R.string.agenda_error_agenda_item_not_found)
+                    )
+                    return@launch
+                }
+
+                _state.update { _state ->
+                    _state.copy(
+                        isLoaded = true, // only after state is initialized
+                        isProgressVisible = false,
+                        event = event,
+                    )
+                }
+
+                return@launch
+            }
+
+            // if no deeplink, create new event
+            _state.update { _state ->
                 _state.copy(
                     isLoaded = true, // only after state is initialized
                     isProgressVisible = false,
-                    username = authInfo?.username ?: "",
-                    authInfo = authInfo,
-
-                    event = initialEventId?.let { eventId ->
-                        agendaRepository.getEvent(eventId)
-                    } ?:
-                        // If `initialEventId` is null, then create a new event.
-                        // • CREATE A NEW EVENT
-                        AgendaItem.Event(
-                            id = UUID.randomUUID().toString(),
-                            title = "Title of New Event",
-                            description = "Description of New Event",
-                            from = startDate.withCurrentHourMinute(),
-                            to = startDate.withCurrentHourMinute().plusHours(1),
-                            remindAt = startDate.withCurrentHourMinute().plusMinutes(30),
-                            host = authInfo?.userId,
-                            isUserEventCreator = true,
-                            photos = emptyList(),
-                            attendees = listOf(
-                                Attendee(
-                                    id = authInfo?.userId!!,
-                                    fullName = authInfo.username ?: "",
-                                    email = authInfo.email ?: "",
-                                    isGoing = true,
-                                )
-                            ),
-                            isSynced = false,
+                    event = AgendaItem.Event(
+                        id = UUID.randomUUID().toString(),
+                        title = "Title of New Event",
+                        description = "Description of New Event",
+                        from = startDate.withCurrentHourMinute(),
+                        to = startDate.withCurrentHourMinute().plusHours(1),
+                        remindAt = startDate.withCurrentHourMinute().plusMinutes(30),
+                        host = authInfo?.userId,
+                        isUserEventCreator = true,
+                        photos = emptyList(),
+                        attendees = listOf(
+                            Attendee(
+                                id = authInfo?.userId!!,
+                                fullName = authInfo.username ?: "",
+                                email = authInfo.email ?: "",
+                                isGoing = true,
+                            )
                         ),
+                        isSynced = false,
+                    )
                 )
             }
         }

@@ -33,7 +33,6 @@ class RemindAtAlarmManagerImpl @Inject constructor(
     override fun setAlarmsForAgendaItems(
         agendaItems: List<AgendaItem>
     ) {
-        logcat { "setAlarmsForAgendaItems: agendaItems = $agendaItems" }
 
         // Only include upcoming `Remind At` items (RemindAt is in the future)
         val futureAgendaItems =
@@ -44,6 +43,11 @@ class RemindAtAlarmManagerImpl @Inject constructor(
         if (futureAgendaItems.isEmpty()) {
             return
         }
+
+        logcat { "setAlarmsForAgendaItems: futureAgendaItems = ${
+            futureAgendaItems.map { it.title }
+                .joinToString { it }
+        }" }
 
         // Create an "Alarm PendingIntent" for each AgendaItem's `.remindAt` time
         val alarmPendingIntents = mutableListOf<PendingIntent>()
