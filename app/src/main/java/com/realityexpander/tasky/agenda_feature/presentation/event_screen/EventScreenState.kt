@@ -13,18 +13,14 @@ data class EventScreenState(
 
     val isLoaded: Boolean = false, // true only after init() is called
     val isProgressVisible: Boolean = false,
-
     val errorMessage: UiText? = null,
 
     val addAttendeeDialogErrorMessage: UiText? = null,
     val isAttendeeEmailValid: Boolean? = null,
 
-    // Stateful One-time events
-//    val scrollToItemId: UuidStr? = null,  // todo add one-time events
-
     val isEditable: Boolean = false,
-
     val editMode: EventScreenEvent.EditMode? = null,
+    val savedEditedAgendaItem: AgendaItem? = null,
 
     // Event to view or edit
     val event: AgendaItem.Event? = null,
