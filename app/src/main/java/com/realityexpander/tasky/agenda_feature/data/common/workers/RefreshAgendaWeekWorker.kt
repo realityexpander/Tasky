@@ -76,10 +76,15 @@ class RefreshAgendaWeekWorker @AssistedInject constructor(
                 }
             }
             //.awaitAll()  // will cancel all if any of the `async`s fail (LEAVE FOR REFERENCE)
-            .map {// will NOT cancel all if any async fails (unlike .awaitAll())
-                it.await() is ResultUiText.Success // return true if success
+            .mapIndexed { index, it -> // will NOT cancel all if any async fails (unlike .awaitAll())
+                val success = it.await() is ResultUiText.Success // return true if success
+                if (!success) {
+                    logcat { "RefreshAgendaWeekWorker.doWork() - FAILED $index, $it" }
+                }
+
+                success
             }.all { success ->
-                success == true   // if any of the async's failed, return retry
+                success == true   // if any of the async's failed, return `retry`
             }
 
         return if (success) {
