@@ -57,11 +57,6 @@ sealed interface EventScreenEvent {
     data class ShowErrorMessage(val message: UiText) : EventScreenEvent
     object ClearErrorMessage : EventScreenEvent
 
-    // • Stateful One-time events  // todo setup one-time events
-    sealed interface StatefulOneTimeEvent {
-//        object ResetScrollTo                                        : StatefulOneTimeEvent, AddEventEvent
-    }
-
     // • Non-state One Time Events
     sealed interface OneTimeEvent {
         // • Event - Navigate Back to Previous Screen
