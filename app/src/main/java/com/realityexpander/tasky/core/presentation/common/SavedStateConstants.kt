@@ -24,6 +24,9 @@ object SavedStateConstants {
     const val SAVED_STATE_editMode                               = "editMode"
     const val SAVED_STATE_startDate                              = "startDate"
 
+    // Editors for process death
+    const val SAVED_STATE_savedEditedAgendaItem                  = "savedAgendaItem"
+
     // Agenda screen
     const val SAVED_STATE_selectedDayIndex                       = "selectedDayIndex"
     const val SAVED_STATE_selectedDate                           = "selectedDate"
