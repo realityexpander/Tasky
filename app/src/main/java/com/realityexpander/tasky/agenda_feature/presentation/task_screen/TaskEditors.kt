@@ -2,6 +2,7 @@ package com.realityexpander.tasky.agenda_feature.presentation.task_screen
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.window.DialogProperties
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.EditTextModal
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.toZonedDateTime
 import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.*
@@ -24,16 +25,15 @@ fun TaskPropertyEditors(
             editMode as EditMode.TextPayload
 
             EditTextModal(
-                text = editMode.text,
                 title = editMode.dialogTitle.get,
+                text = editMode.text,
                 editTextStyle = (editMode as EditMode.EditTextStyle).editTextStyle,
                 onSave = {
                     onAction(EditMode.UpdateText(it))
                 },
-                onCancel = {
-                    onAction(CancelEditMode)
-                }
-            )
+            ) {
+                onAction(CancelEditMode)
+            }
         }
         is EditMode.ChooseDate -> {
             editMode as EditMode.DateTimePayload
@@ -43,6 +43,10 @@ fun TaskPropertyEditors(
             dateDialogState.show()
             MaterialDialog(
                 dialogState = dateDialogState,
+                properties = DialogProperties(
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true,
+                ),
                 buttons = {
                     positiveButton(text = stringResource(android.R.string.ok)) {
                         onAction(EditMode.UpdateDateTime(pickedDate?.toZonedDateTime()!!))
@@ -64,17 +68,21 @@ fun TaskPropertyEditors(
         is EditMode.ChooseTime -> {
             editMode as EditMode.DateTimePayload
             var pickedTime by remember { mutableStateOf(LocalDateTime.now()) }
-            val dateDialogState = rememberMaterialDialogState()
+            val timeDialogState = rememberMaterialDialogState()
 
-            dateDialogState.show()
+            timeDialogState.show()
             MaterialDialog(
-                dialogState = dateDialogState,
+                dialogState = timeDialogState,
+                properties = DialogProperties(
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true,
+                ),
                 buttons = {
                     positiveButton(text = stringResource(android.R.string.ok)) {
                         onAction(EditMode.UpdateDateTime(pickedTime?.toZonedDateTime()!!))
                     }
                     negativeButton(text = stringResource(android.R.string.cancel)) {
-                        dateDialogState.hide()
+                        timeDialogState.hide()
                         onAction(CancelEditMode)
                     }
                 }
