@@ -34,6 +34,8 @@ class ReminderViewModel @Inject constructor(
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage]
     private val editMode: EditMode? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_editMode]
+    private val savedEditedAgendaItem: AgendaItem.Reminder? =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_savedEditedAgendaItem]
 
     // Get params from savedStateHandle (from another screen)
     private val initialReminderId: ReminderId? =
@@ -49,6 +51,7 @@ class ReminderViewModel @Inject constructor(
             isProgressVisible = true,
             isEditable = isEditable,
             editMode = editMode,
+            savedEditedAgendaItem = savedEditedAgendaItem
         )
     )
     val state =
@@ -60,6 +63,8 @@ class ReminderViewModel @Inject constructor(
                 state.isEditable
             savedStateHandle[SavedStateConstants.SAVED_STATE_editMode] =
                 state.editMode
+            savedStateHandle[SavedStateConstants.SAVED_STATE_savedEditedAgendaItem] =
+                state.reminder
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ReminderScreenState())
 
     private val _oneTimeEvent = MutableSharedFlow<OneTimeEvent>()
@@ -74,19 +79,21 @@ class ReminderViewModel @Inject constructor(
                     isProgressVisible = false,
                     username = authInfo?.username ?: "",
                     authInfo = authInfo,
-
-                    reminder = initialReminderId?.let { reminderId ->
-                        agendaRepository.getReminder(reminderId)
+                    reminder = savedEditedAgendaItem ?: run {
+                        initialReminderId?.let { reminderId ->
+                            agendaRepository.getReminder(reminderId) // Default Load item from repository
+                        }
+                            ?:
+                            // If `initialReminderId` is null, then create a new Reminder.
+                            // • CREATE A NEW Reminder
+                            AgendaItem.Reminder(
+                                id = UUID.randomUUID().toString(),
+                                title = "Title of New Reminder",
+                                description = "Description of New Reminder",
+                                time = startDate.withCurrentHourMinute().plusHours(1),
+                                remindAt = startDate.withCurrentHourMinute().plusMinutes(30),
+                            )
                     }
-                    // If `initialReminderId` is null, then create a new Reminder.
-                    // • CREATE A NEW Reminder
-                    ?: AgendaItem.Reminder(
-                            id = UUID.randomUUID().toString(),
-                            title = "Title of New Reminder",
-                            description = "Description of New Reminder",
-                            time = startDate.withCurrentHourMinute().plusHours(1),
-                            remindAt = startDate.withCurrentHourMinute().plusMinutes(30), //ZonedDateTime.now(),ZonedDateTime.now().plusMinutes(30),
-                        )
                 )
             }
         }
@@ -231,7 +238,6 @@ class ReminderViewModel @Inject constructor(
                     )
                 }
 
-//                val result =
                 when (initialReminderId) {
                     null -> {
                         agendaRepository.createReminder(_state.value.reminder ?: return)
@@ -241,9 +247,6 @@ class ReminderViewModel @Inject constructor(
                     }
                 }
 
-//                when (result) {
-//                    is ResultUiText.Success,
-//                    is ResultUiText.Error -> {
                 _state.update { _state ->
                     _state.copy(
                         isProgressVisible = false,
@@ -257,16 +260,6 @@ class ReminderViewModel @Inject constructor(
                 )
                 sendEvent(CancelEditMode)
                 sendEvent(OneTimeEvent.NavigateBack)
-    //                    }
-//                    is ResultUiText.Error -> {
-//                        _state.update { _state ->
-//                            _state.copy(
-//                                isProgressVisible = false,
-//                                errorMessage = result.message
-//                            )
-//                        }
-//                    }
-//                }
             }
             is DeleteReminder -> {
                 _state.value.reminder ?: return
