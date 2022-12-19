@@ -34,6 +34,8 @@ class TaskViewModel @Inject constructor(
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage]
     private val editMode: EditMode? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_editMode]
+    private val savedEditedAgendaItem: AgendaItem.Task? =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_savedEditedAgendaItem]
 
     // Get params from savedStateHandle (from another screen)
     private val initialTaskId: TaskId? =
@@ -43,12 +45,14 @@ class TaskViewModel @Inject constructor(
     private val startDate: ZonedDateTime =
         savedStateHandle[SavedStateConstants.SAVED_STATE_startDate] ?: ZonedDateTime.now()
 
+
     private val _state = MutableStateFlow(
         TaskScreenState(
             errorMessage = errorMessage,
             isProgressVisible = true,
             isEditable = isEditable,
             editMode = editMode,
+            savedEditedAgendaItem = savedEditedAgendaItem,
         )
     )
     val state =
@@ -60,9 +64,8 @@ class TaskViewModel @Inject constructor(
                 state.isEditable
             savedStateHandle[SavedStateConstants.SAVED_STATE_editMode] =
                 state.editMode
-
-//            savedStateHandle[SavedStateConstants.SAVED_STATE_editedTitle] =
-//                state.editedTitle
+            savedStateHandle[SavedStateConstants.SAVED_STATE_savedEditedAgendaItem] =
+                state.task
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TaskScreenState())
 
     private val _oneTimeEvent = MutableSharedFlow<OneTimeEvent>()
@@ -77,30 +80,22 @@ class TaskViewModel @Inject constructor(
                     isProgressVisible = false,
                     username = authInfo?.username ?: "",
                     authInfo = authInfo,
-
-                    task = initialTaskId?.let { taskId ->
-                        // Load event from repository
-                        agendaRepository.getTask(taskId)
-//                            ?.copy(
-//                            // Apply current edits (from process death)
-//                            title = editedTitle,
-//                            description = editedDescription,
-//                            time = editedTime,
-//                            remindAt = editedRemindAt,
-//                            isDone = editedIsDone,
-//                        )
+                    task = savedEditedAgendaItem ?: run {
+                        initialTaskId?.let { taskId ->
+                            agendaRepository.getTask(taskId) // Default Load item from repository
+                        }
+                            ?:
+                            // If `initialTaskId` is null, then create a new Task.
+                            // • CREATE A NEW Task
+                            AgendaItem.Task(
+                                id = UUID.randomUUID().toString(),
+                                title = "Title of New Task",
+                                description = "Description of New Task",
+                                time = startDate.withCurrentHourMinute().plusHours(1),
+                                remindAt = startDate.withCurrentHourMinute().plusMinutes(30),
+                                isDone = false,
+                            )
                     }
-                        ?:
-                        // If `initialTaskId` is null, then create a new Task.
-                        // • CREATE A NEW Task
-                        AgendaItem.Task(
-                            id = UUID.randomUUID().toString(),
-                            title = "Title of New Task",
-                            description = "Description of New Task",
-                            time = startDate.withCurrentHourMinute().plusHours(1),
-                            remindAt = startDate.withCurrentHourMinute().plusMinutes(30),
-                            isDone = false,
-                        )
                 )
             }
         }
@@ -163,7 +158,7 @@ class TaskViewModel @Inject constructor(
                             )
                         }
                     }
-                    else -> throw java.lang.IllegalStateException("Invalid type for SaveText: ${_state.value.editMode}")
+                    else -> throw java.lang.IllegalStateException("Invalid type for UpdateText: ${_state.value.editMode}")
                 }
             }
             is EditMode.UpdateDateTime -> {
@@ -180,7 +175,8 @@ class TaskViewModel @Inject constructor(
                                     time = uiEvent.dateTime,
 
                                     // Update the `RemindAt dateTime` to keep same offset from the `From` date
-                                    remindAt = uiEvent.dateTime.minus(remindAtDuration)
+                                    remindAt = uiEvent.dateTime.minus(remindAtDuration),
+
                                 ),
                                 editMode = null
                             )
@@ -194,7 +190,7 @@ class TaskViewModel @Inject constructor(
                                 // make 'time' and 'remindAt' the same
                                 return@update _state.copy(
                                     task = _state.task?.copy(
-                                        remindAt = _state.task.time
+                                        remindAt = _state.task.time,
                                     ),
                                     editMode = null
                                 )
@@ -215,8 +211,8 @@ class TaskViewModel @Inject constructor(
                 _state.update { _state ->
                     _state.copy(
                         task = _state.task?.copy(
-                            isDone = !(_state.task.isDone)
-                        )
+                            isDone = !(_state.task.isDone),
+                        ),
                     )
                 }
             }
@@ -264,9 +260,6 @@ class TaskViewModel @Inject constructor(
                     }
                 }
 
-//                when (result) {
-//                    is ResultUiText.Success,
-//                    is ResultUiText.Error -> { // ignore errors for UI
                 _state.update { _state ->
                     _state.copy(
                         isProgressVisible = false,
@@ -280,16 +273,6 @@ class TaskViewModel @Inject constructor(
                 )
                 sendEvent(CancelEditMode)
                 sendEvent(OneTimeEvent.NavigateBack)
-//                    }
-//                    is ResultUiText.Error -> {
-//                        _state.update { _state ->
-//                            _state.copy(
-//                                isProgressVisible = false,
-//                                errorMessage = result.message
-//                            )
-//                        }
-//                    }
-//                }
             }
             is DeleteTask -> {
                 _state.value.task ?: return
