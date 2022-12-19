@@ -3,6 +3,7 @@ package com.realityexpander.tasky
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Debug.waitForDebugger
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -49,9 +50,12 @@ class MainActivity : ComponentActivity() {
     var isAlreadyRefreshed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-//        if (true) {
-//            waitForDebugger() // leave for testing process death
-//        }
+        // user-initiated process death: adb shell am force-stop com.realityexpander.tasky
+        // system process death: adb shell am kill com.realityexpander.tasky
+        // check app running: adb shell ps | grep tasky travel
+        if (false) {
+            waitForDebugger() // leave for testing process death
+        }
         super.onCreate(savedInstanceState)
 
         // Check for Alarm Intent

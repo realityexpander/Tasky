@@ -7,10 +7,10 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
-import com.realityexpander.tasky.core.presentation.util.ResultUiText
 import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.*
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants
+import com.realityexpander.tasky.core.presentation.util.ResultUiText
 import com.realityexpander.tasky.core.presentation.util.UiText
 import com.realityexpander.tasky.core.util.withCurrentHourMinute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,6 +58,11 @@ class TaskViewModel @Inject constructor(
                 state.errorMessage
             savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] =
                 state.isEditable
+            savedStateHandle[SavedStateConstants.SAVED_STATE_editMode] =
+                state.editMode
+
+//            savedStateHandle[SavedStateConstants.SAVED_STATE_editedTitle] =
+//                state.editedTitle
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TaskScreenState())
 
     private val _oneTimeEvent = MutableSharedFlow<OneTimeEvent>()
@@ -76,6 +81,14 @@ class TaskViewModel @Inject constructor(
                     task = initialTaskId?.let { taskId ->
                         // Load event from repository
                         agendaRepository.getTask(taskId)
+//                            ?.copy(
+//                            // Apply current edits (from process death)
+//                            title = editedTitle,
+//                            description = editedDescription,
+//                            time = editedTime,
+//                            remindAt = editedRemindAt,
+//                            isDone = editedIsDone,
+//                        )
                     }
                         ?:
                         // If `initialTaskId` is null, then create a new Task.

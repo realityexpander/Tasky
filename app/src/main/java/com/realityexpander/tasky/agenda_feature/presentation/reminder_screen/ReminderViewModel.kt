@@ -7,10 +7,10 @@ import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
-import com.realityexpander.tasky.core.presentation.util.ResultUiText
 import com.realityexpander.tasky.agenda_feature.presentation.reminder_screen.ReminderScreenEvent.*
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants
+import com.realityexpander.tasky.core.presentation.util.ResultUiText
 import com.realityexpander.tasky.core.presentation.util.UiText
 import com.realityexpander.tasky.core.util.withCurrentHourMinute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,6 +58,8 @@ class ReminderViewModel @Inject constructor(
                 state.errorMessage
             savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] =
                 state.isEditable
+            savedStateHandle[SavedStateConstants.SAVED_STATE_editMode] =
+                state.editMode
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ReminderScreenState())
 
     private val _oneTimeEvent = MutableSharedFlow<OneTimeEvent>()

@@ -70,6 +70,8 @@ class EventViewModel @Inject constructor(
                 state.errorMessage
             savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] =
                 state.isEditable
+            savedStateHandle[SavedStateConstants.SAVED_STATE_editMode] =
+                state.editMode
             savedStateHandle[SavedStateConstants.SAVED_STATE_addAttendeeDialogErrorMessage] =
                 state.addAttendeeDialogErrorMessage
             savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid] =
@@ -188,7 +190,7 @@ class EventViewModel @Inject constructor(
                 when (val result =
                     agendaRepository.validateAttendeeExists(uiEvent.email.trim().lowercase())
                 ) {
-                    is ResultUiText.Success -> {
+                    is ResultUiText.Success<Attendee> -> {
                         val attendeeInfo = result.data
                         sendEvent(ShowProgressIndicator(false))
 
@@ -213,7 +215,7 @@ class EventViewModel @Inject constructor(
                             sendEvent(SetErrorMessageForAddAttendeeDialog(UiText.Res(R.string.attendee_add_attendee_dialog_error_email_not_found)))
                         }
                     }
-                    is ResultUiText.Error -> {
+                    is ResultUiText.Error<Attendee> -> {
                         sendEvent(ShowProgressIndicator(false))
                         sendEvent(SetErrorMessageForAddAttendeeDialog(result.message))
                     }
@@ -468,7 +470,6 @@ class EventViewModel @Inject constructor(
 
                 val result =
                     agendaRepository.deleteEvent(_state.value.event ?: return)
-
                 when (result) {
                     is ResultUiText.Success -> {
                         _state.update { _state ->

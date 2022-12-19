@@ -109,7 +109,7 @@ fun EditTextModal(
             TextField(
                 value = editingText,
                 isError = false,
-                textStyle = editTextStyle.copy(textDecoration = null),
+                textStyle = editTextStyle.copy(textDecoration = null, color = MaterialTheme.colors.onSurface),
                 onValueChange = { editingText = it },
                 singleLine = false,
                 maxLines = 20,
