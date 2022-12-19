@@ -24,16 +24,15 @@ fun ReminderPropertyEditors(
             editMode as EditMode.TextPayload
 
             EditTextModal(
-                text = editMode.text,
                 title = editMode.dialogTitle.get,
+                text = editMode.text,
                 editTextStyle = (editMode as EditMode.EditTextStyle).editTextStyle,
                 onSave = {
                     onAction(EditMode.UpdateText(it))
-                },
-                onCancel = {
-                    onAction(CancelEditMode)
                 }
-            )
+            ) {
+                onAction(CancelEditMode)
+            }
         }
         is EditMode.ChooseDate -> {
             editMode as EditMode.DateTimePayload
