@@ -73,10 +73,10 @@ class EventViewModel @Inject constructor(
                 state.errorMessage
             savedStateHandle[SavedStateConstants.SAVED_STATE_addAttendeeDialogErrorMessage] =
                 state.addAttendeeDialogErrorMessage
-            savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] =
-                state.isEditable
             savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid] =
                 state.isAttendeeEmailValid
+            savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] =
+                state.isEditable
             savedStateHandle[SavedStateConstants.SAVED_STATE_editMode] =
                 state.editMode
             savedStateHandle[SavedStateConstants.SAVED_STATE_savedEditedAgendaItem] =
