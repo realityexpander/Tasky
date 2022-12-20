@@ -74,7 +74,7 @@ sealed interface EventScreenEvent {
         }
 
         // • (1) WHICH item is being edited?
-        // - sets initial/default value and the dialog display string)
+        // - sets initial/default value and the dialog display string & text style
         @Parcelize
         @TypeParceler<TextStyle, TextStyleParceler>()
         data class ChooseTitleText(
