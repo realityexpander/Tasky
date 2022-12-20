@@ -103,8 +103,8 @@ class AgendaRepositoryImpl @Inject constructor(
 
                         // • Events - Insert fresh data locally in parallel
                         eventRepository.clearEventsForDayLocally(dateTime)
-                        agenda?.events?.map { event ->
-                            supervisorScope {
+                        supervisorScope {
+                            agenda?.events?.map { event ->
                                 async {
                                     val upsertResult =
                                         eventRepository.upsertEventLocally(event.toDomain())
@@ -119,8 +119,8 @@ class AgendaRepositoryImpl @Inject constructor(
 
                         // • Tasks - Insert fresh data locally in parallel
                         taskRepository.clearTasksForDayLocally(dateTime)
-                        agenda?.tasks?.map { task ->
-                            supervisorScope {
+                        supervisorScope {
+                            agenda?.tasks?.map { task ->
                                 async {
                                     val upsertResult =
                                         taskRepository.upsertTaskLocally(task.toDomain())
@@ -135,8 +135,8 @@ class AgendaRepositoryImpl @Inject constructor(
 
                         // • Reminders - Insert fresh data locally in parallel
                         reminderRepository.clearRemindersForDayLocally(dateTime)
-                        agenda?.reminders?.map { reminder ->
-                            supervisorScope {
+                        supervisorScope {
+                            agenda?.reminders?.map { reminder ->
                                 async {
                                     val upsertResult =
                                         reminderRepository.upsertReminderLocally(reminder.toDomain())
