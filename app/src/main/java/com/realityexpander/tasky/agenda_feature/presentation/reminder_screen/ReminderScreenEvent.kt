@@ -35,7 +35,7 @@ sealed interface ReminderScreenEvent {
     ) : ReminderScreenEvent
     object DismissAlertDialog : ReminderScreenEvent
 
-    // • Update/Save Task
+    // • Update/Save Reminder
     object SaveReminder : ReminderScreenEvent
     object DeleteReminder : ReminderScreenEvent
 
