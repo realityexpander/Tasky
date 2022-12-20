@@ -30,10 +30,10 @@ import javax.inject.Inject
 class AgendaViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     private val agendaRepository: IAgendaRepository,
-    private val savedStateHandle: SavedStateHandle,
     private val connectivityObserver: IInternetConnectivityObserver,
     private val remindAtAlarmManager: IRemindAtAlarmManager,
     private val agendaWorkersScheduler: IAgendaWorkersScheduler,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     // Get params from savedStateHandle (from another screen or after process death)

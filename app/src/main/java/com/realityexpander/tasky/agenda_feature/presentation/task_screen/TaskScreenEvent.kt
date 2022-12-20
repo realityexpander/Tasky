@@ -1,8 +1,13 @@
 package com.realityexpander.tasky.agenda_feature.presentation.task_screen
 
+import android.os.Parcelable
 import androidx.compose.ui.text.TextStyle
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.agenda_feature.data.common.typeParceler.TextStyleParceler
 import com.realityexpander.tasky.core.presentation.util.UiText
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.TypeParceler
+import java.io.Serializable
 import java.time.ZonedDateTime
 
 enum class ShowAlertDialogActionType(val title: UiText) {
@@ -60,31 +65,38 @@ sealed interface TaskScreenEvent {
 
         // • (1) WHICH item is being edited?
         // - sets initial/default value and the dialog display string)
+        @Parcelize
+        @TypeParceler<TextStyle, TextStyleParceler>()
         data class ChooseTitleText(
             override val text: String = "",
             override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_choose_title_text),
             override val editTextStyle: TextStyle = TextStyle.Default
-        ) : EditMode, EditTextStyle, TextPayload
+        ) : EditMode, EditTextStyle, TextPayload, Parcelable, Serializable
 
+        @Parcelize
+        @TypeParceler<TextStyle, TextStyleParceler>()
         data class ChooseDescriptionText(
             override val text: String = "",
             override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_choose_description_text),
             override val editTextStyle: TextStyle = TextStyle.Default
-        ) : EditMode, EditTextStyle, TextPayload
+        ) : EditMode, EditTextStyle, TextPayload, Parcelable
 
+        @Parcelize
         data class ChooseDate(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_choose_from_date)
-        ) : EditMode, DateTimePayload
+        ) : EditMode, DateTimePayload, Parcelable
+        @Parcelize
         data class ChooseTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_choose_from_time),
-        ) : EditMode, DateTimePayload
+        ) : EditMode, DateTimePayload, Parcelable
 
+        @Parcelize
         data class ChooseRemindAtDateTime(
             override val dateTime: ZonedDateTime = ZonedDateTime.now(),
             override val dialogTitle: UiText = UiText.Res(R.string.event_dialog_title_choose_remind_at_date_time)
-        ) : EditMode, DateTimePayload
+        ) : EditMode, DateTimePayload, Parcelable
 
 
         // • (2) WHAT is being edited? (Text, DateTime, Photo, Attendee)

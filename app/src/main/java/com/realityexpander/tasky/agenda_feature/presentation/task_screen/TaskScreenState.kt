@@ -13,12 +13,11 @@ data class TaskScreenState(
 
     val isLoaded: Boolean = false, // true only after init() is called
     val isProgressVisible: Boolean = false,
-
     val errorMessage: UiText? = null,
 
     val isEditable: Boolean = false,
-
     val editMode: TaskScreenEvent.EditMode? = null,
+    val savedEditedAgendaItem: AgendaItem? = null,
 
     // Task to view or edit
     val task: AgendaItem.Task? = null,

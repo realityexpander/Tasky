@@ -38,12 +38,14 @@ class EventViewModel @Inject constructor(
     // Get savedStateHandle (after process death)
     private val errorMessage: UiText? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage]
-    private val editMode: EditMode? =
-        savedStateHandle[SavedStateConstants.SAVED_STATE_editMode]
     private val addAttendeeDialogErrorMessage: UiText? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_addAttendeeDialogErrorMessage]
     private val isAttendeeEmailValid: Boolean? =
         savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid]
+    private val editMode: EditMode? =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_editMode]
+    private val savedEditedAgendaItem: AgendaItem.Event? =
+        savedStateHandle[SavedStateConstants.SAVED_STATE_savedEditedAgendaItem]
 
     // Get params from savedStateHandle (from another screen)
     private val initialEventId: EventId? =
@@ -61,6 +63,7 @@ class EventViewModel @Inject constructor(
             editMode = editMode,
             addAttendeeDialogErrorMessage = addAttendeeDialogErrorMessage,
             isAttendeeEmailValid = isAttendeeEmailValid,
+            savedEditedAgendaItem = savedEditedAgendaItem
         )
     )
     val state =
@@ -68,12 +71,16 @@ class EventViewModel @Inject constructor(
             // save state for process death
             savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage] =
                 state.errorMessage
-            savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] =
-                state.isEditable
             savedStateHandle[SavedStateConstants.SAVED_STATE_addAttendeeDialogErrorMessage] =
                 state.addAttendeeDialogErrorMessage
             savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid] =
                 state.isAttendeeEmailValid
+            savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] =
+                state.isEditable
+            savedStateHandle[SavedStateConstants.SAVED_STATE_editMode] =
+                state.editMode
+            savedStateHandle[SavedStateConstants.SAVED_STATE_savedEditedAgendaItem] =
+                state.event
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventScreenState())
 
     private val _oneTimeEvent = MutableSharedFlow<OneTimeEvent>()
@@ -90,11 +97,24 @@ class EventViewModel @Inject constructor(
                 )
             }
 
-            // check for deeplink
+            // Check for return from process death
+            savedEditedAgendaItem?.let {
+                _state.update { _state ->
+                    _state.copy(
+                        isLoaded = true,
+                        isProgressVisible = false,
+                        event = savedEditedAgendaItem,
+                    )
+                }
+
+                return@launch
+            }
+
+            // Check for Deeplink
             if (initialEventId != null) {
                 val event = agendaRepository.getEvent(initialEventId)
 
-                // if event is null, show error.
+                // if deeplink event is null, show error.
                 event ?: run {
                     _state.value = _state.value.copy(
                         isProgressVisible = false,
@@ -107,14 +127,14 @@ class EventViewModel @Inject constructor(
                     _state.copy(
                         isLoaded = true, // only after state is initialized
                         isProgressVisible = false,
-                        event = event,
+                        event = event, // Apply current edits (from process death)
                     )
                 }
 
                 return@launch
             }
 
-            // if no deeplink, create new event
+            // if no deeplink and initialEventId==null, then create new Event.
             _state.update { _state ->
                 _state.copy(
                     isLoaded = true, // only after state is initialized
@@ -188,7 +208,7 @@ class EventViewModel @Inject constructor(
                 when (val result =
                     agendaRepository.validateAttendeeExists(uiEvent.email.trim().lowercase())
                 ) {
-                    is ResultUiText.Success -> {
+                    is ResultUiText.Success<Attendee> -> {
                         val attendeeInfo = result.data
                         sendEvent(ShowProgressIndicator(false))
 
@@ -213,7 +233,7 @@ class EventViewModel @Inject constructor(
                             sendEvent(SetErrorMessageForAddAttendeeDialog(UiText.Res(R.string.attendee_add_attendee_dialog_error_email_not_found)))
                         }
                     }
-                    is ResultUiText.Error -> {
+                    is ResultUiText.Error<Attendee> -> {
                         sendEvent(ShowProgressIndicator(false))
                         sendEvent(SetErrorMessageForAddAttendeeDialog(result.message))
                     }
@@ -254,7 +274,7 @@ class EventViewModel @Inject constructor(
                         _state.update { _state ->
                             _state.copy(
                                 event = _state.event?.copy(title = uiEvent.text),
-                                editMode = null
+                                editMode = null,
                             )
                         }
                     }
@@ -262,7 +282,7 @@ class EventViewModel @Inject constructor(
                         _state.update { _state ->
                             _state.copy(
                                 event = _state.event?.copy(description = uiEvent.text),
-                                editMode = null
+                                editMode = null,
                             )
                         }
                     }
@@ -275,20 +295,23 @@ class EventViewModel @Inject constructor(
                     is EditMode.ChooseFromTime,
                     is EditMode.ChooseFromDate -> {
                         _state.update { _state ->
-                            val remindAtDuration =
-                                Duration.between(_state.event?.remindAt, _state.event?.from)
+                            _state.event ?: throw IllegalStateException("Event is null")
 
+                            val remindAtDuration =
+                                Duration.between(_state.event.remindAt, _state.event?.from)
+
+                            val maxTo = max(_state.event.to, uiEvent.dateTime)
                             _state.copy(
-                                event = _state.event?.copy(
+                                event = _state.event.copy(
                                     from = uiEvent.dateTime,
 
                                     // Ensure that `to > from`
-                                    to = max(_state.event.to, uiEvent.dateTime),
+                                    to = maxTo, // max(_state.event.to, uiEvent.dateTime),
 
                                     // Update the `RemindAt dateTime` to keep same offset from the `From` date
                                     remindAt = uiEvent.dateTime.minus(remindAtDuration)
                                 ),
-                                editMode = null
+                                editMode = null,
                             )
                         }
                     }
@@ -311,7 +334,7 @@ class EventViewModel @Inject constructor(
                                     // Update the `RemindAt dateTime` to keep same offset from the `From` date
                                     remindAt = minFrom.minus(remindAtDuration)
                                 ),
-                                editMode = null
+                                editMode = null,
                             )
                         }
                     }
@@ -333,7 +356,7 @@ class EventViewModel @Inject constructor(
                                 event = _state.event?.copy(
                                     remindAt = uiEvent.dateTime
                                 ),
-                                editMode = null
+                                editMode = null,
                             )
                         }
                     }
@@ -468,7 +491,6 @@ class EventViewModel @Inject constructor(
 
                 val result =
                     agendaRepository.deleteEvent(_state.value.event ?: return)
-
                 when (result) {
                     is ResultUiText.Success -> {
                         _state.update { _state ->

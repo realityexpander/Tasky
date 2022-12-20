@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -34,7 +35,8 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 fun EditTextModal(
     title: String,
     text: String,
-    editTextStyle: TextStyle =  MaterialTheme.typography.body1,
+    editTextStyle: TextStyle = MaterialTheme.typography.body1,
+    onUpdate: (String) -> Unit = {},
     onSave: (String) -> Unit,
     onCancel: () -> Unit,
 ) {
@@ -42,10 +44,15 @@ fun EditTextModal(
     var editingText by remember {
         mutableStateOf( TextFieldValue(text, TextRange(start = 0, text.length)) )
     }
+    var saveableText by rememberSaveable { mutableStateOf(text) } // for process death recovery
+
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(true) {
         focusRequester.requestFocus()
+
+        // process death restore text
+        editingText = TextFieldValue(saveableText, TextRange(saveableText.length))
     }
 
     Box(
@@ -109,8 +116,12 @@ fun EditTextModal(
             TextField(
                 value = editingText,
                 isError = false,
-                textStyle = editTextStyle.copy(textDecoration = null),
-                onValueChange = { editingText = it },
+                textStyle = editTextStyle.copy(textDecoration = null, color = MaterialTheme.colors.onSurface),
+                onValueChange = {
+                    editingText = it
+                    onUpdate(it.text)
+                    saveableText = it.text
+                },
                 singleLine = false,
                 maxLines = 20,
                 colors = TextFieldDefaults.textFieldColors(
@@ -149,8 +160,7 @@ fun EditTextModalPreview() {
             title = "EDIT DESCRIPTION",
             text = LoremIpsum(20).values.joinToString { it },
             onSave = {},
-            onCancel = {},
-        )
+        ) {}
     }
 }
 
@@ -175,9 +185,8 @@ fun PreviewDarkLargeText() {
         EditTextModal(
             title = "EDIT TITLE",
             text = LoremIpsum(20).values.joinToString { it },
-            onSave = {},
-            onCancel = {},
-            editTextStyle = MaterialTheme.typography.h2
-        )
+            editTextStyle = MaterialTheme.typography.h2,
+            onSave = {}
+        ) {}
     }
 }

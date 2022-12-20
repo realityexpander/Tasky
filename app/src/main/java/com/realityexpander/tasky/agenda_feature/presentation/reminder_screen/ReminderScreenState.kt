@@ -13,12 +13,11 @@ data class ReminderScreenState(
 
     val isLoaded: Boolean = false, // true only after init() is called
     val isProgressVisible: Boolean = false,
-
     val errorMessage: UiText? = null,
 
     val isEditable: Boolean = false,
-
     val editMode: ReminderScreenEvent.EditMode? = null,
+    val savedEditedAgendaItem: AgendaItem? = null,
 
     // Reminder to view or edit
     val reminder: AgendaItem.Reminder? = null,
