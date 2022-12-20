@@ -71,15 +71,14 @@ class EventViewModel @Inject constructor(
             // save state for process death
             savedStateHandle[SavedStateConstants.SAVED_STATE_errorMessage] =
                 state.errorMessage
-            savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] =
-                state.isEditable
-            savedStateHandle[SavedStateConstants.SAVED_STATE_editMode] =
-                state.editMode
             savedStateHandle[SavedStateConstants.SAVED_STATE_addAttendeeDialogErrorMessage] =
                 state.addAttendeeDialogErrorMessage
+            savedStateHandle[SavedStateConstants.SAVED_STATE_isEditable] =
+                state.isEditable
             savedStateHandle[SavedStateConstants.SAVED_STATE_isAttendeeEmailValid] =
                 state.isAttendeeEmailValid
-
+            savedStateHandle[SavedStateConstants.SAVED_STATE_editMode] =
+                state.editMode
             savedStateHandle[SavedStateConstants.SAVED_STATE_savedEditedAgendaItem] =
                 state.event
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventScreenState())
@@ -107,6 +106,7 @@ class EventViewModel @Inject constructor(
                         event = savedEditedAgendaItem,
                     )
                 }
+
                 return@launch
             }
 
