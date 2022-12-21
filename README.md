@@ -1,3 +1,6 @@
+[<img src="https://user-images.githubusercontent.com/5157474/208806552-079ff4c4-9869-4921-9f6f-1f74d4211cdf.png" width=160 />](https://user-images.githubusercontent.com/5157474/208806552-079ff4c4-9869-4921-9f6f-1f74d4211cdf.png)
+
+
 # Tasky
 Task manager similar to a lite version of Google Calendar
 
