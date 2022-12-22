@@ -13,10 +13,11 @@ object ScreenTransitions : DestinationStyle.Animated {
     override fun AnimatedContentScope<NavBackStackEntry>.enterTransition(): EnterTransition? {
 
         return when (initialState.appDestination()) {
-            AgendaScreenDestination -> slideInHorizontally(
-                initialOffsetX = { 1000 },
-                animationSpec = tween(700)
-            )
+            AgendaScreenDestination ->
+                    slideInHorizontally(
+                    initialOffsetX = { 1000 },
+                    animationSpec = tween(700)
+                )
             else -> slideInHorizontally(
                 initialOffsetX = { -1000 },
                 animationSpec = tween(700)
@@ -27,10 +28,11 @@ object ScreenTransitions : DestinationStyle.Animated {
     override fun AnimatedContentScope<NavBackStackEntry>.exitTransition(): ExitTransition? {
 
         return when (targetState.appDestination()) {
-            AgendaScreenDestination -> slideOutHorizontally(
-                targetOffsetX = { 1000 },
-                animationSpec = tween(700)
-            )
+            AgendaScreenDestination ->
+                    slideOutHorizontally(
+                    targetOffsetX = { 1000 },
+                    animationSpec = tween(700)
+                )
             else -> slideOutHorizontally(
                 targetOffsetX = { -1000 },
                 animationSpec = tween(700)
@@ -41,10 +43,11 @@ object ScreenTransitions : DestinationStyle.Animated {
     override fun AnimatedContentScope<NavBackStackEntry>.popEnterTransition(): EnterTransition? {
 
         return when (initialState.appDestination()) {
-            AgendaScreenDestination -> slideInHorizontally(
-                initialOffsetX = { 1000 },
-                animationSpec = tween(700)
-            )
+            AgendaScreenDestination ->
+                    slideInHorizontally(
+                    initialOffsetX = { 1000 },
+                    animationSpec = tween(700)
+                )
             else -> slideInHorizontally(
                 initialOffsetX = { -1000 },
                 animationSpec = tween(700)
@@ -55,10 +58,11 @@ object ScreenTransitions : DestinationStyle.Animated {
     override fun AnimatedContentScope<NavBackStackEntry>.popExitTransition(): ExitTransition? {
 
         return when (targetState.appDestination()) {
-            AgendaScreenDestination -> slideOutHorizontally(
-                targetOffsetX = { 1000 },
-                animationSpec = tween(700)
-            )
+            AgendaScreenDestination ->
+                    slideOutHorizontally(
+                    targetOffsetX = { 1000 },
+                    animationSpec = tween(700)
+                )
             else -> slideOutHorizontally(
                 targetOffsetX = { -1000 },
                 animationSpec = tween(700)
