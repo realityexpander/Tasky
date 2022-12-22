@@ -19,9 +19,9 @@ object ScreenTransitions : DestinationStyle.Animated {
                     animationSpec = tween(700)
                 )
             else -> slideInHorizontally(
-                initialOffsetX = { -1000 },
-                animationSpec = tween(700)
-            )
+                    initialOffsetX = { -1000 },
+                    animationSpec = tween(700)
+                )
         }
     }
 
@@ -34,9 +34,9 @@ object ScreenTransitions : DestinationStyle.Animated {
                     animationSpec = tween(700)
                 )
             else -> slideOutHorizontally(
-                targetOffsetX = { -1000 },
-                animationSpec = tween(700)
-            )
+                    targetOffsetX = { -1000 },
+                    animationSpec = tween(700)
+                )
         }
     }
 
@@ -49,9 +49,9 @@ object ScreenTransitions : DestinationStyle.Animated {
                     animationSpec = tween(700)
                 )
             else -> slideInHorizontally(
-                initialOffsetX = { -1000 },
-                animationSpec = tween(700)
-            )
+                    initialOffsetX = { -1000 },
+                    animationSpec = tween(700)
+                )
         }
     }
 
@@ -64,9 +64,9 @@ object ScreenTransitions : DestinationStyle.Animated {
                     animationSpec = tween(700)
                 )
             else -> slideOutHorizontally(
-                targetOffsetX = { -1000 },
-                animationSpec = tween(700)
-            )
+                    targetOffsetX = { -1000 },
+                    animationSpec = tween(700)
+                )
         }
     }
 }
