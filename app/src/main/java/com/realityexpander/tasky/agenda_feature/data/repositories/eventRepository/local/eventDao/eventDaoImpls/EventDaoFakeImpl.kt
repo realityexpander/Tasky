@@ -24,7 +24,7 @@ class EventDaoFakeImpl @Inject constructor(): IEventDao {
         createEventInFakeDatabase(event)
     }
 
-    override fun upsertEvent(event: EventEntity) {
+    override suspend fun upsertEvent(event: EventEntity) {
 //        createEventInFakeDatabase(event)  // todo implement
     }
 

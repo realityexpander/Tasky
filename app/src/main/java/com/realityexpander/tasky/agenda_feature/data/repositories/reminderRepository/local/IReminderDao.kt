@@ -8,7 +8,7 @@ import java.time.ZonedDateTime
 interface IReminderDao {
 
     suspend fun createReminder(reminder: ReminderEntity)
-    fun upsertReminder(reminder: ReminderEntity)
+    suspend fun upsertReminder(reminder: ReminderEntity)
 
     suspend fun getRemindersForDay(zonedDateTime: ZonedDateTime): List<ReminderEntity>
     fun getRemindersForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<ReminderEntity>>

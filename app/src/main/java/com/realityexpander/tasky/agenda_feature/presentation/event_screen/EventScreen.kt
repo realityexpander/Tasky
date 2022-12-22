@@ -49,6 +49,7 @@ import com.realityexpander.tasky.agenda_feature.presentation.event_screen.compon
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.data.isAvailable
+import com.realityexpander.tasky.core.presentation.animatedTransitions.ScreenTransitions
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
@@ -64,7 +65,8 @@ import java.util.*
     route = "event",
     deepLinks = [
         DeepLink(uriPattern = "https://realityexpander.com/event/{initialEventId}")
-    ]
+    ],
+    style= ScreenTransitions::class
 )
 @Composable
 fun EventScreen(
@@ -167,19 +169,6 @@ fun AddEventScreenContent(
         } else {
             popBack()
         }
-    }
-
-    // • Stateful one-time events
-    LaunchedEffect(state) {
-//        if (state.scrollToItemId != null) {
-//            val item = agendaItems.indexOfFirst { it.id == state.scrollToItemId }
-//            if (item >= 0) {
-//                scope.launch {
-//                    scrollState.animateScrollToItem(item)
-//
-//            }
-//            onAction(AgendaEvent.StatefulOneTimeEvent.ResetScrollTo)
-//        }
     }
 
     val singlePhotoPickerLauncher =

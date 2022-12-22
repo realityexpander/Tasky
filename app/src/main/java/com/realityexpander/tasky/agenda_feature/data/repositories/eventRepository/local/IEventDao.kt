@@ -8,7 +8,7 @@ import java.time.ZonedDateTime
 interface IEventDao {
 
     suspend fun createEvent(event: EventEntity)
-    fun upsertEvent(event: EventEntity)
+    suspend fun upsertEvent(event: EventEntity)
 
     suspend fun getEventsForDay(zonedDateTime: ZonedDateTime): List<EventEntity>
     fun getEventsForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<EventEntity>>

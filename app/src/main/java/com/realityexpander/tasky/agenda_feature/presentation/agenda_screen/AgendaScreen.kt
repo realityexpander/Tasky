@@ -59,6 +59,7 @@ import com.realityexpander.tasky.agenda_feature.presentation.common.enums.Agenda
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.toZonedDateTime
 import com.realityexpander.tasky.agenda_feature.presentation.components.AgendaCard
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
+import com.realityexpander.tasky.core.presentation.animatedTransitions.ScreenTransitions
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.DaySelected
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
@@ -80,7 +81,9 @@ import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Composable
-@Destination
+@Destination(
+    style= ScreenTransitions::class
+)
 fun AgendaScreen(
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     selectedDayIndex: Int? = 0,

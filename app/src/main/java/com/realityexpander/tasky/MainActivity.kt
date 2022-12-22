@@ -8,19 +8,25 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.dataStore
-import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.rememberNavHostEngine
+import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
+import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.realityexpander.tasky.auth_feature.presentation.splash_screen.MainActivityViewModel
 import com.realityexpander.tasky.core.data.settings.AppSettingsSerializer
 import com.realityexpander.tasky.core.data.settings.saveSettingsInitialized
@@ -49,6 +55,7 @@ class MainActivity : ComponentActivity() {
 
     var isAlreadyRefreshed = false
 
+    @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         // user-initiated process death: adb shell am force-stop com.realityexpander.tasky
         // system process death: adb shell am kill com.realityexpander.tasky
@@ -75,13 +82,17 @@ class MainActivity : ComponentActivity() {
             TaskyTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = colorResource(id = R.color.tasky_green)
+                    color = Color.Transparent, //colorResource(id = R.color.tasky_green)
                 ) {
                     val splashState by viewModel.splashState.collectAsState()
                     val context = LocalContext.current
 
-                    val navController = rememberNavController()
-                    val navHostEngine = rememberNavHostEngine()
+                    val navController = rememberAnimatedNavController()
+                    val navHostEngine = rememberAnimatedNavHostEngine(
+                        navHostContentAlignment = Alignment.TopCenter,
+                        rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING, // default `rootDefaultAnimations` means no animations
+                        defaultAnimationsForNestedNavGraph = mapOf(),
+                    )
 
                     // Load Settings (or initialize them)
                     LaunchedEffect(true) {
@@ -111,6 +122,9 @@ class MainActivity : ComponentActivity() {
                             navGraph = NavGraphs.root,
                             navController = navController,
                             engine = navHostEngine,
+                            modifier = Modifier
+                                .background(MaterialTheme.colors.background)
+                                .fillMaxSize(),
                             startRoute =
                             if (splashState.authInfo != null) {
                                 AgendaScreenDestination
