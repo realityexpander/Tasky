@@ -75,20 +75,19 @@ https://user-images.githubusercontent.com/5157474/209285281-838ab9a6-1f9d-48b6-b
     - Image loading library for Compose.
 <br />
 
-
 ## Architecture Overview
+[<img src="https://user-images.githubusercontent.com/5157474/209253082-260178ef-73ef-4d31-bb85-0a7c07fc1b95.png"/>](https://excalidraw.com/#json=I9k6Db_Hm9x3cKzjrA0cH,V-Tt-3ypjv845qR10H8pdA)
+<!-- original document
+https://excalidraw.com/#json=XRhY4HYn5rx3vldB1J4oo,3yGmcP4YsL8lNDN_XUO9gA
+-->
+
+## Architecture Data Flow
 <!--
 Code for chart:
 https://mermaid.live/edit#pako:eNptkk1LxDAQhv9KCJSC7CJ47KFQ3IuHRVHwYqRMm9ENbZIlne5SSv-7abqaLW5Oyfs-88FMRl5biTzjSTIqoyhjY0oH1JhmqQTXpNOUJMJ0BIQ7Bd8O9Pb0IAzzp6hJnRQN949WH20HVYtsu83Zu8Lz3mdtF-zvGcxX9Kgi64Zb7o2UCxbD1iWYMAsQOrzGxkWfz8fdZ4jaFc__xeLlKYqeCKKzVpcSCCroMNqeDbZBOlvXRGPFBwQNKVLYla2toY3kJdQz0NPh6pmzWbgF5oyga4ZSVtH9Vda1HGpLl34nvuEanQYl_XrDNAQPqxU889d5u4ILM3O-sn0bTM0zcj1ueH-Ucd88-4K28yrKebL75b-EbzP9AH52tNQ
 -->
 
 [![](https://mermaid.ink/img/pako:eNptkk1LxDAQhv9KCJSC7CJ47KFQ3IuHRVHwYqRMm9ENbZIlne5SSv-7abqaLW5Oyfs-88FMRl5biTzjSTIqoyhjY0oH1JhmqQTXpNOUJMJ0BIQ7Bd8O9Pb0IAzzp6hJnRQN949WH20HVYtsu83Zu8Lz3mdtF-zvGcxX9Kgi64Zb7o2UCxbD1iWYMAsQOrzGxkWfz8fdZ4jaFc__xeLlKYqeCKKzVpcSCCroMNqeDbZBOlvXRGPFBwQNKVLYla2toY3kJdQz0NPh6pmzWbgF5oyga4ZSVtH9Vda1HGpLl34nvuEanQYl_XrDNAQPqxU889d5u4ILM3O-sn0bTM0zcj1ueH-Ucd88-4K28yrKebL75b-EbzP9AH52tNQ?type=png)](https://mermaid.live/edit#pako:eNptkk1LxDAQhv9KCJSC7CJ47KFQ3IuHRVHwYqRMm9ENbZIlne5SSv-7abqaLW5Oyfs-88FMRl5biTzjSTIqoyhjY0oH1JhmqQTXpNOUJMJ0BIQ7Bd8O9Pb0IAzzp6hJnRQN949WH20HVYtsu83Zu8Lz3mdtF-zvGcxX9Kgi64Zb7o2UCxbD1iWYMAsQOrzGxkWfz8fdZ4jaFc__xeLlKYqeCKKzVpcSCCroMNqeDbZBOlvXRGPFBwQNKVLYla2toY3kJdQz0NPh6pmzWbgF5oyga4ZSVtH9Vda1HGpLl34nvuEanQYl_XrDNAQPqxU889d5u4ILM3O-sn0bTM0zcj1ueH-Ucd88-4K28yrKebL75b-EbzP9AH52tNQ)
-
-## Architecture Breakdown
-[<img src="https://user-images.githubusercontent.com/5157474/209253082-260178ef-73ef-4d31-bb85-0a7c07fc1b95.png"/>](https://excalidraw.com/#json=I9k6Db_Hm9x3cKzjrA0cH,V-Tt-3ypjv845qR10H8pdA)
-<!-- original document
-https://excalidraw.com/#json=XRhY4HYn5rx3vldB1J4oo,3yGmcP4YsL8lNDN_XUO9gA
--->
 
 ## Entity Relationship
 
