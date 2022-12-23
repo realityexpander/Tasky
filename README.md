@@ -6,6 +6,10 @@ Task manager similar to a lite version of Google Calendar
 
 * Manages schedule across time zones automatically
 * Works offline & automatically syncs across multiple devices
+* Invite other people to your events, and automatically sync changes.
+* Alarms & Notifications for Agenda Items coming due
+* Manage multiple user accounts
+
 
 [<img src="https://user-images.githubusercontent.com/5157474/209284957-691e1ed7-1cdf-4e4f-8b87-9bb7fc213d38.png" width=300 />](https://user-images.githubusercontent.com/5157474/209284957-691e1ed7-1cdf-4e4f-8b87-9bb7fc213d38.png)
 [<img src="https://user-images.githubusercontent.com/5157474/209285133-7744af03-454c-41ae-b413-63bed23628ef.png" width=300 />](https://user-images.githubusercontent.com/5157474/209285133-7744af03-454c-41ae-b413-63bed23628ef.png)
