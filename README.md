@@ -9,6 +9,8 @@ Task manager similar to a lite version of Google Calendar
 * Invite other people to your events, and automatically sync changes.
 * Alarms & Notifications for Agenda Items coming due
 * Manage multiple user accounts
+* Internationalized for English, Spanish and German
+
 
 [<img src="https://user-images.githubusercontent.com/5157474/209288417-915a2d5d-81c4-4540-9528-314139b62504.png" width=300 />](https://user-images.githubusercontent.com/5157474/209288417-915a2d5d-81c4-4540-9528-314139b62504.png)
 [<img src="https://user-images.githubusercontent.com/5157474/209288442-744be2ac-daac-45e5-b3cd-2a8f73532cd3.png" width=300 />](https://user-images.githubusercontent.com/5157474/209288442-744be2ac-daac-45e5-b3cd-2a8f73532cd3.png)
