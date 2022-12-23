@@ -75,5 +75,5 @@ To simulate, click on the diagram.
 ## Offline Cache State Diagram
 To simulate, click on the diagram.
 
-[<img src="https://user-images.githubusercontent.com/5157474/209246188-0705fcf7-2517-4ff5-955a-efeb41791302.png"/>](https://stately.ai/registry/editor/f97c13d8-df51-4f0a-a750-873f74f74345?machineId=5ad64523-72e6-4c45-8be6-d5249be291e9)
+[<img src="https://user-images.githubusercontent.com/5157474/209246393-5ec4ca55-0ac2-41da-a1dd-ee2354451664.png"/>](https://stately.ai/registry/editor/f97c13d8-df51-4f0a-a750-873f74f74345?machineId=5ad64523-72e6-4c45-8be6-d5249be291e9)
 
