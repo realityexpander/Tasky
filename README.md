@@ -12,10 +12,7 @@ Task manager similar to a lite version of Google Calendar
 * Internationalized for English, Spanish and German
 
 
-[<img src="https://user-images.githubusercontent.com/5157474/209288417-915a2d5d-81c4-4540-9528-314139b62504.png" width=300 />](https://user-images.githubusercontent.com/5157474/209288417-915a2d5d-81c4-4540-9528-314139b62504.png)
-[<img src="https://user-images.githubusercontent.com/5157474/209288442-744be2ac-daac-45e5-b3cd-2a8f73532cd3.png" width=300 />](https://user-images.githubusercontent.com/5157474/209288442-744be2ac-daac-45e5-b3cd-2a8f73532cd3.png)
-[<img src="https://user-images.githubusercontent.com/5157474/209284957-691e1ed7-1cdf-4e4f-8b87-9bb7fc213d38.png" width=300 />](https://user-images.githubusercontent.com/5157474/209284957-691e1ed7-1cdf-4e4f-8b87-9bb7fc213d38.png)
-[<img src="https://user-images.githubusercontent.com/5157474/209285133-7744af03-454c-41ae-b413-63bed23628ef.png" width=300 />](https://user-images.githubusercontent.com/5157474/209285133-7744af03-454c-41ae-b413-63bed23628ef.png)
+[<img src="https://user-images.githubusercontent.com/5157474/209284957-691e1ed7-1cdf-4e4f-8b87-9bb7fc213d38.png" width=300 />](https://user-images.githubusercontent.com/5157474/209284957-691e1ed7-1cdf-4e4f-8b87-9bb7fc213d38.png))
 [<img src="https://user-images.githubusercontent.com/5157474/209285170-149a4306-0847-4382-bc07-66c3ea3eb3df.png" width=300 />](
 https://user-images.githubusercontent.com/5157474/209285170-149a4306-0847-4382-bc07-66c3ea3eb3df.png)
 [<img src="https://user-images.githubusercontent.com/5157474/209285183-49a62595-d840-4442-b403-67c8d0c1b027.png" width=300 />](
@@ -24,13 +21,10 @@ https://user-images.githubusercontent.com/5157474/209285183-49a62595-d840-4442-b
 https://user-images.githubusercontent.com/5157474/209285202-6c56cb56-83fd-421c-871b-929d422ebbb5.png)
 [<img src="https://user-images.githubusercontent.com/5157474/209285234-f4cab9b6-46ca-40ac-9f4f-89db93771222.png" width=300 />](
 https://user-images.githubusercontent.com/5157474/209285234-f4cab9b6-46ca-40ac-9f4f-89db93771222.png)
-[<img src="https://user-images.githubusercontent.com/5157474/209285262-1214b377-89e4-4b95-bff4-92d24ac232c2.png" width=300 />](
-https://user-images.githubusercontent.com/5157474/209285262-1214b377-89e4-4b95-bff4-92d24ac232c2.png)
-[<img src="https://user-images.githubusercontent.com/5157474/209285281-838ab9a6-1f9d-48b6-becd-4cd104199803.png" width=300 />](
-https://user-images.githubusercontent.com/5157474/209285281-838ab9a6-1f9d-48b6-becd-4cd104199803.png)
 [<img src="https://user-images.githubusercontent.com/5157474/209286100-062e6dbd-6eea-4b51-a1b7-0d9aa5b86ea9.png" width=300 />](https://user-images.githubusercontent.com/5157474/209286100-062e6dbd-6eea-4b51-a1b7-0d9aa5b86ea9.png)
-[<img src="https://user-images.githubusercontent.com/5157474/209286125-23cb34fd-9264-461b-9cee-7872255bcf69.png" width=300 />](https://user-images.githubusercontent.com/5157474/209286125-23cb34fd-9264-461b-9cee-7872255bcf69.png)
 
+## Screen Flow
+![image](https://user-images.githubusercontent.com/5157474/209296748-7d910239-84f0-4a58-aff7-e89577e55481.png)
 
 
 
