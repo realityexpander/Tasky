@@ -10,7 +10,8 @@ Task manager similar to a lite version of Google Calendar
 * Alarms & Notifications for Agenda Items coming due
 * Manage multiple user accounts
 
-
+[<img src="https://user-images.githubusercontent.com/5157474/209288417-915a2d5d-81c4-4540-9528-314139b62504.png" width=300 />](https://user-images.githubusercontent.com/5157474/209288417-915a2d5d-81c4-4540-9528-314139b62504.png)
+[<img src="https://user-images.githubusercontent.com/5157474/209288442-744be2ac-daac-45e5-b3cd-2a8f73532cd3.png" width=300 />](https://user-images.githubusercontent.com/5157474/209288442-744be2ac-daac-45e5-b3cd-2a8f73532cd3.png)
 [<img src="https://user-images.githubusercontent.com/5157474/209284957-691e1ed7-1cdf-4e4f-8b87-9bb7fc213d38.png" width=300 />](https://user-images.githubusercontent.com/5157474/209284957-691e1ed7-1cdf-4e4f-8b87-9bb7fc213d38.png)
 [<img src="https://user-images.githubusercontent.com/5157474/209285133-7744af03-454c-41ae-b413-63bed23628ef.png" width=300 />](https://user-images.githubusercontent.com/5157474/209285133-7744af03-454c-41ae-b413-63bed23628ef.png)
 [<img src="https://user-images.githubusercontent.com/5157474/209285170-149a4306-0847-4382-bc07-66c3ea3eb3df.png" width=300 />](
