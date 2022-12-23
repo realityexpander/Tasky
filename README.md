@@ -68,11 +68,11 @@ https://mermaid.live/edit#pako:eNp9UsFqwzAM_RVjCDms_QFTChnZobDBWNubLyZWW9FYDrYyG
 
 [![](https://mermaid.ink/img/pako:eNp9U2FrwjAQ_SshUDqZ_oEigqNjCA7G1G_5EpqbHjZJSc7B6PrfF9OqVev6IQ3vvdzl3eVqXlgFPONJUqNBylid0g40pFmqpNunTZMkwhSl9D5HuXVSC8PCN9-CUXJBoNn0dzJhn6DRKHDD7Fr6_TDz-g2G7qiMPW82i5yhGqJySbBGDczFpPO780GzIodmywiphMe0Al84rAitEaaVRatnO3ULsl5SCkuLNv0TR4v_qgP6Ym0J0jD0uTVDQWI1BqJ8OasHYtsztkRP0zlRsAgwY7Lb-WvBx86S9TNWxf9V_pi5bUlU3aGn4OKmUlHNznfuFdASPKEas43D0S29tIUsO7YcDVTilK4f-fpN3FT0zYaG9pgHjyRyXfeNvPQmoK2T6uK-4WOuwWmJKkxIvIjgcToEz8L2OCCCC3PUyQPZ1Y8peEbuAGN-qFS4QDcyPPuSpQ8oKCTr3tuRi5PX_AEIWRhw?type=png)](https://mermaid.live/edit#pako:eNp9U2FrwjAQ_SshUDqZ_oEigqNjCA7G1G_5EpqbHjZJSc7B6PrfF9OqVev6IQ3vvdzl3eVqXlgFPONJUqNBylid0g40pFmqpNunTZMkwhSl9D5HuXVSC8PCN9-CUXJBoNn0dzJhn6DRKHDD7Fr6_TDz-g2G7qiMPW82i5yhGqJySbBGDczFpPO780GzIodmywiphMe0Al84rAitEaaVRatnO3ULsl5SCkuLNv0TR4v_qgP6Ym0J0jD0uTVDQWI1BqJ8OasHYtsztkRP0zlRsAgwY7Lb-WvBx86S9TNWxf9V_pi5bUlU3aGn4OKmUlHNznfuFdASPKEas43D0S29tIUsO7YcDVTilK4f-fpN3FT0zYaG9pgHjyRyXfeNvPQmoK2T6uK-4WOuwWmJKkxIvIjgcToEz8L2OCCCC3PUyQPZ1Y8peEbuAGN-qFS4QDcyPPuSpQ8oKCTr3tuRi5PX_AEIWRhw)
 
-## Authentication State Diagram
+## Authentication Flow State Diagram
 To simulate, click on the diagram.
 [<img src="https://user-images.githubusercontent.com/5157474/209244377-1b7d7e1c-a46b-416c-9dbf-7a77d46036b6.png"/>](https://stately.ai/registry/editor/f97c13d8-df51-4f0a-a750-873f74f74345?machineId=91f75b44-fe82-45aa-8434-d7a839a4ab0f)
 
-## Offline Cache State Diagram
+## Offline Cache Strategy State Diagram
 To simulate, click on the diagram.
 
 [<img src="https://user-images.githubusercontent.com/5157474/209246393-5ec4ca55-0ac2-41da-a1dd-ee2354451664.png"/>](https://stately.ai/registry/editor/f97c13d8-df51-4f0a-a750-873f74f74345?machineId=5ad64523-72e6-4c45-8be6-d5249be291e9)
