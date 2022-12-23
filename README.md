@@ -71,3 +71,8 @@ https://mermaid.live/edit#pako:eNp9UsFqwzAM_RVjCDms_QFTChnZobDBWNubLyZWW9FYDrYyG
 ## Authentication State Diagram
 To simulate, click on the diagram.
 [<img src="https://user-images.githubusercontent.com/5157474/209244377-1b7d7e1c-a46b-416c-9dbf-7a77d46036b6.png"/>](https://stately.ai/registry/editor/f97c13d8-df51-4f0a-a750-873f74f74345?machineId=91f75b44-fe82-45aa-8434-d7a839a4ab0f)
+
+## Offline Cache State Diagram
+To simulate, click on the diagram.
+
+[<img src="https://user-images.githubusercontent.com/5157474/209245539-253b4e38-8a46-4e64-ac2c-6816718acf8a.png"/>](https://stately.ai/registry/editor/f97c13d8-df51-4f0a-a750-873f74f74345?machineId=5ad64523-72e6-4c45-8be6-d5249be291e9)
