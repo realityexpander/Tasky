@@ -31,6 +31,7 @@ import com.realityexpander.tasky.agenda_feature.presentation.event_screen.compon
 import com.realityexpander.tasky.agenda_feature.presentation.reminder_screen.ReminderScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
+import com.realityexpander.tasky.core.presentation.animatedTransitions.ScreenTransitions
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
@@ -42,7 +43,9 @@ import java.time.ZonedDateTime
 import java.util.*
 
 @Composable
-@Destination
+@Destination(
+    style= ScreenTransitions::class
+)
 fun ReminderScreen(
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     initialReminderId: UuidStr? = null,

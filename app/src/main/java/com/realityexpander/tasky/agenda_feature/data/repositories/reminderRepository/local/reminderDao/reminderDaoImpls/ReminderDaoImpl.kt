@@ -1,8 +1,8 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.reminderDao.reminderDaoImpls
 
 import androidx.room.*
-import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
 import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
+import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.entities.ReminderEntity
 import com.realityexpander.tasky.core.util.DAY_IN_SECONDS
 import kotlinx.coroutines.*
@@ -56,19 +56,19 @@ interface ReminderDaoImpl : IReminderDao {
 
     // • UPSERT
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertReminder(reminder: ReminderEntity): Long
-
-    @Update(onConflict = OnConflictStrategy.IGNORE)
-    fun update2Reminder(reminder: ReminderEntity)
-
     @Transaction
-    override fun upsertReminder(reminder: ReminderEntity) {
-        val id = insertReminder(reminder)
+    override suspend fun upsertReminder(reminder: ReminderEntity) {
+        val id = _insertReminder(reminder)
         if (id == -1L) {
-            update2Reminder(reminder)
+            _updateReminder(reminder)
         }
     }
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun _insertReminder(reminder: ReminderEntity): Long
+
+    @Update(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun _updateReminder(reminder: ReminderEntity)
 
 
     // • DELETE

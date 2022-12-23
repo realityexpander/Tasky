@@ -129,8 +129,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
 
     // Compose Nav Destinations
-    // For animations replace -core with: implementation 'io.github.raamcosta.compose-destinations:animations-core:$compose_destinations_version'
-    implementation "io.github.raamcosta.compose-destinations:core:$compose_destinations_version"
+    // For animations replace -core with:
+     implementation "io.github.raamcosta.compose-destinations:animations-core:$compose_destinations_version"
     ksp "io.github.raamcosta.compose-destinations:ksp:$compose_destinations_version"
     implementation "androidx.navigation:navigation-compose:2.5.3"
 

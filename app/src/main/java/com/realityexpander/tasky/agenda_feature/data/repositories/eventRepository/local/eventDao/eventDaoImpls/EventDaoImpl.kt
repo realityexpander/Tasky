@@ -54,7 +54,7 @@ interface EventDaoImpl : IEventDao {
     // • UPSERT
 
     @Transaction
-    override fun upsertEvent(event: EventEntity) {
+    override suspend fun upsertEvent(event: EventEntity) {
         val id = _insertEvent(event)
         if (id == -1L) {
             _updateEvent(event)
@@ -62,10 +62,10 @@ interface EventDaoImpl : IEventDao {
     }
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun _insertEvent(event: EventEntity): Long
+    suspend fun _insertEvent(event: EventEntity): Long
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
-    fun _updateEvent(event: EventEntity)
+    suspend fun _updateEvent(event: EventEntity)
 
 
     // • DELETE

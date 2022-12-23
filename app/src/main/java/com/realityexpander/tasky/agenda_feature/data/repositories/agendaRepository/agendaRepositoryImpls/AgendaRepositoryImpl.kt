@@ -99,59 +99,55 @@ class AgendaRepositoryImpl @Inject constructor(
 //                    }
 //                }
 
-                    return withContext(Dispatchers.IO) {
-
-                        // • Events - Insert fresh data locally in parallel
-                        eventRepository.clearEventsForDayLocally(dateTime)
-                        supervisorScope {
-                            agenda?.events?.map { event ->
-                                async {
-                                    val upsertResult =
-                                        eventRepository.upsertEventLocally(event.toDomain())
-                                    if (upsertResult is ResultUiText.Error) {
-                                        throw IllegalStateException(upsertResult.message.asStrOrNull())
-                                    }
+                    // • Events - Insert fresh data locally in parallel
+                    eventRepository.clearEventsForDayLocally(dateTime)
+                    supervisorScope {
+                        agenda?.events?.map { event ->
+                            async {
+                                val upsertResult =
+                                    eventRepository.upsertEventLocally(event.toDomain())
+                                if (upsertResult is ResultUiText.Error) {
+                                    throw IllegalStateException(upsertResult.message.asStrOrNull())
                                 }
                             }
-                        }?.map {
-                            it.await()
                         }
-
-                        // • Tasks - Insert fresh data locally in parallel
-                        taskRepository.clearTasksForDayLocally(dateTime)
-                        supervisorScope {
-                            agenda?.tasks?.map { task ->
-                                async {
-                                    val upsertResult =
-                                        taskRepository.upsertTaskLocally(task.toDomain())
-                                    if (upsertResult is ResultUiText.Error) {
-                                        throw IllegalStateException(upsertResult.message.asStrOrNull())
-                                    }
-                                }
-                            }
-                        }?.map {
-                            it.await()
-                        }
-
-                        // • Reminders - Insert fresh data locally in parallel
-                        reminderRepository.clearRemindersForDayLocally(dateTime)
-                        supervisorScope {
-                            agenda?.reminders?.map { reminder ->
-                                async {
-                                    val upsertResult =
-                                        reminderRepository.upsertReminderLocally(reminder.toDomain())
-                                    if (upsertResult is ResultUiText.Error) {
-                                        throw IllegalStateException(upsertResult.message.asStrOrNull())
-                                    }
-                                }
-                            }
-                        }?.map {
-                            it.await()
-                        }
-
-                        return@withContext ResultUiText.Success(Unit)
+                    }?.map {
+                        it.await()
                     }
 
+                    // • Tasks - Insert fresh data locally in parallel
+                    taskRepository.clearTasksForDayLocally(dateTime)
+                    supervisorScope {
+                        agenda?.tasks?.map { task ->
+                            async {
+                                val upsertResult =
+                                    taskRepository.upsertTaskLocally(task.toDomain())
+                                if (upsertResult is ResultUiText.Error) {
+                                    throw IllegalStateException(upsertResult.message.asStrOrNull())
+                                }
+                            }
+                        }
+                    }?.map {
+                        it.await()
+                    }
+
+                    // • Reminders - Insert fresh data locally in parallel
+                    reminderRepository.clearRemindersForDayLocally(dateTime)
+                    supervisorScope {
+                        agenda?.reminders?.map { reminder ->
+                            async {
+                                val upsertResult =
+                                    reminderRepository.upsertReminderLocally(reminder.toDomain())
+                                if (upsertResult is ResultUiText.Error) {
+                                    throw IllegalStateException(upsertResult.message.asStrOrNull())
+                                }
+                            }
+                        }
+                    }?.map {
+                        it.await()
+                    }
+
+                    return ResultUiText.Success(Unit)
                 }
                 agendaResult.isFailure -> {
                     return ResultUiText.Error(UiText.Res(R.string.error_no_internet))

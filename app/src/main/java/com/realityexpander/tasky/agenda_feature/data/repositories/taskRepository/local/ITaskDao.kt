@@ -8,7 +8,7 @@ import java.time.ZonedDateTime
 interface ITaskDao {
 
     suspend fun createTask(task: TaskEntity)
-    fun upsertTask(task: TaskEntity)
+    suspend fun upsertTask(task: TaskEntity)
 
     suspend fun getTasksForDay(zonedDateTime: ZonedDateTime): List<TaskEntity>
     fun getTasksForDayFlow(zonedDateTime: ZonedDateTime): Flow<List<TaskEntity>>

@@ -21,19 +21,19 @@ interface TaskDaoImpl : ITaskDao {
 
     // • UPSERT
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertTask(task: TaskEntity): Long
-
-    @Update(onConflict = OnConflictStrategy.IGNORE)
-    fun update2Task(task: TaskEntity)
-
     @Transaction
-    override fun upsertTask(task: TaskEntity) {
-        val id = insertTask(task)
+    override suspend fun upsertTask(task: TaskEntity) {
+        val id = _insertTask(task)
         if (id == -1L) {
-            update2Task(task)
+            _updateTask(task)
         }
     }
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun _insertTask(task: TaskEntity): Long
+
+    @Update(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun _updateTask(task: TaskEntity)
 
 
     // • READ
