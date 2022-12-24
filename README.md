@@ -25,11 +25,6 @@ https://user-images.githubusercontent.com/5157474/209285234-f4cab9b6-46ca-40ac-9
 [<img src="https://user-images.githubusercontent.com/5157474/209300668-34279c57-f307-4579-82aa-e59e5088e3d7.png" width=200 />](https://user-images.githubusercontent.com/5157474/209300668-34279c57-f307-4579-82aa-e59e5088e3d7.png)
 
 
-## Screen Flow
-![image](https://user-images.githubusercontent.com/5157474/209296748-7d910239-84f0-4a58-aff7-e89577e55481.png)
-
-
-
 ## 🛠 Built With
 
 - [Kotlin](https://kotlinlang.org/) - First class and official programming language for Android
@@ -70,6 +65,10 @@ https://user-images.githubusercontent.com/5157474/209285234-f4cab9b6-46ca-40ac-9
 - [Coil]()
     - Image loading library for Compose.
 <br />
+
+## Screen Flow
+![image](https://user-images.githubusercontent.com/5157474/209296748-7d910239-84f0-4a58-aff7-e89577e55481.png)
+
 
 ## Architecture Overview
 [<img src="https://user-images.githubusercontent.com/5157474/209253082-260178ef-73ef-4d31-bb85-0a7c07fc1b95.png"/>](https://excalidraw.com/#json=I9k6Db_Hm9x3cKzjrA0cH,V-Tt-3ypjv845qR10H8pdA)
