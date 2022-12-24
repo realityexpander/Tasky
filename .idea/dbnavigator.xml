@@ -13,7 +13,7 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="e34d9b53-a5ce-418d-a184-159c8275924e">
-      <console name="Connection" type="STANDARD" schema="" session="Main"><![CDATA[select * from reminders]]></console>
+      <console name="Connection" type="STANDARD" schema="" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">

@@ -108,4 +108,16 @@ To simulate, click on the diagram.
 
 <img width="454" alt="image" src="https://user-images.githubusercontent.com/5157474/209415113-9c00e837-a092-42fa-ae32-780819e2729a.png"><img width="448" alt="image" src="https://user-images.githubusercontent.com/5157474/209415139-20f8493a-12a4-444a-95fd-c6a2431eadfc.png"><img width="450" alt="image" src="https://user-images.githubusercontent.com/5157474/209415148-39002eeb-697b-4a72-a3df-8aac6bb7e999.png">
 
+<!--
+How to render plantUML from PostMan exports
 
+Online Diagram editor:
+http://www.plantuml.com/plantuml/dumla/n5ZVQzim47xtNt7uFMrIqeUE4jQnC0Q3bhPx6gDezYqMjILFEdTDG_xt2GTwMsp72hQwjw3xzDsF--uK_DwIC5GLUPJ95E7oyaPGjbX08asIOsGp_TiTtg8jjRBuQc2q4GKIcZqB5YMjmLaodTg_ZtvApDs9HG8b2aSh4hp3qj6GDg2qmYXASc4jn3VNT_TmQd0bBQ69ERPD1B2fYRRmF16bd3pY6jw19IFL2ZRNssZRmG9dqoaGFjDfcGkfOiuDzuYVH5xXAsatuNnwqM3f1D_YhmejrHTsFp_eTDrw9zShgOObNLE0o_XGW8piJOMHNdbyMZgyg2X3HJ8HXCTbmu0hnw6DV14ajMgatELjX5OtEUVJMODe3-ygf2jwWrnNg58Hm0-3I1ReR58Hhj2q65-qGeyWlJHerogv2fLJjxFHDW9J7ZCUHEu6Oj0sOY5a_e-nAupkHZMntUk2iVY4Akmei9k-s1auFwp6hu43PpSzWJU0vyEbocG7HCf4LPaAmeVwneFPmRhIBZDDUkgiFzQ4txwtMMS7hHTiRSniu9uq_7YiB9RJV9G5qjUMaKgT6EnfAGVsSVbbURyCLte6rHu-frw135pPpCTpTTOtW2JiOqZjiPVXsJ5NpuvcdFyVqu2LO3SZbeB9_5_be4etM4YLecaLEyVWyvpvl6JXHJkMO7t4EjOJU8pWtq3iemaTpiSYwYyGhz7_Ep0Snf0oDZutd9mi89x5lLyG70l4UuV-T3lHrnpkLzl5oUHF9MQGcr0C0z4JPT7gTzzBz0Pb1-ouFqAAdiAy2CtVpkVPpZYMOhOW3Ph8NCr9v3y1gBH2eh14nZ2obkJbdop-rdhQ1cLNvm1V4sTjNa5KswJL54wVoaE8mqk7J4FPlQ9yT1sWnDJhPNk3MSJ8Km07m36T_JE0g0m5yBEpFyG8CuR2v5Wf9QgAB11j2vCECGB51L6XyKmdxxlUtCyc64zcBFv-OSih6GIjpFqvY6yfdnQBqDH91KOyCxfEYAXnpL7OZur_jX-MzEICgO9bvlvdfwOgk-0EoFtUUUDjUU1gscw6TEFR8dylz__7xVe4
+
+Help:
+https://crashedmind.github.io/PlantUMLHitchhikersGuide/layout/layout.html
+https://plantuml.com/en-dark/commons
+https://www.graphviz.org/
+https://github.com/davidmoten/openapi-to-plantuml
+
+-->

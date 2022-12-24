@@ -1,0 +1,253 @@
+@startuml
+!theme crt-green
+left to right direction
+hide <<Path>> circle
+hide <<Response>> circle
+show <<Parameter>> circle
+hide <<RequestBody>> circle
+hide empty methods
+hide empty fields
+set namespaceSeparator none
+
+class "PUT /task" <<Path>> {
+  {field} x-api-key : string
+  {field} Authorization : string
+}
+
+class "PUT /task 200" <<Response>> {
+  {field} task : AgendaItem.Task
+}
+
+
+class "PUT /task 409" <<Response>> {
+  {field} message : JsonString
+}
+
+class "POST /task" <<Path>> {
+  {field} x-api-key : string
+  {field} Authorization : string
+}
+
+class "POST /task 200" <<Response>> {
+  {field} task : AgendaItem.Task
+}
+
+class "POST /task 409" <<Response>> {
+  {field} message : JsonString
+}
+'''''''''''''''''
+
+class "GET /agenda" <<Path>> {
+  {field} x-api-key : string
+  {field} Authorization : string
+  --
+  {field} time : UTCLong
+  {field} timezone : string
+}
+
+class "GET /agenda 200" <<Response>> {
+  {field} agendaItems: JsonString
+}
+
+class "GET /agenda 401" <<Response>> {
+  {field} response: JsonString
+}
+
+class "POST /syncAgenda" <<Path>> {
+  {field} x-api-key : string
+  {field} Authorization : string
+}
+
+class "POST /syncAgenda 200" <<Response>> {
+  {field} agendaItems : JsonString
+}
+
+class "POST /syncAgenda 401" <<Response>> {
+}
+
+class "GET /attendee" <<Path>> {
+  {field} x-api-key : string
+  {field} Authorization : string
+  --
+  {field} email : string
+}
+
+class "GET /attendee 200" <<Response>> {
+  {field} attendee : Attendee
+}
+
+class "GET /attendee 409" <<Response>> {
+  {field} response : JsonString
+}
+
+class "DELETE /event" <<Path>> {
+  {field} x-api-key : string
+  {field} Authorization : string
+  {field} eventId : string
+}
+
+class "DELETE /event 200" <<Response>> {
+  {field} value : string
+}
+
+class "DELETE /event 502" <<Response>> {
+  {field} message : JsonString
+}
+
+class "PUT /event" <<Path>> {
+  {field} x-api-key : string
+  {field} Authorization : string
+  --
+  {field} update_event_request : string
+  {field} photo0 : byte[]
+  {field} photo1 : byte[]
+  {field} photo9 : byte[]
+}
+
+class "PUT /event 200" <<Response>> {
+  {field} event : AgendaItem.Event
+}
+
+class "PUT /event 500" <<Response>> {
+  {field} message : JsonString
+}
+
+class "GET /event" <<Path>> {
+  {field} x-api-key : string
+  {field} Authorization : string
+}
+
+class "GET /event 200" <<Response>> {
+  {field} event : AgendaItem.Event
+}
+
+class "GET /event 400" <<Response>> {
+}
+
+class "POST /event 200" <<Response>> {
+  {field} event : AgendaItem.Event
+}
+
+class "POST /event 404" <<Response>> {
+  {field} errorMessage : JsonString
+}
+
+class "POST /event" <<Path>> {
+  {field} x-api-key : string
+  {field} Authorization : string
+  --
+  {field} event : AgendaItem.Event
+  {field} create_event_request : string
+  {field} photo0 : byte[]
+  {field} photo1 : byte[]
+  {field} photo9 : byte[]
+}
+'''''''''''''''''''
+class "GET /authenticate" <<Path>> {
+  {field} x-api-key : string
+  {field} Authorization : string
+}
+
+class "GET /authenticate 200" <<Response>> {
+  {field} response : string
+}
+
+class "GET /authenticate 401" <<Response>> {
+}
+
+class "GET /logout" <<Path>> {
+  {field} x-api-key : string
+  {field} Authorization : string
+}
+
+class "GET /logout 200" <<Response>> {
+  {body} response : JsonString
+}
+
+class "GET /logout 401" <<Response>> {
+}
+
+'''''''''''''''''''
+class "POST /login" <<Path>> {
+  {field} x-api-key : string
+  --
+  {body} credentials : JsonString
+}
+
+class "POST /login 200" <<Response>> {
+  {body} authInfo : JsonString
+}
+
+class "POST /login 409" <<Response>> {
+  {body} response : JsonString
+}
+
+''''''''''
+class "POST /register" <<Path>> {
+  {field} x-api-key : string
+  --
+  {body} credentials : JsonString
+}
+
+class "POST /register 200" <<Response>> {
+  {body} authInfo : JsonString
+}
+
+class "POST /register 409" <<Response>> {
+  {body} response : JsonString
+}
+
+
+"POST /register" ..> "success" "POST /register 200"  :  "200"
+
+"POST /register" ..> "failure" "POST /register 409"  :  "409"
+
+"POST /login" ..> "success" "POST /login 200"  :  "200"
+
+"POST /login" ..> "failure" "POST /login 409"  :  "409"
+
+"GET /logout" ..> "success" "GET /logout 200"  :  "200"
+
+"GET /logout" ..> "failure" "GET /logout 401"  : "401"
+
+"GET /authenticate" ..> "success" "GET /authenticate 200"  :  "200"
+
+"GET /authenticate" ..> "failure" "GET /authenticate 401"  :  "401"
+
+"GET /agenda" ..> "success" "GET /agenda 200"  :  "200"
+
+"GET /agenda" ..> "failure" "GET /agenda 401"  :  "401"
+
+"POST /syncAgenda" ..> "success" "POST /syncAgenda 200"  :  "200"
+
+"POST /syncAgenda" ..> "failure" "POST /syncAgenda 401"  :  "401"
+
+"GET /attendee" ..> "success" "GET /attendee 200"  :  "200"
+
+"GET /attendee" ..> "failure" "GET /attendee 409"  :  "409"
+
+"GET /event" ..> "success" "GET /event 200"  :  "200"
+
+"GET /event" ..> "failure" "GET /event 400"  :  "400"
+
+"PUT /event" ..> "success" "PUT /event 200"  :  "200"
+
+"PUT /event" ..> "failure" "PUT /event 500"  :  "500"
+
+"POST /event" ..> "success" "POST /event 200"  :  "200"
+
+"POST /event" ..> "failure" "POST /event 404"  :  "404"
+
+"DELETE /event" ..> "success" "DELETE /event 200"  :  "200"
+
+"DELETE /event" ..> "failure" "DELETE /event 502"  :  "502"
+
+"PUT /task" ..> "success" "PUT /task 200"  :  "200"
+
+"PUT /task" ..> "failure" "PUT /task 409"  :  "409"
+
+"POST /task" ..> "success" "POST /task 200"  :  "200"
+
+"POST /task" ..> "failure" "POST /task 409"  :  "409"
+
+@enduml
