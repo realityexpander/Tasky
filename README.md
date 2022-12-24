@@ -2,7 +2,7 @@
 
 
 # Tasky
-Task manager similar to a lite version of Google Calendar
+Shared Task manager similar to a lite version of Google Calendar
 
 * Manages schedule across time zones automatically
 * Works offline & automatically syncs across multiple devices
@@ -10,7 +10,10 @@ Task manager similar to a lite version of Google Calendar
 * Alarms & Notifications for Agenda Items coming due
 * Manage multiple user accounts
 * Internationalized for English, Spanish and German
+* Automatically sync event changes to all people in an Event
+* Add photos to Events
 
+## Screen Shots
 
 [<img src="https://user-images.githubusercontent.com/5157474/209284957-691e1ed7-1cdf-4e4f-8b87-9bb7fc213d38.png" width=200 />](https://user-images.githubusercontent.com/5157474/209284957-691e1ed7-1cdf-4e4f-8b87-9bb7fc213d38.png))
 [<img src="https://user-images.githubusercontent.com/5157474/209285170-149a4306-0847-4382-bc07-66c3ea3eb3df.png" width=200 />](
