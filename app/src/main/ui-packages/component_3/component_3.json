@@ -1,0 +1,161 @@
+{
+  "name": "component_3",
+  "version": 32,
+  "source-key": {
+    "type": "figma",
+    "file": "xoshZTSXgAb6Bc0QCGI8HY",
+    "node": "1958:1347",
+    "version": "2794659136",
+    "component-id": "4a6a98db23ea4c325880c8d57aea208a75e23516"
+  },
+  "default": "Component 3",
+  "documentation": "Password text field",
+  "design": {
+    "atoms": [
+      {
+        "type": "group",
+        "id": "top_level",
+        "root": "true"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 210"
+      },
+      {
+        "type": "group",
+        "id": "eye"
+      },
+      {
+        "type": "text",
+        "id": "Password"
+      },
+      {
+        "type": "vector",
+        "id": "Vector"
+      }
+    ],
+    "modes": {
+      "Component 3": {
+        "rules": [
+          {
+            "id": "top_level",
+            "tap-handler": "$Component 3 children",
+            "is-structured": "false",
+            "children": [
+              "Rectangle 210",
+              "eye",
+              "Password"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "Rectangle 210",
+            "border-radius": "10.0",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "vector-content": "rectangle_210.svg"
+          },
+          {
+            "id": "eye",
+            "margin": {
+              "left": "288.0",
+              "top": "24.0",
+              "right": "20.0",
+              "bottom": "23.0"
+            },
+            "is-structured": "false",
+            "children": [
+              "Vector"
+            ]
+          },
+          {
+            "id": "Password",
+            "margin": {
+              "left": "20.0",
+              "top": "17.0",
+              "right": "228.0",
+              "bottom": "16.0"
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "229.4117647058823",
+              "saturation": "0.09550561797752807",
+              "value": "0.6980392156862745"
+            },
+            "text-content": "Password",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "16.0",
+            "letter-spacing": "0.8",
+            "line-height": "1.875",
+            "typeface": "Inter"
+          },
+          {
+            "id": "Vector",
+            "margin": {
+              "left": "0.000244140625"
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "vector-content": "vector.svg"
+          }
+        ]
+      }
+    }
+  },
+  "parameters": {
+    "Component 3 children": {
+      "data-type": "void-callback",
+      "required": false,
+      "description": ""
+    },
+    "value": {
+      "data-type": "text",
+      "required": false,
+      "description": ""
+    },
+    "isPasswordVisible": {
+      "data-type": "boolean",
+      "required": false,
+      "description": ""
+    }
+  },
+  "previews": [
+    {
+      "design": "Component 3",
+      "size": {
+        "width": 328.0,
+        "height": 63.0
+      }
+    }
+  ],
+  "adin-component-search-paths": [],
+  "image-search-paths": [],
+  "vector-search-paths": []
+}

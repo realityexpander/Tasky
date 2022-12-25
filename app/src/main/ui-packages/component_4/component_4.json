@@ -1,0 +1,970 @@
+{
+  "name": "component_4",
+  "version": 32,
+  "source-key": {
+    "type": "figma",
+    "file": "xoshZTSXgAb6Bc0QCGI8HY",
+    "node": "4:1347",
+    "version": "2794659136",
+    "component-id": "931f47f689f38228e8b3542f0efeef5f14e3a0f2"
+  },
+  "default": "Component 4",
+  "design": {
+    "atoms": [
+      {
+        "type": "group",
+        "id": "top_level",
+        "root": "true"
+      },
+      {
+        "type": "group",
+        "id": "Device/Device frame components"
+      },
+      {
+        "type": "text",
+        "id": "Create your account"
+      },
+      {
+        "type": "group",
+        "id": "register"
+      },
+      {
+        "type": "text",
+        "id": "Time"
+      },
+      {
+        "type": "vector",
+        "id": "Camera Cutout"
+      },
+      {
+        "type": "group",
+        "id": "right icons"
+      },
+      {
+        "type": "group",
+        "id": "Wifi"
+      },
+      {
+        "type": "group",
+        "id": "Signal"
+      },
+      {
+        "type": "group",
+        "id": "Battery"
+      },
+      {
+        "type": "vector",
+        "id": "Path"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle"
+      },
+      {
+        "type": "vector",
+        "id": "Path1"
+      },
+      {
+        "type": "vector",
+        "id": "Path2"
+      },
+      {
+        "type": "vector",
+        "id": "Path3"
+      },
+      {
+        "type": "vector",
+        "id": "Path4"
+      },
+      {
+        "type": "vector",
+        "id": "Base"
+      },
+      {
+        "type": "vector",
+        "id": "Charge"
+      },
+      {
+        "type": "group",
+        "id": "btn"
+      },
+      {
+        "type": "group",
+        "id": "form"
+      },
+      {
+        "type": "group",
+        "id": "FAB"
+      },
+      {
+        "type": "text",
+        "id": "get started"
+      },
+      {
+        "type": "group",
+        "id": "name"
+      },
+      {
+        "type": "group",
+        "id": "email"
+      },
+      {
+        "type": "group",
+        "id": "password"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 210"
+      },
+      {
+        "type": "text",
+        "id": "Name"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 211"
+      },
+      {
+        "type": "text",
+        "id": "Email address"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 212"
+      },
+      {
+        "type": "group",
+        "id": "eye"
+      },
+      {
+        "type": "text",
+        "id": "Password"
+      },
+      {
+        "type": "vector",
+        "id": "Vector"
+      },
+      {
+        "type": "group",
+        "id": "container"
+      },
+      {
+        "type": "group",
+        "id": "icon"
+      },
+      {
+        "type": "vector",
+        "id": "Vector 12"
+      }
+    ],
+    "modes": {
+      "Component 4": {
+        "rules": [
+          {
+            "id": "top_level",
+            "is-structured": "false",
+            "children": [
+              "Device/Device frame components",
+              "Create your account",
+              "register"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "Device/Device frame components",
+            "padding": {
+              "left": "24.0",
+              "top": "10.0",
+              "right": "24.0",
+              "bottom": "10.0"
+            },
+            "margin": {
+              "bottom": "778.0"
+            },
+            "arrangement": "row",
+            "main-axis-align": "space-between",
+            "children": [
+              "Time",
+              "Camera Cutout",
+              "right icons"
+            ],
+            "background-color": {
+              "alpha": "1.0",
+              "hue": "240.0",
+              "saturation": "0.18518518518518517",
+              "value": "0.10588235294117647"
+            }
+          },
+          {
+            "id": "Create your account",
+            "margin": {
+              "left": "40.0",
+              "top": "75.0",
+              "right": "40.0",
+              "bottom": "703.0"
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "font-weight": "700.0",
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "1.0"
+            },
+            "text-content": "Create your account ",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "28.0",
+            "line-height": "1.0714286041259766",
+            "typeface": "Inter"
+          },
+          {
+            "id": "register",
+            "margin": {
+              "top": "150.0"
+            },
+            "is-structured": "false",
+            "children": [
+              "btn",
+              "form",
+              "FAB"
+            ],
+            "background-color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "1.0"
+            }
+          },
+          {
+            "id": "Time",
+            "font-weight": "500.0",
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "1.0"
+            },
+            "text-content": "9:30",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-align-vertical": "center",
+            "letter-spacing": "0.14",
+            "line-height": "1.4285714721679688"
+          },
+          {
+            "id": "Camera Cutout",
+            "presence": "false",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "24.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "24.0"
+              }
+            }
+          },
+          {
+            "id": "right icons",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "46.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "17.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "Wifi",
+              "Signal",
+              "Battery"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "Wifi",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "17.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "17.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "Path",
+              "Rectangle",
+              "Path1",
+              "Path2"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "Signal",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "16.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "0.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "17.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "17.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "Path3",
+              "Path4"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "Battery",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "38.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "1.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "8.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "15.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "Base",
+              "Charge"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "Path",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            }
+          },
+          {
+            "id": "Rectangle",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            }
+          },
+          {
+            "id": "Path1",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            }
+          },
+          {
+            "id": "Path2",
+            "margin": {
+              "top": "1.416748046875",
+              "bottom": "1.41650390625"
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "vector-content": "path.svg"
+          },
+          {
+            "id": "Path3",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            }
+          },
+          {
+            "id": "Path4",
+            "margin": {
+              "left": "1.41650390625",
+              "top": "1.416748046875",
+              "right": "1.416839599609375",
+              "bottom": "1.41650390625"
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "vector-content": "path1.svg"
+          },
+          {
+            "id": "Base",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "8.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "15.0"
+              }
+            },
+            "vector-content": "base.svg"
+          },
+          {
+            "id": "Charge",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "0.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "8.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "8.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "7.0"
+              }
+            },
+            "vector-content": "charge.svg"
+          },
+          {
+            "id": "btn",
+            "padding": {
+              "left": "15.0",
+              "top": "22.0",
+              "right": "15.0",
+              "bottom": "22.0"
+            },
+            "border-radius": "38.0",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "16.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "329.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "328.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "55.0"
+              }
+            },
+            "arrangement": "row",
+            "children": [
+              "get started"
+            ],
+            "item-spacing": "10.0",
+            "background-color": {
+              "alpha": "1.0",
+              "hue": "240.0",
+              "saturation": "0.18518518518518517",
+              "value": "0.10588235294117647"
+            },
+            "clip-content": "false"
+          },
+          {
+            "id": "form",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "16.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "40.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "328.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "219.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "name",
+              "email",
+              "password"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "FAB",
+            "drop-shadow": {
+              "color": {
+                "alpha": "0.14901960784313725",
+                "hue": "190.73170731707316",
+                "saturation": "0.6721311475409836",
+                "value": "0.7176470588235294"
+              },
+              "blur": "6.0",
+              "offset-x": "2.0",
+              "offset-y": "2.0",
+              "spread": "0.0",
+              "blend-mode": "normal"
+            },
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "16.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "534.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "56.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "56.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "container",
+              "icon"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "get started",
+            "font-weight": "700.0",
+            "color": {
+              "alpha": "1.0",
+              "hue": "215.2941176470588",
+              "saturation": "0.06666666666666665",
+              "value": "1.0"
+            },
+            "text-content": "GET STARTED",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "16.0",
+            "line-height": "1.875",
+            "typeface": "Inter",
+            "case": "upper"
+          },
+          {
+            "id": "name",
+            "border-radius": "10.0",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "328.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "63.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "Rectangle 210",
+              "Name"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "email",
+            "border-radius": "10.0",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "0.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "78.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "328.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "63.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "Rectangle 211",
+              "Email address"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "password",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "0.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "156.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "328.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "63.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "Rectangle 212",
+              "eye",
+              "Password"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "Rectangle 210",
+            "border-radius": "10.0",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "328.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "63.0"
+              }
+            },
+            "vector-content": "rectangle_210.svg"
+          },
+          {
+            "id": "Name",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "20.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "17.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "229.4117647058823",
+              "saturation": "0.09550561797752807",
+              "value": "0.6980392156862745"
+            },
+            "text-content": "Name",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "16.0",
+            "letter-spacing": "0.8",
+            "line-height": "1.875",
+            "typeface": "Inter"
+          },
+          {
+            "id": "Rectangle 211",
+            "border-radius": "10.0",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "328.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "63.0"
+              }
+            },
+            "vector-content": "rectangle_211.svg"
+          },
+          {
+            "id": "Email address",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "20.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "17.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "229.4117647058823",
+              "saturation": "0.09550561797752807",
+              "value": "0.6980392156862745"
+            },
+            "text-content": "Email address",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "16.0",
+            "letter-spacing": "0.8",
+            "line-height": "1.875",
+            "typeface": "Inter"
+          },
+          {
+            "id": "Rectangle 212",
+            "border-radius": "10.0",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "328.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "63.0"
+              }
+            },
+            "vector-content": "rectangle_212.svg"
+          },
+          {
+            "id": "eye",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "288.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "24.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "20.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "16.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "Vector"
+            ]
+          },
+          {
+            "id": "Password",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "20.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "17.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "229.4117647058823",
+              "saturation": "0.09550561797752807",
+              "value": "0.6980392156862745"
+            },
+            "text-content": "Password",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "16.0",
+            "letter-spacing": "0.8",
+            "line-height": "1.875",
+            "typeface": "Inter"
+          },
+          {
+            "id": "Vector",
+            "margin": {
+              "left": "0.000244140625"
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "vector-content": "vector.svg"
+          },
+          {
+            "id": "container",
+            "border-radius": "16.0",
+            "is-structured": "false",
+            "background-color": {
+              "alpha": "1.0",
+              "hue": "240.0",
+              "saturation": "0.18518518518518517",
+              "value": "0.10588235294117647"
+            },
+            "clip-content": "false"
+          },
+          {
+            "id": "icon",
+            "alignment": {
+              "horizontal": {
+                "attachment": "center",
+                "offset": "0.0"
+              },
+              "vertical": {
+                "attachment": "center",
+                "offset": "0.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "24.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "24.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "Vector 12"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "Vector 12",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "8.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "5.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "7.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "15.0"
+              }
+            },
+            "vector-content": "vector_12.svg"
+          }
+        ]
+      }
+    }
+  },
+  "parameters": {
+    "password": {
+      "data-type": "text",
+      "required": false,
+      "description": ""
+    }
+  },
+  "previews": [
+    {
+      "design": "Component 4",
+      "size": {
+        "width": 360.0,
+        "height": 808.0
+      }
+    }
+  ],
+  "adin-component-search-paths": [],
+  "image-search-paths": [],
+  "vector-search-paths": []
+}

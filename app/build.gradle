@@ -8,6 +8,7 @@ plugins {
     id 'com.google.dagger.hilt.android'
     id "org.jlleitschuh.gradle.ktlint" version "11.0.0"
     id 'kotlinx-serialization'
+    id 'com.google.relay' version '0.3.02'
 }
 
 // For Compose Nav Destinations
