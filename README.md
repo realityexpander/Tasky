@@ -27,6 +27,9 @@ https://user-images.githubusercontent.com/5157474/209285234-f4cab9b6-46ca-40ac-9
 [<img src="https://user-images.githubusercontent.com/5157474/209286100-062e6dbd-6eea-4b51-a1b7-0d9aa5b86ea9.png" width=200 />](https://user-images.githubusercontent.com/5157474/209286100-062e6dbd-6eea-4b51-a1b7-0d9aa5b86ea9.png)
 [<img src="https://user-images.githubusercontent.com/5157474/209300668-34279c57-f307-4579-82aa-e59e5088e3d7.png" width=200 />](https://user-images.githubusercontent.com/5157474/209300668-34279c57-f307-4579-82aa-e59e5088e3d7.png)
 
+## Design documents
+
+[Requirements](https://github.com/realityexpander/Tasky/blob/master/documentation/Tasky_Requirements.pdf)
 
 ## 🛠 Built With
 
