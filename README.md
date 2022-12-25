@@ -12,6 +12,7 @@ Shared Task manager similar to a lite version of Google Calendar
 * Internationalized for English, Spanish and German
 * Automatically sync event changes to all people in an Event
 * Add photos to Events
+* Dark & Light mode
 
 ## Screen Shots
 
