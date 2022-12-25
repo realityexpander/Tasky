@@ -29,7 +29,8 @@ https://user-images.githubusercontent.com/5157474/209285234-f4cab9b6-46ca-40ac-9
 
 ## Design documents
 
-[Requirements](https://github.com/realityexpander/Tasky/blob/master/documentation/Tasky_Requirements.pdf)
+[Requirements - Tasky_Requirements.pdf](https://github.com/realityexpander/Tasky/blob/master/documentation/Tasky_Requirements.pdf)
+[API Specification - Tasky_API.pdf](https://github.com/realityexpander/Tasky/blob/master/documentation/Tasky_API.pdf)
 
 ## 🛠 Built With
 
