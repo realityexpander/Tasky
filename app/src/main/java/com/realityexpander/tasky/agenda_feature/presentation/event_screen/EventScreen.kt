@@ -6,6 +6,8 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -142,6 +144,7 @@ enum class AttendeeListType {
 
 const val ADD_PHOTO_PLACEHOLDER = "ADD_PHOTO_PLACEHOLDER"
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AddEventScreenContent(
     state: EventScreenState,
@@ -927,13 +930,26 @@ fun AddEventScreenContent(
     }
 
     // • EDITORS FOR EVENT PROPERTIES
-    state.editMode?.let {
-        EventPropertyEditors(
-            editMode = it,
-            state = state,
-            onAction = onAction,
-            singlePhotoPickerLauncher = singlePhotoPickerLauncher
-        )
+    AnimatedContent(
+        targetState = state.editMode,
+        modifier = Modifier.fillMaxSize(),
+        transitionSpec = {
+            slideInVertically(animationSpec = tween(1000),
+                initialOffsetY = { fullHeight -> fullHeight }
+            ) with
+            slideOutVertically(animationSpec = tween(1000),
+                targetOffsetY = { fullHeight -> fullHeight }
+            )
+        }
+    ) { targetState ->
+        targetState?.let { editMode ->
+            EventPropertyEditors(
+                editMode = editMode,
+                state = state,
+                onAction = onAction,
+                singlePhotoPickerLauncher = singlePhotoPickerLauncher
+            )
+        }
     }
 
     state.showAlertDialog?.let { dialogInfo ->

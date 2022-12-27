@@ -3,6 +3,8 @@ package com.realityexpander.tasky.agenda_feature.presentation.reminder_screen
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -81,6 +83,7 @@ fun ReminderScreen(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ReminderScreenContent(
     state: ReminderScreenState,
@@ -461,12 +464,25 @@ fun ReminderScreenContent(
         }
     }
 
-    // • EDITORS FOR TASK PROPERTIES
-    state.editMode?.let {
-        ReminderPropertyEditors(
-            editMode = it,
-            onAction = onAction,
-        )
+    // • EDITORS FOR REMINDER PROPERTIES
+    AnimatedContent(
+        targetState = state.editMode,
+        modifier = Modifier.fillMaxSize(),
+        transitionSpec = {
+            slideInVertically(animationSpec = tween(1000),
+                initialOffsetY = { fullHeight -> fullHeight }
+            ) with
+            slideOutVertically(animationSpec = tween(1000),
+                targetOffsetY = { fullHeight -> fullHeight }
+            )
+        }
+    ) { targetState ->
+        targetState?.let { editMode ->
+            ReminderPropertyEditors(
+                editMode = editMode,
+                onAction = onAction,
+            )
+        }
     }
 
     state.showAlertDialog?.let { dialogInfo ->
