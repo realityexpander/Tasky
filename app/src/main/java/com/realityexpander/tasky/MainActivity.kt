@@ -44,6 +44,7 @@ import kotlin.system.exitProcess
 
 val Context.dataStore by
 dataStore(
+//preferencesDataStore(
     "app-settings.data",
     AppSettingsSerializer(encrypted = true)
 )

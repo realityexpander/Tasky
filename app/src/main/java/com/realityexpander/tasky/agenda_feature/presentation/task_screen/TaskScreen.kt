@@ -3,6 +3,8 @@ package com.realityexpander.tasky.agenda_feature.presentation.task_screen
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -83,6 +85,7 @@ fun TaskScreen(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TaskScreenContent(
     state: TaskScreenState,
@@ -484,11 +487,24 @@ fun TaskScreenContent(
     }
 
     // • EDITORS FOR TASK PROPERTIES
-    state.editMode?.let {
-        TaskPropertyEditors(
-            editMode = it,
-            onAction = onAction,
-        )
+    AnimatedContent(
+        targetState = state.editMode,
+        modifier = Modifier.fillMaxSize(),
+        transitionSpec = {
+            slideInVertically(animationSpec = tween(1000),
+                initialOffsetY = { fullHeight -> fullHeight }
+            ) with
+            slideOutVertically(animationSpec = tween(1000),
+                targetOffsetY = { fullHeight -> fullHeight }
+            )
+        }
+    ) { targetState ->
+        targetState?.let { editMode ->
+            TaskPropertyEditors(
+                editMode = editMode,
+                onAction = onAction,
+            )
+        }
     }
 
     state.showAlertDialog?.let { dialogInfo ->
