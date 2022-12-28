@@ -101,6 +101,10 @@ android {
             freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"  // for kotlinx.serialization ExperimentalSerializationApi
         }
     }
+
+    tasks.withType(org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask) {
+        reportsOutputDirectory = project.layout.buildDirectory.dir("other/location/$name")
+    }
 }
 
 dependencies {
@@ -200,4 +204,20 @@ dependencies {
     testImplementation 'app.cash.turbine:turbine:0.11.0'
     testImplementation "androidx.arch.core:core-testing:2.1.0" // for InstantTaskExecutorRule (livedata)
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4" // runBlockingTest, CoroutineDispatcher
+}
+
+ktlint {
+    debug = true
+    verbose = true
+    reporters {
+        reporter "checkstyle"
+        reporter "plain"
+
+//        customReporters {
+//            "html" {
+//                fileExtension = "csv"
+//                dependency = projects.samples.kotlinReporterCreating
+//            }
+//        }
+    }
 }
