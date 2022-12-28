@@ -33,24 +33,13 @@ import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import logcat.logcat
 import kotlin.system.exitProcess
-
-
-//val Context.dataStore by
-//dataStore(
-////preferencesDataStore(
-//    "app-settings.data",
-//    AppSettingsSerializer(encrypted = true)
-//)
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainActivityViewModel by viewModels()
-
-//    var isAlreadyRefreshed = false
 
     @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,13 +82,11 @@ class MainActivity : ComponentActivity() {
 
                     // Load Settings (or initialize them)
                     LaunchedEffect(true) {
-//                        val appSettings = context.dataStore.data.first()
                         val appSettings =
-                            viewModel.appSettingsRepository.dataStore.data.first()
+                            viewModel.appSettingsRepository.getAppSettings()
 
                         // Confirm the settings file is created and initialized
                         if (!appSettings.isSettingsInitialized) {
-//                            context.dataStore.saveSettingsInitialized(true)
                             viewModel.appSettingsRepository.saveSettingsIsInitialized(true)
                         }
 

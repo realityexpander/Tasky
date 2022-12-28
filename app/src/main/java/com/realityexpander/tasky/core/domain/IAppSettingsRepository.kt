@@ -8,5 +8,7 @@ interface IAppSettingsRepository {
     abstract val dataStore: DataStore<AppSettings>
 
     suspend fun saveAuthInfo(authInfo: AuthInfo)
+
+    suspend fun getAppSettings(): AppSettings
     suspend fun saveSettingsIsInitialized(firstTime: Boolean)
 }
