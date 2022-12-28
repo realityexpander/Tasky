@@ -213,8 +213,8 @@ ktlint {
     outputToConsole = true
     android = true
     reporters {
-        reporter "checkstyle"
-        reporter "plain"
+//        reporter "checkstyle"
+//        reporter "plain"
         reporter "html"
     }
     filter {
