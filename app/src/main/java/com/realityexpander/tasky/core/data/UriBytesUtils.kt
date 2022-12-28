@@ -21,7 +21,7 @@ fun Uri.getBytesRecompressed(
     imageSize.also { size ->
         if (size > recompressThreshold) {
             // recompress the photo
-            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size ?: 0)
+            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
             val stream = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
             bytes = stream.toByteArray()

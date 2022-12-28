@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.datastore.core.DataStoreFactory
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -30,15 +31,17 @@ import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.auth_feature.presentation.components.EmailField
 import com.realityexpander.tasky.auth_feature.presentation.components.PasswordField
-import com.realityexpander.tasky.core.data.settings.saveAuthInfo
+import com.realityexpander.tasky.core.data.settings.AppSettingsRepositoryImpl
+import com.realityexpander.tasky.core.data.settings.AppSettingsSerializer
+import com.realityexpander.tasky.core.domain.IAppSettingsRepository
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.presentation.util.keyboardVisibilityObserver
 import com.realityexpander.tasky.core.util.InternetConnectivityObserver.InternetAvailabilityIndicator
-import com.realityexpander.tasky.dataStore
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.RegisterScreenDestination
 import kotlinx.coroutines.launch
+import java.io.File
 
 @Composable
 @Destination
@@ -57,6 +60,7 @@ fun LoginScreen(
     val connectivityState by viewModel.onlineState.collectAsState(
         initial = IInternetConnectivityObserver.OnlineStatus.OFFLINE // must start as Offline
     )
+    val appSettingsRepository = viewModel.appSettingsRepository
 
     LoginScreenContent(
         username = username,                // passed to/from RegisterScreen (not used in LoginScreen)
@@ -64,6 +68,7 @@ fun LoginScreen(
         state = loginState,
         onAction = viewModel::sendEvent,
         navigator = navigator,
+        appSettingsRepository = appSettingsRepository,
     )
 
     InternetAvailabilityIndicator(connectivityState)
@@ -76,6 +81,7 @@ fun LoginScreenContent(
     state: LoginState,
     onAction: (LoginEvent) -> Unit,
     navigator: DestinationsNavigator,
+    appSettingsRepository: IAppSettingsRepository
 ) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
@@ -95,7 +101,8 @@ fun LoginScreenContent(
         scope.launch {
 
             // Save the AuthInfo in the dataStore
-            context.dataStore.saveAuthInfo(authInfo)
+//            context.dataStore.saveAuthInfo(authInfo)
+            appSettingsRepository.saveAuthInfo(authInfo)
 
             navigator.navigate(
                 AgendaScreenDestination(
@@ -309,6 +316,12 @@ fun LoginScreenPreview() {
                     authInfo = null,
                 ),
                 onAction = {},
+                appSettingsRepository = AppSettingsRepositoryImpl(
+                    dataStore = DataStoreFactory.create(
+                        serializer = AppSettingsSerializer(),
+                        produceFile = { File("NOT_USED_IN_THIS_SCREEN_UI") }
+                    )
+                )
             )
         }
     }

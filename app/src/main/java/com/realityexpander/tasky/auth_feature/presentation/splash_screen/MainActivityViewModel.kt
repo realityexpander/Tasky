@@ -3,6 +3,7 @@ package com.realityexpander.tasky.auth_feature.presentation.splash_screen
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.realityexpander.tasky.core.domain.IAppSettingsRepository
 import com.realityexpander.tasky.agenda_feature.domain.IRemindAtNotificationManager
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
-    private val remindAtNotificationManager : IRemindAtNotificationManager
+    private val remindAtNotificationManager : IRemindAtNotificationManager,
+    val appSettingsRepository: IAppSettingsRepository
 ) : ViewModel() {
 
     private val _splashState = MutableStateFlow(SplashState())

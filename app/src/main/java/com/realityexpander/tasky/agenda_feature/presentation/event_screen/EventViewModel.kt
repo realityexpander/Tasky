@@ -298,7 +298,7 @@ class EventViewModel @Inject constructor(
                             _state.event ?: throw IllegalStateException("Event is null")
 
                             val remindAtDuration =
-                                Duration.between(_state.event.remindAt, _state.event?.from)
+                                Duration.between(_state.event.remindAt, _state.event.from)
 
                             val maxTo = max(_state.event.to, uiEvent.dateTime)
                             _state.copy(

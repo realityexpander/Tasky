@@ -10,6 +10,7 @@ import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
+import com.realityexpander.tasky.core.domain.IAppSettingsRepository
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_authInfo
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_email
 import com.realityexpander.tasky.core.presentation.common.SavedStateConstants.SAVED_STATE_errorMessage
@@ -36,6 +37,7 @@ class LoginViewModel @Inject constructor(
     val validatePassword: ValidatePassword,
     private val connectivityObserver: IInternetConnectivityObserver,
     private val savedStateHandle: SavedStateHandle,
+    val appSettingsRepository: IAppSettingsRepository
 ) : ViewModel() {
 
     private val username: String =

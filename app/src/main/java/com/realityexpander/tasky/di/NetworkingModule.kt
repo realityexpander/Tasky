@@ -139,7 +139,6 @@ object NetworkingModule {
     fun provideTaskyApi(
         okHttpClient: OkHttpClient,
         converterFactory: Converter.Factory,
-        @AuthDaoProdUsingBinds authDao: IAuthDao,
     ): TaskyApi {
 
         return Retrofit.Builder()

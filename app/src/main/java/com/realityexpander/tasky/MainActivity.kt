@@ -1,6 +1,5 @@
 package com.realityexpander.tasky
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Debug.waitForDebugger
@@ -21,15 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.datastore.dataStore
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.realityexpander.tasky.auth_feature.presentation.splash_screen.MainActivityViewModel
-import com.realityexpander.tasky.core.data.settings.AppSettingsSerializer
-import com.realityexpander.tasky.core.data.settings.saveSettingsInitialized
 import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.Companion.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.util.dumpIntentExtras
@@ -42,19 +38,19 @@ import logcat.logcat
 import kotlin.system.exitProcess
 
 
-val Context.dataStore by
-dataStore(
-//preferencesDataStore(
-    "app-settings.data",
-    AppSettingsSerializer(encrypted = true)
-)
+//val Context.dataStore by
+//dataStore(
+////preferencesDataStore(
+//    "app-settings.data",
+//    AppSettingsSerializer(encrypted = true)
+//)
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainActivityViewModel by viewModels()
 
-    var isAlreadyRefreshed = false
+//    var isAlreadyRefreshed = false
 
     @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,11 +93,14 @@ class MainActivity : ComponentActivity() {
 
                     // Load Settings (or initialize them)
                     LaunchedEffect(true) {
-                        val appSettings = context.dataStore.data.first()
+//                        val appSettings = context.dataStore.data.first()
+                        val appSettings =
+                            viewModel.appSettingsRepository.dataStore.data.first()
 
                         // Confirm the settings file is created and initialized
                         if (!appSettings.isSettingsInitialized) {
-                            context.dataStore.saveSettingsInitialized(true)
+//                            context.dataStore.saveSettingsInitialized(true)
+                            viewModel.appSettingsRepository.saveSettingsIsInitialized(true)
                         }
 
                         // Set logged-in user Authentication status
