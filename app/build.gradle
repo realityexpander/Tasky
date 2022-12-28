@@ -206,18 +206,19 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4" // runBlockingTest, CoroutineDispatcher
 }
 
+//                dependency = projects.samples.kotlinReporterCreating
 ktlint {
     debug = true
     verbose = true
+    outputToConsole = true
+    android = true
     reporters {
         reporter "checkstyle"
         reporter "plain"
-
-//        customReporters {
-//            "html" {
-//                fileExtension = "csv"
-//                dependency = projects.samples.kotlinReporterCreating
-//            }
-//        }
+        reporter "html"
+    }
+    filter {
+        exclude("**/build/**")
+        include("**/kotlin/**")
     }
 }
