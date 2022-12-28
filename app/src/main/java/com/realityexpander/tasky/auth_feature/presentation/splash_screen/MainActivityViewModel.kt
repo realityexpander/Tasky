@@ -3,10 +3,10 @@ package com.realityexpander.tasky.auth_feature.presentation.splash_screen
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.realityexpander.tasky.core.domain.IAppSettingsRepository
 import com.realityexpander.tasky.agenda_feature.domain.IRemindAtNotificationManager
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
+import com.realityexpander.tasky.core.domain.IAppSettingsRepository
 import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.Companion.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
 import com.realityexpander.tasky.core.util.Exceptions
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,7 +46,7 @@ class MainActivityViewModel @Inject constructor(
 
             // Validate the AuthToken
             val authenticateSuccess = try {
-                authRepository.authenticate() // todo check for off-line state
+                authRepository.authenticate()
                 true
             } catch (e: Exceptions.NetworkException) {
                 if(e.localizedMessage == "401 Unauthorized") {

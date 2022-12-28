@@ -10,15 +10,15 @@ class AppSettingsRepositoryImpl @Inject constructor(
     override val dataStore: DataStore<AppSettings>
 ) : IAppSettingsRepository {
 
+    override suspend fun getAppSettings() = dataStore.data.first()
+
     override suspend fun saveAuthInfo(authInfo: AuthInfo) {
         dataStore.updateData { appSettings ->
             appSettings.copy(authInfo = authInfo)
         }
     }
 
-    override suspend fun getAppSettings() = dataStore.data.first()
-
-    override suspend fun saveSettingsIsInitialized(firstTime: Boolean) {
+    override suspend fun saveIsSettingsInitialized(firstTime: Boolean) {
         dataStore.updateData { appSettings ->
             appSettings.copy(isSettingsInitialized = firstTime)
         }

@@ -10,5 +10,5 @@ interface IAppSettingsRepository {
     suspend fun saveAuthInfo(authInfo: AuthInfo)
 
     suspend fun getAppSettings(): AppSettings
-    suspend fun saveSettingsIsInitialized(firstTime: Boolean)
+    suspend fun saveIsSettingsInitialized(firstTime: Boolean)
 }

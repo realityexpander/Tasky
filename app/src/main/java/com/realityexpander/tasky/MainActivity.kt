@@ -87,7 +87,7 @@ class MainActivity : ComponentActivity() {
 
                         // Confirm the settings file is created and initialized
                         if (!appSettings.isSettingsInitialized) {
-                            viewModel.appSettingsRepository.saveSettingsIsInitialized(true)
+                            viewModel.appSettingsRepository.saveIsSettingsInitialized(true)
                         }
 
                         // Set logged-in user Authentication status

@@ -16,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
-//private const val APP_SETTINGS_NAME = "app_settings"
 private const val PROTO_DATA_STORE_FILE_NAME = "app-settings.data"
 
 @InstallIn(SingletonComponent::class)
