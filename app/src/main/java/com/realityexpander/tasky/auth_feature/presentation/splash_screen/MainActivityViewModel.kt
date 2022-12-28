@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.agenda_feature.domain.IRemindAtNotificationManager
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
+import com.realityexpander.tasky.core.domain.IAppSettingsRepository
 import com.realityexpander.tasky.core.presentation.notifications.RemindAtNotificationManagerImpl.Companion.ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
 import com.realityexpander.tasky.core.util.Exceptions
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
-    private val remindAtNotificationManager : IRemindAtNotificationManager
+    private val remindAtNotificationManager : IRemindAtNotificationManager,
+    val appSettingsRepository: IAppSettingsRepository
 ) : ViewModel() {
 
     private val _splashState = MutableStateFlow(SplashState())
@@ -44,7 +46,7 @@ class MainActivityViewModel @Inject constructor(
 
             // Validate the AuthToken
             val authenticateSuccess = try {
-                authRepository.authenticate() // todo check for off-line state
+                authRepository.authenticate()
                 true
             } catch (e: Exceptions.NetworkException) {
                 if(e.localizedMessage == "401 Unauthorized") {

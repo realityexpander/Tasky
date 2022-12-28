@@ -298,7 +298,7 @@ fun TaskScreenContent(
                         Spacer(modifier = Modifier.extraSmallWidth())
                         if (state.task?.isDone == true) { // hack to get the `line-through` to work
                             Text(
-                                text = state.task?.title ?: "",
+                                text = state.task.title,
                                 color = MaterialTheme.colors.onSurface,
                                 fontWeight = SemiBold,
                                 style = MaterialTheme.typography.h2,

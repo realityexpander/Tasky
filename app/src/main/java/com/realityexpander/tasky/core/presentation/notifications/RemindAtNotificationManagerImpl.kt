@@ -270,7 +270,7 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
                 backgroundColor = context.resources.getColor(R.color.purple_200, null)
                 textColor = Color.WHITE
             }
-            else -> context.resources.getColor(R.color.tasky_green, null)
+            //else -> context.resources.getColor(R.color.tasky_green, null)
         }
 
         val offsetYForTask = if (agendaItem.toAgendaItemType() == AgendaItemType.Task) 25 else 0

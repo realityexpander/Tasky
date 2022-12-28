@@ -6,8 +6,8 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.reminderReposi
 
 interface IReminderApi {
 
-    suspend fun createReminder(task: ReminderDTO): Result<Unit>
-    suspend fun getReminder(taskId: ReminderId): ReminderDTO
-    suspend fun updateReminder(task: ReminderDTO): Result<Unit>
-    suspend fun deleteReminder(taskId: ReminderId): Result<Unit>
+    suspend fun createReminder(reminder: ReminderDTO): Result<Unit>
+    suspend fun getReminder(reminderId: ReminderId): ReminderDTO
+    suspend fun updateReminder(reminder: ReminderDTO): Result<Unit>
+    suspend fun deleteReminder(reminderId: ReminderId): Result<Unit>
 }

@@ -19,7 +19,7 @@ interface IReminderDao {
 
     suspend fun updateReminder(reminder: ReminderEntity): Int
 
-    suspend fun deleteReminderById(reminder: ReminderId): Int
+    suspend fun deleteReminderById(reminderId: ReminderId): Int
     suspend fun deleteRemindersByReminderIds(reminderIds: List<ReminderId>): Int
     suspend fun deleteReminder(reminder: ReminderEntity): Int      // completely deletes the event.
 

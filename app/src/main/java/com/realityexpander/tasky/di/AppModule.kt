@@ -1,6 +1,7 @@
 package com.realityexpander.tasky.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
 import androidx.room.Room
 import com.realityexpander.tasky.agenda_feature.data.repositories.TaskyDatabase
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls.AgendaRepositoryImpl
@@ -40,6 +41,9 @@ import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.core.data.remote.TaskyApi
+import com.realityexpander.tasky.core.data.settings.AppSettings
+import com.realityexpander.tasky.core.data.settings.AppSettingsRepositoryImpl
+import com.realityexpander.tasky.core.domain.IAppSettingsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -57,20 +61,14 @@ const val USE_FAKE_REPOSITORY = false
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    /////////// DATABASE ///////////
+    // APP SETTINGS REPOSITORY /////////
 
     @Provides
     @Singleton
-    fun provideTaskyDatabase(
-        @ApplicationContext context: Context
-    ): TaskyDatabase =
-        Room.databaseBuilder(
-            context,
-            TaskyDatabase::class.java,
-            TaskyDatabase.DATABASE_NAME
-        )
-            .fallbackToDestructiveMigration()
-            .build()
+    fun provideAppSettingsRepository(
+        dataStore: DataStore<AppSettings>
+    ): IAppSettingsRepository = AppSettingsRepositoryImpl(dataStore)
+
 
     ////////// AUTHENTICATION REPOSITORY //////////
 
@@ -163,6 +161,22 @@ object AppModule {
             )
         }
     }
+
+    /////////// DATABASE ///////////
+
+    @Provides
+    @Singleton
+    fun provideTaskyDatabase(
+        @ApplicationContext context: Context
+    ): TaskyDatabase =
+        Room.databaseBuilder(
+            context,
+            TaskyDatabase::class.java,
+            TaskyDatabase.DATABASE_NAME
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+
 
     /////////// AGENDA REPOSITORY ///////////
 
@@ -324,9 +338,13 @@ object AppModule {
     @Singleton
     @AuthDaoProdUsingProvides
     fun provideAuthDaoProd(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        appSettingsRepository: IAppSettingsRepository
     ): IAuthDao {
-        return AuthDaoImpl(context)
+        return AuthDaoImpl(
+            context,
+            appSettingsRepository
+        )
     }
 
     @Provides
