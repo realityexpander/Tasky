@@ -1,9 +1,5 @@
 package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
-import android.net.Uri
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,7 +36,6 @@ fun EventPropertyEditors(
     editMode: EditMode,
     state: EventScreenState,
     onAction: (EventScreenEvent) -> Unit,
-    singlePhotoPickerLauncher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
 ) {
     onAction(ClearErrorMessage)
 
@@ -117,11 +112,8 @@ fun EventPropertyEditors(
         is EditMode.ChooseRemindAtDateTime -> { // handled in the RemindAt UI element, this is here to remove compiler warning
         }
         is EditMode.ChooseAddPhoto -> {
-            // Reference: https://github.com/philipplackner/NewPhotoPickerAndroid13/blob/master/app/src/main/java/com/plcoding/newphotopickerandroid13/MainActivity.kt
-            singlePhotoPickerLauncher.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            )
             onAction(CancelEditMode)
+            onAction(OneTimeEvent.LaunchPhotoPicker)
         }
         is EditMode.ViewOrRemovePhoto -> {
             PhotoModal(

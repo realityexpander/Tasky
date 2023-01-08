@@ -5,6 +5,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
@@ -179,6 +180,8 @@ fun AddEventScreenContent(
             contract = ActivityResultContracts.PickVisualMedia(),
             onResult = { photoUri ->
 
+                onAction(CancelEditMode)
+
                 photoUri?.let { uri ->
 
                     if(uri.isImageSizeTooLargeToUpload(context, UPLOAD_IMAGE_MAX_SIZE)) {
@@ -220,6 +223,12 @@ fun AddEventScreenContent(
                         oneTimeEvent.message.asResIdOrNull
                             ?: R.string.error_invalid_string_resource_id
                     ), Toast.LENGTH_SHORT).show()
+            }
+            is LaunchPhotoPicker -> {
+                // Reference: https://github.com/philipplackner/NewPhotoPickerAndroid13/blob/master/app/src/main/java/com/plcoding/newphotopickerandroid13/MainActivity.kt
+                singlePhotoPickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
             }
             null -> {}
         }
@@ -947,7 +956,6 @@ fun AddEventScreenContent(
                 editMode = editMode,
                 state = state,
                 onAction = onAction,
-                singlePhotoPickerLauncher = singlePhotoPickerLauncher
             )
         }
     }

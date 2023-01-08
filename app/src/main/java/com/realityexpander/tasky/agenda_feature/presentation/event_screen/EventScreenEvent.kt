@@ -63,6 +63,7 @@ sealed interface EventScreenEvent {
         object NavigateBack : EventScreenEvent, OneTimeEvent
 
         data class ShowToast(val message: UiText) : EventScreenEvent, OneTimeEvent
+        object LaunchPhotoPicker : EventScreenEvent, OneTimeEvent
     }
 
     sealed interface EditMode {

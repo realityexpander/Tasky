@@ -414,6 +414,11 @@ class EventViewModel @Inject constructor(
                     OneTimeEvent.NavigateBack
                 )
             }
+            OneTimeEvent.LaunchPhotoPicker -> {
+                _oneTimeEvent.emit(
+                    OneTimeEvent.LaunchPhotoPicker
+                )
+            }
             is ShowAlertDialog -> {
                 _state.update { _state ->
                     _state.copy(
