@@ -14,6 +14,7 @@ Shared Task manager similar to a lite version of Google Calendar
 * Add photos to Events
 * Dark & Light mode
 * Deep Link handling
+* Custom Notification with images and functionality
 
 ## Screen Shots
 
