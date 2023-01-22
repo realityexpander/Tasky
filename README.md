@@ -7,7 +7,7 @@ Shared Task manager similar to a lite version of Google Calendar
 * Manages schedule across time zones automatically
 * Works offline & automatically syncs across multiple devices
 * Invite other people to your events, and automatically sync changes.
-* Alarms & Notifications for Agenda Items coming due
+* Alarms & Custom Notifications for Agenda Items coming due
 * Manage multiple user accounts
 * Internationalized for English, Spanish and German
 * Automatically sync event changes to all people in an Event
