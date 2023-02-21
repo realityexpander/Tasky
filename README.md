@@ -1,7 +1,7 @@
-[<img src="https://user-images.githubusercontent.com/5157474/208806552-079ff4c4-9869-4921-9f6f-1f74d4211cdf.png" width=160 />](https://user-images.githubusercontent.com/5157474/208806552-079ff4c4-9869-4921-9f6f-1f74d4211cdf.png)
+![image](https://user-images.githubusercontent.com/5157474/220229313-9dc0f1e0-4f0c-428b-8b24-9d1f841b4739.png)
 
 
-# Tasky
+# Tasky 
 Shared Task manager similar to a lite version of Google Calendar
 
 * Manages schedule across time zones automatically
@@ -15,6 +15,10 @@ Shared Task manager similar to a lite version of Google Calendar
 * Dark & Light mode
 * Deep Link handling
 * Custom Notification with images and functionality
+
+[Google Play Store Presence](https://play.google.com/store/apps/details?id=com.realityexpander.tasky)
+
+[Mini Marketing Site](https://realityexpander.github.io/tasky-website/)
 
 ## Screen Shots
 
