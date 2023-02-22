@@ -1,5 +1,6 @@
-![image](https://user-images.githubusercontent.com/5157474/220229313-9dc0f1e0-4f0c-428b-8b24-9d1f841b4739.png)
+<!-- ![image](https://user-images.githubusercontent.com/5157474/220229313-9dc0f1e0-4f0c-428b-8b24-9d1f841b4739.png) -->
 
+![image](https://user-images.githubusercontent.com/5157474/220583103-171fe9c1-a1a5-42bf-a008-4dd43fb0d0a5.png)
 
 # Tasky 
 Shared Task manager similar to a lite version of Google Calendar
