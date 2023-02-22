@@ -35,8 +35,8 @@ import java.time.temporal.ChronoUnit
 
 
 @Composable
-fun ScheduleCalendar(
-    state: ScheduleCalendarState,
+fun GanttScheduleDisplay(
+    state: GanttScheduleState,
     modifier: Modifier = Modifier,
     viewSpan: Long = 48 * 3600L, // in seconds
     sections: List<CalendarSection> = emptyList(),
@@ -118,7 +118,7 @@ fun ScheduleCalendar(
 @Composable
 fun CalendarSectionRow(
     section: CalendarSection,
-    state: ScheduleCalendarState,
+    state: GanttScheduleState,
     eventTimesVisible: Boolean
 ) {
     Column(Modifier.animateContentSize()) {
@@ -205,7 +205,7 @@ fun CalendarSectionRow(
 
 @Composable
 internal fun DaysRow(
-    state: ScheduleCalendarState,
+    state: GanttScheduleState,
     modifier: Modifier = Modifier
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -236,7 +236,7 @@ internal fun DaysRow(
 
 @Composable
 internal fun HoursRow(
-    state: ScheduleCalendarState
+    state: GanttScheduleState
 ) {
     AnimatedVisibility(visible = state.visibleHours.isNotEmpty()) {
         Layout(
@@ -277,7 +277,7 @@ internal fun HoursRow(
 
 @Composable
 fun DayDividers(
-    state: ScheduleCalendarState,
+    state: GanttScheduleState,
     modifier: Modifier = Modifier
 ) {
     Canvas(modifier = modifier) {

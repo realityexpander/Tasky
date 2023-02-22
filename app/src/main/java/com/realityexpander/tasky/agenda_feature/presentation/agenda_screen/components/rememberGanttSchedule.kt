@@ -13,13 +13,14 @@ import kotlin.math.abs
 import kotlin.math.roundToLong
 
 @Composable
-fun rememberScheduleCalendarState(
+fun rememberGanttScheduleState(
     referenceDateTime: LocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS),
     onDateTimeSelected: (LocalDateTime) -> Unit = {}
-): ScheduleCalendarState {
+): GanttScheduleState {
     val coroutineScope = rememberCoroutineScope()
-    return remember(coroutineScope) {
-        ScheduleCalendarState(
+
+    return remember(coroutineScope, referenceDateTime) {
+        GanttScheduleState(
             referenceDateTime = referenceDateTime,
             onDateTimeSelected = onDateTimeSelected,
             coroutineScope = coroutineScope,
@@ -27,10 +28,10 @@ fun rememberScheduleCalendarState(
     }
 }
 
-class ScheduleCalendarState(
+class GanttScheduleState(
     referenceDateTime: LocalDateTime,
     private val onDateTimeSelected: (LocalDateTime) -> Unit,
-    private val coroutineScope: CoroutineScope
+    private val coroutineScope: CoroutineScope,
 ) {
     val startDateTime: LocalDateTime by derivedStateOf {
         referenceDateTime.plusSeconds(secondsOffset.value)

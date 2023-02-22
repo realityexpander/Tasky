@@ -53,7 +53,7 @@ import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.AgendaScreenEvent.*
-import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.components.ScheduleCalendarDemo
+import com.realityexpander.tasky.agenda_feature.presentation.agenda_screen.components.GanttDisplay
 import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.UserAcronymCircle
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
@@ -453,8 +453,13 @@ fun AgendaScreenContent(
                 .taskyScreenTopCorners(color = MaterialTheme.colors.surface)
                 .padding(0.dp)
         ) col2@{
-            //Spacer(modifier = Modifier.smallHeight())
-            ScheduleCalendarDemo()
+
+            GanttDisplay(
+                agendaItems = state.agendaItems,
+                startDateTime = state.weekStartDate
+                    .plusDays(selectedDayIndex?.toLong() ?: 0)
+                    .toLocalDateTime()
+            )
             Spacer(modifier = Modifier.smallHeight())
 
             // • DAYS OF WEEK & Day PICKER
