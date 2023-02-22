@@ -29,7 +29,7 @@ fun GanttDisplay(
 ) {
   val viewSpan = remember { mutableStateOf(VIEW_SPAN_1_DAY * 2) }
   val isEventTimesVisible = remember { mutableStateOf(true) }
-  var isGanttDisplayVisible by remember { mutableStateOf(true) }
+  var isGanttDisplayVisible by remember { mutableStateOf(false) }
 
   val sectionsForCalendarEvents = remember(agendaItems) {
 
@@ -90,6 +90,16 @@ fun GanttDisplay(
         .wrapContentSize(Alignment.Center)
     ) {
       Row {
+        Spacer(modifier = Modifier.width(8.dp))
+        IconButton(onClick = {
+          isGanttDisplayVisible = !(isGanttDisplayVisible)
+        }) {
+          Icon(
+            imageVector = Icons.Default.Visibility,
+            contentDescription = "hide gantt chart",
+            tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+          )
+        }
         IconButton(
           onClick = {
             viewSpan.value = (viewSpan.value * 2).coerceAtMost(96 * 3600)
@@ -117,16 +127,6 @@ fun GanttDisplay(
           Icon(
             imageVector = Icons.Default.HideImage,
             contentDescription = "hide times",
-            tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
-          )
-        }
-        Spacer(modifier = Modifier.width(8.dp))
-        IconButton(onClick = {
-          isGanttDisplayVisible = !(isGanttDisplayVisible)
-        }) {
-          Icon(
-            imageVector = Icons.Default.Visibility,
-            contentDescription = "hide gantt chart",
             tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
           )
         }

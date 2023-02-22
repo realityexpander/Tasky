@@ -158,6 +158,11 @@ class AgendaViewModel @Inject constructor(
         timer.scheduleAtFixedRate(timerTask, 0, 1000)
     }
 
+    fun getAllAgendaItems() = agendaRepository.getLocalAgendaItemsWithRemindAtInDateTimeRangeFlow(
+        ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS),
+        ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).plusWeeks(8)
+    )
+
     override fun onCleared() {
         super.onCleared()
 

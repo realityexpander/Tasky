@@ -99,6 +99,8 @@ fun AgendaScreen(
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = state.isRefreshing) //isLoading)
     val zonedDateTimeNow by viewModel.zonedDateTimeNow.collectAsState()
 
+    val allAgendaItems = viewModel.getAllAgendaItems().collectAsState(initial = emptyList()).value
+
     SwipeRefresh(
         state = swipeRefreshState,
         onRefresh = viewModel::onSwipeRefresh,
@@ -117,6 +119,7 @@ fun AgendaScreen(
             oneTimeEvent = oneTimeEvent,
             zonedDateTimeNow = zonedDateTimeNow,
             navigator = navigator,
+            allAgendaItems = allAgendaItems,
         )
 
         if (state.isProgressVisible) {
@@ -142,6 +145,7 @@ fun AgendaScreenContent(
     oneTimeEvent: OneTimeEvent?,
     zonedDateTimeNow: ZonedDateTime,
     navigator: DestinationsNavigator,
+    allAgendaItems: List<AgendaItem>,
 ) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
@@ -455,7 +459,7 @@ fun AgendaScreenContent(
         ) col2@{
 
             GanttDisplay(
-                agendaItems = state.agendaItems,
+                agendaItems = allAgendaItems, //state.agendaItems,
                 startDateTime = state.weekStartDate
                     .plusDays(selectedDayIndex?.toLong() ?: 0)
                     .toLocalDateTime()
@@ -1073,6 +1077,32 @@ fun AgendaScreenPreview() {
             oneTimeEvent = null,
             zonedDateTimeNow = ZonedDateTime.now(),
             navigator = EmptyDestinationsNavigator,
+            allAgendaItems = listOf(
+                AgendaItem.Event(
+                    id = "1",
+                    title = "Event 1",
+                    description = "Event Description 1",
+                    from = ZonedDateTime.now(),
+                    to = ZonedDateTime.now().plusHours(1),
+                    remindAt = ZonedDateTime.now(),
+                    host = "Chris Athanas",
+                ),
+                AgendaItem.Task(
+                    id = "2",
+                    title = "Task 2",
+                    description = "Task Description 2",
+                    time = ZonedDateTime.now().plusHours(3),
+                    isDone = false,
+                    remindAt = ZonedDateTime.now().plusHours(2),
+                ),
+                AgendaItem.Reminder(
+                    id = "3",
+                    title = "Reminder 3",
+                    description = "Reminder Description 3",
+                    time = ZonedDateTime.now(),
+                    remindAt = ZonedDateTime.now().plusDays(1),
+                ),
+            ),
         )
     }
 }
