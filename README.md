@@ -186,6 +186,9 @@ https://www.graphviz.org/
 https://github.com/davidmoten/openapi-to-plantuml
 -->
 
-Version History
-12/30/22 1.0 Initial Version - Meets Spec
-02/22/23 1.1 Add Gantt View
+## Version History
+
+| Date       | Version     | Notes                          |
+| :---       |    :----:   | :---                           |
+| 12/30/22   | 1.0         | Initial Version - Meets Spec   |
+| 02/22/23   | 1.1         | Add Gantt View                 |
