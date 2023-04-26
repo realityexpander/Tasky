@@ -41,13 +41,6 @@ https://user-images.githubusercontent.com/5157474/209285234-f4cab9b6-46ca-40ac-9
 [<img src="https://user-images.githubusercontent.com/5157474/209300668-34279c57-f307-4579-82aa-e59e5088e3d7.png" width=200 />](https://user-images.githubusercontent.com/5157474/209300668-34279c57-f307-4579-82aa-e59e5088e3d7.png)
 [<img src="https://user-images.githubusercontent.com/5157474/220576862-ecb6a472-c047-4009-b867-343b1ac37bbf.png" width=200 />](https://user-images.githubusercontent.com/5157474/220576862-ecb6a472-c047-4009-b867-343b1ac37bbf.png)
 
-
-## Design documents
-
-[Requirements - Tasky_Requirements.pdf](https://github.com/realityexpander/Tasky/blob/master/documentation/Tasky_Requirements.pdf)
-
-[API Specification - Tasky_API.pdf](https://github.com/realityexpander/Tasky/blob/master/documentation/Tasky_API.pdf)
-
 ## 🛠 Built With
 
 - [Kotlin](https://kotlinlang.org/) - First class and official programming language for Android
