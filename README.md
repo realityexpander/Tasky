@@ -16,9 +16,11 @@ Shared Task manager similar to a lite version of Google Calendar
 * Dark & Light mode
 * Deep Link handling
 * Custom Notification with images and functionality
+* Visual Planner navigator
 * Code Style focuses on maximum "new developer" comprehensibility
 
 [![Hits-of-Code](https://hitsofcode.com/github/realityexpander/Tasky?branch=master)](https://hitsofcode.com/github/realityexpander/Tasky/view?branch=master)
+
 [Google Play Store Presence](https://play.google.com/store/apps/details?id=com.realityexpander.tasky)
 
 [Mini Marketing Site](https://realityexpander.github.io/tasky-website/)
