@@ -24,7 +24,6 @@ import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginVie
 import com.realityexpander.tasky.core.data.settings.AppSettings
 import com.realityexpander.tasky.core.domain.IAppSettingsRepository
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
-import com.realityexpander.tasky.core.util.InternetConnectivityObserver.InternetConnectivityObserverImpl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
