@@ -6,11 +6,14 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.datastore.core.DataStore
 import androidx.lifecycle.SavedStateHandle
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoFakeImpl
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
+import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidatePassword
@@ -18,10 +21,23 @@ import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginEvent
 import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginScreen
 import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginViewModel
+import com.realityexpander.tasky.core.data.settings.AppSettings
+import com.realityexpander.tasky.core.domain.IAppSettingsRepository
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
+import com.realityexpander.tasky.core.util.InternetConnectivityObserver.InternetConnectivityObserverImpl
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+
+class DataStoreFake<T>(override val data: Flow<T>) : DataStore<T> {
+    override suspend fun updateData(transform: suspend (T) -> T): T {
+        return data.map { transform(it) }.first()
+    }
+}
 
 class AppTest {
 
@@ -35,6 +51,42 @@ class AppTest {
     private val validateEmail = ValidateEmail()
     private val validatePassword = ValidatePassword()
     private val validateUsername = ValidateUsername()
+    private val appSettingsRepository = object : IAppSettingsRepository {
+
+        val appSettingsFlow = flow<AppSettings> {
+            emit(AppSettings())
+        }
+
+        override val dataStore: DataStore<AppSettings>
+            get() = DataStoreFake(appSettingsFlow)
+
+        override suspend fun saveAuthInfo(authInfo: AuthInfo) {
+            // do nothing
+        }
+
+        override suspend fun getAppSettings(): AppSettings {
+            return AppSettings()
+        }
+
+        override suspend fun saveIsSettingsInitialized(firstTime: Boolean) {
+            // do nothing
+        }
+    }
+    private val connectivityObserver = object : IInternetConnectivityObserver {
+        override val onlineStateFlow =
+            flow<IInternetConnectivityObserver.OnlineStatus> {
+                emit(IInternetConnectivityObserver.OnlineStatus.ONLINE)
+            }
+
+        override fun connectivityFlow(): Flow<IInternetConnectivityObserver.ConnectivityStatus> {
+            return onlineStateFlow.map {
+                if (it == IInternetConnectivityObserver.OnlineStatus.ONLINE)
+                    IInternetConnectivityObserver.ConnectivityStatus.Available
+                else
+                    IInternetConnectivityObserver.ConnectivityStatus.Unavailable
+            }
+        }
+    }
 
     @Before
     fun setUp() {
@@ -51,6 +103,8 @@ class AppTest {
             savedStateHandle = SavedStateHandle(),
             validateEmail = validateEmail,
             validatePassword = validatePassword,
+            appSettingsRepository = appSettingsRepository,
+            connectivityObserver = connectivityObserver
         )
     }
 
@@ -85,6 +139,8 @@ class AppTest {
             },
             validateEmail = validateEmail,
             validatePassword = validatePassword,
+            appSettingsRepository = appSettingsRepository,
+            connectivityObserver = connectivityObserver
         )
 
 //        TaskyApplication.savedStateHandle["email"] = expectedEmail       // todo remove after Compose-Destination fix
@@ -123,6 +179,8 @@ class AppTest {
             },
             validateEmail = validateEmail,
             validatePassword = validatePassword,
+            appSettingsRepository = appSettingsRepository,
+            connectivityObserver = connectivityObserver
         )
 
 //        TaskyApplication.savedStateHandle["email"] = expectedEmail       // todo remove after Compose-Destination fix
