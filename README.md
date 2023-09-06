@@ -186,7 +186,8 @@ https://github.com/davidmoten/openapi-to-plantuml
 
 ## Version History
 
-| Date       | Version     | Notes                          |
-| :---       |    :----:   | :---                           |
-| 12/30/22   | 1.0         | Initial Version - Meets Spec   |
-| 02/22/23   | 1.1         | Add Gantt View                 |
+| Date       | Version | Notes                        |
+|:-----------|:-------:|:-----------------------------|
+| 12/30/22   |   1.0   | Initial Version - Meets Spec |
+| 02/22/23   |   1.1   | Add Gantt View               |
+| 9/5/23     |   1.1   | Fix failing tests            |
