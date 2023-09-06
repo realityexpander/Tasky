@@ -36,7 +36,6 @@ fun TaskPropertyEditors(
             }
         }
         is EditMode.ChooseDate -> {
-            editMode as EditMode.DateTimePayload
             var pickedDate by remember { mutableStateOf(LocalDateTime.now()) }
             val dateDialogState = rememberMaterialDialogState()
 
@@ -66,7 +65,6 @@ fun TaskPropertyEditors(
             }
         }
         is EditMode.ChooseTime -> {
-            editMode as EditMode.DateTimePayload
             var pickedTime by remember { mutableStateOf(LocalDateTime.now()) }
             val timeDialogState = rememberMaterialDialogState()
 
@@ -95,7 +93,8 @@ fun TaskPropertyEditors(
                 }
             }
         }
-        is EditMode.ChooseRemindAtDateTime -> { // handled in the RemindAt UI element, this is here to remove compiler warning
+        is EditMode.ChooseRemindAtDateTime -> {
+            // handled in the RemindAt UI element, this is here to remove compiler warning
         }
     }
 }

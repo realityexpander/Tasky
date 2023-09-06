@@ -34,7 +34,9 @@ import org.junit.Test
 
 class DataStoreFake<T>(override val data: Flow<T>) : DataStore<T> {
     override suspend fun updateData(transform: suspend (T) -> T): T {
-        return data.map { transform(it) }.first()
+        return data.map {
+            transform(it)
+        }.first()
     }
 }
 
