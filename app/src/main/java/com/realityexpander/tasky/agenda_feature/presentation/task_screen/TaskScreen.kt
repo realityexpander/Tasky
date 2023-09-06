@@ -549,7 +549,7 @@ fun TaskScreenContent(
     heightDp = 800,
 )
 @Composable
-fun Preview() {
+fun Preview2() {
     TaskyTheme {
         val authInfo = AuthInfo(
             userId = "X0001",
@@ -577,13 +577,15 @@ fun Preview() {
 }
 
 @Preview(
+    showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     group = "Night Mode=true",
     apiLevel = 28,
     widthDp = 400,
-    heightDp = 1200,
+    heightDp = 800,
+    backgroundColor = 0xFF000000,
 )
 @Composable
 fun Preview_night_mode() {
-    Preview()
+    Preview2()
 }
