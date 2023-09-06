@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 // Simulates a local database
 
-class AuthDaoFakeImpl @Inject constructor(): IAuthDao {
+class AuthDaoFake @Inject constructor(): IAuthDao {
     private var authInfoEntity: AuthInfoEntity? = null
 
     override suspend fun getAuthToken(): AuthToken? {

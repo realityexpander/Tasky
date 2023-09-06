@@ -15,7 +15,7 @@ import com.realityexpander.tasky.core.util.Password
 import com.realityexpander.tasky.core.util.Username
 import kotlin.coroutines.cancellation.CancellationException
 
-class AuthRepositoryFakeImpl(
+class AuthRepositoryFake(
     private val authDao: IAuthDao,
     private val authApi: IAuthApi,
     override val validateEmail: ValidateEmail,

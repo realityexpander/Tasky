@@ -101,7 +101,6 @@ fun LoginScreenContent(
         scope.launch {
 
             // Save the AuthInfo in the dataStore
-//            context.dataStore.saveAuthInfo(authInfo)
             appSettingsRepository.saveAuthInfo(authInfo)
 
             navigator.navigate(

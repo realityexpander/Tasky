@@ -10,13 +10,13 @@ import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class AuthApiFakeImplTest {
+class AuthApiFakeTest {
 
     private lateinit var authApiFakeImpl: IAuthApi
 
     @Before
     fun setUp() {
-        authApiFakeImpl = AuthApiFakeImpl()
+        authApiFakeImpl = AuthApiFake()
     }
 
     @Test

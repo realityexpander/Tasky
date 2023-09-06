@@ -1,5 +1,6 @@
 package com.realityexpander.tasky.auth_feature.presentation.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -62,7 +63,7 @@ fun NameField(
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun NameFieldPreview() {
     TaskyTheme {
@@ -74,7 +75,7 @@ fun NameFieldPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun NameFieldPreviewError() {
     TaskyTheme {
@@ -86,7 +87,7 @@ fun NameFieldPreviewError() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun NameFieldPreviewNoLabel() {
     TaskyTheme {

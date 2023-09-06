@@ -29,12 +29,12 @@ import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.taskApi.taskApiImpls.TaskApiImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.taskRepositoryImpls.TaskRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.domain.*
-import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFake
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryImpl
 import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
 import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoImpl
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
-import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFake
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiImpl
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import com.realityexpander.tasky.auth_feature.domain.validation.ValidateEmail
@@ -94,7 +94,7 @@ object AppModule {
         validateEmail: ValidateEmail,
         validatePassword: ValidatePassword
     ): IAuthRepository =
-        AuthRepositoryFakeImpl(
+        AuthRepositoryFake(
             authApi = authApi,
             authDao = authDao,
             validateUsername = validateUsername,
@@ -352,7 +352,7 @@ object AppModule {
     @AuthApiFakeUsingProvides
     fun provideAuthApiFakeImpl(
         /* no dependencies */
-    ): IAuthApi = AuthApiFakeImpl()
+    ): IAuthApi = AuthApiFake()
 
     @Provides
     @Singleton

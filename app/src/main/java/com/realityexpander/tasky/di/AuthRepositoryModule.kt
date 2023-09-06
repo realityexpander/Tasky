@@ -1,12 +1,12 @@
 package com.realityexpander.tasky.di
 
-import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryFake
 import com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls.AuthRepositoryImpl
 import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
-import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoFake
 import com.realityexpander.tasky.auth_feature.data.repository.local.authDaoImpls.AuthDaoImpl
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
-import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFakeImpl
+import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiFake
 import com.realityexpander.tasky.auth_feature.data.repository.remote.authApiImpls.AuthApiImpl
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
 import dagger.Binds
@@ -23,7 +23,7 @@ abstract class AuthRepositoryModule {
     @Singleton
     @AuthDaoFakeUsingBinds
     abstract fun bindAuthDaoFake(
-        authDaoFakeImpl: AuthDaoFakeImpl  // <-- provides this instance...
+        authDaoFake: AuthDaoFake  // <-- provides this instance...
     ): IAuthDao // <-- ... for this interface.
 
     @Binds
@@ -37,7 +37,7 @@ abstract class AuthRepositoryModule {
     @Singleton
     @AuthApiFakeUsingBinds
     abstract fun bindAuthApiFake(
-        authApiFakeImpl: AuthApiFakeImpl // <-- provides this instance...
+        authApiFake: AuthApiFake // <-- provides this instance...
     ): IAuthApi // <-- ... for this interface.
 
     @Binds
@@ -51,7 +51,7 @@ abstract class AuthRepositoryModule {
     @Singleton
     @AuthRepositoryFakeUsingBinds
     abstract fun bindAuthRepositoryFake(
-        authRepositoryFakeImpl: AuthRepositoryFakeImpl // <-- provides this instance...
+        authRepositoryFake: AuthRepositoryFake // <-- provides this instance...
     ): IAuthRepository // <-- ... for this interface.
 
     @Binds

@@ -62,7 +62,7 @@ fun EmailField(
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun EmailFieldPreview() {
     TaskyTheme {
@@ -75,7 +75,7 @@ fun EmailFieldPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun EmailFieldPreviewError() {
     TaskyTheme {
@@ -87,7 +87,7 @@ fun EmailFieldPreviewError() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun EmailFieldPreviewValid() {
     TaskyTheme {
