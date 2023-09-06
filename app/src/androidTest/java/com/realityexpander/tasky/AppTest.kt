@@ -85,7 +85,7 @@ class AppTest {
         val expectedPassword = "•••••••••"
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            savedStateHandle = SavedStateHandle().apply {  // todo put back after Compose-Destination fix
+            savedStateHandle = SavedStateHandle().apply {
                 set("email", "chris@demo.com")
                 set("password", "1234567Aa")
             },
@@ -95,8 +95,6 @@ class AppTest {
             connectivityObserver = connectivityObserver
         )
 
-//        TaskyApplication.savedStateHandle["email"] = expectedEmail       // todo remove after Compose-Destination fix
-//        TaskyApplication.savedStateHandle["password"] = password
         loginViewModel.sendEvent(LoginEvent.UpdateEmail(expectedEmail))
         loginViewModel.sendEvent(LoginEvent.UpdatePassword(password))
 
@@ -135,8 +133,6 @@ class AppTest {
             connectivityObserver = connectivityObserver
         )
 
-//        TaskyApplication.savedStateHandle["email"] = expectedEmail       // todo remove after Compose-Destination fix
-//        TaskyApplication.savedStateHandle["password"] = expectedPassword
         loginViewModel.sendEvent(LoginEvent.UpdateEmail(expectedEmail))
         loginViewModel.sendEvent(LoginEvent.UpdatePassword(expectedPassword))
 

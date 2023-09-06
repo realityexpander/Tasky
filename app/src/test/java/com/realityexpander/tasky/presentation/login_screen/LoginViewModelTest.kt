@@ -62,7 +62,7 @@ class LoginViewModelTest {
 
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            savedStateHandle = SavedStateHandle(), // todo add after Compose-Destination fix
+            savedStateHandle = SavedStateHandle(),
             validateEmail = validateEmail,
             validatePassword = validatePassword,
             appSettingsRepository = appSettingsRepository,
@@ -75,11 +75,9 @@ class LoginViewModelTest {
         // ARRANGE
         val expectedEmail = "chris@demo.com"
         val expectedPassword = "Ab3456789"
-//        TaskyApplication.savedStateHandle["email"] = expectedEmail       // todo remove after Compose-Destination fix
-//        TaskyApplication.savedStateHandle["password"] = expectedPassword
         loginViewModel = LoginViewModel(
             authRepository = authRepository,
-            savedStateHandle = SavedStateHandle().apply {  // todo add after Compose-Destination fix
+            savedStateHandle = SavedStateHandle().apply {
                 set("email", expectedEmail)
                 set("password", expectedPassword)
             },
