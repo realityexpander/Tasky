@@ -33,6 +33,7 @@ import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.serialization.InternalSerializationApi
 import logcat.logcat
 import kotlin.system.exitProcess
 
@@ -41,7 +42,10 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainActivityViewModel by viewModels()
 
-    @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
+    @OptIn(ExperimentalAnimationApi::class,
+        ExperimentalMaterialNavigationApi::class,
+        InternalSerializationApi::class
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         // user-initiated process death: adb shell am force-stop com.realityexpander.tasky
         // system process death: adb shell am kill com.realityexpander.tasky

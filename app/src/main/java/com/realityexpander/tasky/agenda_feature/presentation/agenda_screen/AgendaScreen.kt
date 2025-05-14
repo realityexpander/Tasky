@@ -1,3 +1,4 @@
+@file:OptIn(InternalSerializationApi::class)
 package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 
 import android.content.res.Configuration
@@ -75,6 +76,7 @@ import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.InternalSerializationApi
 import logcat.logcat
 import java.time.ZonedDateTime
 import java.time.format.TextStyle
@@ -1043,6 +1045,11 @@ fun AgendaScreenPreview() {
             state = AgendaState(
                 authInfo = AuthInfo(
                     username = "Chris Athanas",
+                    accessToken = "13456789",
+                    accessTokenExpirationTimestampEpochMilli = System.currentTimeMillis() + 1000 * 60 * 60,
+                    refreshToken = "refresh12334",
+                    userId = "0101010101",
+                    email = "chris@demo.com",
                 ),
                 agendaItems =
                 listOf(

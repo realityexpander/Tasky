@@ -1,7 +1,8 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain
 
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.AttendeeEntity
-import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.AttendeeDTO
+import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.remote.DTOs.AttendeeDTO
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.core.util.toEpochMilli
 import com.realityexpander.tasky.core.util.toZonedDateTime

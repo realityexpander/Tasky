@@ -1,3 +1,4 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.auth_feature.presentation.register_screen
 
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo

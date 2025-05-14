@@ -1,3 +1,4 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.agenda_feature.presentation.reminder_screen
 
 import android.content.res.Configuration
@@ -42,7 +43,6 @@ import com.realityexpander.tasky.core.presentation.util.getStringSafe
 import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
-import java.util.*
 
 @Composable
 @Destination(
@@ -531,8 +531,11 @@ fun Preview() {
     TaskyTheme {
         val authInfo = AuthInfo(
             userId = "X0001",
-            authToken = "1010101010101",
-            username = "Cameron Anderson"
+            accessToken = "1010101010101",
+            username = "Cameron Anderson",
+            refreshToken = "1010101010101",
+            email = "cameron@gmail.com",
+            accessTokenExpirationTimestampEpochMilli = System.currentTimeMillis() + 1000 * 60 * 60 * 10,
         )
 
         ReminderScreenContent(

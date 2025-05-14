@@ -6,23 +6,41 @@ import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
 import com.realityexpander.tasky.auth_feature.data.repository.local.entities.AuthInfoEntity
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.util.*
+import kotlinx.serialization.InternalSerializationApi
 import javax.inject.Inject
 
 // Simulates a local database
 
+@OptIn(InternalSerializationApi::class)
 class AuthDaoFake @Inject constructor(): IAuthDao {
     private var authInfoEntity: AuthInfoEntity? = null
 
-    override suspend fun getAuthToken(): AuthToken? {
-        return authToken(authInfoEntity?.authToken)
+    override suspend fun getAccessToken(): AccessToken? {
+        return accessToken(authInfoEntity?.accessToken)
     }
 
-    override suspend fun setAuthToken(authToken: AuthToken?) {
-        this.authInfoEntity = this.authInfoEntity?.copy(authToken = authToken)
+    override suspend fun setAccessToken(accessToken: AccessToken?) {
+        this.authInfoEntity = this.authInfoEntity?.copy(accessToken = accessToken)
+    }
+
+    override suspend fun getAccessTokenExpirationTimestampEpochMilli(): Long? {
+        return authInfoEntity?.accessTokenExpirationTimestampEpochMilli
+    }
+
+    override suspend fun setAccessTokenExpirationTimestampEpochMilli(accessTokenExpirationTimestampEpochMilli: Long) {
+        this.authInfoEntity = this.authInfoEntity?.copy(accessTokenExpirationTimestampEpochMilli = accessTokenExpirationTimestampEpochMilli)
+    }
+
+    override suspend fun setRefreshToken(refreshToken: String?) {
+        this.authInfoEntity = this.authInfoEntity?.copy(refreshToken = refreshToken)
+    }
+
+    override suspend fun getRefreshToken(): String? {
+        return authInfoEntity?.refreshToken
     }
 
     override suspend fun clearAuthToken() {
-        this.authInfoEntity = this.authInfoEntity?.copy(authToken = null)
+        this.authInfoEntity = this.authInfoEntity?.copy(accessToken = null)
     }
 
     override suspend fun getAuthUsername(): Username? {

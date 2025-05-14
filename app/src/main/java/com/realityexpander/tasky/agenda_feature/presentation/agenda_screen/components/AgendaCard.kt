@@ -1,3 +1,4 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.agenda_feature.presentation.components
 
 import androidx.compose.animation.AnimatedVisibility
@@ -33,7 +34,7 @@ import com.realityexpander.tasky.core.presentation.theme.TaskyLightBlue
 import com.realityexpander.tasky.core.presentation.theme.TaskyPurple
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
-import com.realityexpander.tasky.core.util.authToken
+import com.realityexpander.tasky.core.util.accessToken
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -315,7 +316,9 @@ fun AgendaCardPreview() {
                 userId = "123",
                 email = "chris@demo.com",
                 username = "Chris",
-                authToken = authToken("123"),
+                accessToken = accessToken("123"),
+                refreshToken = "123",
+                accessTokenExpirationTimestampEpochMilli = System.currentTimeMillis() + 1000000,
             ),
             agendaItem = AgendaItem.Event(
                 id = UUID.randomUUID().toString(),

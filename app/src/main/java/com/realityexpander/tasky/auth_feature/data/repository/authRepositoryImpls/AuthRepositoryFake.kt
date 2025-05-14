@@ -1,3 +1,4 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls
 
 import com.realityexpander.tasky.auth_feature.data.common.convertersDTOEntityDomain.toDomain
@@ -49,12 +50,15 @@ class AuthRepositoryFake(
 
         val authInfo = authInfoDTO.toDomain()
 
-        authInfo?.let {
+        authInfo ?: throw Exceptions.LoginException("No AuthInfo")
+        authInfo.let {
             authDao.setAuthInfo(authInfo)
             return authDao.getAuthInfo()
                 ?: throw Exceptions.LoginException("No AuthInfo")
-        } ?: throw Exceptions.LoginException("No AuthInfo")
+        }
     }
+
+
 
     override suspend fun register(
         username: Username,
@@ -93,17 +97,17 @@ class AuthRepositoryFake(
     }
 
     override suspend fun setAuthInfo(authInfo: AuthInfo?) {
-        authApi.setAuthToken(authInfo?.authToken)
+        authApi.setAuthInfo(authInfo)
         authDao.setAuthInfo(authInfo)
     }
 
     override suspend fun clearAuthInfo() {
-        authApi.clearAuthToken()
+        authApi.clearAuthInfo()
         authDao.clearAuthInfo()
     }
 
     override fun getAuthUserId(): String? {
-        return IAuthApi.authUserId
+        return IAuthApi.authenticatedUserId
     }
 
     override suspend fun authenticate(): Boolean {
@@ -111,6 +115,7 @@ class AuthRepositoryFake(
     }
 
     override suspend fun authenticateAuthInfo(authInfo: AuthInfo?): Boolean {
-        return authApi.authenticateAuthToken(authInfo?.authToken)
+        return authApi.authenticateAccessToken(authInfo?.accessToken)
     }
+
 }

@@ -1,3 +1,4 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.auth_feature.data.common.convertersDTOEntityDomain
 
 import com.realityexpander.tasky.auth_feature.data.repository.local.entities.AuthInfoEntity
@@ -8,7 +9,7 @@ import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 // Convert AuthInfo to AuthInfoDTO
 fun AuthInfo?.toDTO(): AuthInfoDTO? {
     return AuthInfoDTO(
-        authToken = this?.authToken,
+        accessToken = this?.accessToken,
         userId = this?.userId,
         username = this?.username,
         email = this?.email
@@ -19,7 +20,9 @@ fun AuthInfo?.toDTO(): AuthInfoDTO? {
 fun AuthInfoDTO?.toDomain(): AuthInfo? {
     return this?.let {
         AuthInfo(
-            authToken = authToken,
+            accessToken = accessToken,
+            accessTokenExpirationTimestampEpochMilli = accessTokenExpirationTimestampEpochMilli,
+            refreshToken = refreshToken,
             userId = userId,
             username = username,
             email = email
@@ -31,7 +34,9 @@ fun AuthInfoDTO?.toDomain(): AuthInfo? {
 fun AuthInfo?.toEntity(): AuthInfoEntity? {
     return this?.let {
         AuthInfoEntity(
-            authToken = authToken,
+            accessToken = accessToken,
+            accessTokenExpirationTimestampEpochMilli = accessTokenExpirationTimestampEpochMilli,
+            refreshToken = refreshToken,
             userId = userId,
             username = username,
             email = email
@@ -43,7 +48,9 @@ fun AuthInfo?.toEntity(): AuthInfoEntity? {
 fun AuthInfoEntity?.toDomain(): AuthInfo? {
     return this?.let {
         AuthInfo(
-            authToken = authToken,
+            accessToken = accessToken,
+            accessTokenExpirationTimestampEpochMilli = accessTokenExpirationTimestampEpochMilli,
+            refreshToken = refreshToken,
             userId = userId,
             username = username,
             email = email
@@ -53,9 +60,11 @@ fun AuthInfoEntity?.toDomain(): AuthInfo? {
 
 fun main() {
     val authInfo = AuthInfo(
-        authToken = "authToken",
+        accessToken = "authToken12345",
+        accessTokenExpirationTimestampEpochMilli = 1234567890L,
+        refreshToken = "refreshToken1234134",
         userId = "userId",
-        username = "username"
+        username = "username",
     )
     val authInfoDTO = authInfo.toDTO()
     val authInfoEntity = authInfo.toEntity()

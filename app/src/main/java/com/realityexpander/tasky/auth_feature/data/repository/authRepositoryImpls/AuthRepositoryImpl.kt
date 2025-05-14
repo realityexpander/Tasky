@@ -13,9 +13,11 @@ import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.Exceptions
 import com.realityexpander.tasky.core.util.Password
 import com.realityexpander.tasky.core.util.Username
+import kotlinx.serialization.InternalSerializationApi
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
+@OptIn(InternalSerializationApi::class)
 class AuthRepositoryImpl @Inject constructor(
     private val authDao: IAuthDao,
     private val authApi: IAuthApi,
@@ -50,14 +52,15 @@ class AuthRepositoryImpl @Inject constructor(
             throw Exceptions.UnknownErrorException(e.message)
         }
 
-        val authInfo = authInfoDTO?.copy(email = email).toDomain() // include email in the AuthInfo
+        val authInfo = authInfoDTO?.copy(email = email).toDomain() // include email in the AuthInfo (passed in from the UI)
 
-        authInfo?.let {
-            authDao.setAuthInfo(authInfo)
-            authApi.setAuthUserId(authInfo.userId)
+        authInfo ?: throw Exceptions.LoginException("No AuthInfo")
+        authInfo.let {
+            setAuthInfo(authInfo)
+
             return authDao.getAuthInfo()
-                ?: throw Exceptions.LoginException("No AuthInfo")
-        } ?: throw Exceptions.LoginException("No AuthInfo")
+                ?: throw Exceptions.LoginException("No AuthInfo from DAO")
+        }
     }
 
     override suspend fun register(
@@ -95,7 +98,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun logout() {
         try {
-            authDao.clearAuthInfo()
+            clearAuthInfo()
             authApi.logout()
         } catch(e: CancellationException) {
             throw e
@@ -108,22 +111,21 @@ class AuthRepositoryImpl @Inject constructor(
         return authDao.getAuthInfo()
     }
 
-    override fun getAuthUserId(): String? {
-        return IAuthApi.authUserId
-    }
-
     override suspend fun setAuthInfo(authInfo: AuthInfo?) {
-        authApi.setAuthToken(authInfo?.authToken)
-        authApi.setAuthUserId(authInfo?.userId)
-
+        authApi.setAuthInfo(authInfo)
         authDao.setAuthInfo(authInfo)
     }
 
+    override fun getAuthUserId(): String? {
+        return IAuthApi.authenticatedUserId
+    }
+
     override suspend fun clearAuthInfo() {
-        authApi.clearAuthToken()
+        authApi.clearAuthInfo()
         authDao.clearAuthInfo()
     }
 
+    // Authenticates the stored AuthToken
     override suspend fun authenticate(): Boolean {
         return try {
             authApi.authenticate()
@@ -140,10 +142,10 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun authenticateAuthInfo(authInfo: AuthInfo?): Boolean {
         if(authInfo == null) return false
-        if(authInfo.authToken.isNullOrBlank()) return false
+        if(authInfo.accessToken.isNullOrBlank()) return false
 
         return try {
-            authApi.authenticateAuthToken(authInfo.authToken)
+            authApi.authenticateAccessToken(authInfo.accessToken)
         } catch(e: CancellationException) {
             false
         } catch (e: Exception) {

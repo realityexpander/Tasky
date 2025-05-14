@@ -1,3 +1,4 @@
+@file:OptIn(InternalSerializationApi::class)
 package com.realityexpander.tasky.agenda_feature.presentation.task_screen
 
 import android.content.res.Configuration
@@ -34,6 +35,7 @@ import com.realityexpander.tasky.agenda_feature.presentation.event_screen.compon
 import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.*
 import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
+import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi.Companion.accessTokenExpirationTimestampEpochMilli
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.animatedTransitions.ScreenTransitions
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
@@ -43,8 +45,8 @@ import com.realityexpander.tasky.core.presentation.util.UiText
 import com.realityexpander.tasky.core.presentation.util.getStringSafe
 import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.coroutines.launch
+import kotlinx.serialization.InternalSerializationApi
 import java.time.ZonedDateTime
-import java.util.*
 
 @Composable
 @Destination(
@@ -553,8 +555,11 @@ fun Preview2() {
     TaskyTheme {
         val authInfo = AuthInfo(
             userId = "X0001",
-            authToken = "1010101010101",
-            username = "Cameron Anderson"
+            accessToken = "1010101010101",
+            username = "Cameron Anderson",
+            email = "cameron@gmail.com",
+            refreshToken = "1010101010101",
+            accessTokenExpirationTimestampEpochMilli = System.currentTimeMillis() + 1000000,
         )
 
         TaskScreenContent(

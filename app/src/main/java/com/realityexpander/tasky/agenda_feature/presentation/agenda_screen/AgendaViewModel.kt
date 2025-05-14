@@ -1,3 +1,4 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 
 import androidx.lifecycle.SavedStateHandle
@@ -100,6 +101,14 @@ class AgendaViewModel @Inject constructor(
         object : TimerTask() {
             override fun run() {
                 _zonedDateTimeNow.value = ZonedDateTime.now()
+
+                // Check if the user is logged in
+                runBlocking {
+                    if (authRepository.getAuthInfo() == null) {
+                        // send logout
+                        sendEvent(Logout)
+                    }
+                }
             }
         }
 
@@ -135,6 +144,11 @@ class AgendaViewModel @Inject constructor(
                         agendaRepository.getAgendaForDayFlow(
                             ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
                         )
+//                            .collect { agendaItems ->  // AI Suggested CDA FIX
+//                                _agendaState.update {
+//                                    it.copy(agendaItems = agendaItems)
+//                                }
+//                            }
                     }
                 }
             }

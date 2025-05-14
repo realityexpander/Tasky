@@ -1,3 +1,4 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.auth_feature.presentation.splash_screen
 
 import android.content.Intent
@@ -54,10 +55,10 @@ class MainActivityViewModel @Inject constructor(
                 if(e.localizedMessage == "401 Unauthorized") {
                     false
                 } else {
-                    authInfo?.authToken != null
+                    authInfo?.accessToken != null
                 }
             } catch (e: Exceptions.UnknownErrorException) {
-                authInfo?.authToken != null
+                authInfo?.accessToken != null
             } catch (e: Exception) {
                 _splashState.update {
                     it.copy(

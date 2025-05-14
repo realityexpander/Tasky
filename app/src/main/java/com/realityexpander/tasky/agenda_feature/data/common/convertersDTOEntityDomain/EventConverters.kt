@@ -1,3 +1,4 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain
 
 import com.google.gson.GsonBuilder

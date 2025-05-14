@@ -5,14 +5,23 @@ import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.A
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi
 import com.realityexpander.tasky.core.data.remote.TaskyApi
 import com.realityexpander.tasky.core.data.remote.utils.getErrorBodyMessage
-import com.realityexpander.tasky.core.util.*
+import com.realityexpander.tasky.core.util.AccessToken
+import com.realityexpander.tasky.core.util.Email
+import com.realityexpander.tasky.core.util.Exceptions
 import com.realityexpander.tasky.core.util.InternetConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetReachable
+import com.realityexpander.tasky.core.util.Password
+import com.realityexpander.tasky.core.util.Username
+import com.realityexpander.tasky.core.util.accessToken
+import com.realityexpander.tasky.core.util.userId
+import com.realityexpander.tasky.core.util.username
+import kotlinx.serialization.InternalSerializationApi
 import retrofit2.HttpException
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
 // Uses real network API & Retrofit calls
 
+@OptIn(InternalSerializationApi::class)
 class AuthApiImpl @Inject constructor (
     private val taskyApi: TaskyApi
 ): IAuthApi {
@@ -32,14 +41,18 @@ class AuthApiImpl @Inject constructor (
             when(response.code()) {
                 200 -> {
                     return AuthInfoDTO(
-                        authToken(response.body()?.authToken
-                            ?: throw Exceptions.LoginException("No Token")
+                        accessToken = accessToken(response.body()?.accessToken
+                            ?: throw Exceptions.LoginException("No Access Token")
                         ),
-                        userId(response.body()?.userId
+                        accessTokenExpirationTimestampEpochMilli = response.body()?.accessTokenExpirationTimestampEpochMilli
+                            ?: throw Exceptions.LoginException("No Access Token Expiration Date"),
+                        refreshToken = response.body()?.refreshToken
+                            ?: throw Exceptions.LoginException("No Refresh Token"),
+                        userId = userId(response.body()?.userId
                             ?: throw Exceptions.LoginException("No User Id")
                         ),
-                        username(response.body()?.username
-                            ?: throw Exceptions.LoginException("No Full Name")
+                        username = username(response.body()?.username
+                            ?: throw Exceptions.LoginException("No Full Name"),
                     ))
                 }
                 409 -> throw Exceptions.LoginException(
@@ -149,13 +162,12 @@ class AuthApiImpl @Inject constructor (
         }
     }
 
-    override suspend fun authenticateAuthToken(authToken: AuthToken?): Boolean {
-        authToken ?: return false
+    override suspend fun authenticateAccessToken(accessToken: AccessToken?): Boolean {
+        accessToken ?: return false
         if(!isInternetReachable) return false
 
         try {
-            val response =
-                taskyApi.authenticateAuthToken(authToken)
+            val response = taskyApi.authenticateAuthToken(accessToken)
 
             return when(response.code()) {
                 200 -> true // Success
@@ -186,6 +198,7 @@ class AuthApiImpl @Inject constructor (
 
         try {
             taskyApi.logout()
+            IAuthApi.clearAuthInfo()
         } catch (e: Exceptions.NetworkException) {
             throw e
         } catch (e: Exceptions.UnknownErrorException) {

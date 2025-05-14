@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.agenda_feature.presentation.event_screen
+package com.realityexpander.tasky.core.data
 
 import android.content.ContentUris
 import android.content.Context
@@ -8,6 +8,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import java.io.File
+import java.lang.Long
 
 
 // Left here for reference
@@ -45,7 +46,7 @@ fun getRealPathFromURI(context: Context, uri: Uri): String? {
                         val file = File(id)
                         if (file.exists()) return id
                     }
-                    val contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id))
+                    val contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id))
                     return getDataColumn(context, contentUri, null, null)
                 }
                 isMediaDocument(uri) -> {

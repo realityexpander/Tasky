@@ -49,6 +49,48 @@ https://user-images.githubusercontent.com/5157474/209285234-f4cab9b6-46ca-40ac-9
 
 ## 🛠 Built With
 
+- Gradle: jbr-17 JetBrains Runtime 17.0.11 - aarch64 /Users/chrisathanas/Library/Java/JavaVirtualMachines/jbr-17.0.11/Contents/Home
+- Android Studio Narwhal | 2025.1.1 Canary 10
+  Build #AI-251.23774.435.2511.13464725, built on May 8, 2025
+  Runtime version: 21.0.6+-13391695-b895.109 aarch64 (JCEF 122.1.9)
+  VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o.
+  Toolkit: sun.lwawt.macosx.LWCToolkit
+  macOS 15.4.1
+  Kotlin plugin: K2 mode
+  GC: G1 Young Generation, G1 Concurrent GC, G1 Old Generation
+  Memory: 4096M
+  Cores: 10
+  Metal Rendering is ON
+  Registry:
+  ide.tooltip.initialDelay=812
+  ide.browser.jcef.gpu.disable=true
+  debugger.new.tool.window.layout=true
+  analyze.exceptions.on.the.fly=true
+  ide.experimental.ui=true
+  com.android.studio.ml.activeModel=com.android.studio.ml.AidaModel
+  Non-Bundled Plugins:
+  com.intellij.marketplace (251.23774.466)
+  dev.j-a.swift (1.3.3.393-251)
+  wu.seal.tool.jsontokotlin (3.7.6)
+  org.jetbrains.plugins.hocon (2025.1.0)
+  idea.plugin.protoeditor (251.23774.318)
+  com.wakatime.intellij.plugin (15.0.3)
+  com.github.airsaid.androidlocalize (3.0.0)
+  DBN (3.5.3.0)
+  net.seesharpsoft.intellij.plugins.csv (4.0.2)
+  org.jetbrains.compose.desktop.ide (1.7.3)
+  com.jetbrains.kmm (0.8.5(251)-1)
+  com.developerphil.adbidea (1.6.19)
+  com.github.copilot (1.5.44-243)
+  mobi.hsz.idea.gitignore (4.5.6)
+  com.abeade.plugin.figma.import (1.4.1)
+
+╰►java --version                                                                                                                                                                                                                                                                       1 ↵  1144  14:08:36 
+openjdk 21.0.6 2025-01-21
+OpenJDK Runtime Environment (build 21.0.6+-13391695-b895.109)
+OpenJDK 64-Bit Server VM (build 21.0.6+-13391695-b895.109, mixed mode)
+
+
 - [Kotlin](https://kotlinlang.org/) - First class and official programming language for Android
   development.
 - [Compose](https://developer.android.com/jetpack/compose) - Jetpack Compose is Android’s

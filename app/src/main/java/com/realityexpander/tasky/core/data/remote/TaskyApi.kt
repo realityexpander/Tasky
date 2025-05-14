@@ -6,26 +6,31 @@ import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.common.util.TimeZoneStr
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaDayDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
-import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.GetAttendeeResponseDTO
+import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.remote.DTOs.GetAttendeeResponseDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.DTOs.ReminderDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.remote.SyncAgendaRequestDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.DTOs.TaskDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.ApiCredentialsDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
-import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi.Companion.createBearerTokenString
-import com.realityexpander.tasky.core.util.AuthToken
+import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.RefreshTokenRequestDTO
+import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.RefreshTokenResponseDTO
+import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi.Companion.createAuthorizationAccessTokenString
+import com.realityexpander.tasky.core.util.AccessToken
 import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.EpochMilli
 import com.realityexpander.tasky.core.util.UuidStr
+import kotlinx.serialization.InternalSerializationApi
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 
+@OptIn(InternalSerializationApi::class)
 interface TaskyApi {
 
     companion object {
-        const val BASE_URL = "https://tasky.pl-coding.com/"
+//        const val BASE_URL = "https://tasky.pl-coding.com/"
 //        const val BASE_URL = "http://localhost:8080/" // for local testing of the backend
+        const val BASE_URL = "http://192.168.1.80:8080/" // for local testing of the backend
         const val API_KEY = BuildConfig.API_KEY
     }
 
@@ -46,10 +51,11 @@ interface TaskyApi {
         // Uses the Authorization Header created in the the interceptor
     ): Response<Void>
 
+    // Overrides the Authorization Header in the interceptor and uses the `accessToken` parameter
     @GET("authenticate")
     suspend fun authenticateAuthToken(
-        authToken: AuthToken?,
-        @Header("Authorization") authorizationHeader: String = createBearerTokenString(authToken),
+        accessToken: AccessToken?,
+        @Header("Authorization") authorizationHeader: String = createAuthorizationAccessTokenString(accessToken),
     ): Response<Void>
 
     @GET("logout")

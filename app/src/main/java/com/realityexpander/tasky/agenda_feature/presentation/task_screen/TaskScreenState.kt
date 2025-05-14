@@ -1,3 +1,4 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.agenda_feature.presentation.task_screen
 
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
