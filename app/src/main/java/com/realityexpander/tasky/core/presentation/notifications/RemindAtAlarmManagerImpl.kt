@@ -88,7 +88,7 @@ class RemindAtAlarmManagerImpl @Inject constructor(
             context,
             0,
             Intent(context, MainActivity::class.java),
-            PendingIntent.FLAG_NO_CREATE
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         )
 
         logcat { "cancelAllAlarms alarmSupervisorPendingIntent=$alarmSupervisorPendingIntent" }
