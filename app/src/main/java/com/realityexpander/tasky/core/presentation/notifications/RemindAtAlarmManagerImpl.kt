@@ -1,5 +1,4 @@
 package com.realityexpander.tasky.core.presentation.notifications
-
 import android.Manifest
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -7,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Parcelable
-import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
@@ -34,7 +32,7 @@ class RemindAtAlarmManagerImpl @Inject constructor(
         private const val REMIND_AT_ALARM_SUPERVISOR_REQUEST_CODE = 1
     }
 
-    @androidx.annotation.RequiresPermission(android.Manifest.permission.SCHEDULE_EXACT_ALARM)
+    @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
     override fun setAlarmsForAgendaItems(
         agendaItems: List<AgendaItem>
     ) {
@@ -73,7 +71,7 @@ class RemindAtAlarmManagerImpl @Inject constructor(
             Intent(context, MainActivity::class.java).also {
                 it.putExtra(
                     CURRENT_ALARMS_PENDING_INTENTS,
-                    arrayOf<PendingIntent>(*alarmPendingIntents.toTypedArray())
+                    arrayOf(*alarmPendingIntents.toTypedArray())
                 )
                 it.putStringArrayListExtra( // for debugging
                     CURRENT_ALARMS_TITLES,

@@ -189,6 +189,7 @@ class AuthApiFake @Inject constructor(): IAuthApi {
 
     /////////////// Server simulation functions //////////////////////
 
+    @Suppress("PrivatePropertyName") // ignore the underscore
     private val users_onServer =
         mutableMapOf<Email, AuthInfoFakeEntity>()
 
@@ -199,6 +200,7 @@ class AuthApiFake @Inject constructor(): IAuthApi {
         val secret: String
     )
 
+    @Suppress("SpellCheckingInspection") // For the sake of the example
     val tokenConfig = TokenConfig(
         issuer = "http://localhost:8080", // environmentVariables.jwtIssuer
         audience = "users", // environmentVariables.jwtAudience
