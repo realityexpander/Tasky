@@ -1,8 +1,8 @@
-@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
+@file:Suppress("PackageName")
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs
 
-import com.realityexpander.tasky.agenda_feature.common.util.AttendeeId
-import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
+import com.realityexpander.tasky.agenda_feature.domain.AttendeeId
+import com.realityexpander.tasky.agenda_feature.domain.PhotoId
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.remote.DTOs.AttendeeDTO
 import com.realityexpander.tasky.agenda_feature.domain.AbstractAgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.UsesEpochMilli

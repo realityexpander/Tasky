@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.DTOs
 
-import com.realityexpander.tasky.agenda_feature.common.util.TaskId
+import com.realityexpander.tasky.agenda_feature.domain.TaskId
 import com.realityexpander.tasky.agenda_feature.domain.AbstractAgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.UsesEpochMilli
 import com.realityexpander.tasky.core.util.EpochMilli

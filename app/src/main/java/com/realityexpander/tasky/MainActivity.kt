@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
@@ -33,7 +33,6 @@ import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlinx.serialization.InternalSerializationApi
 import logcat.logcat
 import kotlin.system.exitProcess
 
@@ -44,7 +43,6 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalAnimationApi::class,
         ExperimentalMaterialNavigationApi::class,
-        InternalSerializationApi::class
     )
     override fun onCreate(savedInstanceState: Bundle?) {
         // user-initiated process death: adb shell am force-stop com.realityexpander.tasky
@@ -77,7 +75,7 @@ class MainActivity : ComponentActivity() {
                     val splashState by viewModel.splashState.collectAsState()
                     val context = LocalContext.current
 
-                    val navController = rememberAnimatedNavController()
+                    val navController = rememberNavController()
                     val navHostEngine = rememberAnimatedNavHostEngine(
                         navHostContentAlignment = Alignment.TopCenter,
                         rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING, // default `rootDefaultAnimations` means no animations
@@ -117,11 +115,11 @@ class MainActivity : ComponentActivity() {
                                 .background(MaterialTheme.colors.background)
                                 .fillMaxSize(),
                             startRoute =
-                            if (splashState.authInfo != null) {
-                                AgendaScreenDestination
-                            } else {
-                                LoginScreenDestination
-                            },
+                                if (splashState.authInfo != null) {
+                                    AgendaScreenDestination
+                                } else {
+                                    LoginScreenDestination
+                                },
                         )
                     }
                 }
@@ -134,11 +132,11 @@ class MainActivity : ComponentActivity() {
         exitProcess(0)
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
         logcat { "onNewIntent: $intent" }
-        intent?.dumpIntentExtras()
+        intent.dumpIntentExtras()
 
         // Handle Alarm Notification
         viewModel.onIntentReceived(intent)

@@ -1,4 +1,3 @@
-@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.auth_feature.data.repository.authRepositoryImpls
 
 import com.realityexpander.tasky.auth_feature.data.common.convertersDTOEntityDomain.toDomain

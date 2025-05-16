@@ -1,8 +1,8 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.remote
 
-import com.realityexpander.tasky.agenda_feature.common.util.EventId
-import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
-import com.realityexpander.tasky.agenda_feature.common.util.TaskId
+import com.realityexpander.tasky.agenda_feature.domain.EventId
+import com.realityexpander.tasky.agenda_feature.domain.ReminderId
+import com.realityexpander.tasky.agenda_feature.domain.TaskId
 import kotlinx.serialization.Required
 import kotlinx.serialization.Serializable
 

@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.local
 
-import com.realityexpander.tasky.agenda_feature.common.util.TaskId
+import com.realityexpander.tasky.agenda_feature.domain.TaskId
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.local.entities.TaskEntity
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime

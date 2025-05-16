@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.runtime.*
@@ -25,7 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.IInternetConnectivityObserver
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.auth_feature.presentation.components.EmailField
 import com.realityexpander.tasky.auth_feature.presentation.components.NameField
@@ -34,7 +35,7 @@ import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyShapes
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.presentation.util.keyboardVisibilityObserver
-import com.realityexpander.tasky.core.util.InternetConnectivityObserver.InternetAvailabilityIndicator
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.InternetAvailabilityIndicator
 import com.realityexpander.tasky.destinations.LoginScreenDestination
 
 @Composable
@@ -295,7 +296,7 @@ fun RegisterScreenContent(
                         .align(alignment = Alignment.BottomStart)
                 ) {
                     // • BACK TO LOGIN BUTTON
-                    CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) { // allows smaller touch-targets
+                    CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) { // allows smaller touch-targets
                         IconButton(
                             onClick = {
                                 navigateToLogin()

@@ -10,8 +10,8 @@ import kotlinx.serialization.encoding.Encoder
 import java.time.ZonedDateTime
 
 
-@OptIn(ExperimentalSerializationApi::class)
-@Serializer(forClass = ZonedDateTime::class)
+//@OptIn(ExperimentalSerializationApi::class)
+//@Serializer(forClass = ZonedDateTime::class)
 object ZonedDateTimeSerializer : KSerializer<ZonedDateTime> {
     override val descriptor =
         PrimitiveSerialDescriptor("ZonedDateTime", PrimitiveKind.STRING)

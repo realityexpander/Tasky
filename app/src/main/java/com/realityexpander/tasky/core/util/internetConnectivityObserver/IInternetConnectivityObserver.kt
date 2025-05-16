@@ -1,4 +1,4 @@
-package com.realityexpander.observeconnectivity
+package com.realityexpander.tasky.core.util.internetConnectivityObserver
 
 import kotlinx.coroutines.flow.Flow
 

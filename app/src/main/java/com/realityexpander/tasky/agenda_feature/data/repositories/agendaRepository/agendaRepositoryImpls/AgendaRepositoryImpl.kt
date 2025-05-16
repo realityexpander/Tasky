@@ -1,11 +1,10 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls
 
-import com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
-import com.realityexpander.tasky.R
-import com.realityexpander.tasky.agenda_feature.common.util.EventId
-import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
-import com.realityexpander.tasky.agenda_feature.common.util.TaskId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
+import com.realityexpander.tasky.R
+import com.realityexpander.tasky.agenda_feature.domain.EventId
+import com.realityexpander.tasky.agenda_feature.domain.ReminderId
+import com.realityexpander.tasky.agenda_feature.domain.TaskId
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.IAgendaApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.IAttendeeRepository
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.ISyncRepository
@@ -15,7 +14,7 @@ import com.realityexpander.tasky.agenda_feature.domain.*
 import com.realityexpander.tasky.core.presentation.util.ResultUiText
 import com.realityexpander.tasky.core.presentation.util.UiText
 import com.realityexpander.tasky.core.util.Email
-import com.realityexpander.tasky.core.util.InternetConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetReachable
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetReachable
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

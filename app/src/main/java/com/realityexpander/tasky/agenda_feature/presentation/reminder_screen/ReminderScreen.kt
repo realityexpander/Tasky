@@ -1,4 +1,3 @@
-@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.agenda_feature.presentation.reminder_screen
 
 import android.content.res.Configuration
@@ -6,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -29,10 +29,10 @@ import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.TimeDateRow
-import com.realityexpander.tasky.agenda_feature.presentation.event_screen.RemindAtRow
-import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.SmallHeightHorizontalDivider
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.RemindAtRow
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.SmallHeightHorizontalDivider
 import com.realityexpander.tasky.agenda_feature.presentation.reminder_screen.ReminderScreenEvent.*
-import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.toLongMonthDayYear
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.animatedTransitions.ScreenTransitions
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
@@ -470,11 +470,11 @@ fun ReminderScreenContent(
         modifier = Modifier.fillMaxSize(),
         transitionSpec = {
             slideInVertically(animationSpec = tween(1000),
-                initialOffsetY = { fullHeight -> fullHeight }
-            ) with
-            slideOutVertically(animationSpec = tween(1000),
-                targetOffsetY = { fullHeight -> fullHeight }
-            )
+                        initialOffsetY = { fullHeight -> fullHeight }
+                    ).togetherWith(
+                slideOutVertically(animationSpec = tween(1000),
+                        targetOffsetY = { fullHeight -> fullHeight }
+                    ))
         }
     ) { targetState ->
         targetState?.let { editMode ->

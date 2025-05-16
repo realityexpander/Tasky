@@ -1,11 +1,10 @@
-@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.auth_feature.presentation.register_screen
 
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.IInternetConnectivityObserver
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository

@@ -5,7 +5,9 @@ import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.PendingIntent.*
+import android.app.PendingIntent.FLAG_IMMUTABLE
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
+import android.app.PendingIntent.getBroadcast
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -13,6 +15,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -35,7 +38,8 @@ import com.realityexpander.tasky.core.util.toIntegerHashCodeOfUUIDString
 import com.realityexpander.tasky.core.util.toZonedDateTime
 import logcat.logcat
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.UUID
+import androidx.core.graphics.createBitmap
 
 class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificationManager {
 
@@ -71,7 +75,15 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
         alarmIntent: Intent
     ) {
         alarmIntent.apply {
-            val agendaItem = getParcelableExtra(ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM) as? AgendaItem
+            val agendaItem =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    getParcelableExtra(
+                        ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM,
+                        AgendaItem::class.java
+                    )
+                } else
+                    @Suppress("DEPRECATION")
+                    getParcelableExtra(ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM) as? AgendaItem?
 
             agendaItem?.let { item ->
                 createNotification(
@@ -109,12 +121,13 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
     // Clear this alarm Intent from the AlarmManager
     private fun clearAlarm(alarmIntent: Intent) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        @Suppress("RemoveRedundantQualifierName") // Make PendingIntent explicit
         alarmManager.cancel(
             PendingIntent.getActivity(
                 context,
                 alarmIntent.getIntExtra(ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID, 0),
                 alarmIntent,
-                0
+                PendingIntent.FLAG_IMMUTABLE
             )
         )
     }
@@ -169,6 +182,7 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
                 Intent(context, MainActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }.let { intent ->
+                    @Suppress("RemoveRedundantQualifierName") // Make PendingIntent explicit
                     PendingIntent.getActivity(
                         context,
                         alarmId,
@@ -237,6 +251,7 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
         return completeTaskAction
     }
 
+    @Suppress("VariableInitializerIsRedundant")  // for backgroundColor = Color.WHITE
     private fun createInfoCardBitmap(
         agendaItem: AgendaItem,
         title: String,
@@ -247,7 +262,8 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
         val height = 300
 
         // Create a Bitmap and a Canvas for the Bitmap
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        // val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val bitmap = createBitmap(width, height)
         val canvas = Canvas(bitmap)
         val paint = Paint()
 
@@ -291,7 +307,7 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
         paint.color = textColor
         paint.textSize = 24f
         val offsetY2ForTask = if (agendaItem.toAgendaItemType() == AgendaItemType.Task) 15 else 0
-        val descriptionText = if (description.isBlank()) "<No description>" else description
+        val descriptionText = description.ifBlank { "<No description>" }
 
         // Draw the `title`, `startTime` & `description` text
         canvas.drawTextBlock(
@@ -305,7 +321,6 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
             20f,
             70f + offsetY2ForTask,
             width,
-            height,
             paint
         )
 
@@ -319,7 +334,6 @@ class RemindAtNotificationManagerImpl(val context: Context) : IRemindAtNotificat
         x: Float,
         y: Float,
         width: Int,
-        height: Int,
         paint: Paint
     ) {
         val textPaint = TextPaint(paint)

@@ -1,7 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.syncDao.syncDaoImpl
 
 import androidx.room.*
-import com.realityexpander.tasky.agenda_feature.common.util.AgendaItemId
+import com.realityexpander.tasky.agenda_feature.domain.AgendaItemId
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ISyncDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ModificationTypeForSync
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.entities.SyncItemEntity

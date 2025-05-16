@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local
 
-import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
+import com.realityexpander.tasky.agenda_feature.domain.ReminderId
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.entities.ReminderEntity
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime

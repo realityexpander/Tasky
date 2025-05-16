@@ -3,7 +3,6 @@ package com.realityexpander.tasky.di
 import android.util.Log
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.realityexpander.tasky.BuildConfig
-import com.realityexpander.tasky.agenda_feature.data.common.serializers.ZonedDateTimeSerializer
 import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.RefreshTokenRequestDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.RefreshTokenResponseDTO
@@ -17,7 +16,6 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.Dispatcher
 import okhttp3.Interceptor
@@ -35,7 +33,6 @@ import java.time.ZonedDateTime
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
-import kotlin.jvm.java
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -61,7 +58,6 @@ object NetworkingModule {
     ///////////////////////////////////////////
     // Networking (OkHttp & Retrofit)
 
-    @OptIn(InternalSerializationApi::class)
     private interface TaskyRefreshAccessTokenService {
         @POST("/accessToken")
         suspend fun refreshAccessToken(@Body request: RefreshTokenRequestDTO): retrofit2.Response<RefreshTokenResponseDTO>
@@ -69,7 +65,6 @@ object NetworkingModule {
 
     @Provides
     @Singleton
-    @OptIn(InternalSerializationApi::class)
     fun provideOkHttpClient(
         @AuthDaoProdUsingBinds authDao: IAuthDao,
     ): OkHttpClient {

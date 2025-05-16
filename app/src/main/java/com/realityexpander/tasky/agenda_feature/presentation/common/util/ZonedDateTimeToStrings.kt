@@ -1,11 +1,13 @@
-package com.realityexpander.tasky.agenda_feature.util
+package com.realityexpander.tasky.agenda_feature.presentation.common.util
 
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.core.presentation.util.UiText
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.abs
 
 fun ZonedDateTime.toLongMonthDayYear(): String {
     return ("${this.month.name} " +
@@ -28,7 +30,7 @@ fun ZonedDateTime.toTimeDifferenceHumanReadable(remindAtTime: ZonedDateTime): Ui
     if (diff == 0L) return UiText.ResOrStr(R.string.zonedDateTimeToString_same_time, "Same time")
 
     val beforeOrAfter = if (diff < 0) "before" else "after"
-    val diffAbs = Math.abs(diff)
+    val diffAbs = abs(diff)
 
     val days = diffAbs / 86400
     val hours = (diffAbs % 86400) / 3600
@@ -79,13 +81,13 @@ fun ZonedDateTime.toTimeDifferenceHumanReadable(remindAtTime: ZonedDateTime): Ui
 
 // Local tests
 fun main() {
-    val remindAt = ZonedDateTime.of(2021, 1, 1, 0, 0, 0, 0, java.time.ZoneId.of("UTC"))
+    val remindAt = ZonedDateTime.of(2021, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
 
     println("remindAt.toLongMonthDayYear() == \"JANUARY 1 2021\": ${remindAt.toLongMonthDayYear() == "JANUARY 1 2021"}")
     println("remindAt.toShortMonthDayYear() == \"Jan 1 2021\": ${remindAt.toShortMonthDayYear() == "Jan 1 2021"}")
 
 
-    val date2 = ZonedDateTime.of(2021, 12, 31, 0, 0, 0, 0, java.time.ZoneId.of("UTC"))
+    val date2 = ZonedDateTime.of(2021, 12, 31, 0, 0, 0, 0, ZoneId.of("UTC"))
     println("date2.toLongMonthDayYear() == \"DECEMBER 31 2021\": ${date2.toLongMonthDayYear() == "DECEMBER 31 2021"}")
     println("date2.toShortMonthDayYear() == \"Dec 31 2021\": ${date2.toShortMonthDayYear() == "Dec 31 2021"}")
 
@@ -95,7 +97,7 @@ fun main() {
     println("remindAt.plusHours(1).toTime12Hour() == \"1:00 AM\": ${remindAt.plusHours(1).toTime12Hour() == "1:00 AM"}")
 
 
-    val date = ZonedDateTime.of(2021, 1, 1, 0, 0, 0, 0, java.time.ZoneId.of("UTC"))
+    val date = ZonedDateTime.of(2021, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
 
     println()
     println("date.toTimeDifferenceHumanReadable(date) == \"Same time\": " +

@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.agenda_feature.presentation.event_screen.components
+package com.realityexpander.tasky.agenda_feature.presentation.common.components
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth

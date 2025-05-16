@@ -5,10 +5,8 @@ import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.InternalSerializationApi
 import logcat.logcat
 
-@OptIn(InternalSerializationApi::class)
 @Suppress("RemoveRedundantQualifierName", "RedundantCompanionReference")
 interface IAuthApi {
     suspend fun login(
@@ -117,4 +115,6 @@ interface IAuthApi {
             IAuthApi.Companion.refreshToken = null
         }
     }
+
+    suspend fun refreshAccessToken(userId: UserId, refreshToken: RefreshToken) { /* THIS IS NO-OP STUB FOR TESTING */ }
 }

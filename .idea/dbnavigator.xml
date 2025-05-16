@@ -50,7 +50,7 @@
           <description value="" />
           <database-type value="SQLITE" />
           <config-type value="BASIC" />
-          <database-version value="3.41" />
+          <database-version value="3.49" />
           <driver-source value="BUNDLED" />
           <driver-library value="" />
           <driver value="" />

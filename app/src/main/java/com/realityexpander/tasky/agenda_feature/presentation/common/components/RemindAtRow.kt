@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.agenda_feature.presentation.event_screen
+package com.realityexpander.tasky.agenda_feature.presentation.common.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,8 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
-import com.realityexpander.tasky.agenda_feature.util.toTimeDifferenceHumanReadable
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.toTimeDifferenceHumanReadable
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
 import com.realityexpander.tasky.core.presentation.common.modifiers.smallWidth
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme

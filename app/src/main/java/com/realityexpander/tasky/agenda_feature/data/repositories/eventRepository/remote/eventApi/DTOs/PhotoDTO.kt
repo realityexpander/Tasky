@@ -1,8 +1,9 @@
+@file:Suppress("PackageName")
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs
 
 import android.net.Uri
-import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
-import com.realityexpander.tasky.agenda_feature.common.util.UrlStr
+import com.realityexpander.tasky.agenda_feature.domain.PhotoId
+import com.realityexpander.tasky.agenda_feature.domain.UrlStr
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames

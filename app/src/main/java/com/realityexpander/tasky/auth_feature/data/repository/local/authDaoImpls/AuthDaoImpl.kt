@@ -12,12 +12,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
-import kotlinx.serialization.InternalSerializationApi
 import javax.inject.Inject
 
 // Uses the DAO pattern to access the Proto Datastore (does not use Room)
 
-@OptIn(InternalSerializationApi::class)
 class AuthDaoImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val appSettingsRepository: IAppSettingsRepository, //AppSettingsRepositoryImpl

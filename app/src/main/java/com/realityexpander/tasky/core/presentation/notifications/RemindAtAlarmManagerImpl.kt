@@ -1,10 +1,14 @@
 package com.realityexpander.tasky.core.presentation.notifications
 
+import android.Manifest
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Parcelable
+import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IRemindAtAlarmManager
@@ -30,6 +34,7 @@ class RemindAtAlarmManagerImpl @Inject constructor(
         private const val REMIND_AT_ALARM_SUPERVISOR_REQUEST_CODE = 1
     }
 
+    @androidx.annotation.RequiresPermission(android.Manifest.permission.SCHEDULE_EXACT_ALARM)
     override fun setAlarmsForAgendaItems(
         agendaItems: List<AgendaItem>
     ) {
@@ -37,17 +42,20 @@ class RemindAtAlarmManagerImpl @Inject constructor(
         // Only include upcoming `Remind At` items (RemindAt is in the future)
         val futureAgendaItems =
             agendaItems.filter {
-                it.remindAt.toEpochMilli() >= ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS).toEpochMilli()
+                it.remindAt.toEpochMilli() >= ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+                    .toEpochMilli()
             }
 
         if (futureAgendaItems.isEmpty()) {
             return
         }
 
-        logcat { "setAlarmsForAgendaItems: futureAgendaItems = ${
-            futureAgendaItems.map { it.title }
-                .joinToString { it }
-        }" }
+        logcat {
+            "setAlarmsForAgendaItems: futureAgendaItems = ${
+                futureAgendaItems.map { it.title }
+                    .joinToString { it }
+            }"
+        }
 
         // Create an "Alarm PendingIntent" for each AgendaItem's `.remindAt` time
         val alarmPendingIntents = mutableListOf<PendingIntent>()
@@ -103,14 +111,39 @@ class RemindAtAlarmManagerImpl @Inject constructor(
                     { _, alarmSupervisorIntent, _, _, _ ->
 
                         // Get all the supervised Alarm PendingIntents from the Alarm Supervisor Intent.
-                        val currentAlarmIntents =
-                            alarmSupervisorIntent.getParcelableArrayExtra(CURRENT_ALARMS_PENDING_INTENTS)
-                        currentAlarmIntents?.forEachIndexed { index, alarmIntent ->
-                            logcat { "cancelAllAlarms: cancel() item=${alarmSupervisorIntent.getStringArrayListExtra(CURRENT_ALARMS_TITLES)?.get(index)}" }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            val currentAlarmIntents =
+                                alarmSupervisorIntent.getParcelableArrayListExtra(
+                                    CURRENT_ALARMS_PENDING_INTENTS,
+                                    PendingIntent::class.java
+                                )
+                            currentAlarmIntents?.forEachIndexed { index, alarmIntent ->
+                                logcat {
+                                    "cancelAllAlarms: cancel() item=${
+                                        alarmSupervisorIntent.getStringArrayListExtra(CURRENT_ALARMS_TITLES)?.get(index)
+                                    }"
+                                }
 
-                            // Cancel each Alarm PendingIntent.
-                            (alarmIntent as PendingIntent).cancel()
+                                // Cancel each Alarm PendingIntent.
+                                (alarmIntent as PendingIntent).cancel()
+                            }
+                        } else {
+                            @Suppress("DEPRECATION")
+                            val currentAlarmIntents =
+                                alarmSupervisorIntent.getParcelableArrayExtra(CURRENT_ALARMS_PENDING_INTENTS)
+                            currentAlarmIntents?.forEachIndexed { index, alarmIntent ->
+                                logcat {
+                                    "cancelAllAlarms: cancel() item=${
+                                        alarmSupervisorIntent.getStringArrayListExtra(CURRENT_ALARMS_TITLES)?.get(index)
+                                    }"
+                                }
+
+                                // Cancel each Alarm PendingIntent.
+                                (alarmIntent as PendingIntent).cancel()
+                            }
                         }
+
+
 
                         onFinished()
                     },
@@ -127,15 +160,17 @@ class RemindAtAlarmManagerImpl @Inject constructor(
     //////////////////////////////////////
     ////////// HELPER FUNCTIONS //////////
 
+    @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
     private fun createAlarmPendingIntentAndSetAlarm(
         agendaItem: AgendaItem,
         alarmId: Int,
     ): PendingIntent {
-        val alarmBroadcastReceiverIntent = Intent(context, AlarmBroadcastReceiver::class.java).apply {
-            putExtra(ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM, agendaItem as Parcelable)
-            putExtra(ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID, alarmId)
-            action = ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
-        }
+        val alarmBroadcastReceiverIntent =
+            Intent(context, AlarmBroadcastReceiver::class.java).apply {
+                putExtra(ALARM_NOTIFICATION_INTENT_EXTRA_AGENDA_ITEM, agendaItem as Parcelable)
+                putExtra(ALARM_NOTIFICATION_INTENT_EXTRA_ALARM_ID, alarmId)
+                action = ALARM_NOTIFICATION_INTENT_ACTION_ALARM_TRIGGER
+            }
 
         val broadcastAlarmPendingIntent =
             PendingIntent.getBroadcast(

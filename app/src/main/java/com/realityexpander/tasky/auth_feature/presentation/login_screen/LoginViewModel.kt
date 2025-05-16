@@ -1,11 +1,10 @@
-@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.auth_feature.presentation.login_screen
 
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.IInternetConnectivityObserver
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.auth_feature.domain.IAuthRepository
@@ -36,7 +35,7 @@ class LoginViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
     val validateEmail: ValidateEmail,
     val validatePassword: ValidatePassword,
-    private val connectivityObserver: IInternetConnectivityObserver,
+    connectivityObserver: IInternetConnectivityObserver,
     private val savedStateHandle: SavedStateHandle,
     val appSettingsRepository: IAppSettingsRepository
 ) : ViewModel() {
@@ -64,7 +63,10 @@ class LoginViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val onlineState =
-        connectivityObserver.onlineStateFlow.mapLatest { it }
+        connectivityObserver.onlineStateFlow.mapLatest {
+            println("LoginViewModel: onlineState: $it")
+            it
+        }
 
     private val _loginState = MutableStateFlow(
         LoginState(

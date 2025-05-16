@@ -2,8 +2,6 @@ package com.realityexpander.tasky.agenda_feature.domain
 
 import android.net.Uri
 import android.os.Parcelable
-import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
-import com.realityexpander.tasky.agenda_feature.common.util.UrlStr
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

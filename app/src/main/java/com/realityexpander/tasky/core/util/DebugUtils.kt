@@ -11,6 +11,6 @@ fun Intent.dumpIntentExtras() {
 
     logcat {"┌-Intent Extras:" }
     for (key in bundle.keySet()!!) {
-        logcat { "┡->$key : " + if(bundle.get(key) != null) bundle.get(key) else "NULL" }
+        logcat { "┡->$key : " + if(bundle.getString(key) != null) bundle.getString(key) else "<<NULL>>" }
     }
 }

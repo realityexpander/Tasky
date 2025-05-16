@@ -1,11 +1,10 @@
-@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.agenda_feature.presentation.task_screen
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.agenda_feature.common.util.TaskId
+import com.realityexpander.tasky.agenda_feature.domain.TaskId
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IAgendaRepository
 import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.*

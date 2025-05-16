@@ -1,7 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.domain
 
 import android.os.Parcelable
-import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
 import com.realityexpander.tasky.core.util.EpochMilli
 import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.UuidStr

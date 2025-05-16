@@ -1,6 +1,6 @@
-package com.realityexpander.tasky.core.util.InternetConnectivityObserver
+@file:Suppress("PackageName")
+package com.realityexpander.tasky.core.util.internetConnectivityObserver
 
-import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map

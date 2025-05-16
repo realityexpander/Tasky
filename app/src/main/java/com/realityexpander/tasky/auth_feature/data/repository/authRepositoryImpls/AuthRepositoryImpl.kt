@@ -13,11 +13,9 @@ import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.Exceptions
 import com.realityexpander.tasky.core.util.Password
 import com.realityexpander.tasky.core.util.Username
-import kotlinx.serialization.InternalSerializationApi
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
-@OptIn(InternalSerializationApi::class)
 class AuthRepositoryImpl @Inject constructor(
     private val authDao: IAuthDao,
     private val authApi: IAuthApi,

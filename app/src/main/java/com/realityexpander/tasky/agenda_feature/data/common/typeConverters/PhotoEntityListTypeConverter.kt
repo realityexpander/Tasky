@@ -3,7 +3,6 @@ package com.realityexpander.tasky.agenda_feature.data.common.typeConverters
 import android.net.Uri
 import androidx.room.TypeConverter
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.local.entities.PhotoEntity
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 

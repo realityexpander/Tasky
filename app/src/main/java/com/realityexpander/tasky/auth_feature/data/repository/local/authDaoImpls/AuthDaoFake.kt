@@ -5,13 +5,16 @@ import com.realityexpander.tasky.auth_feature.data.common.convertersDTOEntityDom
 import com.realityexpander.tasky.auth_feature.data.repository.local.IAuthDao
 import com.realityexpander.tasky.auth_feature.data.repository.local.entities.AuthInfoEntity
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
-import com.realityexpander.tasky.core.util.*
-import kotlinx.serialization.InternalSerializationApi
+import com.realityexpander.tasky.core.util.AccessToken
+import com.realityexpander.tasky.core.util.UserId
+import com.realityexpander.tasky.core.util.Username
+import com.realityexpander.tasky.core.util.accessToken
+import com.realityexpander.tasky.core.util.userId
+import com.realityexpander.tasky.core.util.username
 import javax.inject.Inject
 
 // Simulates a local database
 
-@OptIn(InternalSerializationApi::class)
 class AuthDaoFake @Inject constructor(): IAuthDao {
     private var authInfoEntity: AuthInfoEntity? = null
 

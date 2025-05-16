@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository
 
-import com.realityexpander.tasky.agenda_feature.common.util.AgendaItemId
+import com.realityexpander.tasky.agenda_feature.domain.AgendaItemId
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.ModificationTypeForSync
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.local.entities.SyncItemEntity
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem

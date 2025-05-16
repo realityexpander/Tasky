@@ -1,4 +1,3 @@
-@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 
 import android.content.res.Configuration
@@ -10,6 +9,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,14 +43,15 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.TimeDateRow
-import com.realityexpander.tasky.agenda_feature.presentation.common.util.isImageSizeTooLargeToUpload
+import com.realityexpander.tasky.agenda_feature.data.common.utils.isImageSizeTooLargeToUpload
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.RemindAtRow
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.OneTimeEvent.*
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.AttendeeList
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.PillButton
-import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.SmallHeightHorizontalDivider
-import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.SmallHeightHorizontalDivider
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.toLongMonthDayYear
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.data.isAvailable
 import com.realityexpander.tasky.core.presentation.animatedTransitions.ScreenTransitions
@@ -514,7 +515,7 @@ fun AddEventScreenContent(
                 ) {
 
                     if ((isEditable && isUserEventCreator)
-                        && state.event?.photos.isNullOrEmpty()
+                        && state.event.photos.isEmpty()
                     ) {
                         // • NO PHOTOS
                         Row(
@@ -550,8 +551,8 @@ fun AddEventScreenContent(
                             )
                         }
                     } else {
-                        if ( (isEditable && isUserEventCreator)
-                            || state.event?.photos?.isNotEmpty() == true
+                        if ((isEditable && isUserEventCreator)
+                            || state.event.photos.isNotEmpty()
                         ) {
                             // • LIST OF PHOTO IMAGES
                             Column(
@@ -580,11 +581,11 @@ fun AddEventScreenContent(
                                         .wrapContentHeight()
                                         .horizontalScroll(state = rememberScrollState())
                                 ) {
-                                    var photoList = state.event?.photos
+                                    var photoList = state.event.photos
 
                                     // Add the "Add Photo" button if in edit mode
                                     if (isEditable && isUserEventCreator) {
-                                        if (photoList.isNullOrEmpty()) {
+                                        if (photoList.isEmpty()) {
                                             photoList = listOf(
                                                 Photo.Local(
                                                     ADD_PHOTO_PLACEHOLDER,
@@ -604,7 +605,7 @@ fun AddEventScreenContent(
                                         }
                                     }
 
-                                    photoList?.forEach { photo ->
+                                    photoList.forEach { photo ->
                                         // • Photo content box
                                         Box(
                                             modifier = Modifier
@@ -945,11 +946,11 @@ fun AddEventScreenContent(
         modifier = Modifier.fillMaxSize(),
         transitionSpec = {
             slideInVertically(animationSpec = tween(1000),
-                initialOffsetY = { fullHeight -> fullHeight }
-            ) with
-            slideOutVertically(animationSpec = tween(1000),
-                targetOffsetY = { fullHeight -> fullHeight }
-            )
+                        initialOffsetY = { fullHeight -> fullHeight }
+                    ).togetherWith(
+                slideOutVertically(animationSpec = tween(1000),
+                        targetOffsetY = { fullHeight -> fullHeight }
+                    ))
         }
     ) { targetState ->
         targetState?.let { editMode ->
@@ -1014,6 +1015,7 @@ fun Preview() {
             accessTokenExpirationTimestampEpochMilli = System.currentTimeMillis() + 1000000,
         )
 
+        @Suppress("SpellCheckingInspection")
         AddEventScreenContent(
             state = EventScreenState(
 

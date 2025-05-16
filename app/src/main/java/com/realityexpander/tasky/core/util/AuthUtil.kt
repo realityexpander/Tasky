@@ -34,4 +34,8 @@ fun uuidStr(uuidStr: String?): UuidStr? {
     return uuidStr
 }
 
+fun refreshToken(refreshToken: String?): RefreshToken? {
+    return refreshToken
+}
+
 

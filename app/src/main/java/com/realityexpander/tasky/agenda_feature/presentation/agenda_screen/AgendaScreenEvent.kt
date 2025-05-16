@@ -1,8 +1,8 @@
 package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 
-import com.realityexpander.tasky.agenda_feature.common.util.AgendaItemId
-import com.realityexpander.tasky.agenda_feature.common.util.EventId
-import com.realityexpander.tasky.agenda_feature.common.util.TaskId
+import com.realityexpander.tasky.agenda_feature.domain.AgendaItemId
+import com.realityexpander.tasky.agenda_feature.domain.EventId
+import com.realityexpander.tasky.agenda_feature.domain.TaskId
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.enums.AgendaItemType
 import com.realityexpander.tasky.core.presentation.util.UiText

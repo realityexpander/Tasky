@@ -16,7 +16,7 @@ import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginEvent
 import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginViewModel
 import com.realityexpander.tasky.core.data.settings.AppSettingsRepositoryFake
-import com.realityexpander.tasky.core.util.InternetConnectivityObserver.ConnectivityObserverFake
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.ConnectivityObserverFake
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.mockkStatic

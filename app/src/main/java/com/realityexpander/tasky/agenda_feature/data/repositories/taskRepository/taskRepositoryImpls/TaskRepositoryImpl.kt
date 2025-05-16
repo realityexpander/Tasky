@@ -1,7 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.taskRepositoryImpls
 
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.agenda_feature.common.util.TaskId
+import com.realityexpander.tasky.agenda_feature.domain.TaskId
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
 import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEntity
@@ -12,7 +12,7 @@ import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.ITaskRepository
 import com.realityexpander.tasky.core.presentation.util.ResultUiText
 import com.realityexpander.tasky.core.presentation.util.UiText
-import com.realityexpander.tasky.core.util.InternetConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetReachable
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetReachable
 import com.realityexpander.tasky.core.util.rethrowIfCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

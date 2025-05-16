@@ -2,7 +2,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.eventReposito
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.realityexpander.tasky.agenda_feature.common.util.PhotoId
+import com.realityexpander.tasky.agenda_feature.domain.PhotoId
 import com.realityexpander.tasky.agenda_feature.domain.AbstractAgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.UsesZonedDateTime
 import com.realityexpander.tasky.core.util.UuidStr

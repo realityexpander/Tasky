@@ -1,4 +1,4 @@
-package com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEntityDomain
+package com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain
 
 import com.google.gson.GsonBuilder
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.entities.ReminderEntity

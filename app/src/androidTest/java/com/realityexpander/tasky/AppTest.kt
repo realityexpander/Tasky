@@ -19,7 +19,7 @@ import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginEve
 import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginScreen
 import com.realityexpander.tasky.auth_feature.presentation.login_screen.LoginViewModel
 import com.realityexpander.tasky.core.data.settings.AppSettingsRepositoryFake
-import com.realityexpander.tasky.core.util.InternetConnectivityObserver.ConnectivityObserverFake
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.ConnectivityObserverFake
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import org.junit.Before
 import org.junit.Rule

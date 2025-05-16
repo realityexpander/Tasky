@@ -1,36 +1,39 @@
 package com.realityexpander.tasky.core.data.remote
 
 import com.realityexpander.tasky.BuildConfig
-import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
-import com.realityexpander.tasky.agenda_feature.common.util.TaskId
-import com.realityexpander.tasky.agenda_feature.common.util.TimeZoneStr
+import com.realityexpander.tasky.agenda_feature.domain.ReminderId
+import com.realityexpander.tasky.agenda_feature.domain.TaskId
+import com.realityexpander.tasky.agenda_feature.domain.TimeZoneStr
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs.AgendaDayDTO
-import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.attendeeRepository.remote.DTOs.GetAttendeeResponseDTO
+import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.DTOs.ReminderDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.remote.SyncAgendaRequestDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.DTOs.TaskDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.ApiCredentialsDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.AuthInfoDTO
-import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.RefreshTokenRequestDTO
-import com.realityexpander.tasky.auth_feature.data.repository.remote.DTOs.auth.RefreshTokenResponseDTO
 import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi.Companion.createAuthorizationAccessTokenString
 import com.realityexpander.tasky.core.util.AccessToken
 import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.EpochMilli
 import com.realityexpander.tasky.core.util.UuidStr
-import kotlinx.serialization.InternalSerializationApi
 import okhttp3.MultipartBody
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
+import retrofit2.http.Query
 
-@OptIn(InternalSerializationApi::class)
 interface TaskyApi {
 
     companion object {
 //        const val BASE_URL = "https://tasky.pl-coding.com/"
-//        const val BASE_URL = "http://localhost:8080/" // for local testing of the backend
-        const val BASE_URL = "http://192.168.1.80:8080/" // for local testing of the backend
+        const val BASE_URL = "http://192.168.1.80:8080/" // for local testing of the Tasky backend
         const val API_KEY = BuildConfig.API_KEY
     }
 

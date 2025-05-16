@@ -5,7 +5,8 @@ import androidx.room.TypeConverter
 class StringListTypeConverter {
     @TypeConverter
     fun fromList(value: List<String>?): String? {
-        if(value?.size == 0) return ""
+//        if(value?.size == 0) return ""
+        if(value?.isEmpty() == true) return ""
 
         return value?.joinToString(",")
     }

@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi
 
-import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.domain.EventId
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 
 interface IEventApi {

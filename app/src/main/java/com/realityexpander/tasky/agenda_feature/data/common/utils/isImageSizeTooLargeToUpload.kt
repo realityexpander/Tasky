@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.agenda_feature.presentation.common.util
+package com.realityexpander.tasky.agenda_feature.data.common.utils
 
 import android.content.Context
 import android.net.Uri

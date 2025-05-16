@@ -1,18 +1,18 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.reminderRepositoryImpls
 
-import com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
-import com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
-import com.realityexpander.remindery.agenda_feature.data.common.convertersDTOEntityDomain.toEntity
+import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDTO
+import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toDomain
+import com.realityexpander.tasky.agenda_feature.data.common.convertersDTOEntityDomain.toEntity
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
+import com.realityexpander.tasky.agenda_feature.domain.ReminderId
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.IReminderApi
 import com.realityexpander.tasky.agenda_feature.data.repositories.syncRepository.ISyncRepository
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.IReminderRepository
 import com.realityexpander.tasky.core.presentation.util.ResultUiText
 import com.realityexpander.tasky.core.presentation.util.UiText
-import com.realityexpander.tasky.core.util.InternetConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetReachable
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetReachable
 import com.realityexpander.tasky.core.util.rethrowIfCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

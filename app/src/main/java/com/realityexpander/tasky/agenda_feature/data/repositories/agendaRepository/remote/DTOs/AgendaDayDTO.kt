@@ -1,3 +1,4 @@
+@file:Suppress("PackageName")
 package com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.DTOs
 
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO

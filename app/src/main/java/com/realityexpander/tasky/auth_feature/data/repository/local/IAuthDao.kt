@@ -4,10 +4,8 @@ import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.util.AccessToken
 import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.Username
-import kotlinx.serialization.InternalSerializationApi
 
 
-@OptIn(InternalSerializationApi::class)
 interface IAuthDao {
     suspend fun getAccessToken(): AccessToken?
 

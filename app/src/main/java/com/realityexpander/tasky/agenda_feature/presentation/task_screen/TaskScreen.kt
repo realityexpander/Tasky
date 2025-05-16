@@ -1,18 +1,50 @@
-@file:OptIn(InternalSerializationApi::class)
 package com.realityexpander.tasky.agenda_feature.presentation.task_screen
 
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.material.icons.outlined.Circle
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,22 +62,38 @@ import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.TimeDateRow
-import com.realityexpander.tasky.agenda_feature.presentation.event_screen.RemindAtRow
-import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.SmallHeightHorizontalDivider
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.*
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.*
-import com.realityexpander.tasky.agenda_feature.util.toLongMonthDayYear
-import com.realityexpander.tasky.auth_feature.data.repository.remote.IAuthApi.Companion.accessTokenExpirationTimestampEpochMilli
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.RemindAtRow
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.SmallHeightHorizontalDivider
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.CancelEditMode
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.DeleteTask
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.DismissAlertDialog
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.ChooseDate
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.ChooseDescriptionText
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.ChooseRemindAtDateTime
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.ChooseTime
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.ChooseTitleText
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.UpdateDateTime
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.OneTimeEvent
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.SaveTask
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.SetEditMode
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.SetIsEditable
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.ShowAlertDialog
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.ToggleIsDone
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.toLongMonthDayYear
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.animatedTransitions.ScreenTransitions
-import com.realityexpander.tasky.core.presentation.common.modifiers.*
+import com.realityexpander.tasky.core.presentation.common.modifiers.DP
+import com.realityexpander.tasky.core.presentation.common.modifiers.extraSmallWidth
+import com.realityexpander.tasky.core.presentation.common.modifiers.mediumHeight
+import com.realityexpander.tasky.core.presentation.common.modifiers.smallHeight
+import com.realityexpander.tasky.core.presentation.common.modifiers.smallWidth
+import com.realityexpander.tasky.core.presentation.common.modifiers.taskyScreenTopCorners
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.presentation.util.UiText
 import com.realityexpander.tasky.core.presentation.util.getStringSafe
 import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.coroutines.launch
-import kotlinx.serialization.InternalSerializationApi
 import java.time.ZonedDateTime
 
 @Composable
@@ -494,11 +542,11 @@ fun TaskScreenContent(
         modifier = Modifier.fillMaxSize(),
         transitionSpec = {
             slideInVertically(animationSpec = tween(1000),
-                initialOffsetY = { fullHeight -> fullHeight }
-            ) with
+                    initialOffsetY = { fullHeight -> fullHeight }
+                ).togetherWith(
             slideOutVertically(animationSpec = tween(1000),
-                targetOffsetY = { fullHeight -> fullHeight }
-            )
+                    targetOffsetY = { fullHeight -> fullHeight }
+                ))
         }
     ) { targetState ->
         targetState?.let { editMode ->

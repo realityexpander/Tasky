@@ -1,7 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.reminderApiImpls
 
 import android.accounts.NetworkErrorException
-import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
+import com.realityexpander.tasky.agenda_feature.domain.ReminderId
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.DTOs.ReminderDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.reminderApi.IReminderApi
 import com.realityexpander.tasky.core.data.remote.TaskyApi

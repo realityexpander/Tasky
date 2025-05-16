@@ -6,9 +6,7 @@ import com.realityexpander.tasky.auth_feature.domain.validation.ValidateUsername
 import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.Password
 import com.realityexpander.tasky.core.util.Username
-import kotlinx.serialization.InternalSerializationApi
 
-@OptIn(InternalSerializationApi::class)
 interface IAuthRepository {
 
     val validateEmail: ValidateEmail

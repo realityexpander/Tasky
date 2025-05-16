@@ -1,4 +1,3 @@
-@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.auth_feature.presentation.login_screen
 
 import android.content.res.Configuration
@@ -27,7 +26,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.IInternetConnectivityObserver
 import com.realityexpander.tasky.MainActivity
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.auth_feature.presentation.components.EmailField
@@ -38,7 +37,7 @@ import com.realityexpander.tasky.core.domain.IAppSettingsRepository
 import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.presentation.util.keyboardVisibilityObserver
-import com.realityexpander.tasky.core.util.InternetConnectivityObserver.InternetAvailabilityIndicator
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.InternetAvailabilityIndicator
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.RegisterScreenDestination
 import kotlinx.coroutines.launch

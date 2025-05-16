@@ -1,3 +1,4 @@
+@file:Suppress("SpellCheckingInspection")
 package com.realityexpander.tasky.agenda_feature.data.common.typeConverters
 
 import androidx.room.TypeConverter

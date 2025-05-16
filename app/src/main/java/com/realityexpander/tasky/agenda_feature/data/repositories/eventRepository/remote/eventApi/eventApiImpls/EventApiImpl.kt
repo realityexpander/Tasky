@@ -3,7 +3,7 @@ package com.realityexpander.tasky.agenda_feature.data.repositories.eventReposito
 import android.accounts.NetworkErrorException
 import android.content.Context
 import android.net.Uri
-import com.realityexpander.tasky.agenda_feature.common.util.EventId
+import com.realityexpander.tasky.agenda_feature.domain.EventId
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.EventDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.DTOs.PhotoDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.eventRepository.remote.eventApi.IEventApi
@@ -16,8 +16,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okio.*
-import java.util.*
 import javax.inject.Inject
 
 

@@ -8,15 +8,16 @@ import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import androidx.core.net.toUri
 
 
-@OptIn(ExperimentalSerializationApi::class)
-@Serializer(forClass = Uri::class)
+//@OptIn(ExperimentalSerializationApi::class)
+//@Serializer(forClass = Uri::class)
 object UriSerializer : KSerializer<Uri> {
     override val descriptor = PrimitiveSerialDescriptor("Uri", PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): Uri {
-        return Uri.parse(decoder.decodeString())
+        return decoder.decodeString().toUri()
     }
 
     override fun serialize(encoder: Encoder, value: Uri) {
@@ -28,9 +29,9 @@ object UriSerializer : KSerializer<Uri> {
 
 // Local Test
 fun main() {
-    val uri = Uri.parse("https://www.google.com")
+    val uri = "https://www.google.com".toUri()
     val uriStr = uri.toString()
-    val uri2 = Uri.parse(uriStr)
+    val uri2 = uriStr.toUri()
 
     println("uri: $uri")
     println("uriStr: $uriStr")

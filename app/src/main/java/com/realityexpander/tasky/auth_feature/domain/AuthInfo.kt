@@ -7,11 +7,9 @@ import com.realityexpander.tasky.core.util.EpochMilli
 import com.realityexpander.tasky.core.util.UserId
 import com.realityexpander.tasky.core.util.Username
 import kotlinx.parcelize.Parcelize
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 @Parcelize
-@InternalSerializationApi
 @Serializable
 data class AuthInfo(
     val accessToken: AccessToken? = null,

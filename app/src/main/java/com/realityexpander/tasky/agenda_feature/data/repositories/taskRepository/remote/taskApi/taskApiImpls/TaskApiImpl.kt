@@ -1,7 +1,7 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.taskApi.taskApiImpls
 
 import android.accounts.NetworkErrorException
-import com.realityexpander.tasky.agenda_feature.common.util.TaskId
+import com.realityexpander.tasky.agenda_feature.domain.TaskId
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.DTOs.TaskDTO
 import com.realityexpander.tasky.agenda_feature.data.repositories.taskRepository.remote.ITaskApi
 import com.realityexpander.tasky.core.data.remote.TaskyApi

@@ -1,4 +1,3 @@
-@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.agenda_feature.presentation.components
 
 import androidx.compose.animation.AnimatedVisibility
@@ -24,7 +23,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
-import com.realityexpander.tasky.agenda_feature.presentation.common.MenuItem
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.MenuItem
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP

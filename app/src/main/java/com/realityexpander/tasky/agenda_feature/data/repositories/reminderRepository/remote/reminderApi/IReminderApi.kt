@@ -1,6 +1,6 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.reminderApi
 
-import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
+import com.realityexpander.tasky.agenda_feature.domain.ReminderId
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.remote.DTOs.ReminderDTO
 
 

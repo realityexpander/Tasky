@@ -8,20 +8,17 @@ import com.realityexpander.tasky.core.data.remote.utils.getErrorBodyMessage
 import com.realityexpander.tasky.core.util.AccessToken
 import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.Exceptions
-import com.realityexpander.tasky.core.util.InternetConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetReachable
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.InternetConnectivityObserverImpl.Companion.isInternetReachable
 import com.realityexpander.tasky.core.util.Password
 import com.realityexpander.tasky.core.util.Username
 import com.realityexpander.tasky.core.util.accessToken
 import com.realityexpander.tasky.core.util.userId
 import com.realityexpander.tasky.core.util.username
-import kotlinx.serialization.InternalSerializationApi
 import retrofit2.HttpException
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
 // Uses real network API & Retrofit calls
-
-@OptIn(InternalSerializationApi::class)
 class AuthApiImpl @Inject constructor (
     private val taskyApi: TaskyApi
 ): IAuthApi {

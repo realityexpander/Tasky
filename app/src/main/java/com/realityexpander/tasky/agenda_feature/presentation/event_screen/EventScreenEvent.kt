@@ -3,7 +3,7 @@ package com.realityexpander.tasky.agenda_feature.presentation.event_screen
 import android.os.Parcelable
 import androidx.compose.ui.text.TextStyle
 import com.realityexpander.tasky.R
-import com.realityexpander.tasky.agenda_feature.common.util.AttendeeId
+import com.realityexpander.tasky.agenda_feature.domain.AttendeeId
 import com.realityexpander.tasky.agenda_feature.data.common.typeParceler.TextStyleParceler
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
@@ -69,7 +69,7 @@ sealed interface EventScreenEvent {
     sealed interface EditMode {
 
         // Dialog Display options
-        abstract val dialogTitle: UiText
+        val dialogTitle: UiText
         sealed interface EditTextStyle { // dialog uses a specific text style for edit text
             val editTextStyle: TextStyle
         }

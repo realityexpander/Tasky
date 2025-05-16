@@ -1,11 +1,16 @@
 package com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.reminderDao.reminderDaoImpls
 
-import androidx.room.*
-import com.realityexpander.tasky.agenda_feature.common.util.ReminderId
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
+import com.realityexpander.tasky.agenda_feature.domain.ReminderId
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.IReminderDao
 import com.realityexpander.tasky.agenda_feature.data.repositories.reminderRepository.local.entities.ReminderEntity
 import com.realityexpander.tasky.core.util.DAY_IN_SECONDS
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
 
@@ -65,9 +70,11 @@ interface ReminderDaoImpl : IReminderDao {
     }
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Suppress("FunctionName")
     suspend fun _insertReminder(reminder: ReminderEntity): Long
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
+    @Suppress("FunctionName")
     suspend fun _updateReminder(reminder: ReminderEntity)
 
 

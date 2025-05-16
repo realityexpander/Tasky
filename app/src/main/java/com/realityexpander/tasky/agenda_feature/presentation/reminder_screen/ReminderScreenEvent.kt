@@ -54,7 +54,7 @@ sealed interface ReminderScreenEvent {
     sealed interface EditMode {
 
         // Dialog Display options
-        abstract val dialogTitle: UiText
+        val dialogTitle: UiText
         sealed interface EditTextStyle { // dialog uses a specific text style for edit text
             val editTextStyle: TextStyle
         }

@@ -19,7 +19,7 @@ class ValidateUsernameTest {
         /* nothing */
 
         // ACT / ASSERT
-        assertTrue(validateUsername.validate("AA"))
+        assertTrue(validateUsername.validate("AAAA")) // Shortest valid username
         assertTrue(validateUsername.validate("AAAA AAAA AAAA AAAA "))
         assertTrue(validateUsername.validate("!@#\$%^&*()_+(*&@)(#*&)(@#"))
         assertTrue(validateUsername.validate("12345678901234567890123456789012345678901234567890")) // 50 chars

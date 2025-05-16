@@ -1,4 +1,4 @@
-package com.realityexpander.tasky.core.util.InternetConnectivityObserver
+package com.realityexpander.tasky.core.util.internetConnectivityObserver
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
 import com.realityexpander.tasky.R
 import kotlinx.coroutines.delay
 

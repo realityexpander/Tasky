@@ -4,7 +4,7 @@ https://user-images.githubusercontent.com/5157474/220800950-ddd04b3b-f1ae-4a48-b
 
 # Tasky 
 Shared Task manager similar to a lite version of Google Calendar
-Over 120 Stars on Github!
+Over 150 Stars on Github!
 
 * Full compose UI
 * Manages schedule across time zones automatically

@@ -1,11 +1,10 @@
-@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
 package com.realityexpander.tasky.agenda_feature.presentation.agenda_screen
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.realityexpander.observeconnectivity.IInternetConnectivityObserver
-import com.realityexpander.observeconnectivity.IInternetConnectivityObserver.OnlineStatus
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.IInternetConnectivityObserver
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.IInternetConnectivityObserver.OnlineStatus
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.data.common.utils.getDateForDayOffset
 import com.realityexpander.tasky.agenda_feature.domain.*
@@ -135,7 +134,7 @@ class AgendaViewModel @Inject constructor(
 //            }
         }
 
-        // When connectivity is restored, Sync offline changes & Pull Agenda for today from remote
+        // Any time connectivity is restored, Sync offline changes & Pull Agenda for today from remote
         viewModelScope.launch {
             onlineState.collect { status ->
                 if(status == OnlineStatus.ONLINE) {
@@ -144,11 +143,11 @@ class AgendaViewModel @Inject constructor(
                         agendaRepository.getAgendaForDayFlow(
                             ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
                         )
-//                            .collect { agendaItems ->  // AI Suggested CDA FIX
-//                                _agendaState.update {
-//                                    it.copy(agendaItems = agendaItems)
-//                                }
-//                            }
+                            .collect { agendaItems ->  // AI Suggested CDA FIX
+                                _agendaState.update {
+                                    it.copy(agendaItems = agendaItems)
+                                }
+                            }
                     }
                 }
             }
@@ -169,7 +168,8 @@ class AgendaViewModel @Inject constructor(
         }
 
         // Start ZonedDateTimeNow real-time Update Tick Timer
-        timer.scheduleAtFixedRate(timerTask, 0, 1000)
+        //timer.scheduleAtFixedRate(timerTask, 0, 1000)
+        timer.schedule(timerTask, 0, 1000)
     }
 
     fun getAllAgendaItems() = agendaRepository.getLocalAgendaItemsWithRemindAtInDateTimeRangeFlow(
