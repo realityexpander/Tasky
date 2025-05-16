@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
-    id 'com.google.devtools.ksp' // version inherited from root project (version '2.0.0-RC1-1.0.19')
+    id 'com.google.devtools.ksp' // version inherited from Top-level `build.gradle`
     id 'dagger.hilt.android.plugin'
     id 'com.google.dagger.hilt.android'
     id "org.jlleitschuh.gradle.ktlint" version "12.2.0"
@@ -119,14 +119,12 @@ dependencies {
 
     // Compose Nav Destinations
     // For animations replace -core with:
-    //noinspection NewerVersionAvailable // using 1.9.63 for Compose 1.5.x
+    //noinspection NewerVersionAvailable // using 1.10.2 for Compose 1.6.x
     implementation "io.github.raamcosta.compose-destinations:animations-core:$compose_destinations_version"
-
     ksp "io.github.raamcosta.compose-destinations:ksp:$compose_destinations_version"
-    implementation "androidx.navigation:navigation-compose:2.9.0"
 
     // Icons
-    implementation "androidx.compose.material:material-icons-extended:$compose_ui_version"
+    implementation "androidx.compose.material:material-icons-extended:1.7.8"
 
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
@@ -142,7 +140,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:0.36.0" // CDA FIX - needs update to API
 
     //Dagger - Hilt
-    // noinspection NewerVersionAvailable // for kotlin 2.0.0-RC1
+    // noinspection NewerVersionAvailable // for kotlin 2.0.21
     implementation "com.google.dagger:hilt-android:$dagger_hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$dagger_hilt_version"
     kapt "com.google.dagger:hilt-compiler:$dagger_hilt_version"

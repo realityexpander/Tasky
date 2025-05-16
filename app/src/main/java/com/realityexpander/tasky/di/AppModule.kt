@@ -3,6 +3,7 @@ package com.realityexpander.tasky.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.room.Room
+import androidx.room.migration.AutoMigrationSpec
 import com.realityexpander.tasky.agenda_feature.data.repositories.TaskyDatabase
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.agendaRepositoryImpls.AgendaRepositoryImpl
 import com.realityexpander.tasky.agenda_feature.data.repositories.agendaRepository.remote.AgendaApiImpl
@@ -174,7 +175,9 @@ object AppModule {
             TaskyDatabase::class.java,
             TaskyDatabase.DATABASE_NAME
         )
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigrationFrom(
+                dropAllTables = true, 1
+            )
             .build()
 
 

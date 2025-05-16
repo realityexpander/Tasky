@@ -1,19 +1,20 @@
 buildscript {
     ext {
-        kotlin_version = '2.0.0-RC1'
-        compose_ui_version = '1.5.0' // for kotlin 2.0.0-RC1
-        room_version = '2.7.1' // for kotlin 2.0.0-RC1
+        kotlin_version = '2.0.21'
+        compose_ui_version = '1.6.10' // for kotlin 2.0.21
+//        compose_ui_version = '1.7.6' // for kotlin 2.1.21
+        room_version = '2.7.1' // for kotlin 2.0.21
         retrofit_version = '2.11.0'
         okhttp_version = '5.0.0-alpha.14'
-        dagger_hilt_version = '2.51.1' // for kotlin 1.9.21
-        compose_destinations_version = '1.9.63' // for Compose 1.5.x
+        dagger_hilt_version = '2.51.1' // for kotlin 2.0.21
+        compose_destinations_version = '1.10.2' // for Compose 1.6.x
+//        compose_destinations_version = '1.11.9' // for Compose 1.7.x, kotlin 2.1.21
         kotlinx_serialization_json_version = '1.6.3'
-        lifecycle_version = '2.5.1'
-        compose_compiler_version = '1.5.7' // for kotlin 1.9.21, compose 1.5.0
+        lifecycle_version = '2.9.0'  // for kotlin 2.0.21
+        compose_compiler_version = '1.5.15' // for kotlin 2.0.21, Compose 1.6.x
         compose_material_dialogs_datetime_version = '0.9.0'
         work_manager_version = '2.10.1' // introduces breaking changes for WorkManager setup // CDA FIX
-//        kotlinx_coroutines_version = '1.7.3'  // for kotlin 2.0.0-RC1
-        kotlinx_coroutines_version = '1.10.2'  // for kotlin 2.0.0-RC1
+        kotlinx_coroutines_version = '1.10.2'  // for kotlin 2.0.21
     }
 
     repositories {
@@ -35,10 +36,18 @@ buildscript {
 plugins {
     id 'com.android.application' version '8.10.0' apply false
     id 'com.android.library' version '8.10.0' apply false
-    id 'org.jetbrains.kotlin.android' version '2.0.0-RC1' apply false
-    id 'com.google.devtools.ksp' version '2.0.0-1.0.22' apply false
-    id 'org.jetbrains.kotlin.plugin.compose' version '2.0.0' apply false// for kotlin 1.9.21
-    id 'org.jetbrains.kotlin.jvm' version "2.0.0" apply false
+
+    id 'org.jetbrains.kotlin.android' version '2.0.21' apply false
+//    id 'org.jetbrains.kotlin.android' version '2.1.21' apply false
+
+    id 'com.google.devtools.ksp' version '2.0.21-1.0.28' apply false
+//    id 'com.google.devtools.ksp' version '2.1.21-2.0.1' apply false // for kotlin 2.1.21
+
+    id 'org.jetbrains.kotlin.plugin.compose' version '2.0.21' apply false// for kotlin 2.0.21
+//    id 'org.jetbrains.kotlin.plugin.compose' version '2.1.21' apply false// for kotlin 2.1.21
+
+    id 'org.jetbrains.kotlin.jvm' version "2.0.21" apply false // for kotlin 2.0.21
+//    id 'org.jetbrains.kotlin.jvm' version "2.1.21" apply false // for kotlin 2.1.21
 }
 
 tasks.register('clean', Delete) {

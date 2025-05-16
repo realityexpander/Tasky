@@ -9,6 +9,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -281,7 +282,7 @@ fun AgendaItemActionDropdown(
     ) {
         MenuItem(
             title = "Open",
-            vectorIcon = Icons.Filled.OpenInNew,
+            vectorIcon = Icons.AutoMirrored.Filled.OpenInNew,
             onClick = {
                 onDismissRequest()
                 onViewDetails()

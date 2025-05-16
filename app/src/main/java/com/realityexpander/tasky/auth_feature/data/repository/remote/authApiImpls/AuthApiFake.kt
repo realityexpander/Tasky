@@ -204,8 +204,8 @@ class AuthApiFake @Inject constructor(): IAuthApi {
     val tokenConfig = TokenConfig(
         issuer = "http://localhost:8080", // environmentVariables.jwtIssuer
         audience = "users", // environmentVariables.jwtAudience
-//        expiresIn = 60L * 60L * 1000L, // 1 hour
-        expiresIn = 10L * 1000L, // 10 seconds
+        expiresIn = 60L * 60L * 1000L, // 1 hour
+//        expiresIn = 10L * 1000L, // 10 seconds
         secret = "sa89HBNasdf(/32b" // environmentVariables.jwtSecret
     )
 

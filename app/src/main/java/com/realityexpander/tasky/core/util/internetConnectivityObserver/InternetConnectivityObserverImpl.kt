@@ -114,6 +114,7 @@ class InternetConnectivityObserverImpl(
         }.distinctUntilChanged()
     }
 
+    @Suppress("DEPRECATION") // for API < 24
     fun isNetworkAvailable(): Boolean {
         val activeNetwork = connectivityManager.activeNetworkInfo
         return activeNetwork != null && activeNetwork.isConnected

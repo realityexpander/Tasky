@@ -37,6 +37,7 @@ import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddTask
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -491,7 +492,7 @@ fun AgendaScreenContent(
                 ) {
                     MenuItem(
                         title = "Logout",
-                        vectorIcon = Icons.Filled.Logout,
+                        vectorIcon = Icons.AutoMirrored.Filled.Logout,
                         onClick = {
                             isLogoutMenuExpanded = false
                             onAction(Logout)
