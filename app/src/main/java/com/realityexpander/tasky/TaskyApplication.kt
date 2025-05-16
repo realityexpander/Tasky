@@ -25,7 +25,7 @@ class TaskyApplication : Application(), Configuration.Provider {
     // CDA FIX - This is not how to do it!
     override var workManagerConfiguration: Configuration =
         Configuration.Builder()
-//            .setWorkerFactory(workerFactory)
+//            .setWorkerFactory(workerFactory) // TODO: Fix this
             .setMinimumLoggingLevel(android.util.Log.INFO)
             .build()
 

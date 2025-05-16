@@ -197,16 +197,16 @@ dependencies {
     // For testing
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     androidTestImplementation project(path: ':app')
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
-    testImplementation "com.google.truth:truth:1.1.3"
-    testImplementation "io.mockk:mockk:1.13.2"
-    testImplementation 'app.cash.turbine:turbine:0.11.0'
-    testImplementation "androidx.arch.core:core-testing:2.1.0" // for InstantTaskExecutorRule (livedata)
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4" // runBlockingTest, CoroutineDispatcher
+    debugImplementation "androidx.compose.ui:ui-test-manifest:1.8.1"
+    testImplementation "com.google.truth:truth:1.4.4"
+    testImplementation "io.mockk:mockk:1.14.2"
+    testImplementation 'app.cash.turbine:turbine:1.2.0'
+    testImplementation "androidx.arch.core:core-testing:2.2.0" // for InstantTaskExecutorRule (livedata)
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2" // runBlockingTest, CoroutineDispatcher
 }
 
 //  dependency = projects.samples.kotlinReporterCreating

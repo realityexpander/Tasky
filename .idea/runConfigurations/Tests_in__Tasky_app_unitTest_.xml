@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Tests in 'com'" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="Tests in 'Tasky.app.unitTest'" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -11,8 +11,6 @@
       <option name="taskNames">
         <list>
           <option value=":app:testDebugUnitTest" />
-          <option value="--tests" />
-          <option value="&quot;com.*&quot;" />
         </list>
       </option>
       <option name="vmOptions" />
@@ -20,6 +18,7 @@
     <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
+    <RunAsTest>true</RunAsTest>
     <method v="2" />
   </configuration>
 </component>

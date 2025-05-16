@@ -251,9 +251,6 @@ class AuthApiFake @Inject constructor(): IAuthApi {
         }
 
         return token.sign(Algorithm.HMAC256(tokenConfig.secret))
-
-//        return accessToken(token) as AccessToken
-//        return accessToken("token for $email, expires:${System.currentTimeMillis() + 60L * 10L}") as AccessToken
     }
 
     private fun generateRefreshToken_onServer(email: Email): RefreshToken {
