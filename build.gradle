@@ -37,16 +37,20 @@ plugins {
     id 'com.android.application' version '8.10.0' apply false
     id 'com.android.library' version '8.10.0' apply false
 
-    id 'org.jetbrains.kotlin.android' version '2.0.21' apply false
+    // NOTE: This must match the `kotlin_version` in the buildscript above
+    id 'org.jetbrains.kotlin.android' version "$kotlin_version" apply false
 //    id 'org.jetbrains.kotlin.android' version '2.1.21' apply false
 
-    id 'com.google.devtools.ksp' version '2.0.21-1.0.28' apply false
+    // NOTE: The first version number must match the `kotlin_version` in the buildscript above
+    id 'com.google.devtools.ksp' version "$kotlin_version-1.0.28" apply false // 2.0.21-1.0.28
 //    id 'com.google.devtools.ksp' version '2.1.21-2.0.1' apply false // for kotlin 2.1.21
 
-    id 'org.jetbrains.kotlin.plugin.compose' version '2.0.21' apply false// for kotlin 2.0.21
+    // NOTE: This must match the `kotlin_version` in the buildscript above
+    id 'org.jetbrains.kotlin.plugin.compose' version "$kotlin_version" apply false// for kotlin 2.0.21
 //    id 'org.jetbrains.kotlin.plugin.compose' version '2.1.21' apply false// for kotlin 2.1.21
 
-    id 'org.jetbrains.kotlin.jvm' version "2.0.21" apply false // for kotlin 2.0.21
+    // NOTE: This must match the `kotlin_version` in the buildscript above
+    id 'org.jetbrains.kotlin.jvm' version "$kotlin_version" apply false // for kotlin 2.0.21
 //    id 'org.jetbrains.kotlin.jvm' version "2.1.21" apply false // for kotlin 2.1.21
 }
 
