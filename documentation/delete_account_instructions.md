@@ -8,3 +8,7 @@
  ### All data associated with the email address will be deleted within 30 days.
 
   ## Thank you
+
+Send request to delete your account to realityexpanderdev@gmail.com
+  We will process your request as soon as possible.
+
