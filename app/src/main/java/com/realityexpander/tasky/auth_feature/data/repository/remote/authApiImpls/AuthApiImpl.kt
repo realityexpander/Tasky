@@ -14,6 +14,7 @@ import com.realityexpander.tasky.core.util.Username
 import com.realityexpander.tasky.core.util.accessToken
 import com.realityexpander.tasky.core.util.userId
 import com.realityexpander.tasky.core.util.username
+import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
@@ -195,6 +196,7 @@ class AuthApiImpl @Inject constructor (
 
         try {
             taskyApi.logout()
+            delay(1000) // wait for the logout to complete
             IAuthApi.clearAuthInfo()
         } catch (e: Exceptions.NetworkException) {
             throw e

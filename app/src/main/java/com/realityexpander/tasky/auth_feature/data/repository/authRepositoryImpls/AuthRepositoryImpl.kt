@@ -13,6 +13,7 @@ import com.realityexpander.tasky.core.util.Email
 import com.realityexpander.tasky.core.util.Exceptions
 import com.realityexpander.tasky.core.util.Password
 import com.realityexpander.tasky.core.util.Username
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -96,8 +97,9 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun logout() {
         try {
-            clearAuthInfo()
             authApi.logout()
+            delay(1000) // wait for the logout to complete
+            clearAuthInfo() // must clear AFTER logout
         } catch(e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -123,7 +125,7 @@ class AuthRepositoryImpl @Inject constructor(
         authDao.clearAuthInfo()
     }
 
-    // Authenticates the stored AuthToken
+    // Authenticates the stored client AuthToken
     override suspend fun authenticate(): Boolean {
         return try {
             authApi.authenticate()

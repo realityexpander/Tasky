@@ -3,9 +3,15 @@ package com.realityexpander.tasky.core.util.internetConnectivityObserver
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
-import com.realityexpander.tasky.core.util.internetConnectivityObserver.IInternetConnectivityObserver.*
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.IInternetConnectivityObserver.ConnectivityStatus
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.IInternetConnectivityObserver.InternetReachabilityStatus
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.IInternetConnectivityObserver.OnlineStatus
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import logcat.logcat
 
 class InternetConnectivityObserverImpl(

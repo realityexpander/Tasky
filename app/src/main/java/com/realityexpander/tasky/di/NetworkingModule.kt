@@ -79,6 +79,7 @@ object NetworkingModule {
 
                 val requestBuilder = chain.request().newBuilder()
                     .addHeader("x-api-key", TaskyApi.API_KEY)
+                    .addHeader("Content-Type", "application/json")
                 val request = requestBuilder
                     .build()
 
@@ -167,8 +168,12 @@ object NetworkingModule {
                         val jsonObject = JSONObject(payload)
                         val exp = jsonObject.getLong("exp") * 1000
                         if (exp < System.currentTimeMillis()) {
-                            Log.d("AuthInterceptor", "JWT expired, refreshing AccessToken...")
-                            refreshAccessToken()
+                            try {
+                                Log.d("AuthInterceptor", "JWT expired, refreshing AccessToken...")
+                                refreshAccessToken()
+                            } catch (e: Exception) {
+                                Log.e("AuthInterceptor", "Failed to refresh access token: ${e.message}")
+                            }
                         }
                     }
                 }

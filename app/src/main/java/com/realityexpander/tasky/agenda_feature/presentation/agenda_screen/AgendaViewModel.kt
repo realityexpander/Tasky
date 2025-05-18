@@ -101,13 +101,14 @@ class AgendaViewModel @Inject constructor(
             override fun run() {
                 _zonedDateTimeNow.value = ZonedDateTime.now()
 
-                // Check if the user is logged in
-                runBlocking {
-                    if (authRepository.getAuthInfo() == null) {
-                        // send logout
-                        sendEvent(Logout)
-                    }
-                }
+                // CDA FIX - Remove soon
+//                // Check if the user is logged in
+//                runBlocking {
+//                    if (authRepository.getAuthInfo() == null) {
+//                        // send logout
+//                        sendEvent(Logout)
+//                    }
+//                }
             }
         }
 

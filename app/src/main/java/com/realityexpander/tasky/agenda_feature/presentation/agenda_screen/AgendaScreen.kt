@@ -292,7 +292,7 @@ fun AgendaScreenContent(
     // Guard against invalid authentication state OR perform logout
     SideEffect {
         if (state.isLoaded && state.authInfo == null) {
-            onAction(Logout)
+//            onAction(Logout) // the user is already logged out (because authInfo is null)
             navigateToLoginScreen()
         }
     }
