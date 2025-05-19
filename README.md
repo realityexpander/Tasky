@@ -56,7 +56,7 @@ https://user-images.githubusercontent.com/5157474/209285234-f4cab9b6-46ca-40ac-9
   - [Tasky Backend v2](https://github.com/realityexpander/Tasky-Backend-v2)
 
 ## Delete Account Request
-  - [delete_account_instructions.md](documentation/delete_account_instructions.md)
+  - [Delete Account Instructions](documentation/delete_account_instructions.md)
 
 ## 🛠 Built With
 ```
