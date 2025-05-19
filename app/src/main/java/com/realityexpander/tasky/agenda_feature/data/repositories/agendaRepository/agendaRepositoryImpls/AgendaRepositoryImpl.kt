@@ -192,6 +192,7 @@ class AgendaRepositoryImpl @Inject constructor(
     // Note: ResultUiText.Error is returned if there are changes to sync, and ANY sync item fails.
     // THIS WILL ATTEMPT TO UPLOAD ALL SYNC ITEMS.
     override suspend fun syncAgenda(): ResultUiText<Void> {
+        println("AgendaRepositoryImpl.syncAgenda() called")
         val syncItems = syncRepository.getSyncItems()
         if (!isInternetReachable && syncItems.isEmpty()) { // no changes to sync
             return ResultUiText.Success(null)
@@ -208,9 +209,9 @@ class AgendaRepositoryImpl @Inject constructor(
                         val success = when (syncItem.agendaItemTypeForSync) {
                             AgendaItemTypeForSync.Event -> {
                                 val event = getEvent(
-                                    eventId = syncItem.agendaItemId,
-                                    isLocalOnly = true
-                                ) ?: return@forEach
+                                        eventId = syncItem.agendaItemId,
+                                        isLocalOnly = true
+                                    ) ?: return@forEach
                                 createEvent(
                                     event = event,
                                     isRemoteOnly = true

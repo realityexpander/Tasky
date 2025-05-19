@@ -52,7 +52,8 @@ class AgendaViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class) // for .flatMapLatest, .flattenMerge
     private val _agendaItems =
         _selectedDayIndex.combine(_currentDate) { dayIndex, date ->
-            agendaRepository.syncAgenda()
+            println("AgendaViewModel _selectedDayIndex: $dayIndex")
+            agendaRepository.syncAgenda() // Will be called for each dayIndex change
             agendaRepository.getAgendaForDayFlow(
                 getDateForDayOffset(date, dayIndex)
             )

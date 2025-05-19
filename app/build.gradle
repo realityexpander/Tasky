@@ -31,7 +31,7 @@ android {
         applicationId "com.realityexpander.tasky"
         minSdk 28
         targetSdk 36 // Build.VERSION_CODES.BAKLAVA
-        versionCode 3
+        versionCode 4
         versionName "1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -103,6 +103,11 @@ android {
         configureEach {
             reportsOutputDirectory = project.layout.buildDirectory.dir("other/location/$name")
         }
+    }
+
+    // LINT
+    lint {
+        baseline = file("lint-baseline.xml")
     }
 }
 
