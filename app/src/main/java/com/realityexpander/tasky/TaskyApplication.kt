@@ -16,7 +16,6 @@ class TaskyApplication : Application(), Configuration.Provider {
 
     override var workManagerConfiguration: Configuration =
         Configuration.Builder()
-            .setMinimumLoggingLevel(android.util.Log.INFO)
             .build()
 
     override fun onCreate() {
