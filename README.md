@@ -53,7 +53,7 @@ https://user-images.githubusercontent.com/5157474/209285234-f4cab9b6-46ca-40ac-9
   - Accesses MongoDB Atlas & S3-compatible storage
   - Runs locally without Docker
   - Deployable to VPS or AWS 
-  - [Tasky Backend v2](https://github.com/realityexpander/Tasky-Backend-v2)
+  - [Tasky Ktor Backend v2 Repository](https://github.com/realityexpander/Tasky-Backend-v2)
 
 ## Delete Account Request
   - [Delete Account Instructions](documentation/delete_account_instructions.md)
