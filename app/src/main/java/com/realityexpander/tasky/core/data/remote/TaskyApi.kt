@@ -32,8 +32,7 @@ import retrofit2.http.Query
 interface TaskyApi {
 
     companion object {
-//        const val BASE_URL = "https://tasky.pl-coding.com/"
-        const val BASE_URL = "http://192.168.1.80:8080/" // for local testing of the Tasky backend
+        const val BASE_URL = BuildConfig.API_BASE_URL
         const val API_KEY = BuildConfig.API_KEY
     }
 

@@ -57,7 +57,10 @@ android {
         if (apiFile.exists()) {
             def apiProperties = new Properties()
             apiProperties.load(new FileInputStream(apiFile))
+
+            // add API_KEY to BuildConfig
             buildConfigField "String", "API_KEY", "\"${apiProperties['API_KEY']}\""
+            buildConfigField "String", "API_BASE_URL", "\"${apiProperties['API_BASE_URL']}\""
         } else {
             println("ERROR - `api.properties` file not found - please add `api.properties` file with API_KEY to the root of the project")
         }
