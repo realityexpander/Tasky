@@ -6,7 +6,8 @@ buildscript {
         room_version = '2.7.1' // for kotlin 2.0.21
         retrofit_version = '2.11.0'
         okhttp_version = '5.0.0-alpha.14'
-        dagger_hilt_version = '2.51.1' // for kotlin 2.0.21
+//        dagger_hilt_version = '2.51.1' // for kotlin 2.0.21
+        dagger_hilt_version = '2.56.2' // for kotlin 2.0.21
         compose_destinations_version = '1.10.2' // for Compose 1.6.x
 //        compose_destinations_version = '1.11.9' // for Compose 1.7.x, kotlin 2.1.21
         kotlinx_serialization_json_version = '1.6.3'
@@ -52,6 +53,8 @@ plugins {
     // NOTE: This must match the `kotlin_version` in the buildscript above
     id 'org.jetbrains.kotlin.jvm' version "$kotlin_version" apply false // for kotlin 2.0.21
 //    id 'org.jetbrains.kotlin.jvm' version "2.1.21" apply false // for kotlin 2.1.21
+
+    id 'androidx.room' version "2.7.1" apply false // for kotlin 2.0.21
 }
 
 tasks.register('clean', Delete) {
