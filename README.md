@@ -47,6 +47,14 @@ https://user-images.githubusercontent.com/5157474/209285234-f4cab9b6-46ca-40ac-9
 [<img src="https://user-images.githubusercontent.com/5157474/209300668-34279c57-f307-4579-82aa-e59e5088e3d7.png" width=200 />](https://user-images.githubusercontent.com/5157474/209300668-34279c57-f307-4579-82aa-e59e5088e3d7.png)
 [<img src="https://user-images.githubusercontent.com/5157474/220576862-ecb6a472-c047-4009-b867-343b1ac37bbf.png" width=200 />](https://user-images.githubusercontent.com/5157474/220576862-ecb6a472-c047-4009-b867-343b1ac37bbf.png)
 
+## Backend Server Code
+  - Updated to version 2 to use refresh tokens & config-based security 
+  - Written 100% in Kotlin using Ktor
+  - Accesses MongoDB Atlas & S3-compatible storage
+  - Runs locally without Docker
+  - Deployable to VPS or AWS 
+  - [Tasky Backend v2](https://github.com/realityexpander/Tasky-Backend-v2)
+
 ## Delete Account Request
   - [delete_account_instructions.md](documentation/delete_account_instructions.md)
 
