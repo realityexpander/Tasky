@@ -59,7 +59,7 @@ https://user-images.githubusercontent.com/5157474/209285234-f4cab9b6-46ca-40ac-9
   - [delete_account_instructions.md](documentation/delete_account_instructions.md)
 
 ## 🛠 Built With
-```markdown
+```
 - Gradle: jbr-17 JetBrains Runtime 17.0.11 - aarch64 /Users/chrisathanas/Library/Java/JavaVirtualMachines/jbr-17.0.11/Contents/Home
 - Android Studio Narwhal | 2025.1.1 Canary 10
   Build #AI-251.23774.435.2511.13464725, built on May 8, 2025
