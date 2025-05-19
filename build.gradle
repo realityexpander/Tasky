@@ -6,16 +6,16 @@ buildscript {
         room_version = '2.7.1' // for kotlin 2.0.21
         retrofit_version = '2.11.0'
         okhttp_version = '5.0.0-alpha.14'
-//        dagger_hilt_version = '2.51.1' // for kotlin 2.0.21
         dagger_hilt_version = '2.56.2' // for kotlin 2.0.21
-        compose_destinations_version = '1.10.2' // for Compose 1.6.x
-//        compose_destinations_version = '1.11.9' // for Compose 1.7.x, kotlin 2.1.21
+        hilt_compiler_version = '1.3.0-alpha01'
         kotlinx_serialization_json_version = '1.6.3'
+        kotlinx_coroutines_version = '1.10.2'  // for kotlin 2.0.21
         lifecycle_version = '2.9.0'  // for kotlin 2.0.21
+        compose_destinations_version = '1.10.2' // for Compose 1.6.x
+//        compose_destinations_version = '1.11.9' // for Compose 1.7.x, kotlin 2.1.21 // Breaking changes
         compose_compiler_version = '1.5.15' // for kotlin 2.0.21, Compose 1.6.x
         compose_material_dialogs_datetime_version = '0.9.0'
         work_manager_version = '2.10.1' // introduces breaking changes for WorkManager setup // CDA FIX
-        kotlinx_coroutines_version = '1.10.2'  // for kotlin 2.0.21
     }
 
     repositories {
@@ -44,7 +44,7 @@ plugins {
 
     // NOTE: The first version number must match the `kotlin_version` in the buildscript above
     id 'com.google.devtools.ksp' version "$kotlin_version-1.0.28" apply false // 2.0.21-1.0.28
-//    id 'com.google.devtools.ksp' version '2.1.21-2.0.1' apply false // for kotlin 2.1.21
+//    id 'com.google.devtools.ksp' version '2.1.21-2.0.1' apply false // for kotlin 2.1.21-2.0.1
 
     // NOTE: This must match the `kotlin_version` in the buildscript above
     id 'org.jetbrains.kotlin.plugin.compose' version "$kotlin_version" apply false// for kotlin 2.0.21

@@ -14,18 +14,8 @@ class TaskyApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
-//    override fun getWorkManagerConfiguration(): Configuration {
-//        return Configuration.Builder()
-//            .setWorkerFactory(workerFactory)
-//            .setMinimumLoggingLevel(android.util.Log.INFO)
-//            .build()
-//    }
-
-
-    // CDA FIX - This is not how to do it?
     override var workManagerConfiguration: Configuration =
         Configuration.Builder()
-//            .setWorkerFactory(workerFactory) // TODO: Fix this
             .setMinimumLoggingLevel(android.util.Log.INFO)
             .build()
 
