@@ -1,4 +1,8 @@
 # This file should *NOT* be checked into Version Control Systems,
 
-API_KEY=<ENTER YOUR API KEY HERE FOR TASKY BACKEND>
+API_KEY=<ENTER_KEY_FOR_TASKY_BACKEND>
 API_BASE_URL = <HTTP_API_BASE_URL>
+
+# Local server development
+#API_KEY=<GENERATE_KEY_ON_TASKY_BACKEND>
+#API_BASE_URL = http://192.168.1.80:8080/
