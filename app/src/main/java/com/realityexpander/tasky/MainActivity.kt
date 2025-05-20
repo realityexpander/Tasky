@@ -57,13 +57,13 @@ class MainActivity : ComponentActivity() {
             onNewIntent(intent)
         }
 
-        // Main app
         installSplashScreen().apply {
             setKeepOnScreenCondition {
                 viewModel.splashState.value.isLoading
             }
         }
 
+        // Main app
         setContent {
             TaskyTheme {
                 Surface(
