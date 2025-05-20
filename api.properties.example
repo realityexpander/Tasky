@@ -1,4 +1,4 @@
 # This file should *NOT* be checked into Version Control Systems,
 
 API_KEY=<ENTER YOUR API KEY HERE FOR TASKY BACKEND>
-API_BASE_URL = https://<API_BASE_URL>
+API_BASE_URL = <HTTP_API_BASE_URL>
