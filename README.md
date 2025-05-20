@@ -6,7 +6,7 @@ https://user-images.githubusercontent.com/5157474/220800950-ddd04b3b-f1ae-4a48-b
 Shared Task manager similar to a lite version of Google Calendar
 Over 150 Stars on Github!
 
-* Full compose UI
+* 100% compose UI (0% XML)
 * Manages schedule across time zones automatically
 * Works offline & automatically syncs across multiple devices
 * Invite other people to your events, and automatically sync changes.
