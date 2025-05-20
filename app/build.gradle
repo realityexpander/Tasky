@@ -156,6 +156,7 @@ dependencies {
     implementation "androidx.hilt:hilt-work:$hilt_compiler_version"
 
     // Retrofit
+    //noinspection NewerVersionAvailable // Using Retrofit 2.x for now
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
@@ -177,7 +178,7 @@ dependencies {
 
     // Proto DataStore
     implementation "androidx.datastore:datastore-preferences:1.1.6"
-    implementation "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8"
+    implementation "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0"
 
     // SplashScreen
     implementation "androidx.core:core-splashscreen:1.0.1"
@@ -190,7 +191,7 @@ dependencies {
     implementation "io.coil-kt:coil-compose:2.7.0"
 
     // Logging with Logcat
-    implementation 'com.squareup.logcat:logcat:0.1'
+    implementation 'com.squareup.logcat:logcat:0.2.1'
 
     // For JWT's
     implementation 'com.auth0:java-jwt:4.5.0'
