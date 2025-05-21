@@ -58,7 +58,7 @@ object NetworkingModule {
     ///////////////////////////////////////////
     // Networking (OkHttp & Retrofit)
 
-    private interface TaskyRefreshAccessTokenService {
+    private interface RefreshAccessTokenService {
         @POST("/accessToken")
         suspend fun refreshAccessToken(@Body request: RefreshTokenRequestDTO): retrofit2.Response<RefreshTokenResponseDTO>
     }
@@ -104,8 +104,8 @@ object NetworkingModule {
                     .build()
             }
 
-            val api: TaskyRefreshAccessTokenService by lazy {
-                instance.create(TaskyRefreshAccessTokenService::class.java)
+            val api: RefreshAccessTokenService by lazy {
+                instance.create(RefreshAccessTokenService::class.java)
             }
         }
 
