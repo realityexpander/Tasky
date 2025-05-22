@@ -15,5 +15,5 @@
 local.properties
 p.api.properties
 *.api.properties
-/.kotlin/errors/errors-1747766046962.log
+/.kotlin/errors/*
 /api.properties
