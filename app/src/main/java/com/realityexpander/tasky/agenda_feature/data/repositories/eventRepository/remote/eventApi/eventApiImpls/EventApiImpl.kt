@@ -14,6 +14,7 @@ import com.realityexpander.tasky.core.util.UPLOAD_IMAGE_MAX_SIZE
 import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
@@ -119,7 +120,7 @@ class EventApiImpl @Inject constructor(
                 .createFormData(
                     "photo$index",
                     getImageFilenameForServer(context, index, photo.uri, photo.id),
-                    body = bytes.toRequestBody()
+                    body = bytes.toRequestBody("image/jpg".toMediaType()), // put the photo.jpg bytes into the request
                 )
         }
     }
