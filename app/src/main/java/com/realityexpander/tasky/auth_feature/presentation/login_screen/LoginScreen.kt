@@ -2,50 +2,39 @@ package com.realityexpander.tasky.auth_feature.presentation.login_screen
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment.Companion.CenterVertically
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.datastore.core.DataStoreFactory
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.realityexpander.tasky.core.util.internetConnectivityObserver.IInternetConnectivityObserver
 import com.realityexpander.tasky.MainActivity
-import com.realityexpander.tasky.R
 import com.realityexpander.tasky.auth_feature.presentation.components.EmailField
 import com.realityexpander.tasky.auth_feature.presentation.components.PasswordField
-import com.realityexpander.tasky.core.data.settings.AppSettingsRepositoryImpl
-import com.realityexpander.tasky.core.data.settings.AppSettingsSerializer
 import com.realityexpander.tasky.core.domain.IAppSettingsRepository
-import com.realityexpander.tasky.core.presentation.common.modifiers.*
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.presentation.util.keyboardVisibilityObserver
+import com.realityexpander.tasky.core.util.internetConnectivityObserver.IInternetConnectivityObserver
 import com.realityexpander.tasky.core.util.internetConnectivityObserver.InternetAvailabilityIndicator
 import com.realityexpander.tasky.destinations.AgendaScreenDestination
 import com.realityexpander.tasky.destinations.RegisterScreenDestination
 import kotlinx.coroutines.launch
-import java.io.File
 
 @Composable
 @Destination
-@RootNavGraph(start = true)
+@RootNavGraph(start = true) // for some reason this line disables the Compose Previews... we await for a fix...
 fun LoginScreen(
     username: String? = "Chris Athanas",
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
@@ -288,69 +277,22 @@ fun LoginScreenContent(
     }
 }
 
-//@Preview
-//@Composable
-//fun LoginScreenPreview_LightMode() {
-//    TaskyTheme {
-//        LoginScreenContent()
-//    }
-//}
-
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    group = "Night mode=true",
-    widthDp = 500,
-    heightDp = 1000
-)
+@Preview
 @Composable
-fun LoginScreenPreview() {
+fun LoginScreenPreview_LightMode() {
     TaskyTheme {
-        Surface {
         LoginScreenContent()
-        }
     }
 }
 
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    group = "Night mode=false"
+)
 @Composable
-fun LoginScreenContent() {
-    LoginScreenContent(
-        navigator = EmptyDestinationsNavigator,
-        username = "NOT_USED_IN_THIS_SCREEN_UI",
-        confirmPassword = "NOT_USED_IN_THIS_SCREEN_UI",
-        state = LoginState(
-            email = "chris@demo.com",
-            password = "123456Aa",
-            isInvalidEmail = false,
-            isInvalidPassword = false,
-            isInvalidEmailMessageVisible = false,
-            isInvalidPasswordMessageVisible = true,
-            isPasswordVisible = true,
-            isLoading = false,
-            errorMessage = null,
-            statusMessage = null,
-            authInfo = null,
-        ),
-        onAction = {},
-        appSettingsRepository = AppSettingsRepositoryImpl(
-            dataStore = DataStoreFactory.create(
-                serializer = AppSettingsSerializer(),
-                produceFile = { File("NOT_USED_IN_THIS_SCREEN_UI") }
-            )
-        )
-    )
+fun LoginScreenPreview_NightMode() {
+    TaskyTheme {
+        LoginScreenContent()
+    }
 }
-//
-//
-//@Preview(
-//    showBackground = true,
-//    uiMode = Configuration.UI_MODE_NIGHT_NO,
-//    group = "Night mode=false"
-//)
-//@Composable
-//fun LoginScreenPreview_NightMode() {
-//    TaskyTheme {
-//        LoginScreenContent()
-//    }
-//}
-//
