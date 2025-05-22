@@ -519,12 +519,12 @@ fun ReminderScreenContent(
 
 
 @Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
     showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
     group = "Night Mode=false",
     apiLevel = 28,
     widthDp = 400,
-    heightDp = 800,
+    heightDp = 600,
 )
 @Composable
 fun Preview() {
@@ -538,30 +538,49 @@ fun Preview() {
             accessTokenExpirationTimestampEpochMilli = System.currentTimeMillis() + 1000 * 60 * 60 * 10,
         )
 
-        ReminderScreenContent(
-            state = ReminderScreenState(
-                authInfo = authInfo,
-                username = "Cameron Anderson",
-                reminder = AgendaItem.Reminder(
-                    id = "0001",
-                    title = "Title of Reminder",
-                    description = "Description of Reminder",
-                    time = ZonedDateTime.now().plusHours(1),
-                    remindAt = ZonedDateTime.now().plusMinutes(30),
-                )
-            ),
-            onAction = { println("ACTION: $it") },
-            navigator = EmptyDestinationsNavigator,
-            oneTimeEvent = null,
-        )
+        ReminderScreenPreview(authInfo)
     }
 }
 
+@Composable
+private fun ReminderScreenPreview(authInfo: AuthInfo) {
+    ReminderScreenContent(
+        state = ReminderScreenState(
+            authInfo = authInfo,
+            username = "Cameron Anderson",
+            reminder = AgendaItem.Reminder(
+                id = "0001",
+                title = "Title of Reminder",
+                description = "Description of Reminder",
+                time = ZonedDateTime.now().plusHours(1),
+                remindAt = ZonedDateTime.now().plusMinutes(30),
+            )
+        ),
+        onAction = { println("ACTION: $it") },
+        navigator = EmptyDestinationsNavigator,
+        oneTimeEvent = null,
+    )
+}
+
 @Preview(
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
     group = "Night Mode=true",
+    widthDp = 400,
+    heightDp = 600,
+    locale = "de"
 )
 @Composable
 fun Preview_night_mode() {
-    Preview()
+    TaskyTheme {
+        val authInfo = AuthInfo(
+            userId = "X0001",
+            accessToken = "1010101010101",
+            username = "Cameron Anderson",
+            refreshToken = "1010101010101",
+            email = "cameron@gmail.com",
+            accessTokenExpirationTimestampEpochMilli = System.currentTimeMillis() + 1000 * 60 * 60 * 10,
+        )
+
+        ReminderScreenPreview(authInfo)
+    }
 }
