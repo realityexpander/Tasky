@@ -147,7 +147,7 @@ fun RemindAtRowPreview() {
                 isEditable = true,
                 isDropdownMenuVisible = false,
                 fromDateTime = ZonedDateTime.now(),
-                remindAtDateTime = ZonedDateTime.now().plusMinutes(10),
+                remindAtDateTime = ZonedDateTime.now().minusMinutes(10),
                 onEditRemindAtDateTime = {},
                 onDismissRequest = {},
                 onSaveRemindAtDateTime = {},
