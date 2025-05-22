@@ -288,52 +288,69 @@ fun LoginScreenContent(
     }
 }
 
-@Composable
+//@Preview
+//@Composable
+//fun LoginScreenPreview_LightMode() {
+//    TaskyTheme {
+//        LoginScreenContent()
+//    }
+//}
+
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
-    group = "Night mode=true"
+    group = "Night mode=true",
+    widthDp = 500,
+    heightDp = 1000
 )
+@Composable
 fun LoginScreenPreview() {
     TaskyTheme {
         Surface {
-            LoginScreenContent(
-                navigator = EmptyDestinationsNavigator,
-                username = "NOT_USED_IN_THIS_SCREEN_UI",
-                confirmPassword = "NOT_USED_IN_THIS_SCREEN_UI",
-                state = LoginState(
-                    email = "chris@demo.com",
-                    password = "123456Aa",
-                    isInvalidEmail = false,
-                    isInvalidPassword = false,
-                    isInvalidEmailMessageVisible = false,
-                    isInvalidPasswordMessageVisible = true,
-                    isPasswordVisible = true,
-                    isLoading = false,
-                    errorMessage = null,
-                    statusMessage = null,
-                    authInfo = null,
-                ),
-                onAction = {},
-                appSettingsRepository = AppSettingsRepositoryImpl(
-                    dataStore = DataStoreFactory.create(
-                        serializer = AppSettingsSerializer(),
-                        produceFile = { File("NOT_USED_IN_THIS_SCREEN_UI") }
-                    )
-                )
-            )
+        LoginScreenContent()
         }
     }
 }
 
-
 @Composable
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    group = "Night mode=false"
-)
-fun LoginScreenPreview_NightMode() {
-    LoginScreenPreview()
+fun LoginScreenContent() {
+    LoginScreenContent(
+        navigator = EmptyDestinationsNavigator,
+        username = "NOT_USED_IN_THIS_SCREEN_UI",
+        confirmPassword = "NOT_USED_IN_THIS_SCREEN_UI",
+        state = LoginState(
+            email = "chris@demo.com",
+            password = "123456Aa",
+            isInvalidEmail = false,
+            isInvalidPassword = false,
+            isInvalidEmailMessageVisible = false,
+            isInvalidPasswordMessageVisible = true,
+            isPasswordVisible = true,
+            isLoading = false,
+            errorMessage = null,
+            statusMessage = null,
+            authInfo = null,
+        ),
+        onAction = {},
+        appSettingsRepository = AppSettingsRepositoryImpl(
+            dataStore = DataStoreFactory.create(
+                serializer = AppSettingsSerializer(),
+                produceFile = { File("NOT_USED_IN_THIS_SCREEN_UI") }
+            )
+        )
+    )
 }
-
+//
+//
+//@Preview(
+//    showBackground = true,
+//    uiMode = Configuration.UI_MODE_NIGHT_NO,
+//    group = "Night mode=false"
+//)
+//@Composable
+//fun LoginScreenPreview_NightMode() {
+//    TaskyTheme {
+//        LoginScreenContent()
+//    }
+//}
+//
