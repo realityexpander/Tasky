@@ -177,7 +177,7 @@ dependencies {
     implementation "androidx.room:room-ktx:2.7.1"
 
     // Proto DataStore
-    implementation "androidx.datastore:datastore-preferences:1.1.6"
+    implementation "androidx.datastore:datastore-preferences:1.1.7"
     implementation "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0"
 
     // SplashScreen
@@ -203,7 +203,7 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     androidTestImplementation project(path: ':app')
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.8.1"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:1.8.2"
     testImplementation "com.google.truth:truth:1.4.4"
     testImplementation "io.mockk:mockk:1.14.2"
     testImplementation 'app.cash.turbine:turbine:1.2.0'
