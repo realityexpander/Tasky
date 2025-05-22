@@ -145,7 +145,7 @@ class EventViewModel @Inject constructor(
                         description = "Description of New Event",
                         from = startDate.withCurrentHourMinute(),
                         to = startDate.withCurrentHourMinute().plusHours(1),
-                        remindAt = startDate.withCurrentHourMinute().plusMinutes(30),
+                        remindAt = startDate.withCurrentHourMinute().minusMinutes(10),
                         host = authInfo?.userId,
                         isUserEventCreator = true,
                         photos = emptyList(),
