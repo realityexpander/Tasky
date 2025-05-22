@@ -7,18 +7,55 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Circle
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,23 +76,42 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.R
+import com.realityexpander.tasky.agenda_feature.data.common.utils.isImageSizeTooLargeToUpload
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
 import com.realityexpander.tasky.agenda_feature.domain.Attendee
 import com.realityexpander.tasky.agenda_feature.domain.Photo
-import com.realityexpander.tasky.agenda_feature.presentation.common.components.TimeDateRow
-import com.realityexpander.tasky.agenda_feature.data.common.utils.isImageSizeTooLargeToUpload
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.RemindAtRow
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.SmallHeightHorizontalDivider
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.TimeDateRow
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.isUserIdGoingAsAttendee
-import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.*
-import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.OneTimeEvent.*
+import com.realityexpander.tasky.agenda_feature.presentation.common.util.toLongMonthDayYear
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.CancelEditMode
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.DeleteEvent
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.DismissAlertDialog
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.EditMode
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.JoinEvent
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.LeaveEvent
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.OneTimeEvent
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.OneTimeEvent.LaunchPhotoPicker
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.OneTimeEvent.NavigateBack
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.OneTimeEvent.ShowToast
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.SaveEvent
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.SetEditMode
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.SetIsEditable
+import com.realityexpander.tasky.agenda_feature.presentation.event_screen.EventScreenEvent.ShowAlertDialog
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.AttendeeList
 import com.realityexpander.tasky.agenda_feature.presentation.event_screen.components.PillButton
-import com.realityexpander.tasky.agenda_feature.presentation.common.components.SmallHeightHorizontalDivider
-import com.realityexpander.tasky.agenda_feature.presentation.common.util.toLongMonthDayYear
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.data.isAvailable
 import com.realityexpander.tasky.core.presentation.animatedTransitions.ScreenTransitions
-import com.realityexpander.tasky.core.presentation.common.modifiers.*
+import com.realityexpander.tasky.core.presentation.common.modifiers.DP
+import com.realityexpander.tasky.core.presentation.common.modifiers.extraSmallHeight
+import com.realityexpander.tasky.core.presentation.common.modifiers.extraSmallWidth
+import com.realityexpander.tasky.core.presentation.common.modifiers.largeHeight
+import com.realityexpander.tasky.core.presentation.common.modifiers.mediumHeight
+import com.realityexpander.tasky.core.presentation.common.modifiers.smallHeight
+import com.realityexpander.tasky.core.presentation.common.modifiers.smallWidth
+import com.realityexpander.tasky.core.presentation.common.modifiers.taskyScreenTopCorners
 import com.realityexpander.tasky.core.presentation.theme.TaskyLightGreen
 import com.realityexpander.tasky.core.presentation.theme.TaskyTheme
 import com.realityexpander.tasky.core.presentation.util.UiText
@@ -64,14 +120,14 @@ import com.realityexpander.tasky.core.util.UPLOAD_IMAGE_MAX_SIZE
 import com.realityexpander.tasky.core.util.UuidStr
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.UUID
 
 @Destination(
     route = "event",
     deepLinks = [
         DeepLink(uriPattern = "https://realityexpander.com/event/{initialEventId}")
     ],
-    style= ScreenTransitions::class
+    style = ScreenTransitions::class
 )
 @Composable
 fun EventScreen(
@@ -80,7 +136,7 @@ fun EventScreen(
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     isEditable: Boolean = false,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
-    startDate : ZonedDateTime? = ZonedDateTime.now(),
+    startDate: ZonedDateTime? = ZonedDateTime.now(),
     navigator: DestinationsNavigator,
     viewModel: EventViewModel = hiltViewModel(),
 ) {
@@ -168,7 +224,7 @@ fun AddEventScreenContent(
     }
 
     BackHandler(true) {
-        if(state.editMode != null) {
+        if (state.editMode != null) {
             scope.launch {
                 onAction(CancelEditMode)
             }
@@ -186,16 +242,18 @@ fun AddEventScreenContent(
 
                 photoUri?.let { uri ->
 
-                    if(uri.isImageSizeTooLargeToUpload(context, UPLOAD_IMAGE_MAX_SIZE)) {
-                        onAction(ShowAlertDialog(
-                            title = UiText.Res(R.string.event_error_image_too_big_title),
-                            message = UiText.Res(R.string.event_error_image_too_big_message),
-                            confirmButtonLabel =  ShowAlertDialogActionType.ConfirmOK.title,
-                            onConfirm = {
-                                onAction(DismissAlertDialog)
-                            },
-                            isDismissButtonVisible = false,
-                        ))
+                    if (uri.isImageSizeTooLargeToUpload(context, UPLOAD_IMAGE_MAX_SIZE)) {
+                        onAction(
+                            ShowAlertDialog(
+                                title = UiText.Res(R.string.event_error_image_too_big_title),
+                                message = UiText.Res(R.string.event_error_image_too_big_message),
+                                confirmButtonLabel = ShowAlertDialogActionType.ConfirmOK.title,
+                                onConfirm = {
+                                    onAction(DismissAlertDialog)
+                                },
+                                isDismissButtonVisible = false,
+                            )
+                        )
 
                         return@let
                     }
@@ -218,20 +276,24 @@ fun AddEventScreenContent(
             is NavigateBack -> {
                 popBack()
             }
+
             is ShowToast -> {
                 Toast.makeText(
                     context,
                     context.getString(
                         oneTimeEvent.message.asResIdOrNull
                             ?: R.string.error_invalid_string_resource_id
-                    ), Toast.LENGTH_SHORT).show()
+                    ), Toast.LENGTH_SHORT
+                ).show()
             }
+
             is LaunchPhotoPicker -> {
                 // Reference: https://github.com/philipplackner/NewPhotoPickerAndroid13/blob/master/app/src/main/java/com/plcoding/newphotopickerandroid13/MainActivity.kt
                 singlePhotoPickerLauncher.launch(
                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                 )
             }
+
             null -> {}
         }
     }
@@ -279,71 +341,73 @@ fun AddEventScreenContent(
             )
 
             // • EDIT / SAVE BUTTON
-                if (isEditable) {
-                    TextButton(
-                        onClick = {
-                            // Check Uri's of local photos are still available (they may have been deleted before the user pressed Save)
-                            val unavailableLocalPhotos =
-                                state.event?.photos
-                                    ?.filterIsInstance<Photo.Local>()
-                                    ?.filterNot { photoLocal ->
-                                        photoLocal.uri.isAvailable(context)
-                                    }
-                            if(unavailableLocalPhotos?.isNotEmpty() == true) {
-                                // Remove the missing photos
-                                unavailableLocalPhotos.forEach { photoLocal ->
-                                    onAction(EditMode.RemovePhoto(photoLocal))
+            if (isEditable) {
+                TextButton(
+                    onClick = {
+                        // Check Uri's of local photos are still available (they may have been deleted before the user pressed Save)
+                        val unavailableLocalPhotos =
+                            state.event?.photos
+                                ?.filterIsInstance<Photo.Local>()
+                                ?.filterNot { photoLocal ->
+                                    photoLocal.uri.isAvailable(context)
                                 }
+                        if (unavailableLocalPhotos?.isNotEmpty() == true) {
+                            // Remove the missing photos
+                            unavailableLocalPhotos.forEach { photoLocal ->
+                                onAction(EditMode.RemovePhoto(photoLocal))
+                            }
 
-                                // Tell user that some photos were removed
-                                onAction(ShowAlertDialog(
+                            // Tell user that some photos were removed
+                            onAction(
+                                ShowAlertDialog(
                                     title = UiText.Res(R.string.event_error_image_file_missing_title),
                                     message = UiText.Res(R.string.event_error_image_file_missing_message),
-                                    confirmButtonLabel =  ShowAlertDialogActionType.ConfirmOK.title,
+                                    confirmButtonLabel = ShowAlertDialogActionType.ConfirmOK.title,
                                     onConfirm = {
                                         onAction(DismissAlertDialog)
                                     },
                                     isDismissButtonVisible = false,
-                                ))
+                                )
+                            )
 
-                                return@TextButton
-                            }
+                            return@TextButton
+                        }
 
-                            onAction(SetIsEditable(false))
-                            onAction(SaveEvent)
-                        },
-                        modifier = Modifier.weight(.25f)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.save),
-                            color = MaterialTheme.colors.surface,
-                            textAlign = TextAlign.End,
+                        onAction(SetIsEditable(false))
+                        onAction(SaveEvent)
+                    },
+                    modifier = Modifier.weight(.25f)
+                ) {
+                    Text(
+                        text = stringResource(R.string.save),
+                        color = MaterialTheme.colors.surface,
+                        textAlign = TextAlign.End,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .alignByBaseline()
+                            .width(40.dp)
+                    )
+                }
+            } else {
+                IconButton(
+                    onClick = {
+                        onAction(SetIsEditable(true))
+                    },
+                    modifier = Modifier.weight(.25f)
+                ) {
+                    Row {
+                        Spacer(modifier = Modifier.smallWidth())
+                        Icon(
+                            imageVector = Icons.Filled.Edit,
+                            tint = MaterialTheme.colors.surface,
+                            contentDescription = stringResource(R.string.event_description_edit_event),
                             modifier = Modifier
                                 .align(Alignment.CenterVertically)
-                                .alignByBaseline()
                                 .width(40.dp)
                         )
                     }
-                } else {
-                    IconButton(
-                        onClick = {
-                            onAction(SetIsEditable(true))
-                        },
-                        modifier = Modifier.weight(.25f)
-                    ) {
-                        Row {
-                            Spacer(modifier = Modifier.smallWidth())
-                            Icon(
-                                imageVector = Icons.Filled.Edit,
-                                tint = MaterialTheme.colors.surface,
-                                contentDescription = stringResource(R.string.event_description_edit_event),
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .width(40.dp)
-                            )
-                        }
-                    }
                 }
+            }
 
         }
         //Spacer(modifier = Modifier.smallHeight())
@@ -500,7 +564,7 @@ fun AddEventScreenContent(
             }
 
             // • PHOTO PICKER / ADD & REMOVE PHOTOS
-            if((isEditable && isUserEventCreator)
+            if ((isEditable && isUserEventCreator)
                 || !state.event?.photos.isNullOrEmpty()
             ) {
                 Spacer(modifier = Modifier.smallHeight())
@@ -640,18 +704,33 @@ fun AddEventScreenContent(
                                             } else {
                                                 // • PHOTO IMAGE
                                                 SubcomposeAsyncImage(
-                                                    model = when(photo) {
+                                                    model = when (photo) {
                                                         is Photo.Local -> photo.uri
                                                         is Photo.Remote -> photo.url
                                                     },
                                                     contentDescription = stringResource(id = R.string.event_description_photo),
                                                     contentScale = ContentScale.Crop,
-                                                    loading = { CircularProgressIndicator(
-                                                        color = MaterialTheme.colors.primary,
-                                                        modifier = Modifier
-                                                            .align(Alignment.Center)
-                                                            .padding(10.dp)
-                                                    ) },
+                                                    onError = {
+                                                        onAction(
+                                                            ShowAlertDialog(
+                                                                title = UiText.Res(R.string.event_error_image_file_missing_title),
+                                                                message = UiText.Res(R.string.event_error_image_file_missing_message),
+                                                                confirmButtonLabel = ShowAlertDialogActionType.ConfirmOK.title,
+                                                                onConfirm = {
+                                                                    onAction(DismissAlertDialog)
+                                                                },
+                                                                isDismissButtonVisible = false,
+                                                            )
+                                                        )
+                                                    },
+                                                    loading = {
+                                                        CircularProgressIndicator(
+                                                            color = MaterialTheme.colors.primary,
+                                                            modifier = Modifier
+                                                                .align(Alignment.Center)
+                                                                .padding(10.dp)
+                                                        )
+                                                    },
                                                     modifier = Modifier
                                                         .fillMaxWidth()
                                                         .clickable {
@@ -773,7 +852,9 @@ fun AddEventScreenContent(
                     // • Add Attendee Button
                     Icon(
                         imageVector = Icons.Outlined.Add,
-                        tint = if (isEditable && isUserEventCreator) MaterialTheme.colors.onSurface.copy(alpha = .3f) else Color.Transparent,
+                        tint = if (isEditable && isUserEventCreator) MaterialTheme.colors.onSurface.copy(
+                            alpha = .3f
+                        ) else Color.Transparent,
                         contentDescription = stringResource(R.string.event_description_add_attendee_button),
                         modifier = Modifier
                             .offset(y = (-4).dp)
@@ -843,7 +924,8 @@ fun AddEventScreenContent(
                         isUserEventCreator = state.event?.isUserEventCreator ?: false,
                         header = stringResource(R.string.event_going),
                         attendees = state.event?.attendees?.filter { it.isGoing } ?: emptyList(),
-                        hostUserId = state.event?.host ?: throw IllegalStateException("event host not found"),
+                        hostUserId = state.event?.host
+                            ?: throw IllegalStateException("event host not found"),
                         onAttendeeClick = {},
                         onAttendeeRemoveClick = { attendee ->
                             onAction(
@@ -866,7 +948,8 @@ fun AddEventScreenContent(
                         isUserEventCreator = state.event?.isUserEventCreator ?: false,
                         header = stringResource(R.string.event_not_going),
                         attendees = state.event?.attendees?.filterNot { it.isGoing } ?: emptyList(),
-                        hostUserId = state.event?.host ?: throw IllegalStateException("event host not found"),
+                        hostUserId = state.event?.host
+                            ?: throw IllegalStateException("event host not found"),
                         onAttendeeClick = {},
                         onAttendeeRemoveClick = { attendee ->
                             onAction(
@@ -882,37 +965,39 @@ fun AddEventScreenContent(
 
                 // • JOIN/LEAVE/DELETE EVENT BUTTON
                 val showAlertDialogActionDeleteTitle = UiText.Res(
-                        R.string.confirm_action_dialog_title_phrase,
-                        context.getStringSafe(ShowAlertDialogActionType.DeleteEvent.title.asResIdOrNull),
-                        context.getString(R.string.agenda_item_type_event)
-                    )
+                    R.string.confirm_action_dialog_title_phrase,
+                    context.getStringSafe(ShowAlertDialogActionType.DeleteEvent.title.asResIdOrNull),
+                    context.getString(R.string.agenda_item_type_event)
+                )
                 val showAlertDialogActionDeleteMessage = UiText.Res(
-                        R.string.confirm_action_dialog_text_phrase,
-                        context.getStringSafe(ShowAlertDialogActionType.DeleteEvent.title.asResIdOrNull).lowercase(),
-                        context.getString(R.string.agenda_item_type_event).lowercase()
-                    )
+                    R.string.confirm_action_dialog_text_phrase,
+                    context.getStringSafe(ShowAlertDialogActionType.DeleteEvent.title.asResIdOrNull)
+                        .lowercase(),
+                    context.getString(R.string.agenda_item_type_event).lowercase()
+                )
                 TextButton(
                     onClick = {
                         if (isUserEventCreator)
-                            onAction(ShowAlertDialog(
-                                title = showAlertDialogActionDeleteTitle,
-                                message = showAlertDialogActionDeleteMessage,
-                                confirmButtonLabel =  ShowAlertDialogActionType.DeleteEvent.title,
-                                onConfirm = {
-                                    onAction(DeleteEvent)
-                                }
-                            ))
-                       else if(isUserIdGoingAsAttendee(
+                            onAction(
+                                ShowAlertDialog(
+                                    title = showAlertDialogActionDeleteTitle,
+                                    message = showAlertDialogActionDeleteMessage,
+                                    confirmButtonLabel = ShowAlertDialogActionType.DeleteEvent.title,
+                                    onConfirm = {
+                                        onAction(DeleteEvent)
+                                    }
+                                ))
+                        else if (isUserIdGoingAsAttendee(
                                 state.authInfo?.userId
                                     ?: throw IllegalStateException("user not logged in"),
-                                state.event?.attendees)
-                            ) {
-                                onAction(SetIsEditable(true))
-                                onAction(LeaveEvent)
-                        }
-                        else {
-                                onAction(SetIsEditable(true))
-                                onAction(JoinEvent)
+                                state.event?.attendees
+                            )
+                        ) {
+                            onAction(SetIsEditable(true))
+                            onAction(LeaveEvent)
+                        } else {
+                            onAction(SetIsEditable(true))
+                            onAction(JoinEvent)
                         }
                     },
                     modifier = Modifier
@@ -921,13 +1006,15 @@ fun AddEventScreenContent(
                     Text(
                         if (state.event?.isUserEventCreator == true)
                             stringResource(R.string.event_delete_event)
-                        else if(isUserIdGoingAsAttendee(
-                                state.authInfo?.userId ?: throw IllegalStateException("user not logged in"),
-                                state.event?.attendees)
+                        else if (isUserIdGoingAsAttendee(
+                                state.authInfo?.userId
+                                    ?: throw IllegalStateException("user not logged in"),
+                                state.event?.attendees
                             )
-                                stringResource(R.string.event_leave_event)
-                            else
-                                stringResource(R.string.event_join_event),
+                        )
+                            stringResource(R.string.event_leave_event)
+                        else
+                            stringResource(R.string.event_join_event),
                         style = MaterialTheme.typography.h4,
                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
                         textAlign = TextAlign.Center,
@@ -945,12 +1032,14 @@ fun AddEventScreenContent(
         targetState = state.editMode,
         modifier = Modifier.fillMaxSize(),
         transitionSpec = {
-            slideInVertically(animationSpec = tween(1000),
-                        initialOffsetY = { fullHeight -> fullHeight }
-                    ).togetherWith(
-                slideOutVertically(animationSpec = tween(1000),
-                        targetOffsetY = { fullHeight -> fullHeight }
-                    ))
+            slideInVertically(
+                animationSpec = tween(1000),
+                initialOffsetY = { fullHeight -> fullHeight }
+            ).togetherWith(
+                slideOutVertically(
+                    animationSpec = tween(1000),
+                    targetOffsetY = { fullHeight -> fullHeight }
+                ))
         }
     ) { targetState ->
         targetState?.let { editMode ->
@@ -980,7 +1069,7 @@ fun AddEventScreenContent(
                 }
             },
             dismissButton = {
-                if(dialogInfo.isDismissButtonVisible) {
+                if (dialogInfo.isDismissButtonVisible) {
                     TextButton(
                         onClick = { onAction(DismissAlertDialog) },
                         colors = ButtonDefaults
@@ -996,92 +1085,114 @@ fun AddEventScreenContent(
 
 
 @Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    group = "Night Mode=true",
+    widthDp = 500,
+    heightDp = 1000,
     showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    group = "Night Mode=false",
-    apiLevel = 28,
-    widthDp = 400,
-    heightDp = 1200,
+    // locale = "de"
 )
 @Composable
 fun Preview() {
+    val previewContext = LocalContext.current
+
     TaskyTheme {
-        val authInfo = AuthInfo(
-            userId = "X0001",
-            accessToken = "1010101010101",
-            username = "Cameron Anderson",
-            email = "cameraon@dewmo.com",
-            refreshToken = "1010101010101",
-            accessTokenExpirationTimestampEpochMilli = System.currentTimeMillis() + 1000000,
-        )
-
-        @Suppress("SpellCheckingInspection")
-        AddEventScreenContent(
-            state = EventScreenState(
-
-                authInfo = authInfo,
-                username = "Cameron Anderson",
-                event = AgendaItem.Event(
-                    id = "0001",
-                    title = "Title of Event",
-                    description = "Description of Event",
-                    isUserEventCreator = false,
-                    from = ZonedDateTime.now().plusHours(1),
-                    to = ZonedDateTime.now().plusHours(2),
-                    remindAt = ZonedDateTime.now().plusMinutes(30),
-                    attendees = listOf(
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = true,
-                            fullName = authInfo.username!!,
-                            email = "cameron@demo.com",
-                            remindAt = ZonedDateTime.now(),
-                            id = authInfo.userId!!,
-                            photo = "https://randomuser.me/api/portraits/men/75.jpg"
-                        ),
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = true,
-                            fullName = "Jeremy Johnson",
-                            remindAt = ZonedDateTime.now(),
-                            email = "jj@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/75.jpg"
-                        ),
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = true,
-                            fullName = "Fred Flintstone",
-                            remindAt = ZonedDateTime.now(),
-                            email = "ff@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/71.jpg"
-                        ),
-                        Attendee(
-                            eventId = "0001",
-                            isGoing = true,
-                            fullName = "Sam Bankman",
-                            remindAt = ZonedDateTime.now(),
-                            email = "sb@demo.com",
-                            id = UUID.randomUUID().toString(),
-                            photo = "https://randomuser.me/api/portraits/men/70.jpg"
-                        ),
-                    ),
-                )
-            ),
-            oneTimeEvent = null,
-            onAction = { println("ACTION: $it") },
-            navigator = EmptyDestinationsNavigator,
-            startDate = ZonedDateTime.now(),
-        )
+        CompositionLocalProvider(
+            LocalContext provides previewContext
+        ) {
+            AddEventScreenPreviewContent()
+        }
     }
 }
 
+@Composable
+private fun AddEventScreenPreviewContent() {
+    val authInfo = AuthInfo(
+        userId = "X0001",
+        accessToken = "1010101010101",
+        username = "Cameron Anderson",
+        email = "cameraon@dewmo.com",
+        refreshToken = "1010101010101",
+        accessTokenExpirationTimestampEpochMilli = System.currentTimeMillis() + 1000000,
+    )
+
+    @Suppress("SpellCheckingInspection")
+    AddEventScreenContent(
+        state = EventScreenState(
+            authInfo = authInfo,
+            username = "Cameron Anderson",
+            event = AgendaItem.Event(
+                id = "0001",
+                title = "Title of Event",
+                description = "Description of Event",
+                isUserEventCreator = false,
+                from = ZonedDateTime.now().plusHours(1),
+                to = ZonedDateTime.now().plusHours(2),
+                remindAt = ZonedDateTime.now().minusMinutes(10),
+                host = authInfo.userId,
+                attendees = listOf(
+                    Attendee(
+                        eventId = "0001",
+                        isGoing = true,
+                        fullName = authInfo.username!!,
+                        email = "cameron@demo.com",
+                        remindAt = ZonedDateTime.now(),
+                        id = authInfo.userId!!,
+                        photo = "https://randomuser.me/api/portraits/men/75.jpg",
+                    ),
+                    Attendee(
+                        eventId = "0001",
+                        isGoing = true,
+                        fullName = "Jeremy Johnson",
+                        remindAt = ZonedDateTime.now(),
+                        email = "jj@demo.com",
+                        id = UUID.randomUUID().toString(),
+                        photo = "https://randomuser.me/api/portraits/men/75.jpg",
+                    ),
+                    Attendee(
+                        eventId = "0001",
+                        isGoing = true,
+                        fullName = "Fred Flintstone",
+                        remindAt = ZonedDateTime.now(),
+                        email = "ff@demo.com",
+                        id = UUID.randomUUID().toString(),
+                        photo = "https://randomuser.me/api/portraits/men/71.jpg",
+                    ),
+                    Attendee(
+                        eventId = "0001",
+                        isGoing = true,
+                        fullName = "Sam Bankman",
+                        remindAt = ZonedDateTime.now(),
+                        email = "sb@demo.com",
+                        id = UUID.randomUUID().toString(),
+                        photo = "https://randomuser.me/api/portraits/men/70.jpg",
+                    ),
+                ),
+            )
+        ),
+        oneTimeEvent = null,
+        onAction = { println("ACTION: $it") },
+        navigator = EmptyDestinationsNavigator,
+        startDate = ZonedDateTime.now(),
+    )
+}
+
 @Preview(
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    group = "Night Mode=true",
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    group = "Night Mode=false",
+    widthDp = 500,
+    heightDp = 1200,
+    locale = "de"
 )
 @Composable
-fun Preview_night_mode() {
-    Preview()
+fun Preview_night_mode_de() {
+    val previewContext = LocalContext.current
+
+    TaskyTheme {
+        CompositionLocalProvider(
+            LocalContext provides previewContext
+        ) {
+            AddEventScreenPreviewContent()
+        }
+    }
 }
