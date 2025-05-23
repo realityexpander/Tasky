@@ -61,25 +61,11 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.realityexpander.tasky.R
 import com.realityexpander.tasky.agenda_feature.domain.AgendaItem
-import com.realityexpander.tasky.agenda_feature.presentation.common.components.TimeDateRow
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.RemindAtRow
 import com.realityexpander.tasky.agenda_feature.presentation.common.components.SmallHeightHorizontalDivider
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.CancelEditMode
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.DeleteTask
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.DismissAlertDialog
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.ChooseDate
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.ChooseDescriptionText
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.ChooseRemindAtDateTime
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.ChooseTime
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.ChooseTitleText
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.EditMode.UpdateDateTime
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.OneTimeEvent
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.SaveTask
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.SetEditMode
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.SetIsEditable
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.ShowAlertDialog
-import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.ToggleIsDone
+import com.realityexpander.tasky.agenda_feature.presentation.common.components.TimeDateRow
 import com.realityexpander.tasky.agenda_feature.presentation.common.util.toLongMonthDayYear
+import com.realityexpander.tasky.agenda_feature.presentation.task_screen.TaskScreenEvent.*
 import com.realityexpander.tasky.auth_feature.domain.AuthInfo
 import com.realityexpander.tasky.core.presentation.animatedTransitions.ScreenTransitions
 import com.realityexpander.tasky.core.presentation.common.modifiers.DP
@@ -107,7 +93,7 @@ fun TaskScreen(
     isEditable: Boolean = false,
     @Suppress("UNUSED_PARAMETER")  // extracted from navArgs in the viewModel
     startDate : ZonedDateTime? = ZonedDateTime.now(),
-    navigator: DestinationsNavigator,
+    navigator: DestinationsNavigator = EmptyDestinationsNavigator,
     viewModel: TaskViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -383,7 +369,7 @@ fun TaskScreenContent(
                             .clickable(isEditable) {
                                 onAction(
                                     SetEditMode(
-                                        ChooseTitleText(
+                                        EditMode.ChooseTitleText(
                                             state.task?.title ?: "",
                                             editTextStyle = editTextStyle
                                         )
@@ -428,7 +414,7 @@ fun TaskScreenContent(
                             .clickable(enabled = isEditable) {
                                 onAction(
                                     SetEditMode(
-                                        ChooseDescriptionText(
+                                        EditMode.ChooseDescriptionText(
                                             state.task?.description ?: "",
                                             editTextStyle = editTextStyle
                                         )
@@ -458,14 +444,14 @@ fun TaskScreenContent(
                     onEditDate = {
                         onAction(
                             SetEditMode(
-                                ChooseDate(state.task?.time ?: ZonedDateTime.now())
+                                EditMode.ChooseDate(state.task?.time ?: ZonedDateTime.now())
                             )
                         )
                     },
                     onEditTime = {
                         onAction(
                             SetEditMode(
-                                ChooseTime(state.task?.time ?: ZonedDateTime.now())
+                                EditMode.ChooseTime(state.task?.time ?: ZonedDateTime.now())
                             )
                         )
                     }
@@ -477,11 +463,11 @@ fun TaskScreenContent(
                     fromDateTime = state.task?.time ?: ZonedDateTime.now(),
                     remindAtDateTime = state.task?.remindAt ?: ZonedDateTime.now(),
                     isEditable = isEditable,
-                    isDropdownMenuVisible = state.editMode is ChooseRemindAtDateTime,
+                    isDropdownMenuVisible = state.editMode is EditMode.ChooseRemindAtDateTime,
                     onEditRemindAtDateTime = {
                         onAction(
                             SetEditMode(
-                                ChooseRemindAtDateTime(
+                                EditMode.ChooseRemindAtDateTime(
                                     state.task?.remindAt ?: ZonedDateTime.now()
                                 )
                             )
@@ -490,7 +476,7 @@ fun TaskScreenContent(
                     onDismissRequest = { onAction(CancelEditMode) },
                     onSaveRemindAtDateTime = { dateTime ->
                         onAction(
-                            UpdateDateTime(dateTime)
+                            EditMode.UpdateDateTime(dateTime)
                         )
                     }
                 )
@@ -590,55 +576,62 @@ fun TaskScreenContent(
 }
 
 
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    group = "Night Mode=false",
-    apiLevel = 28,
-    widthDp = 400,
-    heightDp = 800,
-)
 @Composable
-fun Preview2() {
-    TaskyTheme {
-        val authInfo = AuthInfo(
-            userId = "X0001",
-            accessToken = "1010101010101",
-            username = "Cameron Anderson",
-            email = "cameron@gmail.com",
-            refreshToken = "1010101010101",
-            accessTokenExpirationTimestampEpochMilli = System.currentTimeMillis() + 1000000,
-        )
+private fun PreviewContent() {
+    val authInfo = AuthInfo(
+        userId = "X0001",
+        accessToken = "1010101010101",
+        username = "Cameron Anderson",
+        email = "cameron@gmail.com",
+        refreshToken = "1010101010101",
+        accessTokenExpirationTimestampEpochMilli = System.currentTimeMillis() + 1000000,
+    )
 
-        TaskScreenContent(
-            state = TaskScreenState(
-                authInfo = authInfo,
-                username = "Cameron Anderson",
-                task = AgendaItem.Task(
-                    id = "0001",
-                    title = "Title of Task",
-                    description = "Description of Task",
-                    time = ZonedDateTime.now().plusHours(1),
-                    remindAt = ZonedDateTime.now().plusMinutes(30),
-                )
-            ),
-            onAction = { println("ACTION: $it") },
-            navigator = EmptyDestinationsNavigator,
-            oneTimeEvent = null,
-        )
-    }
+    TaskScreenContent(
+        state = TaskScreenState(
+            authInfo = authInfo,
+            username = "Cameron Anderson",
+            task = AgendaItem.Task(
+                id = "0001",
+                title = "Title of Task",
+                description = "Description of Task",
+                time = ZonedDateTime.now().plusHours(1),
+                remindAt = ZonedDateTime.now().plusMinutes(30),
+            )
+        ),
+        onAction = { println("ACTION: $it") },
+        navigator = EmptyDestinationsNavigator,
+        oneTimeEvent = null,
+    )
 }
 
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     group = "Night Mode=true",
-    apiLevel = 28,
     widthDp = 400,
-    heightDp = 800,
-    backgroundColor = 0xFF000000,
+    heightDp = 500,
+//    backgroundColor = 0xFF000000,
 )
 @Composable
 fun Preview_night_mode() {
-    Preview2()
+    TaskyTheme {
+        PreviewContent()
+    }
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    group = "Night Mode=false",
+    apiLevel = 28,
+    widthDp = 400,
+    heightDp = 500,
+    locale = "de"
+)
+@Composable
+fun Preview1() {
+    TaskyTheme {
+        PreviewContent()
+    }
 }
