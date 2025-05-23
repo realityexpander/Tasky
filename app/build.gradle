@@ -5,7 +5,7 @@ plugins {
     id 'com.google.devtools.ksp' // version inherited from Top-level `build.gradle`
     id 'dagger.hilt.android.plugin'
     id 'com.google.dagger.hilt.android'
-    id "org.jlleitschuh.gradle.ktlint" version "12.2.0"
+    id "org.jlleitschuh.gradle.ktlint" version "12.3.0"
     id 'kotlinx-serialization'
     id 'com.google.relay' version '0.3.12'  // Converts UI components designed in Figma into Jetpack Compose code for Android apps
     id 'org.jetbrains.kotlin.plugin.compose'

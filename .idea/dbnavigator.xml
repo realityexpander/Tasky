@@ -35,6 +35,14 @@
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
   </component>
+  <component name="DBNavigator.Project.JavaExecutionManager">
+    <method-browser />
+    <execution-history>
+      <group-entries value="true" />
+      <execution-inputs />
+    </execution-history>
+    <execution-variables-cache />
+  </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
     <filters />

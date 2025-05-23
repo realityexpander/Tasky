@@ -60,9 +60,11 @@ interface EventDaoImpl : IEventDao {
         }
     }
 
+    @Suppress("FunctionName") // allow underscore prefix
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun _insertEvent(event: EventEntity): Long
 
+    @Suppress("FunctionName") // allow underscore prefix
     @Update(onConflict = OnConflictStrategy.IGNORE)
     suspend fun _updateEvent(event: EventEntity)
 
@@ -92,7 +94,8 @@ interface EventDaoImpl : IEventDao {
     override suspend fun clearAllSyncedEventsForDay(zonedDateTime: ZonedDateTime): Int
 
     companion object {
-
+        // • Queries
+        @Suppress("ConstPropertyName") // allow underscore prefix
         const val getEventsForDayQuery =
             """
             SELECT * FROM events WHERE  
