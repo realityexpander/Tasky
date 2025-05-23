@@ -518,6 +518,26 @@ fun ReminderScreenContent(
 }
 
 
+@Composable
+private fun ReminderScreenPreview(authInfo: AuthInfo) {
+    ReminderScreenContent(
+        state = ReminderScreenState(
+            authInfo = authInfo,
+            username = "Cameron Anderson",
+            reminder = AgendaItem.Reminder(
+                id = "0001",
+                title = "Title of Reminder",
+                description = "Description of Reminder",
+                time = ZonedDateTime.now().plusHours(1),
+                remindAt = ZonedDateTime.now().plusMinutes(30),
+            )
+        ),
+        onAction = { println("ACTION: $it") },
+        navigator = EmptyDestinationsNavigator,
+        oneTimeEvent = null,
+    )
+}
+
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     showBackground = true,
@@ -540,26 +560,6 @@ fun Preview() {
 
         ReminderScreenPreview(authInfo)
     }
-}
-
-@Composable
-private fun ReminderScreenPreview(authInfo: AuthInfo) {
-    ReminderScreenContent(
-        state = ReminderScreenState(
-            authInfo = authInfo,
-            username = "Cameron Anderson",
-            reminder = AgendaItem.Reminder(
-                id = "0001",
-                title = "Title of Reminder",
-                description = "Description of Reminder",
-                time = ZonedDateTime.now().plusHours(1),
-                remindAt = ZonedDateTime.now().plusMinutes(30),
-            )
-        ),
-        onAction = { println("ACTION: $it") },
-        navigator = EmptyDestinationsNavigator,
-        oneTimeEvent = null,
-    )
 }
 
 @Preview(
