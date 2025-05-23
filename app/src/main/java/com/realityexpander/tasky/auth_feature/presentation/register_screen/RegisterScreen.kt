@@ -325,7 +325,7 @@ fun RegisterScreenContent(
 }
 
 
-//    // • BACK TO LOG IN BUTTON (alternate design)
+//    // • BACK TO LOG IN BUTTON (alternate design) leave for reference
 //    Text(
 //        text = stringResource(R.string.register_already_a_member_sign_in),
 //        style = MaterialTheme.typography.body2,
@@ -342,7 +342,8 @@ fun RegisterScreenContent(
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
-    group= "Night Mode=true"
+    group= "Night Mode=true",
+    heightDp = 600
 )
 fun RegisterScreenPreview() {
     TaskyTheme {
@@ -376,57 +377,9 @@ fun RegisterScreenPreview() {
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
-    group="Night Mode=false"
+    group="Night Mode=false",
+    heightDp = 600
 )
 fun RegisterScreenPreview_NightMode_NO() {
     RegisterScreenPreview()
 }
-
-//@Composable
-//@Preview(
-//    showBackground = true,
-//    uiMode = Configuration.UI_MODE_NIGHT_YES,
-//    group = "ViewModel"
-//)
-//fun RegisterScreenPreview_Interactive() {
-//    TaskyTheme {
-//        Surface {
-//            RegisterScreen(
-//                email = "hello",
-//                navigator = EmptyDestinationsNavigator,
-//                viewModel = RegisterViewModel(
-//                    authRepository = AuthRepositoryFakeImpl(
-//                        authApi = AuthApiFakeImpl(),
-//                        authDao = AuthDaoFakeImpl(),
-//                        validateUsername = ValidateUsername(),
-//                        validateEmail = ValidateEmail(),
-//                        validatePassword = ValidatePassword(),
-//                    ),
-//                    validateUsername = ValidateUsername(),
-//                    validateEmail = ValidateEmail(),
-//                    validatePassword = ValidatePassword(),
-////                    savedStateHandle = SavedStateHandle().apply {
-////                        // For Live Preview / interactive mode
-////                        set("username", "c")
-////                        set("email", "chris@demo.com")
-////                        set("password", "123456Aa")
-////                        set("confirmPassword", "123456Aa")
-////                        set("invalidUsername", true)
-////                        set("invalidEmail", true)
-//////                        set("invalidPassword", true)
-//////                        set("invalidConfirmPassword", true)
-//////                        set("isPasswordsMatch", false)
-////                        set("isShowInvalidUsernameMessage", true)
-////                        set("isShowInvalidEmailMessage", true)
-//////                        set("isShowInvalidPasswordMessage", true)
-//////                        set("isShowInvalidConfirmPasswordMessage", true)
-//////                        set("isLoading", true)
-//////                        set("errorMessage", "Error Message")
-//////                        set("statusMessage", "Status Message")
-//////                        set("isLoggedIn", true)
-////                    }
-//                )
-//            )
-//        }
-//    }
-//}
