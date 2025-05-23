@@ -544,7 +544,7 @@ private fun ReminderScreenPreview(authInfo: AuthInfo) {
     group = "Night Mode=false",
     apiLevel = 28,
     widthDp = 400,
-    heightDp = 600,
+    heightDp = 500,
 )
 @Composable
 fun Preview() {
@@ -566,7 +566,7 @@ fun Preview() {
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     group = "Night Mode=true",
     widthDp = 400,
-    heightDp = 600,
+    heightDp = 500,
     locale = "de"
 )
 @Composable
