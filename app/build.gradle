@@ -57,7 +57,7 @@ android {
             def API_KEY = 'API_KEY'
             def API_BASE_URL='API_BASE_URL'
 
-            // add API_KEY to BuildConfig
+            // add API_KEY & BASE_URL to BuildConfig.java file
             buildConfigField "String", API_KEY, "\"${apiProperties[API_KEY]}\""
             buildConfigField "String", API_BASE_URL, "\"${apiProperties[API_BASE_URL]}\""
         } else {
